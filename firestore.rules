@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/Accounts/$(request.auth.uid))
+        && get(/databases/$(database)/documents/Accounts/$(request.auth.uid)).data.role == 'admin'
+        && get(/databases/$(database)/documents/Accounts/$(request.auth.uid)).data.active == true;
+    }
+
+    match /Accounts/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /TeamPlayers/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /Matches/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /News/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /Honours/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /Gallery/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /Socials/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /PlayerProfiles/{uid} {
+      allow read: if true;
+      allow create, update: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow delete: if isAdmin();
+    }
+  }
+}
