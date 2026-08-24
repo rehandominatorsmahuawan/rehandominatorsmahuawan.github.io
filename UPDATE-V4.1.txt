@@ -1,0 +1,3 @@
+RDM V4.1
+- My Profile: Player ID and Jersey Number now clearly labeled in a centered horizontal row.
+- View Profile: same centered horizontal Player ID / Jersey Number layout.
