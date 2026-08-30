@@ -1,0 +1,6 @@
+RDM V4.2 UPDATE
+
+1. News preserves Enter/new lines exactly as typed.
+2. Gallery images display at their natural aspect ratio without forced 4:3 blank space.
+3. Existing V4/V4.1 Firebase profile, Remember Me, Player ID/Jersey layout and cloud features retained.
+4. Current Instagram account updated to @rehandominatorsmahuawann.
