@@ -15,3 +15,16 @@
 .preserveLines{white-space:pre-wrap}.gallery img{height:auto!important;aspect-ratio:auto!important;object-fit:contain!important;display:block}.gallery figure{align-self:start}.homeMatchHub{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}.miniMatch{background:#10141b;border:1px solid #242b36;border-radius:18px;padding:20px}.miniMatch span,.pinTag{font-size:9px;color:#ef3b50;font-weight:900;letter-spacing:1px}.miniMatch h3{margin:9px 0}.miniMatch p{color:#969eaa;font-size:10px}.statsGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.statCard{background:#10141b;border:1px solid #252b35;border-radius:20px;padding:18px;text-align:center}.statCard img{width:84px;height:84px;border-radius:50%;object-fit:cover}.statNums{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:14px 0}.statNums b{background:#090c11;border-radius:10px;padding:10px 4px;font-size:16px}.statNums small{display:block;font-size:7px;color:#8f97a3;margin-top:5px}.statCard p{font-size:9px;color:#8f97a3}.subHead{margin-top:38px}.availabilityList{display:grid;gap:8px}.availabilityRow{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;background:#10141b;border:1px solid #252b35;border-radius:14px;padding:13px}.availabilityRow span,.availabilityRow b{font-size:10px}.available{color:#5ee28a}.unavailable{color:#ff6576}.xiGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin:12px 0}.xiGrid span{background:#090c11;padding:9px;border-radius:9px;font-size:9px}.albumFilters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}.albumFilters .on{background:#ef233c}.pinnedNews{border-color:#ef233c}.scoreLine{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.scoreLine b{background:#080b10;padding:12px;border-radius:10px;text-align:center;font-size:11px}.shareProfileBtn{margin-top:14px}@media(max-width:780px){.statsGrid{grid-template-columns:1fr 1fr}}@media(max-width:480px){.homeMatchHub,.statsGrid{grid-template-columns:1fr}.statNums{grid-template-columns:1fr 1fr}.xiGrid{grid-template-columns:1fr}.availabilityRow{grid-template-columns:1fr auto}}
 
 .adminHint{margin-top:16px;text-align:center;color:#8f97a3;font-size:9px;line-height:1.8}.adminGrid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+/* V5.2 mobile admin/button layout */
+.adminGrid{grid-template-columns:1fr!important;gap:11px!important}
+.adminGrid button{width:100%;min-height:58px!important;white-space:nowrap;text-align:center}
+.sectionHead>.primary{white-space:nowrap;flex:0 0 auto}
+#matches .sectionHead{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px}
+#lineup .sectionHead:first-child{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px}
+@media(max-width:480px){
+ #matches .sectionHead{grid-template-columns:minmax(0,1fr) auto auto;gap:7px}
+ #matches .sectionHead h2,#lineup .sectionHead:first-child h2{font-size:clamp(21px,6vw,27px)}
+ #matches .sectionHead>.primary,#lineup .sectionHead:first-child>.primary{font-size:8px!important;padding:10px 9px!important;white-space:nowrap!important}
+ #lineup .sectionHead:first-child{grid-template-columns:minmax(0,1fr) auto;gap:8px}
+ .adminGrid button{min-height:56px!important;font-size:10px!important;padding:12px 14px!important}
+}
