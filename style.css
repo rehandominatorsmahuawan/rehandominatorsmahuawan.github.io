@@ -28,3 +28,45 @@
  #lineup .sectionHead:first-child{grid-template-columns:minmax(0,1fr) auto;gap:8px}
  .adminGrid button{min-height:56px!important;font-size:10px!important;padding:12px 14px!important}
 }
+/* V6 full cricket portal */
+.homeActions{display:grid!important;grid-template-columns:1fr!important;width:min(310px,100%);gap:10px!important}.homeActions>*{width:100%;white-space:nowrap;text-align:center}.countdown{display:block;margin-top:8px;color:#fff;font-weight:800}.noticeBanner{margin:0 0 16px;padding:13px 16px;border:1px solid #ef233c;border-radius:14px;background:#171015;text-align:center;font-size:10px}.leaderGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.leaderCard,.recordCard{background:#10141b;border:1px solid #252b35;border-radius:16px;padding:16px}.leaderCard b{display:block;font-size:18px;margin-top:7px}.seasonTag{font-size:8px;color:#ef3b50}.matchDetails{display:grid;gap:8px;margin-top:12px}.matchDetails>div{background:#090c11;border-radius:10px;padding:10px}.inningsTable{width:100%;border-collapse:collapse;font-size:9px;margin-top:10px}.inningsTable th,.inningsTable td{padding:7px 4px;border-bottom:1px solid #252b35;text-align:left}.posterPreview{border:1px solid #ef233c;border-radius:16px;padding:18px;text-align:center;background:linear-gradient(145deg,#161a22,#090b0f);margin-top:12px}.backToTop{position:fixed;right:18px;bottom:18px;width:46px;height:46px;border:0;border-radius:50%;background:#ef233c;color:#fff;font-size:22px;font-weight:900;display:none;z-index:30}.backToTop.show{display:block}.searchPlayer{width:100%;margin:0 0 16px;padding:13px;border-radius:12px;border:1px solid #2b313c;background:#0b0e13;color:#fff}.captainBadge{display:inline-block;margin-left:5px;color:#ef3b50;font-size:8px}.loadingRdm{padding:20px;text-align:center;color:#8f97a3}@media(max-width:600px){.leaderGrid{grid-template-columns:1fr}}
+/* V6.1 */
+.homeMatchHub{margin:16px 0}.miniMatch{display:grid;gap:7px;padding:16px;border:1px solid #252b35;border-radius:16px;background:#10141b;font-size:10px;color:#8f97a3}.miniMatch b{font-size:16px;color:#fff}.miniMatch small{color:#9aa2af}.noticeBanner .preserveLines{margin-top:6px;white-space:pre-wrap}.v61extra{margin-top:12px}.adminGrid{grid-template-columns:1fr!important}.adminGrid button{width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.homeActions{grid-template-columns:1fr!important}.homeActions>*{display:block!important;width:100%!important;white-space:nowrap!important}
+/* V6.2 Records + Tournaments */
+.v62Grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.v62Grid .full{grid-column:1/-1}.v62Meta{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0}.v62Chip{font-size:8px;padding:5px 8px;border:1px solid #303744;border-radius:999px;color:#b8c0cc}.v62Note{white-space:pre-wrap;color:#aeb6c2}.v62Actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.recordCard h3,.tournamentCard h3{margin:7px 0}.recordValue{font-size:20px;font-weight:900;color:#fff;margin:8px 0}.tournamentCard{background:#10141b;border:1px solid #252b35;border-radius:16px;padding:16px}.v62Help{padding:12px;border:1px dashed #343b47;border-radius:12px;color:#9ca5b2;font-size:9px;margin-bottom:12px}@media(max-width:600px){.v62Grid{grid-template-columns:1fr}.v62Grid .full{grid-column:auto}}
+/* V6.3 record separation */
+#records .subHead{margin-top:32px}#records .subHead .primary{white-space:nowrap}.recordValue{font-size:1.55rem;font-weight:800;margin:10px 0}.v62Actions{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:600px){#records .subHead{align-items:flex-start;gap:12px;flex-direction:column}#records .subHead .primary{width:100%;font-size:.72rem}}
+
+/* V6.4 - always-visible admin Edit/Delete action row */
+.v62Actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;margin-top:18px!important;width:100%!important}
+.v62Actions .tinyBtn{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-height:46px!important;white-space:nowrap!important}
+.v62Actions .deleteBtn{background:#e51b35!important;color:#fff!important;border-color:#e51b35!important}
+
+/* V6.5 PREMIUM MIDNIGHT BLUE + GOLD THEME — visual-only experiment */
+:root{--bg:#050b18;--panel:#0b1426;--panel2:#0e1b31;--line:#223451;--text:#f7f9ff;--muted:#93a4bd;--blue:#1769ff;--blue2:#0d47c9;--gold:#f3c969;--gold2:#c99a32}
+body{background:radial-gradient(circle at 50% -10%,#102b55 0,transparent 34%),var(--bg);color:var(--text)}
+.a1{background:#1769ff}.a2{background:#c99a32;opacity:.12}
+.top{background:rgba(5,11,24,.9);border-bottom-color:var(--line)}
+.brand img,footer img,.dialogLogo img,.heroLogo img{background:#e9edf5;border-color:#3a4c68}
+.brand small,.heroPlace,.metrics span,.sectionHead p,.card p,.pbody p,.honour p,.mutedMini,.socialPlatform,.profileNick,.profileBio,.statCard p,.miniMatch,.adminHint{color:var(--muted)}
+.primary{background:linear-gradient(135deg,var(--blue),var(--blue2));box-shadow:0 10px 30px rgba(23,105,255,.24)}
+.secondary,.tinyBtn{background:#101d32;border-color:#29405f;color:#fff}
+.nav{background:rgba(6,13,27,.95);border-bottom-color:#1b2d49}.nav button{background:#0c1728;color:#9fb0c8}.nav button.active{background:#142743;color:#fff;box-shadow:inset 0 -2px var(--gold)}
+.hero{border-color:#274166;background:radial-gradient(circle at 88% 8%,rgba(243,201,105,.13),transparent 34%),radial-gradient(circle at 10% 90%,rgba(23,105,255,.18),transparent 40%),linear-gradient(145deg,#0d1b31,#07101f)}
+.eyebrow,.sectionHead span,.miniMatch span,.pinTag,.seasonTag,.captainBadge,.identityItem span{color:var(--gold)}
+.hero h1 em{color:var(--gold);text-shadow:0 0 28px rgba(243,201,105,.12)}
+.heroLogo{background:linear-gradient(135deg,#fff,var(--gold));box-shadow:0 14px 50px rgba(23,105,255,.25)}
+.metrics div,.card,.honour,.socialCard,.miniMatch,.statCard,.leaderCard,.recordCard,.tournamentCard{background:linear-gradient(155deg,#0d1a2d,#091321);border-color:#243a59}
+.player,.profileCard,.profileIdentity{background:linear-gradient(155deg,#0e1d32,#08111f);border-color:#294361}
+.player:hover{border-color:#5377a5}.photo,.trophy,.gallery img{background:#07101e;border-color:#233a58}.player .photo{border-color:#365170}
+.badge,.profileId,.albumFilters .on,.tabs .on,.backToTop{background:linear-gradient(135deg,var(--blue),var(--blue2))}
+.profileAvatar{border-color:var(--gold)}
+.profileIdentity{border-color:#3d5f88}.identityDivider{background:#355071}
+.profileOfficial,.statNums b,.xiGrid span,.scoreLine b,.matchDetails>div{background:#07111f}
+.dialog{background:#0b1729;border-color:#315078}.close{background:#142641}.dialog input,.dialog textarea,.dialog select{background:#07111f;border-color:#315078}.tabs button{background:#112039;color:#9fb0c8}
+.gallery figure{background:#0b1729;border-color:#243a59}
+.noticeBanner,.posterPreview{border-color:var(--gold);background:linear-gradient(145deg,#111d2e,#0a1322)}
+.searchPlayer{background:#081321;border-color:#2c4565}.v62Chip{border-color:#385371;color:#c3d0e2}.v62Help{border-color:#385371;color:#a9b8cd}
+.v62Actions .deleteBtn{background:#b42336!important;border-color:#cf3449!important}
+footer{border-top-color:#203650}

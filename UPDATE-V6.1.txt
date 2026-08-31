@@ -1,0 +1,12 @@
+RDM V6.1 COMPLETE CRICKET PORTAL FIX
+- Home View Squad and Contact Captain: separate rows, single-line buttons
+- Home next-match card + countdown now visible
+- Pinned news/notification banner now visible on Home
+- Match cards show Toss, POTM, batting, bowling, partnerships and FOW
+- Match venue Map and Match Poster controls retained
+- Stats, last-5 form, season filters, leaderboard/rankings retained
+- Team Records, Opponents/H2H, Tournaments retained
+- Player search and Captain/VC badges retained
+- Admin Panel now lists every cricket management area, one button per row
+- Admin add/edit/delete controls retained on respective pages
+- Firestore rules include all V6 collections

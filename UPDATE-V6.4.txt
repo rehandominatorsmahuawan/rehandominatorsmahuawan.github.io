@@ -1,0 +1,5 @@
+RDM V6.4
+- Restored/strengthened Admin EDIT + DELETE controls on Player, Team and Partnership record cards.
+- Tournament and Opponent/H2H cards retain EDIT + DELETE.
+- Delete button is visually distinct and actions are shown in a full-width two-button row for admin.
+- Normal visitors/players do not see admin actions.

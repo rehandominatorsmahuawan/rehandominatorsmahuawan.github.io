@@ -1,0 +1,8 @@
+RDM V6.2 RECORDS + TOURNAMENTS FIX
+- Records now use a proper structured form instead of repeated browser prompts.
+- Record fields: category, season, title, value, holder, opponent, date, note.
+- Leaderboard remains automatic from Player Stats/Achievements and supports season filter.
+- Tournaments now use a proper structured form.
+- Tournament fields: name, season, status, position, venue, dates, organizer, teams, RDM matches/wins/losses, fixtures/points/notes.
+- Edit/Delete retained for admin.
+- Opponent H2H retained.

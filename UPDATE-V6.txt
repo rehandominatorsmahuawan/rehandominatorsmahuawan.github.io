@@ -1,0 +1,15 @@
+RDM V6 FULL CRICKET PORTAL
+- Home View Squad / Contact Captain stacked, single-line buttons
+- Latest pinned news banner + next match countdown
+- Toss details + full textual batting/bowling scorecard + partnerships + fall of wickets + POTM
+- Venue Google Maps button
+- Match poster preview
+- Player stats + last-5 form + leaderboard + season filter
+- Team records
+- Opponent head-to-head
+- Tournament fixtures/notes/final position
+- Player search + captain/vice-captain badges
+- Existing achievements, gallery albums, availability, Playing XI, share profile, pinned news retained
+- Admin controls added for V6 records/tournaments/opponents/full scorecard
+- Back-to-top button
+- New Firestore rules for TeamRecords, Tournaments, Opponents
