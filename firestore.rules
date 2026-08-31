@@ -38,6 +38,13 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
     }
+    match /PlayerStats/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /Achievements/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /PlayingXI/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /Availability/{id} {
+      allow read: if true;
+      allow write: if isAdmin() || (signedIn() && exists(/databases/$(database)/documents/Accounts/$(request.auth.uid)) && get(/databases/$(database)/documents/Accounts/$(request.auth.uid)).data.playerId == id);
+    }
     match /PlayerProfiles/{uid} {
       allow read: if true;
       allow create, update: if signedIn() && (request.auth.uid == uid || isAdmin());
