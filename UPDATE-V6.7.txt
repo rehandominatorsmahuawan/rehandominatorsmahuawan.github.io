@@ -1,0 +1,7 @@
+RDM V6.7 ELITE CLUB DESIGN
+- Professional elite cricket-club visual polish
+- Refined hero crest and typography
+- Premium cards, buttons, navigation and forms
+- Leadership badges retained on separate row
+- Equal profile spacing retained
+- Existing Firebase/data/features retained

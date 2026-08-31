@@ -48,6 +48,7 @@ service cloud.firestore {
     match /TeamRecords/{id} { allow read: if true; allow write: if isAdmin(); }
     match /Tournaments/{id} { allow read: if true; allow write: if isAdmin(); }
     match /Opponents/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /Updates/{id} { allow read: if true; allow write: if isAdmin(); }
     match /PlayerProfiles/{uid} {
       allow read: if true;
       allow create, update: if signedIn() && (request.auth.uid == uid || isAdmin());

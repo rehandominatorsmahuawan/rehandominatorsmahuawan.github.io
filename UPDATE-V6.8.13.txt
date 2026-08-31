@@ -1,0 +1,9 @@
+RDM V6.8.13 PREMIUM STADIUM EDITION
+- Gallery TROPHIES album removed (Honours remains unchanged)
+- Gallery: ALL / TEAM PHOTOS / MEMORIES / UPDATES
+- Add Photo and Move Album use the same four-category system (excluding ALL)
+- Premium stadium-inspired green/emerald/gold design polish
+- My Profile now shows one EDIT PROFILE button
+- Six edit options expand vertically, row-by-row
+- BACK TO MY PROFILE button added inside edit menu
+- Existing features retained

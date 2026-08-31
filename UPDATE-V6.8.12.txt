@@ -1,0 +1,1 @@
+V6.8.12: Added curated default nicknames and professional bios for all 15 RDM players. Existing non-empty Firebase profile nicknames/bios remain unchanged and editable.

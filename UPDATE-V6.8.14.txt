@@ -1,0 +1,5 @@
+RDM V6.8.14
+- Stronger visible cricket stadium/ground/floodlight visual theme.
+- My Profile outer card spacing and border fixed on mobile.
+- Squad public player profile now has a clear BACK TO SQUAD button.
+- Existing V6.8.13 features retained.

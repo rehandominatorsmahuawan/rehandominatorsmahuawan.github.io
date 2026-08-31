@@ -1,0 +1,1 @@
+V6.8.1: Records top compact category filters: ALL, PLAYER, TEAM, PARTNERSHIP, TOURNAMENT, H2H. Same compact size style as ALL.

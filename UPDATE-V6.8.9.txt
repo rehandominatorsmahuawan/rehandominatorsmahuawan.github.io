@@ -1,0 +1,1 @@
+RDM V6.8.9: restored persistent Gallery album bar, retained filtering/move/metadata, improved Player ID placement, added Wicket-Keeper badge for Soaib. No intentional feature removals.
