@@ -1,0 +1,8 @@
+RDM V6.6 Professional Stadium Theme
+- Emerald + antique gold + deep stadium green visual system
+- Redesigned centered hero with premium logo treatment
+- Home actions stacked: View Squad then Contact Captain
+- Pill navigation, elevated cards, cleaner section hierarchy
+- Admin panel one action per row on mobile
+- Gallery keeps natural image aspect ratio
+- No Firebase/data logic changed

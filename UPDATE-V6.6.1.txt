@@ -1,0 +1,6 @@
+RDM V6.6.1 FINAL PRO POLISH
+- Home RDM logo rebuilt as a premium centered crest.
+- Home hero spacing and action buttons polished.
+- Public/My Profile left-right spacing made symmetrical on mobile.
+- Captain and Vice-Captain badges redesigned as premium pills.
+- Existing Firebase, records, tournaments, edit/delete and cricket features retained.

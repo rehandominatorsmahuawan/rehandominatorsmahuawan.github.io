@@ -70,3 +70,80 @@ body{background:radial-gradient(circle at 50% -10%,#102b55 0,transparent 34%),va
 .searchPlayer{background:#081321;border-color:#2c4565}.v62Chip{border-color:#385371;color:#c3d0e2}.v62Help{border-color:#385371;color:#a9b8cd}
 .v62Actions .deleteBtn{background:#b42336!important;border-color:#cf3449!important}
 footer{border-top-color:#203650}
+
+/* ===== V6.6 PRO STADIUM THEME ===== */
+:root{--bg:#06110f;--panel:#0b1a17;--panel2:#0f2420;--line:#1d3932;--text:#f5f7f4;--muted:#93aaa2;--accent:#19c37d;--accent2:#d6b75a;--shadow:0 18px 55px rgba(0,0,0,.32)}
+body{background:radial-gradient(circle at 50% -10%,#12372d 0,#071511 32%,#040b09 72%);color:var(--text)}
+.a1{background:#19c37d;opacity:.11}.a2{background:#d6b75a;opacity:.08}
+.top{height:82px;background:rgba(4,13,10,.9);border-bottom:1px solid var(--line);box-shadow:0 10px 35px rgba(0,0,0,.22)}
+.brand img{border:2px solid rgba(214,183,90,.7);box-shadow:0 0 0 5px rgba(214,183,90,.06)}
+.brand b{color:#fff}.brand small{color:#8ba49a}
+.nav{top:82px;background:rgba(5,15,12,.94);border-bottom:1px solid var(--line);gap:7px}
+.nav button{background:transparent;border:1px solid transparent;color:#91a79e;border-radius:999px;padding:10px 15px}
+.nav button.active{background:rgba(25,195,125,.12);border-color:rgba(25,195,125,.32);color:#d9ffed;box-shadow:none}
+.primary{background:linear-gradient(135deg,#20cf88,#0d9f68);color:#03110b;box-shadow:0 10px 26px rgba(25,195,125,.18);border:1px solid rgba(255,255,255,.08)}
+.secondary{background:#0c1b17;color:#f5f7f4;border:1px solid #24443b}
+.hero{min-height:500px;border:1px solid #214138;border-radius:34px;padding:clamp(32px,6vw,72px);align-items:center;text-align:center;background:linear-gradient(180deg,rgba(11,31,25,.82),rgba(5,15,12,.96)),radial-gradient(circle at 50% 0,rgba(25,195,125,.25),transparent 42%);box-shadow:var(--shadow)}
+.hero:before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 49.8%,rgba(255,255,255,.025) 50%,transparent 50.2%);pointer-events:none}.hero:after{color:rgba(214,183,90,.035);right:50%;transform:translateX(50%);bottom:-70px}
+.heroLogo img{width:112px;height:112px;border-radius:50%;object-fit:contain;border:3px solid var(--accent2);box-shadow:0 0 0 8px rgba(214,183,90,.07),0 18px 45px rgba(0,0,0,.35)}
+.eyebrow,.sectionHead span{color:var(--accent2)}.heroTeam{margin-top:22px;color:#dfeae5;font-weight:900;letter-spacing:1.5px}.heroPlace{margin-top:8px;color:#87a398;font-size:10px;letter-spacing:1.4px}
+.hero h1{margin:20px 0 12px}.hero h1 em{color:var(--accent);text-shadow:0 0 30px rgba(25,195,125,.16)}.hero p{color:#9cb0a8}
+.homeActions{width:min(330px,100%);display:grid!important;grid-template-columns:1fr!important;margin-left:auto;margin-right:auto}.homeActions .primary,.homeActions .secondary{width:100%;white-space:nowrap;text-align:center}
+.metrics{gap:12px}.metrics div,.card,.honour,.socialCard,.player,.profileCard{background:linear-gradient(145deg,rgba(14,34,29,.94),rgba(7,19,15,.98));border-color:#203e35;box-shadow:0 12px 34px rgba(0,0,0,.18)}
+.metrics div{position:relative;overflow:hidden}.metrics div:before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(var(--accent2),var(--accent))}.metrics strong{color:#fff}.metrics span{color:#8fa69d}
+.sectionHead{padding-bottom:14px;border-bottom:1px solid #17352d}.sectionHead h2{letter-spacing:.4px}.sectionHead p{color:#8fa49c}
+.player:hover{border-color:#3b725f;box-shadow:0 18px 45px rgba(0,0,0,.3)}.player .photo{border-color:#31594c;box-shadow:0 0 0 5px rgba(25,195,125,.05)}.badge,.profileId{background:linear-gradient(135deg,#d6b75a,#a98731);color:#100d04}
+.tinyBtn{background:#0d201b;border-color:#2b5145}.socialIcon{background:#0b211a;border:1px solid #244a3d}.dialog{background:linear-gradient(160deg,#10251f,#07130f);border-color:#2c5145;box-shadow:0 30px 100px rgba(0,0,0,.65)}.dialog input,.dialog textarea,.dialog select{background:#06110e;border-color:#2a4b40}.tabs button{background:#0b1b17}.tabs .on{background:#19c37d;color:#04120c}.close{background:#173029}.profileAvatar{border-color:var(--accent2)}
+.gallery figure{background:#0b1a16;border-color:#203d34}.gallery img{background:#040c09;aspect-ratio:auto;height:auto;display:block}.gallery figcaption{color:#b3c3bd}
+.v62Help,.miniMatch{background:rgba(14,36,29,.8)!important;border:1px solid #23493c!important;border-radius:16px!important;color:#9fb4ac!important}.backToTop{background:linear-gradient(135deg,#d6b75a,#aa8730)!important;color:#0b0902!important;box-shadow:0 10px 30px rgba(0,0,0,.35)!important}
+footer{border-top-color:#17352d;background:rgba(3,10,8,.45)}
+#toast{background:#eaf8f1;color:#07130f}
+@media(max-width:780px){.top{height:76px}.nav{top:76px}.hero{min-height:460px;border-radius:26px}.heroLogo img{width:92px;height:92px}.sectionHead{flex-wrap:wrap}.sectionHead>.primary,.sectionHead>button{white-space:nowrap}.dashGrid{grid-template-columns:1fr!important}.dashGrid button{min-height:58px!important;width:100%!important;white-space:nowrap!important}}
+@media(max-width:480px){.hero{padding:28px 18px}.hero h1 span{white-space:normal}.actions.homeActions .primary,.actions.homeActions .secondary{font-size:9px;flex:none}.metrics{gap:9px}.metrics div{border-radius:15px}.sectionHead h2{font-size:25px}.nav button{padding:9px 13px}}
+
+/* ===== V6.6.1 FINAL PRO POLISH ===== */
+/* Premium home crest */
+.heroLogo{width:138px;height:138px;display:grid;place-items:center;margin:0 auto 22px;padding:10px;border-radius:50%;position:relative;background:radial-gradient(circle,#17382e 0 55%,#0a1c16 56%);border:1px solid rgba(214,183,90,.55);box-shadow:0 0 0 7px rgba(214,183,90,.06),0 0 0 13px rgba(25,195,125,.035),0 24px 60px rgba(0,0,0,.42)}
+.heroLogo:before{content:'';position:absolute;inset:5px;border-radius:50%;border:1px solid rgba(214,183,90,.38);pointer-events:none}
+.heroLogo:after{content:'RDM';position:absolute;bottom:-11px;left:50%;transform:translateX(-50%);padding:4px 11px;border-radius:999px;background:linear-gradient(135deg,#e3c76d,#a8842d);color:#0a100d;font-size:8px;font-weight:1000;letter-spacing:1.5px;box-shadow:0 5px 16px rgba(0,0,0,.35)}
+.heroLogo img{width:108px!important;height:108px!important;border-radius:50%!important;object-fit:contain!important;border:2px solid rgba(255,255,255,.22)!important;background:#e6e6e6!important;box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)!important}
+.heroTeam{font-size:clamp(19px,3.4vw,34px);text-shadow:0 4px 22px rgba(0,0,0,.28)}
+.hero{isolation:isolate}.hero:before{opacity:.9}.hero .eyebrow{padding:7px 12px;border-radius:999px;background:rgba(214,183,90,.07);border:1px solid rgba(214,183,90,.16)}
+.homeActions{width:min(360px,100%)!important;gap:12px!important}.homeActions>*{min-height:54px;display:flex!important;align-items:center;justify-content:center;border-radius:15px!important;letter-spacing:1px}
+
+/* Public/My profile: perfectly symmetrical on phones */
+.modal{padding-left:16px!important;padding-right:16px!important}
+.publicDialog{width:min(720px,calc(100vw - 32px))!important;margin-left:auto!important;margin-right:auto!important;padding:24px!important}
+.publicProfileCard,.profileCard{width:100%!important;max-width:720px!important;margin-left:auto!important;margin-right:auto!important;padding-left:24px!important;padding-right:24px!important}
+.profileAvatar{display:block;margin-left:auto!important;margin-right:auto!important}
+.profileIdentity{width:min(540px,100%)!important;margin-left:auto!important;margin-right:auto!important}
+.profileOfficial,.profileBio,.profileSocialList{width:min(560px,100%)!important;margin-left:auto!important;margin-right:auto!important}
+.profileBio{padding-left:6px;padding-right:6px;text-align:center}
+
+/* Premium Captain / Vice Captain identity badges */
+.captainBadge{display:inline-flex!important;align-items:center;justify-content:center;vertical-align:middle;margin-left:8px!important;padding:5px 9px!important;border-radius:999px!important;font-size:7px!important;line-height:1!important;font-weight:1000!important;letter-spacing:.75px!important;color:#0b120e!important;background:linear-gradient(135deg,#f1d67d,#b88e31)!important;border:1px solid rgba(255,238,170,.55)!important;box-shadow:0 5px 16px rgba(0,0,0,.24)!important;white-space:nowrap!important}
+.player:nth-child(3) .captainBadge{color:#eafff5!important;background:linear-gradient(135deg,#168b61,#0c5d43)!important;border-color:rgba(72,218,159,.42)!important}
+.pbody h3{display:flex;align-items:center;justify-content:center;gap:3px;flex-wrap:wrap}
+
+/* Consistent premium cards */
+.card,.miniMatch,.leaderCard,.recordCard,.tournamentCard,.honour,.socialCard{border-radius:20px!important}
+.sectionHead h2{line-height:1.12}.sectionHead span{letter-spacing:2.1px}
+
+@media(max-width:480px){
+ .heroLogo{width:118px;height:118px;padding:9px;margin-bottom:24px}.heroLogo img{width:91px!important;height:91px!important}.heroLogo:after{font-size:7px;bottom:-10px}
+ .publicDialog{width:calc(100vw - 32px)!important;padding:18px!important;border-radius:24px!important}
+ .publicProfileCard,.profileCard{padding-left:14px!important;padding-right:14px!important}
+ .profileIdentity{grid-template-columns:minmax(0,1fr) 1px minmax(0,1fr)!important;gap:8px!important;padding:13px 8px!important}
+ .identityItem strong{font-size:14px!important}.identityItem span{font-size:7px!important;letter-spacing:.8px!important}
+ .profileAvatar{width:138px!important;height:138px!important}
+ .captainBadge{margin-left:4px!important;padding:4px 7px!important;font-size:6.5px!important}
+ .homeActions{width:min(100%,340px)!important}
+}
+
+/* V6.6.3 — Leadership badge on its own row */
+.pbody h3{display:block!important;text-align:center!important}
+.captainBadge{display:flex!important;width:max-content!important;margin:10px auto 0!important;padding:6px 12px!important;font-size:7px!important;letter-spacing:.9px!important}
+.player:nth-child(3) .captainBadge{margin-left:auto!important;margin-right:auto!important}
+@media(max-width:480px){
+ .captainBadge{margin:9px auto 0!important;padding:5px 10px!important;font-size:6.5px!important}
+}
