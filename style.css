@@ -2815,3 +2815,118 @@ body[data-theme="dark"] .viewProfileBtn{
   border:0!important;
   box-shadow:none!important;
 }
+
+
+/* =========================================================
+   V6.8.50 — RDM COLORFUSION PRO SPORTS THEME
+   Professional + colourful, preserving existing layout/cards.
+   ========================================================= */
+
+:root{
+  --pro-blue:#1976d2;
+  --pro-cyan:#19b7d1;
+  --pro-violet:#7657e8;
+  --pro-coral:#f06b5d;
+  --pro-gold:#e3ad39;
+  --pro-mint:#43c8a4;
+}
+
+/* LIGHT — bright stadium daylight */
+html[data-theme="light"] body,
+body[data-theme="light"]{
+  background:
+    radial-gradient(circle at 8% 5%,rgba(25,183,209,.13),transparent 23%),
+    radial-gradient(circle at 91% 13%,rgba(118,87,232,.10),transparent 22%),
+    radial-gradient(circle at 82% 88%,rgba(67,200,164,.09),transparent 22%),
+    linear-gradient(180deg,#f9fcff 0%,#eef7ff 47%,#f8fbff 100%)!important;
+  color:#102f4b!important;
+}
+
+/* DARK — colourful night stadium, never pure black */
+html[data-theme="dark"] body,
+body[data-theme="dark"]{
+  background:
+    radial-gradient(circle at 8% 4%,rgba(25,183,209,.14),transparent 24%),
+    radial-gradient(circle at 92% 10%,rgba(118,87,232,.15),transparent 23%),
+    radial-gradient(circle at 80% 92%,rgba(240,107,93,.07),transparent 20%),
+    linear-gradient(180deg,#081827 0%,#0b2033 48%,#081827 100%)!important;
+  color:#edf8ff!important;
+}
+
+/* premium colourful top accent on content surfaces */
+.card,.panel,.playerCard,.profileCard,.statCard,.recordCard,.socialCard,
+.matchCard,.newsCard,.updateCard,.galleryCard,.honourCard{
+  position:relative;
+  overflow:hidden;
+}
+.card:before,.panel:before,.playerCard:before,.profileCard:before,.statCard:before,
+.recordCard:before,.socialCard:before,.matchCard:before,.newsCard:before,
+.updateCard:before,.galleryCard:before,.honourCard:before{
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  left:0!important;right:0!important;top:0!important;
+  height:3px!important;
+  background:linear-gradient(90deg,var(--pro-blue),var(--pro-cyan),var(--pro-violet),var(--pro-coral),var(--pro-gold))!important;
+  opacity:.78!important;
+  pointer-events:none!important;
+}
+
+/* Light surfaces remain clean white */
+html[data-theme="light"] .card,html[data-theme="light"] .panel,
+html[data-theme="light"] .playerCard,html[data-theme="light"] .profileCard,
+html[data-theme="light"] .statCard,html[data-theme="light"] .recordCard,
+html[data-theme="light"] .socialCard,html[data-theme="light"] .matchCard,
+html[data-theme="light"] .newsCard,html[data-theme="light"] .updateCard,
+body[data-theme="light"] .card,body[data-theme="light"] .panel,
+body[data-theme="light"] .playerCard,body[data-theme="light"] .profileCard,
+body[data-theme="light"] .statCard,body[data-theme="light"] .recordCard,
+body[data-theme="light"] .socialCard,body[data-theme="light"] .matchCard,
+body[data-theme="light"] .newsCard,body[data-theme="light"] .updateCard{
+  background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(246,251,255,.98))!important;
+  border-color:#d6e6f1!important;
+  box-shadow:0 12px 32px rgba(26,79,119,.10)!important;
+}
+
+/* Dark cards get subtle blue/violet depth */
+html[data-theme="dark"] .card,html[data-theme="dark"] .panel,
+html[data-theme="dark"] .playerCard,html[data-theme="dark"] .profileCard,
+html[data-theme="dark"] .statCard,html[data-theme="dark"] .recordCard,
+html[data-theme="dark"] .socialCard,html[data-theme="dark"] .matchCard,
+html[data-theme="dark"] .newsCard,html[data-theme="dark"] .updateCard,
+body[data-theme="dark"] .card,body[data-theme="dark"] .panel,
+body[data-theme="dark"] .playerCard,body[data-theme="dark"] .profileCard,
+body[data-theme="dark"] .statCard,body[data-theme="dark"] .recordCard,
+body[data-theme="dark"] .socialCard,body[data-theme="dark"] .matchCard,
+body[data-theme="dark"] .newsCard,body[data-theme="dark"] .updateCard{
+  background:linear-gradient(145deg,#102c42,#10263b)!important;
+  border-color:rgba(108,188,224,.20)!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.23)!important;
+}
+
+/* energetic but controlled primary actions */
+.primary,.profileEditMain,.socialAction,.homeUpdateOpen,button.primary{
+  background:linear-gradient(105deg,#1976d2 0%,#19b7d1 52%,#7657e8 100%)!important;
+  color:#fff!important;
+  border-color:rgba(255,255,255,.18)!important;
+  box-shadow:0 7px 18px rgba(25,118,210,.22)!important;
+}
+
+/* selected tabs get the same brand gradient */
+.albumTab.active,.recordTypeBtn.active,.navBtn.active,[aria-selected="true"]{
+  background:linear-gradient(105deg,#1976d2,#19b7d1 58%,#7657e8)!important;
+  color:#fff!important;
+  border-color:transparent!important;
+}
+
+/* controlled multi-colour accents */
+.leadershipBadge,.pinnedLabel{color:#d5a12e!important}
+.sectionEyebrow{color:#1976d2!important}
+html[data-theme="dark"] .sectionEyebrow{color:#65cbe2!important}
+
+/* no stray decorative leaf/blob */
+.hero::after,.hero::before,.heroCard::after,.heroCard::before,
+.homeHero::after,.homeHero::before,.heroWrap::after,.heroWrap::before{
+  content:none!important;
+  display:none!important;
+}
