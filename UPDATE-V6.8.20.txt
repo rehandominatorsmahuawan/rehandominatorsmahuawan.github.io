@@ -1,0 +1,7 @@
+V6.8.20 — IN-PAGE FORM SYSTEM
+- Edit Stats now opens a full in-page form.
+- Add Scorecard, Achievement, Playing XI, Availability and Opponent use in-page forms.
+- Existing structured Records/Tournament forms are rendered in-page instead of overlay modal.
+- Legacy Add/Edit editor is moved into the active page instead of covering the screen.
+- Save + Back/Cancel controls included.
+- Existing site features retained.

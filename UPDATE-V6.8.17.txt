@@ -1,4 +1,0 @@
-RDM V6.8.17 — Light Readability Edition
-- Removed remaining dark theme surfaces through final CSS overrides.
-- Improved text contrast across cards, profile, dialogs, gallery, tabs, forms and navigation.
-- Retained colourful animated stadium styling and all existing functionality.

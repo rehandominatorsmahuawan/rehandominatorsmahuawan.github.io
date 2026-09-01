@@ -1,0 +1,7 @@
+RDM V6.8.27
+- Unified full-screen light-blue editor design for add/edit forms.
+- Compact mini-font fields, visible X, gradient SAVE button.
+- Editor headings hidden; fields start directly.
+- Existing main editor, stats, opponents, tournaments, Playing XI, availability, scorecards, achievements, records, updates share the editor theme.
+- Profile nickname/bio/jersey/password/social add/edit moved away from browser prompts to custom editor.
+- No Firestore rules changes.

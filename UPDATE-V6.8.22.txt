@@ -1,0 +1,1 @@
+V6.8.22: Browser prompt dialogs replaced by professional custom popup forms for Stats, Opponents, Tournaments, Playing XI, Availability and Scorecard. Existing features retained.

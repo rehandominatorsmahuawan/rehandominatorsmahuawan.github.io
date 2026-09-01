@@ -1,0 +1,7 @@
+RDM V6.8.21
+- Add/Edit workflows use Edit Player-style custom modal forms.
+- Multiple related fields are shown together; browser prompt chains disabled for upgraded workflows.
+- Same light blue/white/gold colour combination retained.
+- Modal height is viewport-safe and internally scrollable on mobile.
+- Close X stays reachable; form opens at top and Save remains reachable by scrolling.
+- Existing site features retained.

@@ -378,3 +378,74 @@ footer b{color:#174c88!important}.light{background:transparent!important}.lightb
 /* Generic fallback for old dark cards that escaped earlier overrides */
 .page .card,.page article.card{color:#173f6b}
 body{background:linear-gradient(145deg,#eefaff,#fff9df,#effff6)!important;color:#173f6b!important}
+/* V6.8.20 inline forms */
+.rdmInlineFormHost{display:none;padding:18px 24px 0}.rdmInlineFormHost.show{display:block}.rdmInlineForm{max-width:900px;margin:0 auto 22px;padding:22px;border:1px solid #b8dff2;border-radius:28px;background:linear-gradient(135deg,#f4fbff,#fff9df 52%,#effff5);box-shadow:0 18px 45px rgba(31,104,160,.14)}.rdmFormHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.rdmFormHead span{font-size:11px;letter-spacing:2px;color:#bf8b18;font-weight:900}.rdmFormHead h2{margin:5px 0 0;color:#15558a}.rdmFormBack,.rdmInlineForm .secondary{border:1px solid #9fd3e9;background:#fff;color:#15558a;border-radius:16px;padding:12px 16px;font-weight:900}.rdmInlineForm form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.rdmInlineForm label{display:flex;flex-direction:column;gap:7px;color:#235d7d;font-size:12px;font-weight:900;letter-spacing:.6px}.rdmInlineForm input,.rdmInlineForm textarea,.rdmInlineForm select{width:100%;box-sizing:border-box;border:1px solid #b9dce9;border-radius:15px;background:#fff;color:#123f62;padding:14px;font:inherit;outline:none}.rdmInlineForm textarea{resize:vertical}.rdmInlineForm input:focus,.rdmInlineForm textarea:focus,.rdmInlineForm select:focus{border-color:#38b9d8;box-shadow:0 0 0 3px rgba(56,185,216,.12)}.rdmFormActions{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}@media(max-width:650px){.rdmInlineFormHost{padding:14px 14px 0}.rdmInlineForm{padding:18px;border-radius:22px}.rdmInlineForm form{grid-template-columns:1fr}.rdmFormActions{grid-template-columns:1fr}.rdmFormHead{align-items:flex-start}.rdmFormBack{white-space:nowrap}}
+/* V6.8.21 unified Add/Edit modal — same light colour language as Edit Player */
+.rdmUnifiedModal{align-items:flex-start!important;overflow-y:auto!important;padding:clamp(18px,5vh,44px) 16px!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important}
+.rdmUnifiedDialog{width:min(640px,100%)!important;max-height:calc(100dvh - 36px)!important;overflow-y:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;margin:auto!important;padding:clamp(24px,5vw,38px)!important;border-radius:30px!important;background:linear-gradient(155deg,#ffffff 0%,#f2fbff 55%,#fffbea 100%)!important;border:1px solid #b8deef!important;box-shadow:0 24px 70px rgba(42,105,155,.20)!important;color:#173b63!important;position:relative!important}
+.rdmUnifiedDialog h2{text-align:center!important;color:#15558a!important;margin:10px 42px 30px!important;font-size:clamp(24px,6vw,34px)!important;letter-spacing:1.5px!important}.rdmUnifiedDialog>.close{position:sticky!important;top:0!important;float:right!important;z-index:20!important;width:52px!important;height:52px!important;border-radius:50%!important;background:#f1fbff!important;color:#2c668b!important;border:1px solid #b9ddeb!important;box-shadow:0 8px 22px rgba(48,116,158,.12)!important}.rdmUnifiedFields{display:grid!important;grid-template-columns:1fr!important;gap:20px!important;clear:both!important}.rdmUnifiedFields label{display:flex!important;flex-direction:column!important;gap:10px!important;color:#7890a1!important;font-size:11px!important;font-weight:900!important;letter-spacing:1.8px!important}.rdmUnifiedFields input,.rdmUnifiedFields textarea,.rdmUnifiedFields select{width:100%!important;padding:17px 18px!important;border-radius:17px!important;border:1px solid #b9dce9!important;background:#fff!important;color:#173b63!important;box-shadow:none!important;outline:none!important;line-height:1.35!important}.rdmUnifiedFields textarea{min-height:118px!important;resize:vertical!important}.rdmUnifiedFields input:focus,.rdmUnifiedFields textarea:focus,.rdmUnifiedFields select:focus{border-color:#38b9d8!important;box-shadow:0 0 0 3px rgba(56,185,216,.12)!important}.rdmUnifiedDialog>.primary{margin-top:26px!important;min-height:62px!important;border-radius:17px!important;font-size:15px!important;letter-spacing:2px!important;background:linear-gradient(100deg,#1788f2,#35c4dd)!important}.rdmUnifiedDialog::-webkit-scrollbar{width:5px}.rdmUnifiedDialog::-webkit-scrollbar-thumb{background:#b6dbea;border-radius:99px}
+@media(max-width:520px){.rdmUnifiedModal{padding:18px 12px!important}.rdmUnifiedDialog{max-height:calc(100dvh - 36px)!important;padding:22px 18px 26px!important;border-radius:26px!important}.rdmUnifiedDialog h2{margin-top:10px!important;margin-bottom:26px!important}.rdmUnifiedDialog>.close{width:48px!important;height:48px!important}.rdmUnifiedFields{gap:17px!important}}
+
+/* V6.8.22 — compact unified mobile forms */
+.rdmUnifiedModal{padding:14px!important;align-items:center!important;overflow:hidden!important}
+.rdmUnifiedDialog{width:min(94vw,620px)!important;max-height:88dvh!important;overflow-y:auto!important;padding:22px 20px 20px!important;border-radius:28px!important;scrollbar-width:thin!important}
+.rdmUnifiedDialog h2{font-size:26px!important;line-height:1.05!important;margin:4px 42px 20px!important;letter-spacing:1px!important}
+.rdmUnifiedDialog .close{top:14px!important;right:14px!important;width:44px!important;height:44px!important;min-height:44px!important;border-radius:50%!important}
+.rdmUnifiedFields{display:grid!important;gap:13px!important}
+.rdmUnifiedFields label{display:grid!important;gap:6px!important;margin:0!important;font-size:10px!important;letter-spacing:1.5px!important;line-height:1.2!important}
+.rdmUnifiedFields input,.rdmUnifiedFields select{height:48px!important;min-height:48px!important;padding:0 15px!important;border-radius:16px!important;font-size:14px!important}
+.rdmUnifiedFields textarea{min-height:92px!important;padding:13px 15px!important;border-radius:16px!important;font-size:14px!important;line-height:1.35!important;resize:vertical!important}
+.rdmUnifiedDialog>.primary.wide{min-height:50px!important;height:50px!important;margin-top:18px!important;border-radius:16px!important;font-size:13px!important;letter-spacing:2px!important}
+@media(max-width:600px){
+ .rdmUnifiedModal{padding:10px!important}
+ .rdmUnifiedDialog{width:96vw!important;max-height:90dvh!important;padding:18px 16px 16px!important;border-radius:24px!important}
+ .rdmUnifiedDialog h2{font-size:22px!important;margin:5px 40px 16px!important}
+ .rdmUnifiedDialog .close{top:10px!important;right:10px!important;width:40px!important;height:40px!important;min-height:40px!important}
+ .rdmUnifiedFields{gap:10px!important}
+ .rdmUnifiedFields label{gap:5px!important;font-size:9px!important;letter-spacing:1.25px!important}
+ .rdmUnifiedFields input,.rdmUnifiedFields select{height:44px!important;min-height:44px!important;padding:0 13px!important;border-radius:14px!important;font-size:13px!important}
+ .rdmUnifiedFields textarea{min-height:78px!important;padding:11px 13px!important;border-radius:14px!important;font-size:13px!important}
+ .rdmUnifiedDialog>.primary.wide{height:46px!important;min-height:46px!important;margin-top:14px!important;border-radius:14px!important}
+}
+
+/* V6.8.23 — MINI FONT FOR UNIFIED FORMS */
+#rdmUnifiedForm .rdmUnifiedDialog,
+#rdmUnifiedForm .rdmUnifiedDialog h2,
+#rdmUnifiedForm .rdmUnifiedDialog label,
+#rdmUnifiedForm .rdmUnifiedDialog input,
+#rdmUnifiedForm .rdmUnifiedDialog textarea,
+#rdmUnifiedForm .rdmUnifiedDialog select,
+#rdmUnifiedForm .rdmUnifiedDialog button{
+  font-family:inherit!important;
+  font-variant:small-caps;
+  letter-spacing:.09em!important;
+}
+#rdmUnifiedForm .rdmUnifiedDialog h2{font-size:clamp(22px,6vw,32px)!important;font-weight:900!important;letter-spacing:.1em!important}
+#rdmUnifiedForm .rdmUnifiedDialog label{font-size:11px!important;font-weight:900!important;letter-spacing:.16em!important}
+#rdmUnifiedForm .rdmUnifiedDialog input,
+#rdmUnifiedForm .rdmUnifiedDialog textarea,
+#rdmUnifiedForm .rdmUnifiedDialog select{font-size:14px!important;font-weight:700!important;letter-spacing:.06em!important}
+#rdmUnifiedForm .rdmUnifiedDialog .primary{font-size:14px!important;font-weight:900!important;letter-spacing:.14em!important}
+#rdmUnifiedForm .rdmUnifiedDialog .close{font-variant:normal!important;letter-spacing:0!important}
+
+
+/* V6.8.24 — true mini-font forms (Unicode small caps supplied by JS) */
+#rdmUnifiedForm .rdmUnifiedDialog,
+#rdmUnifiedForm .rdmUnifiedDialog h2,
+#rdmUnifiedForm .rdmUnifiedDialog label,
+#rdmUnifiedForm .rdmUnifiedDialog input,
+#rdmUnifiedForm .rdmUnifiedDialog textarea,
+#rdmUnifiedForm .rdmUnifiedDialog select,
+#rdmUnifiedForm .rdmUnifiedDialog button,
+#editor .dialog,#editor .dialog h2,#editor .dialog label,#editor .dialog button,
+#loginModal .dialog,#loginModal .dialog h2,#loginModal .dialog label,#loginModal .dialog button,
+#cropModal .dialog,#cropModal .dialog h2,#cropModal .dialog label,#cropModal .dialog button{
+  font-family:Arial,Helvetica,sans-serif!important;
+  font-variant:normal!important;
+}
+#rdmUnifiedForm .rdmUnifiedDialog h2{font-size:22px!important;letter-spacing:.09em!important}
+#rdmUnifiedForm .rdmUnifiedFields label{font-size:10px!important;letter-spacing:.12em!important}
+#rdmUnifiedForm .rdmUnifiedFields input,
+#rdmUnifiedForm .rdmUnifiedFields textarea,
+#rdmUnifiedForm .rdmUnifiedFields select{font-size:13px!important;letter-spacing:.04em!important}
+#rdmUnifiedForm .rdmUnifiedDialog>.primary.wide{font-size:12px!important;letter-spacing:.12em!important}

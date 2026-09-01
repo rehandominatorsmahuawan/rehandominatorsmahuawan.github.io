@@ -1,0 +1,1 @@
+RDM V6.8.26: Full-screen unified Add/Edit editor. No extra editor heading; compact mini-font fields, fixed top-right close button, full-width save. Existing features retained.

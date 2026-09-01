@@ -5,7 +5,7 @@ function rdmWhen(ms){if(!ms)return '';const d=new Date(ms);return '🕒 '+d.toLo
 const xdoc=d=>({...d.data(),_docId:d.id});
 async function xload(){try{const [s,a,v,l]=await Promise.all([rdmDB.collection(XCOL.stats).get(),rdmDB.collection(XCOL.achievements).get(),rdmDB.collection(XCOL.availability).get(),rdmDB.collection(XCOL.lineups).get()]);XD.stats=s.docs.map(xdoc);XD.achievements=a.docs.map(xdoc).sort((a,b)=>(b.createdMs||0)-(a.createdMs||0));XD.availability=v.docs.map(xdoc);XD.lineups=l.docs.map(xdoc).sort((a,b)=>(b.createdMs||0)-(a.createdMs||0));xrender()}catch(e){console.warn('V5 load',e)}}
 const xv=id=>(document.getElementById(id)?.value||'').trim();
-const xp=(label,def='')=>prompt(label,def);
+const xp=(label,def='')=>null;
 const xnum=v=>Number(v||0)||0;
 function xrender(){renderHomeExtras();renderStats();renderAchievements();renderAvailability();renderLineups();window.renderGalleryAlbums?.();renderPinnedNews();}
 function renderHomeExtras(){let box=document.getElementById('homeMatchHub');if(!box){box=document.createElement('div');box.id='homeMatchHub';box.className='homeMatchHub';document.querySelector('#home .metrics').insertAdjacentElement('beforebegin',box)}

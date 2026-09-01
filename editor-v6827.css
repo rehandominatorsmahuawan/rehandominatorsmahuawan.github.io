@@ -1,0 +1,33 @@
+/* RDM V6.8.27 — unified full-screen light-blue editor theme */
+:root{--ed-blue:#168df2;--ed-cyan:#31c5e8;--ed-ink:#18548a;--ed-line:#c8e4ef;--ed-bg1:#d9f2ff;--ed-bg2:#eefbff;--ed-card:#fbfeff}
+#editor.modal.show,#updateEditor.modal.show,#v62Modal.modal.show,.rdmProFormModal{
+ position:fixed!important;inset:0!important;z-index:99990!important;display:flex!important;align-items:flex-start!important;justify-content:center!important;
+ padding:12px!important;overflow:auto!important;background:linear-gradient(155deg,var(--ed-bg1),#ccecff 45%,var(--ed-bg2))!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+#editor .dialog,#updateEditor .dialog,#v62Modal .dialog,.rdmProFormCard{
+ position:relative!important;width:min(100%,720px)!important;max-width:720px!important;min-height:calc(100dvh - 24px)!important;margin:0 auto!important;
+ padding:72px 26px 28px!important;border:1px solid #d7edf5!important;border-radius:32px!important;background:rgba(251,254,255,.97)!important;
+ box-shadow:0 18px 55px rgba(40,126,170,.16)!important;color:var(--ed-ink)!important;overflow:visible!important;
+}
+#editor #editTitle,#updateEditor h2,#v62Modal h2,.rdmProFormCard>h2{display:none!important}
+#editor .close,#updateEditor .close,#v62Modal .close,.rdmProClose{
+ position:absolute!important;top:20px!important;right:20px!important;width:48px!important;height:48px!important;border-radius:50%!important;border:1px solid #c9e5ef!important;
+ background:#f2fbff!important;color:#5b8aa5!important;font:700 22px/1 Arial,sans-serif!important;display:grid!important;place-items:center!important;z-index:5!important;box-shadow:0 7px 20px rgba(42,130,174,.10)!important;
+}
+#editor form,#updateEditor form,#v62Modal form,.rdmProFormCard form{width:100%!important;margin:0!important;padding:0!important}
+#editor #editFields,.rdmProGrid,#updateEditor form,#v62Modal form{display:grid!important;grid-template-columns:1fr!important;gap:14px!important}
+#editor label,#updateEditor label,#v62Modal label,.rdmProGrid label{display:grid!important;gap:7px!important;margin:0!important;color:#7b93a5!important;font-size:11px!important;font-weight:800!important;letter-spacing:1.5px!important;text-transform:uppercase!important}
+#editor input,#editor textarea,#editor select,#updateEditor input,#updateEditor textarea,#updateEditor select,#v62Modal input,#v62Modal textarea,#v62Modal select,.rdmProGrid input,.rdmProGrid textarea,.rdmProGrid select{
+ box-sizing:border-box!important;width:100%!important;min-height:50px!important;height:50px!important;margin:0!important;padding:0 15px!important;border:1px solid var(--ed-line)!important;border-radius:17px!important;
+ background:#fff!important;color:#245c82!important;outline:none!important;box-shadow:0 2px 8px rgba(54,137,174,.04)!important;font-size:13px!important;font-weight:700!important;letter-spacing:.5px!important;
+}
+#editor textarea,#updateEditor textarea,#v62Modal textarea,.rdmProGrid textarea{height:92px!important;min-height:92px!important;padding:13px 15px!important;resize:vertical!important;line-height:1.55!important}
+#editor input:focus,#editor textarea:focus,#editor select:focus,#updateEditor input:focus,#updateEditor textarea:focus,#updateEditor select:focus,.rdmProGrid input:focus,.rdmProGrid textarea:focus,.rdmProGrid select:focus{border-color:#59c4e5!important;box-shadow:0 0 0 3px rgba(49,197,232,.12)!important}
+#editor .primary.wide,#updateEditor .primary.wide,#v62Modal .primary.wide,.rdmProSave{
+ width:100%!important;min-height:58px!important;margin-top:10px!important;border:0!important;border-radius:17px!important;background:linear-gradient(100deg,var(--ed-blue),var(--ed-cyan))!important;color:#fff!important;
+ font-size:14px!important;font-weight:900!important;letter-spacing:2px!important;box-shadow:0 10px 24px rgba(22,141,242,.20)!important;
+}
+.rdmFormOpen{overflow:hidden!important}
+@media(min-width:680px){.rdmProGrid{grid-template-columns:1fr 1fr!important}.rdmProGrid label.full{grid-column:1/-1!important}}
+@media(max-width:520px){#editor.modal.show,#updateEditor.modal.show,#v62Modal.modal.show,.rdmProFormModal{padding:0!important}#editor .dialog,#updateEditor .dialog,#v62Modal .dialog,.rdmProFormCard{width:100%!important;min-height:100dvh!important;border-radius:0!important;border:0!important;padding:74px 20px 24px!important}}
