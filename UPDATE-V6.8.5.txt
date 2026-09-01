@@ -1,6 +1,0 @@
-RDM V6.8.5
-- Professional UI polish
-- Gallery UPDATES album added
-- News shows publish date/time
-- Official Updates shows date/time
-- Gallery cards show upload date/time

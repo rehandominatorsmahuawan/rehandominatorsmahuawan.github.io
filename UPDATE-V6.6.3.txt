@@ -1,4 +1,0 @@
-RDM V6.6.3
-- Captain and Vice-Captain leadership badges now render on a dedicated centered row below the player name.
-- Captain keeps premium gold styling; Vice-Captain keeps premium emerald styling.
-- Existing professional design, profile spacing, Firebase features and secure quick-switch are retained.

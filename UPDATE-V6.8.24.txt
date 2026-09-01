@@ -1,7 +1,0 @@
-RDM V6.8.24 — TRUE MINI FONT FOR ALL FORMS
-
-- Unified Add/Edit forms now use real Unicode mini/small-cap UI text.
-- Legacy Edit Player / profile / login / crop form labels and buttons are normalized too.
-- Input values/data are NOT altered before saving.
-- Select option values are preserved while display text uses mini font.
-- Compact sizing, scrolling and colour combination retained.

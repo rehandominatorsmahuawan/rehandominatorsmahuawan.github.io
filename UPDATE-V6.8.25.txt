@@ -1,6 +1,0 @@
-RDM V6.8.25
-- Compact custom popup forms
-- Reduced input/select/textarea sizes
-- Mini-font styling across form headings, labels, fields and save button
-- Mobile spacing and sizing optimized
-- Existing custom-form functionality retained

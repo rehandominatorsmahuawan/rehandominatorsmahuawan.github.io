@@ -57,3 +57,15 @@ setTimeout(()=>rdmMiniFormUI(document),250);
 
 setTimeout(()=>{[['addAchievement',addAchievement],['addLineup',addLineup],['addTournament',()=>v6AddTournament()],['addOpponent',()=>v6AddOpponent()],['addScorecard',addScorecard]].forEach(([id,fn])=>{const b=document.getElementById(id);if(b)b.onclick=e=>{e.stopPropagation();fn()}})},700);
 })();
+
+/* V6.8.28 — shared premium confirmation dialog for delete actions */
+window.rdmConfirmModal=function(title,message,onConfirm){
+  document.getElementById('rdmConfirmModal')?.remove();
+  const m=document.createElement('div');
+  m.id='rdmConfirmModal';m.className='modal show rdmUnifiedModal';
+  m.innerHTML=`<div class="dialog rdmUnifiedDialog rdmConfirmDialog"><button class="close" type="button">×</button><h2>${window.rdmMiniText?.(title||'CONFIRM')||String(title||'CONFIRM')}</h2><p class="rdmConfirmText">${window.rdmMiniText?.(message||'ARE YOU SURE?')||String(message||'ARE YOU SURE?')}</p><div class="rdmConfirmActions"><button type="button" class="secondary" data-cancel>ᴄᴀɴᴄᴇʟ</button><button type="button" class="primary deleteConfirmBtn" data-confirm>ᴅᴇʟᴇᴛᴇ</button></div></div>`;
+  document.body.appendChild(m);window.rdmMiniFormUI?.(m);
+  const close=()=>m.remove();m.querySelector('.close').onclick=close;m.querySelector('[data-cancel]').onclick=close;
+  m.addEventListener('click',e=>{if(e.target===m)close()});
+  m.querySelector('[data-confirm]').onclick=async e=>{const b=e.currentTarget;b.disabled=true;try{await onConfirm();close()}catch(err){console.error(err);toast?.('ᴀᴄᴛɪᴏɴ ꜰᴀɪʟᴇᴅ');b.disabled=false}};
+};

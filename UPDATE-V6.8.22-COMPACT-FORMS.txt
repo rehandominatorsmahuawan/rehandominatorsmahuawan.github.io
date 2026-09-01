@@ -1,6 +1,0 @@
-RDM V6.8.22
-- Unified form design retained.
-- Reduced input height and field spacing on mobile.
-- Compact heading, padding, close button and save button.
-- Long forms remain internally scrollable with top and bottom accessible.
-- Existing features unchanged.

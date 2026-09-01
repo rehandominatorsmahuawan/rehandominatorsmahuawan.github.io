@@ -1,6 +1,0 @@
-RDM V6.8.4
-- Official Updates page added as last navigation item
-- Website / Social Media / Platform / Account / Feature categories
-- Admin Add, Edit, Delete, Pin controls
-- One pinned update appears on Home
-- Updates stored in Firestore Updates collection

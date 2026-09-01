@@ -1,7 +1,0 @@
-RDM V6.8.16 COLOUR FESTIVAL STADIUM
-- Removed dark/night visual treatment with a final light colourful override.
-- Bright sky/royal/mint/gold/coral cricket-club palette.
-- Animated gradient hero title and floating crest.
-- Light stadium floodlight/ground visual retained.
-- Squad modal keeps only X close; Back to Squad stays hidden.
-- Existing features preserved.

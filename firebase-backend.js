@@ -32,7 +32,7 @@ async function rdmProfileWrite(p,extra={}){const uid=await rdmProfileUid(p.id);i
 
 function socialObj(x,i){return typeof x==='string'?{name:'SOCIAL '+(i+1),url:x}:x||{}}
 function profileHtml(p,editable=false,adminEdit=false){const socials=(p.socials||[]).map(socialObj).filter(s=>s.url||s.name);const sh=socials.length?`<div class="profileSocialList">${socials.map((s,i)=>`<div class="profileSocialRow"><a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener">${mini(s.name||('SOCIAL '+(i+1)))} ↗</a>${editable?`<button class="tinyBtn" onclick="editOwnSocial(${i})">✎</button><button class="tinyBtn danger" onclick="deleteOwnSocial(${i})">×</button>`:''}</div>`).join('')}</div>`:'<p class="mutedMini">ɴᴏ ꜱᴏᴄɪᴀʟ ʟɪɴᴋꜱ</p>';
-  return `<article class="profileCard publicProfileCard"><img class="profileAvatar" src="${esc(p.image||'assets/logo.jpg')}"><h2>${mini(p.name)}</h2><div class="profileIdentity"><div class="identityItem"><span>ᴘʟᴀʏᴇʀ ɪᴅ</span><strong>${miniId(p.id)}</strong></div><div class="identityDivider"></div><div class="identityItem"><span>ᴊᴇʀꜱᴇʏ ɴᴜᴍʙᴇʀ</span><strong>${p.jersey?'#'+esc(p.jersey):'—'}</strong></div></div>${p.nick?`<p class="profileNick">${mini(p.nick)}</p>`:''}<div class="profileOfficial"><b>${mini(p.role)}</b><br>${mini(p.detail)}</div>${p.bio?`<div class="profileBio">${mini(p.bio)}</div>`:''}${sh}${editable?`<div class="profileEditHub"><button type="button" class="primary profileEditMain" onclick="toggleProfileEditMenu()">⚙ ᴇᴅɪᴛ ᴘʀᴏꜰɪʟᴇ <span>⌄</span></button><div id="profileEditMenu" class="profileEditMenu"><button class="profileEditRow" onclick="chooseDP()"><span>📷</span><b>ᴘʀᴏꜰɪʟᴇ ᴘʜᴏᴛᴏ</b><i>›</i></button><button class="profileEditRow" onclick="selfEdit('jersey')"><span>🏏</span><b>ᴊᴇʀꜱᴇʏ ɴᴜᴍʙᴇʀ</b><i>›</i></button><button class="profileEditRow" onclick="selfEdit('nick')"><span>✦</span><b>ɴɪᴄᴋɴᴀᴍᴇ</b><i>›</i></button><button class="profileEditRow" onclick="selfEdit('bio')"><span>✎</span><b>ʙɪᴏ</b><i>›</i></button><button class="profileEditRow" onclick="addOwnSocial()"><span>↗</span><b>ꜱᴏᴄɪᴀʟꜱ</b><i>›</i></button><button class="profileEditRow" onclick="selfEdit('pass')"><span>🔐</span><b>ᴘᴀꜱꜱᴡᴏʀᴅ</b><i>›</i></button><button type="button" class="profileEditBack" onclick="toggleProfileEditMenu(false)">← ʙᴀᴄᴋ ᴛᴏ ᴍʏ ᴘʀᴏꜰɪʟᴇ</button></div></div>`:''}${adminEdit?`<div class="profileActions"><button class="secondary" onclick="adminChooseDP('${p.id}')">✎ ᴅᴘ</button><button class="secondary" onclick="editPlayer('${p.id}')">✎ ᴘʀᴏꜰɪʟᴇ</button></div>`:''}</article>`}
+  return `<article class="profileCard publicProfileCard"><img class="profileAvatar" src="${esc(p.image||'assets/logo.jpg')}"><h2>${mini(p.name)}</h2><div class="profileIdentity"><div class="identityItem"><span>ᴘʟᴀʏᴇʀ ɪᴅ</span><strong>${miniId(p.id)}</strong></div><div class="identityDivider"></div><div class="identityItem"><span>ᴊᴇʀꜱᴇʏ ɴᴜᴍʙᴇʀ</span><strong>${p.jersey?'#'+esc(p.jersey):'—'}</strong></div></div>${p.nick?`<p class="profileNick">${mini(p.nick)}</p>`:''}<div class="profileOfficial"><b>${mini(p.role)}</b><br>${mini(p.detail)}</div>${p.bio?`<div class="profileBio">${mini(p.bio)}</div>`:''}${sh}${editable?`<div class="profileEditHub"><button type="button" class="primary profileEditMain" onclick="openProfileEditMenu()">⚙ ᴇᴅɪᴛ ᴘʀᴏꜰɪʟᴇ</button><button type="button" class="secondary profileDownloadMain" onclick="openProfileDownload()">⬇ ᴅᴏᴡɴʟᴏᴀᴅ ᴘʀᴏꜰɪʟᴇ</button></div>`:''}${adminEdit?'':''}</article>`}
 
 render=function(){q('#players').innerHTML=D.players.map(p=>{const n=(p.name||'').toUpperCase();const lead=n==='REHAN AKHTAR'?'CAPTAIN':n==='SAIF ALI'?'VICE-CAPTAIN':n==='SOAIB AKHTAR'?'WICKET-KEEPER':'';return `<article class="player clickablePlayer" onclick="openPlayerProfile('${p.id}')"><div class="photo"><img src="${esc(p.image||'assets/logo.jpg')}" alt="${esc(p.name)}"></div>${lead?`<div class="leadershipBadge ${lead==='VICE-CAPTAIN'?'vice':lead==='WICKET-KEEPER'?'keeper':''}">${lead==='CAPTAIN'?'♛':lead==='VICE-CAPTAIN'?'★':'🧤'} ${mini(lead)}</div>`:''}<div class="pbody"><span class="simplePlayerId">${miniId(p.id)}${p.jersey?' <em>#'+esc(p.jersey)+'</em>':''}</span><h3>${mini(p.name)}</h3><b>${mini(p.role)}</b><p>${mini(p.detail)}</p>${p.nick?`<p>ɴɪᴄᴋɴᴀᴍᴇ • ${mini(p.nick)}</p>`:''}<button class="tinyBtn viewProfileBtn" onclick="event.stopPropagation();openPlayerProfile('${p.id}')">ᴠɪᴇᴡ ᴘʀᴏꜰɪʟᴇ</button>${rdmAdmin()?`<button class="tinyBtn" onclick="event.stopPropagation();editPlayer('${p.id}')">✎ ᴇᴅɪᴛ</button>`:''}</div></article>`}).join('');
  q('#honourList').innerHTML=D.honours.map((h,i)=>`<article class="honour"><div class="trophy"><img src="${h.image}" onclick="zoom('${h.image}')"></div><h3>${h.year} • ${mini(h.title)}</h3><p>${mini(h.sub)}</p>${rdmAdmin()?`<button class="tinyBtn" onclick="removeItem('honours',${i})">ᴅᴇʟᴇᴛᴇ</button>`:''}</article>`).join('');
@@ -43,26 +43,127 @@ render=function(){q('#players').innerHTML=D.players.map(p=>{const n=(p.name||'')
 renderProfile=function(){const p=rdmPlayer();if(p)q('#profileBody').innerHTML=profileHtml(p,true,false)};
 window.openPlayerProfile=id=>{const p=D.players.find(x=>x.id===id);if(!p)return;let m=q('#publicProfileModal');if(!m){m=document.createElement('div');m.id='publicProfileModal';m.className='modal';m.innerHTML='<div class="dialog publicDialog"><button class="close" type="button">×</button><div id="publicProfileBody"></div></div>';document.body.appendChild(m);m.querySelector('.close').onclick=()=>m.classList.remove('show');}q('#publicProfileBody').innerHTML=profileHtml(p,false,rdmAdmin());m.classList.add('show')};
 
-window.selfEdit=async k=>{const p=rdmPlayer();if(!p)return;if(k==='pass'){const old=prompt('CURRENT PASSWORD');if(!old)return;const nw=prompt('NEW PASSWORD • MINIMUM 6 CHARACTERS');if(!nw)return;if(nw.length<6)return toast('ᴍɪɴɪᴍᴜᴍ 6 ᴄʜᴀʀᴀᴄᴛᴇʀꜱ');try{const u=rdmAuth.currentUser,cred=firebase.auth.EmailAuthProvider.credential(u.email,old);await u.reauthenticateWithCredential(cred);await u.updatePassword(nw);toast('ᴘᴀꜱꜱᴡᴏʀᴅ ᴄʜᴀɴɢᴇᴅ')}catch(e){console.error(e);toast('ᴄᴜʀʀᴇɴᴛ ᴘᴀꜱꜱᴡᴏʀᴅ ᴡʀᴏɴɢ')}return}const label={jersey:'JERSEY NUMBER',nick:'NICKNAME',bio:'BIO'}[k],v=prompt(label,p[k]||'');if(v===null)return;p[k]=v.trim();try{await rdmProfileWrite(p);rdmRefresh();toast('ꜱᴀᴠᴇᴅ ᴏɴʟɪɴᴇ')}catch(e){console.error(e);toast('ꜱᴀᴠᴇ ꜰᴀɪʟᴇᴅ')}};
-window.addOwnSocial=async()=>{const p=rdmPlayer();if(!p)return;if((p.socials||[]).length>=3)return toast('ᴍᴀx 3 ꜱᴏᴄɪᴀʟꜱ');const name=prompt('SOCIAL NAME • EXAMPLE: INSTAGRAM');if(!name)return;const url=prompt('SOCIAL LINK • https://...');if(!safeUrl(url))return toast('ᴠᴀʟɪᴅ ʟɪɴᴋ ʀᴇǫᴜɪʀᴇᴅ');p.socials=[...(p.socials||[]),{name:name.trim(),url:url.trim()}].slice(0,3);await rdmProfileWrite(p);rdmRefresh();toast('ꜱᴏᴄɪᴀʟ ᴀᴅᴅᴇᴅ')};
-window.editOwnSocial=async i=>{const p=rdmPlayer(),s=socialObj(p?.socials?.[i],i);if(!p||!s)return;const name=prompt('SOCIAL NAME',s.name||'');if(name===null)return;const url=prompt('SOCIAL LINK',s.url||'');if(url===null||!safeUrl(url))return toast('ᴠᴀʟɪᴅ ʟɪɴᴋ ʀᴇǫᴜɪʀᴇᴅ');p.socials[i]={name:name.trim()||('SOCIAL '+(i+1)),url:url.trim()};await rdmProfileWrite(p);rdmRefresh();toast('ꜱᴏᴄɪᴀʟ ᴜᴘᴅᴀᴛᴇᴅ')};
+
+function rdmOpenSimpleModal(title,fields,onSave){
+  if(typeof window.rdmUnifiedModal==='function') return window.rdmUnifiedModal(title,fields,onSave);
+  return null;
+}
+function closeProfileEditMenu(){document.getElementById('profileEditModal')?.remove()}
+function profileEditRows(){
+  return `<div class="profileEditMenu show profileEditMenuModal"><button class="profileEditRow" type="button" onclick="runProfileEditAction('photo')"><span>📷</span><b>ᴘʀᴏꜰɪʟᴇ ᴘʜᴏᴛᴏ</b><i>›</i></button><button class="profileEditRow" type="button" onclick="runProfileEditAction('jersey')"><span>🏏</span><b>ᴊᴇʀꜱᴇʏ ɴᴜᴍʙᴇʀ</b><i>›</i></button><button class="profileEditRow" type="button" onclick="runProfileEditAction('nick')"><span>✦</span><b>ɴɪᴄᴋɴᴀᴍᴇ</b><i>›</i></button><button class="profileEditRow" type="button" onclick="runProfileEditAction('bio')"><span>✎</span><b>ʙɪᴏ</b><i>›</i></button><button class="profileEditRow" type="button" onclick="runProfileEditAction('socials')"><span>↗</span><b>ꜱᴏᴄɪᴀʟꜱ</b><i>›</i></button><button class="profileEditRow" type="button" onclick="runProfileEditAction('pass')"><span>🔐</span><b>ᴘᴀꜱꜱᴡᴏʀᴅ</b><i>›</i></button></div>`
+}
+window.openProfileEditMenu=function(){
+  closeProfileEditMenu();
+  const m=document.createElement('div');
+  m.id='profileEditModal';
+  m.className='modal show profileEditOverlay';
+  m.innerHTML=`<div class="dialog rdmUnifiedDialog profileEditDialog"><button class="close" type="button">×</button><h2>EDIT PROFILE</h2>${profileEditRows()}</div>`;
+  document.body.appendChild(m);
+  window.rdmMiniFormUI?.(m);
+  const c=m.querySelector('.close');
+  if(c)c.onclick=()=>closeProfileEditMenu();
+  m.addEventListener('click',e=>{if(e.target===m)closeProfileEditMenu()});
+  const dlg=m.querySelector('.profileEditDialog');
+  requestAnimationFrame(()=>{if(dlg)dlg.scrollTop=0});
+};
+window.runProfileEditAction=function(action){
+  closeProfileEditMenu();
+  setTimeout(()=>{
+    if(action==='photo') return chooseDP();
+    if(action==='socials') return addOwnSocial();
+    return selfEdit(action);
+  },40);
+};
+window.selfEdit=async k=>{
+  const p=rdmPlayer();
+  if(!p)return;
+  const useModal=typeof window.rdmUnifiedModal==='function';
+  if(k==='pass'){
+    if(useModal){
+      return rdmOpenSimpleModal('CHANGE PASSWORD',[
+        {name:'currentPassword',label:'CURRENT PASSWORD',type:'password',required:true},
+        {name:'newPassword',label:'NEW PASSWORD • MINIMUM 6 CHARACTERS',type:'password',required:true},
+        {name:'confirmPassword',label:'CONFIRM NEW PASSWORD',type:'password',required:true}
+      ],async d=>{
+        const old=String(d.currentPassword||'').trim();
+        const nw=String(d.newPassword||'').trim();
+        const cf=String(d.confirmPassword||'').trim();
+        if(nw.length<6){toast('ᴍɪɴɪᴍᴜᴍ 6 ᴄʜᴀʀᴀᴄᴛᴇʀꜱ');throw new Error('VALIDATION')}
+        if(nw!==cf){toast('ᴘᴀꜱꜱᴡᴏʀᴅꜱ ᴅᴏ ɴᴏᴛ ᴍᴀᴛᴄʜ');throw new Error('VALIDATION')}
+        try{
+          const u=rdmAuth.currentUser,cred=firebase.auth.EmailAuthProvider.credential(u.email,old);
+          await u.reauthenticateWithCredential(cred);
+          await u.updatePassword(nw);
+          toast('ᴘᴀꜱꜱᴡᴏʀᴅ ᴄʜᴀɴɢᴇᴅ');
+        }catch(e){console.error(e);toast('ᴄᴜʀʀᴇɴᴛ ᴘᴀꜱꜱᴡᴏʀᴅ ᴡʀᴏɴɢ');throw e}
+      });
+    }
+    return toast('ꜰᴏʀᴍ ʟᴏᴀᴅɪɴɢ');
+  }
+  const config={
+    jersey:{title:'EDIT JERSEY NUMBER',field:{name:'value',label:'JERSEY NUMBER',value:p.jersey||''}},
+    nick:{title:'EDIT NICKNAME',field:{name:'value',label:'NICKNAME',value:p.nick||''}},
+    bio:{title:'EDIT BIO',field:{name:'value',label:'BIO',type:'textarea',value:p.bio||'',rows:5}},
+  }[k];
+  if(!config)return;
+  if(useModal){
+    return rdmOpenSimpleModal(config.title,[config.field],async d=>{
+      p[k]=String(d.value||'').trim();
+      try{await rdmProfileWrite(p);rdmRefresh();toast('ꜱᴀᴠᴇᴅ ᴏɴʟɪɴᴇ')}catch(e){console.error(e);toast('ꜱᴀᴠᴇ ꜰᴀɪʟᴇᴅ');throw e}
+    });
+  }
+  return toast('ꜰᴏʀᴍ ʟᴏᴀᴅɪɴɢ')
+};
+window.addOwnSocial=async()=>{
+  const p=rdmPlayer();if(!p)return;
+  if((p.socials||[]).length>=3)return toast('ᴍᴀx 3 ꜱᴏᴄɪᴀʟꜱ');
+  if(typeof window.rdmUnifiedModal==='function'){
+    return rdmOpenSimpleModal('ADD SOCIAL',[
+      {name:'name',label:'SOCIAL NAME',placeholder:'INSTAGRAM',required:true},
+      {name:'url',label:'SOCIAL LINK',placeholder:'https://...',required:true}
+    ],async d=>{
+      if(!safeUrl(d.url)) {toast('ᴠᴀʟɪᴅ ʟɪɴᴋ ʀᴇǫᴜɪʀᴇᴅ');throw new Error('VALIDATION')}
+      p.socials=[...(p.socials||[]),{name:String(d.name).trim()||('SOCIAL '+((p.socials||[]).length+1)),url:String(d.url).trim()}].slice(0,3);
+      await rdmProfileWrite(p);rdmRefresh();toast('ꜱᴏᴄɪᴀʟ ᴀᴅᴅᴇᴅ');
+    });
+  }
+  return toast('ꜰᴏʀᴍ ʟᴏᴀᴅɪɴɢ')
+};
+window.editOwnSocial=async i=>{
+  const p=rdmPlayer(),s=socialObj(p?.socials?.[i],i);if(!p||!s)return;
+  if(typeof window.rdmUnifiedModal==='function'){
+    return rdmOpenSimpleModal('EDIT SOCIAL',[
+      {name:'name',label:'SOCIAL NAME',value:s.name||''},
+      {name:'url',label:'SOCIAL LINK',value:s.url||'',placeholder:'https://...',required:true}
+    ],async d=>{
+      if(!safeUrl(d.url)) {toast('ᴠᴀʟɪᴅ ʟɪɴᴋ ʀᴇǫᴜɪʀᴇᴅ');throw new Error('VALIDATION')}
+      p.socials[i]={name:String(d.name||'').trim()||('SOCIAL '+(i+1)),url:String(d.url).trim()};
+      await rdmProfileWrite(p);rdmRefresh();toast('ꜱᴏᴄɪᴀʟ ᴜᴘᴅᴀᴛᴇᴅ');
+    });
+  }
+  return toast('ꜰᴏʀᴍ ʟᴏᴀᴅɪɴɢ')
+};
 window.deleteOwnSocial=async i=>{const p=rdmPlayer();if(!p)return;p.socials.splice(i,1);await rdmProfileWrite(p);rdmRefresh();toast('ꜱᴏᴄɪᴀʟ ᴅᴇʟᴇᴛᴇᴅ')};
 
-const originalChooseDP=window.chooseDP;window.chooseDP=()=>{rdmCropTarget=rdmPlayer()?.id||null;originalChooseDP()};window.adminChooseDP=id=>{if(!rdmAdmin())return;rdmCropTarget=id;originalChooseDP()};
+/* V6.8.28 — restore full cloud Admin/Profile controls accidentally lost in V6.8.26. */
+const originalChooseDP=window.chooseDP;
+window.chooseDP=()=>{rdmCropTarget=rdmPlayer()?.id||null;originalChooseDP()};
+window.adminChooseDP=id=>{if(!rdmAdmin())return;rdmCropTarget=id;originalChooseDP()};
 q('#cropSave').onclick=async()=>{const p=D.players.find(x=>x.id===(rdmCropTarget||rdmPlayer()?.id));if(!p||!crop.img)return;const src=q('#cropCanvas'),out=document.createElement('canvas');out.width=320;out.height=320;out.getContext('2d').drawImage(src,0,0,320,320);p.image=out.toDataURL('image/jpeg',.72);try{if(rdmAdmin())await rdmDB.collection(RCOL.players).doc(p.id).set({image:p.image,updatedAt:rdmStamp()},{merge:true});await rdmProfileWrite(p);q('#cropModal').classList.remove('show');rdmCropTarget=null;await rdmLoadAll();toast('ᴅᴘ ꜱᴀᴠᴇᴅ ᴏɴʟɪɴᴇ')}catch(e){console.error(e);toast('ᴅᴘ ꜱᴀᴠᴇ ꜰᴀɪʟᴇᴅ')}};
 
-window.removeItem=async(k,i)=>{if(!rdmAdmin())return toast('ᴀᴅᴍɪɴ ᴏɴʟʏ');const item=D[k]?.[i],col=RCOL[k];if(!item||!col)return;try{if(item._docId)await rdmDB.collection(col).doc(item._docId).delete();D[k].splice(i,1);rdmRefresh();toast('ᴅᴇʟᴇᴛᴇᴅ ᴏɴʟɪɴᴇ')}catch(e){console.error(e);toast('ᴅᴇʟᴇᴛᴇ ꜰᴀɪʟᴇᴅ')}};
-window.editPlayer=id=>{if(rdmAdmin())openEdit('editPlayer',D.players.find(x=>x.id===id))};window.editSocial=i=>{if(rdmAdmin())openEdit('editSocial',D.socials[i])};
+window.removeItem=async(k,i)=>{if(!rdmAdmin())return toast('ᴀᴅᴍɪɴ ᴏɴʟʏ');const item=D[k]?.[i],col=RCOL[k];if(!item||!col)return;const run=async()=>{try{if(item._docId)await rdmDB.collection(col).doc(item._docId).delete();D[k].splice(i,1);rdmRefresh();toast('ᴅᴇʟᴇᴛᴇᴅ ᴏɴʟɪɴᴇ')}catch(e){console.error(e);toast('ᴅᴇʟᴇᴛᴇ ꜰᴀɪʟᴇᴅ');throw e}};if(typeof window.rdmConfirmModal==='function')return window.rdmConfirmModal('DELETE ITEM','THIS ACTION CANNOT BE UNDONE.',run);return run()};
+window.editPlayer=id=>{if(rdmAdmin())openEdit('editPlayer',D.players.find(x=>x.id===id))};
+window.editSocial=i=>{if(rdmAdmin())openEdit('editSocial',D.socials[i])};
 openEdit=function(mode,obj=null){editMode=mode;editObj=obj;let h='',f='';const fi='<label>ɪᴍᴀɢᴇ<input id="efile" type="file" accept="image/*"></label>';
  if(mode==='match'){h='ᴀᴅᴅ ᴍᴀᴛᴄʜ';f='<label>ᴏᴘᴘᴏɴᴇɴᴛ<input id="e1"></label><label>ᴅᴀᴛᴇ / ᴛɪᴍᴇ<input id="e2"></label><label>ᴠᴇɴᴜᴇ<input id="e3"></label><label>ᴅᴇᴛᴀɪʟ / ʀᴇꜱᴜʟᴛ / ᴘᴏᴛᴍ<textarea id="e4"></textarea></label>'}
  if(mode==='news'){h='ᴀᴅᴅ ɴᴇᴡꜱ';f='<label>ᴛɪᴛʟᴇ<input id="e1"></label><label>ᴀɴɴᴏᴜɴᴄᴇᴍᴇɴᴛ<textarea id="e2"></textarea></label>'}
  if(mode==='player'){h='ᴀᴅᴅ ᴘʟᴀʏᴇʀ';f='<label>ɴᴀᴍᴇ<input id="e1"></label><label>ʀᴏʟᴇ<input id="e2"></label><label>ᴘʟᴀʏɪɴɢ ᴅᴇᴛᴀɪʟ<textarea id="e3"></textarea></label>'+fi}
  if(mode==='honour'){h='ᴀᴅᴅ ʜᴏɴᴏᴜʀ';f='<label>ʏᴇᴀʀ<input id="e1"></label><label>ʀᴇꜱᴜʟᴛ<input id="e2"></label><label>ᴛᴏᴜʀɴᴀᴍᴇɴᴛ<input id="e3"></label>'+fi}
- if(mode==='gallery'){h='ᴀᴅᴅ ᴘʜᴏᴛᴏ';f=fi+'<label>ᴄᴀᴘᴛɪᴏɴ<input id="e1"></label><label>ᴀʟʙᴜᴍ<select id="e2"><option>MEMORIES</option><option>MATCHES</option><option>TROPHIES</option><option>TEAM PHOTOS</option><option>UPDATES</option></select></label>'}
+ if(mode==='gallery'){h='ᴀᴅᴅ ᴘʜᴏᴛᴏ';f=fi+'<label>ᴄᴀᴘᴛɪᴏɴ<input id="e1"></label><label>ᴀʟʙᴜᴍ<select id="e2"><option>TEAM PHOTOS</option><option selected>MEMORIES</option><option>UPDATES</option></select></label>'}
  if(mode==='social'){h='ᴀᴅᴅ ꜱᴏᴄɪᴀʟ';f='<label>ᴘʟᴀᴛꜰᴏʀᴍ<input id="e1" placeholder="INSTAGRAM"></label><label>ᴅɪꜱᴘʟᴀʏ ɴᴀᴍᴇ<input id="e4" placeholder="RDM INSTAGRAM"></label><label>ʟɪɴᴋ<input id="e2" placeholder="https://..."></label><label>ɪᴄᴏɴ<input id="e3" placeholder="IG"></label>'+fi}
  if(mode==='editSocial'){h='ᴇᴅɪᴛ ꜱᴏᴄɪᴀʟ';f=`<label>ᴘʟᴀᴛꜰᴏʀᴍ<input id="e1" value="${esc(obj.name||'')}"></label><label>ᴅɪꜱᴘʟᴀʏ ɴᴀᴍᴇ<input id="e4" value="${esc(obj.displayName||obj.name||'')}"></label><label>ʟɪɴᴋ<input id="e2" value="${esc(obj.url||'')}"></label><label>ɪᴄᴏɴ<input id="e3" value="${esc(obj.icon||'')}"></label>${fi}`}
  if(mode==='editPlayer'){h='ᴇᴅɪᴛ ᴘʟᴀʏᴇʀ';f=`<label>ɴᴀᴍᴇ<input id="e1" value="${esc(obj.name)}"></label><label>ʀᴏʟᴇ<input id="e2" value="${esc(obj.role)}"></label><label>ᴘʟᴀʏɪɴɢ ᴅᴇᴛᴀɪʟ<textarea id="e3">${esc(obj.detail)}</textarea></label><label>ᴊᴇʀꜱᴇʏ<input id="e4" value="${esc(obj.jersey||'')}"></label><label>ɴɪᴄᴋɴᴀᴍᴇ<input id="e5" value="${esc(obj.nick||'')}"></label><label>ʙɪᴏ<textarea id="e6">${esc(obj.bio||'')}</textarea></label>${fi}`}
- q('#editTitle').textContent=h;q('#editFields').innerHTML=f;q('#editor').classList.add('show')};
+ q('#editTitle').textContent=h;q('#editFields').innerHTML=f;q('#editor').classList.add('show');window.rdmMiniFormUI?.(q('#editor'))};
 q('#editForm').onsubmit=async e=>{e.preventDefault();if(!rdmAdmin())return toast('ᴀᴅᴍɪɴ ᴏɴʟʏ');const v=id=>q('#'+id)?.value?.trim()||'',file=q('#efile')?.files?.[0];try{let img='';if(file)img=await rdmCompressFile(file);const now=Date.now();
  if(editMode==='match')await rdmDB.collection(RCOL.matches).add({opponent:v('e1'),date:v('e2'),venue:v('e3'),note:v('e4'),createdMs:now,updatedAt:rdmStamp()});
  if(editMode==='news')await rdmDB.collection(RCOL.news).add({title:v('e1'),text:v('e2'),createdMs:now,updatedAt:rdmStamp()});
@@ -75,4 +176,47 @@ q('#editForm').onsubmit=async e=>{e.preventDefault();if(!rdmAdmin())return toast
  q('#editor').classList.remove('show');await rdmLoadAll();toast('ꜱᴀᴠᴇᴅ ᴏɴʟɪɴᴇ')}catch(e){console.error(e);toast(e.message==='IMAGE_TOO_LARGE'?'ɪᴍᴀɢᴇ ᴛᴏᴏ ʟᴀʀɢᴇ':'ꜱᴀᴠᴇ ꜰᴀɪʟᴇᴅ')}};
 rdmRefresh();
 
-window.toggleProfileEditMenu=function(force){const m=document.getElementById('profileEditMenu');if(!m)return;const open=typeof force==='boolean'?force:!m.classList.contains('show');m.classList.toggle('show',open);if(open)setTimeout(()=>m.scrollIntoView({behavior:'smooth',block:'nearest'}),40)};
+function rdmCanvasRoundRect(ctx,x,y,w,h,r,fill,stroke){
+  r=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke()}
+}
+function rdmWrapCanvasText(ctx,text,x,y,maxWidth,lineHeight,maxLines=5){
+  const words=String(text||'').replace(/\s+/g,' ').trim().split(' ');let line='',lines=[];
+  for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word}else line=test;if(lines.length>=maxLines)break}
+  if(line&&lines.length<maxLines)lines.push(line);lines.slice(0,maxLines).forEach((ln,i)=>ctx.fillText(ln,x,y+i*lineHeight));return lines.length*lineHeight;
+}
+function rdmLoadImage(src){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=src})}
+function rdmExportMini(v){
+  if(typeof window.rdmMiniText==='function')return window.rdmMiniText(String(v??''));
+  if(typeof mini==='function')return mini(String(v??''));
+  return String(v??'');
+}
+function rdmCanvasFont(ctx,weight,size){ctx.font=`${weight} ${size}px "Noto Sans", "Arial Unicode MS", Arial, sans-serif`}
+async function rdmDrawProfileImage(format='png'){
+  const p=rdmPlayer();if(!p)return;
+  /* 4:5 profile-only export: no browser/UI chrome, no dark/black area. */
+  const W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const ctx=c.getContext('2d');
+  const bg=ctx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#f0faff');bg.addColorStop(.48,'#fffbea');bg.addColorStop(1,'#effff6');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  rdmCanvasRoundRect(ctx,34,34,W-68,H-68,44,'rgba(255,255,255,.97)','#b7ddec');
+  const band=ctx.createLinearGradient(80,0,W-80,0);band.addColorStop(0,'#2e8ff2');band.addColorStop(.55,'#36c6dc');band.addColorStop(1,'#2bc793');rdmCanvasRoundRect(ctx,70,70,W-140,10,5,band,null);
+  let logo=null;try{logo=await rdmLoadImage('assets/logo.jpg')}catch{}
+  if(logo){ctx.save();ctx.beginPath();ctx.arc(105,132,38,0,Math.PI*2);ctx.clip();ctx.drawImage(logo,67,94,76,76);ctx.restore();ctx.strokeStyle='#d3b34f';ctx.lineWidth=3;ctx.beginPath();ctx.arc(105,132,40,0,Math.PI*2);ctx.stroke()}
+  ctx.textAlign='left';ctx.fillStyle='#174f82';rdmCanvasFont(ctx,900,26);ctx.fillText(rdmExportMini('REHAN DOMINATORS MAHUAWAN'),165,128);ctx.fillStyle='#6f879b';rdmCanvasFont(ctx,700,15);ctx.fillText(rdmExportMini('MAHUAWAN • GOPALGANJ • BIHAR'),165,155);
+  let avatar=null;try{avatar=await rdmLoadImage(p.image||'assets/logo.jpg')}catch{try{avatar=await rdmLoadImage('assets/logo.jpg')}catch{}}
+  if(avatar){ctx.save();ctx.beginPath();ctx.arc(W/2,315,132,0,Math.PI*2);ctx.clip();const s=Math.max(264/avatar.width,264/avatar.height),dw=avatar.width*s,dh=avatar.height*s;ctx.drawImage(avatar,W/2-dw/2,315-dh/2,dw,dh);ctx.restore();ctx.strokeStyle='#26bd94';ctx.lineWidth=10;ctx.beginPath();ctx.arc(W/2,315,138,0,Math.PI*2);ctx.stroke();ctx.strokeStyle='#ffffff';ctx.lineWidth=4;ctx.beginPath();ctx.arc(W/2,315,143,0,Math.PI*2);ctx.stroke()}
+  ctx.textAlign='center';ctx.fillStyle='#174f82';rdmCanvasFont(ctx,900,42);ctx.fillText(rdmExportMini(p.name||'PLAYER'),W/2,505);
+  rdmCanvasRoundRect(ctx,120,545,840,120,26,'#eef8ff','#c5e1ee');ctx.fillStyle='#d59a1c';rdmCanvasFont(ctx,900,15);ctx.fillText(rdmExportMini('PLAYER ID'),330,583);ctx.fillText(rdmExportMini('JERSEY NUMBER'),750,583);ctx.fillStyle='#174f82';rdmCanvasFont(ctx,900,27);ctx.fillText(rdmExportMini(p.id||'—'),330,627);ctx.fillText(rdmExportMini(p.jersey?'#'+p.jersey:'—'),750,627);ctx.strokeStyle='#6e8ba1';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(540,564);ctx.lineTo(540,648);ctx.stroke();
+  let y=712;
+  if(p.nick){ctx.fillStyle='#5c7890';rdmCanvasFont(ctx,800,19);ctx.fillText(rdmExportMini(p.nick),W/2,y);y+=48}
+  const roleH=140;rdmCanvasRoundRect(ctx,120,y,840,roleH,26,'#f4f9ff','#c6e0ed');ctx.fillStyle='#315f83';rdmCanvasFont(ctx,900,22);ctx.fillText(rdmExportMini(p.role||''),W/2,y+43);rdmCanvasFont(ctx,750,18);rdmWrapCanvasText(ctx,rdmExportMini(p.detail||''),W/2,y+82,740,28,2);y+=roleH+52;
+  if(p.bio){ctx.fillStyle='#526f87';rdmCanvasFont(ctx,700,18);const used=rdmWrapCanvasText(ctx,rdmExportMini(p.bio),W/2,y,780,28,4);y+=used+28}
+  const socials=(p.socials||[]).map(socialObj).filter(s=>s.name||s.url).slice(0,3);
+  if(socials.length){const sh=56+socials.length*32;rdmCanvasRoundRect(ctx,135,y,810,sh,20,'#f8fcff','#d4e7ef');ctx.fillStyle='#d59a1c';rdmCanvasFont(ctx,900,15);ctx.fillText(rdmExportMini('SOCIALS'),W/2,y+29);ctx.fillStyle='#466c89';rdmCanvasFont(ctx,700,16);socials.forEach((s,i)=>ctx.fillText(rdmExportMini(s.name||('SOCIAL '+(i+1))),W/2,y+62+i*30));y+=sh+18}
+  const footerY=Math.min(1272,Math.max(1220,y+32));ctx.fillStyle='#d59a1c';rdmCanvasFont(ctx,900,15);ctx.fillText(rdmExportMini('ONE TEAM • ONE DREAM • ONE DOMINATION'),W/2,footerY);ctx.fillStyle='#7890a3';rdmCanvasFont(ctx,700,13);ctx.fillText(rdmExportMini('OFFICIAL PLAYER PROFILE • RDM'),W/2,footerY+30);
+  const mime=format==='jpg'?'image/jpeg':'image/png',ext=format==='jpg'?'jpg':'png';const url=c.toDataURL(mime,format==='jpg'?.95:1);const a=document.createElement('a');a.href=url;a.download=`${String(p.id||'RDM')}-${String(p.name||'PLAYER').replace(/\s+/g,'-')}-PROFILE.${ext}`;document.body.appendChild(a);a.click();a.remove();toast?.(`ᴘʀᴏꜰɪʟᴇ ${ext.toUpperCase()} ʀᴇᴀᴅʏ`)
+}
+window.openProfileDownload=function(){
+  document.getElementById('profileDownloadModal')?.remove();const m=document.createElement('div');m.id='profileDownloadModal';m.className='modal show profileDownloadOverlay';m.innerHTML=`<div class="dialog rdmUnifiedDialog profileDownloadDialog"><button class="close" type="button">×</button><h2>DOWNLOAD PROFILE</h2><p class="profileDownloadNote">ᴄʜᴏᴏꜱᴇ ɪᴍᴀɢᴇ ꜰᴏʀᴍᴀᴛ</p><div class="profileDownloadChoices"><button type="button" class="primary" data-format="png">⬇ ᴘɴɢ • ʙᴇꜱᴛ ǫᴜᴀʟɪᴛʏ</button><button type="button" class="secondary" data-format="jpg">⬇ ᴊᴘɢ • ꜱᴍᴀʟʟᴇʀ ꜰɪʟᴇ</button></div></div>`;document.body.appendChild(m);window.rdmMiniFormUI?.(m);const close=()=>m.remove();m.querySelector('.close').onclick=close;m.addEventListener('click',e=>{if(e.target===m)close()});m.querySelectorAll('[data-format]').forEach(b=>b.onclick=async()=>{const f=b.dataset.format;b.disabled=true;try{await rdmDrawProfileImage(f);close()}catch(e){console.error(e);toast?.('ᴅᴏᴡɴʟᴏᴀᴅ ꜰᴀɪʟᴇᴅ');b.disabled=false}})
+};
+
+window.toggleProfileEditMenu=function(force){ if(force===false) closeProfileEditMenu(); else openProfileEditMenu(); };
+

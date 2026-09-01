@@ -1,2 +1,0 @@
-
-V6.8.18: removed remaining black/dark surfaces; fixed Stats, My Profile role block, public profile overlay, Playing XI and modal readability. No feature removals.

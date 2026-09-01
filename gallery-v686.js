@@ -9,8 +9,8 @@
    if(!(typeof rdmAdmin==='function'&&rdmAdmin()))return;
    const m=document.createElement('div');m.className='modal show';
    m.innerHTML=`<form class="dialog galleryMoveDialog"><button class="close" type="button">×</button><h2>ᴍᴏᴠᴇ ᴘʜᴏᴛᴏ</h2><p>ꜱᴇʟᴇᴄᴛ ᴅᴇꜱᴛɪɴᴀᴛɪᴏɴ ᴀʟʙᴜᴍ</p><label>ᴀʟʙᴜᴍ<select id="moveAlbum">${DEST.map(a=>`<option ${a===current?'selected':''}>${a}</option>`).join('')}</select></label><button class="primary wide">ᴍᴏᴠᴇ ᴛᴏ ᴀʟʙᴜᴍ</button></form>`;
-   document.body.appendChild(m);m.querySelector('.close').onclick=()=>m.remove();
-   m.querySelector('form').onsubmit=async e=>{e.preventDefault();const album=m.querySelector('#moveAlbum').value;try{await rdmDB.collection('Gallery').doc(id).set({album,updatedAt:rdmStamp()},{merge:true});m.remove();if(typeof loadCloud==='function')await loadCloud();renderGalleryAlbums();toast('ᴘʜᴏᴛᴏ ᴍᴏᴠᴇᴅ')}catch(err){console.error(err);toast('ᴍᴏᴠᴇ ꜰᴀɪʟᴇᴅ')}};
+   document.body.appendChild(m);window.rdmMiniFormUI?.(m);m.querySelector('.close').onclick=()=>m.remove();
+   m.querySelector('form').onsubmit=async e=>{e.preventDefault();const album=m.querySelector('#moveAlbum').value;try{await rdmDB.collection('Gallery').doc(id).set({album,updatedAt:rdmStamp()},{merge:true});m.remove();if(typeof rdmLoadAll==='function')await rdmLoadAll();renderGalleryAlbums();toast('ᴘʜᴏᴛᴏ ᴍᴏᴠᴇᴅ')}catch(err){console.error(err);toast('ᴍᴏᴠᴇ ꜰᴀɪʟᴇᴅ')}};
  };
  window.renderGalleryAlbums=function(){
    const g=document.getElementById('galleryList');if(!g||typeof D==='undefined')return;

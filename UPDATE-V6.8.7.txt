@@ -1,7 +1,0 @@
-RDM V6.8.7
-- Professional colourful UI polish
-- Navigation: Gallery -> News -> Updates -> My Profile
-- Gallery album tabs fixed and kept in one horizontal row
-- Gallery Move To Album retained
-- Gallery metadata separated: Album Name / Date & Time / Note
-- News and Updates retain date/time display

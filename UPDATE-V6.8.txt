@@ -1,7 +1,0 @@
-RDM V6.8 SIGNATURE PROFESSIONAL
-- Premium signature stadium redesign layered over V6.7.
-- Refined hero crest, gradients, metrics and action buttons.
-- Cleaner section hierarchy and premium card depth.
-- Upgraded Captain / Vice-Captain leadership badges.
-- More professional admin dashboard button treatment.
-- Profile, records, tournaments, Firebase and existing functionality retained.

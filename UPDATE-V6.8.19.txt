@@ -1,6 +1,0 @@
-RDM V6.8.19
-- Removed remaining dark/near-black Playing XI and availability cards.
-- Added colourful light alternating player rows with readable navy text.
-- Public player profile overlay is now bright/light instead of black.
-- Public profile close X moved above the card with high z-index and visible circular styling.
-- Existing features retained.

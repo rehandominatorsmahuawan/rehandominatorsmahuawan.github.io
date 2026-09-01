@@ -1,8 +1,0 @@
-RDM V6.3
-- Player Records, Team Records and Partnership Records separated.
-- Tournament records remain in dedicated Tournaments page.
-- Opponent/H2H remains separate.
-- Separate admin add buttons/forms for each record type.
-- Zero leaderboard now shows No Stats Yet / No POTM Yet.
-- Record dates display in readable format.
-- Existing V6.2 records are automatically classified by their old category where possible.

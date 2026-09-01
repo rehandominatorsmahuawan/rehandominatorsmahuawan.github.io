@@ -71,6 +71,20 @@ function rdmRealAdmin(){
   return !!(session && session.realRole === 'admin');
 }
 
+
+function rdmAskAdminPassword(){
+  return new Promise(resolve=>{
+    document.getElementById('rdmAdminSwitchModal')?.remove();
+    const m=document.createElement('div');m.id='rdmAdminSwitchModal';m.className='modal show rdmUnifiedModal';
+    m.innerHTML=`<form class="dialog rdmUnifiedDialog"><button class="close" type="button">×</button><h2>ADMIN ACCESS</h2><div class="rdmUnifiedFields"><label>ADMIN PASSWORD<input name="password" type="password" autocomplete="current-password" required></label></div><button class="primary wide" type="submit">CONTINUE</button></form>`;
+    document.body.appendChild(m);window.rdmMiniFormUI?.(m);
+    let done=false;const finish=v=>{if(done)return;done=true;m.remove();resolve(v)};
+    m.querySelector('.close').onclick=()=>finish(null);m.addEventListener('click',e=>{if(e.target===m)finish(null)});
+    m.querySelector('form').onsubmit=e=>{e.preventDefault();finish(String(new FormData(e.currentTarget).get('password')||''))};
+    setTimeout(()=>m.querySelector('input')?.focus(),50);
+  });
+}
+
 async function setQuickView(mode){
   if(!session) return;
   if(session.realRole === 'admin'){
@@ -84,7 +98,7 @@ async function setQuickView(mode){
     return;
   }
   // A player session cannot silently become an administrator. Ask once for admin auth.
-  const password=prompt('ADMIN PASSWORD');
+  const password=await rdmAskAdminPassword();
   if(!password) return;
   try{
     const cred=await rdmAuth.signInWithEmailAndPassword('admin@rdm.invalid',password);
