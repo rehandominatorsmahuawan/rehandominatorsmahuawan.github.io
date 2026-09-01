@@ -2380,3 +2380,438 @@ html[data-rdm-theme="dark"] :is(
   .nav button{min-height:32px!important;height:32px!important;padding:5px 14px!important}
   .sectionHead .primary,.socialAction,.profileEditMain,.profileDownloadMain{min-height:38px!important;padding:8px 18px!important}
 }
+
+
+/* V6.8.48 — PROFESSIONAL LIGHT + DARK THEME POLISH
+   Layout remains unchanged. Only the visual theme/contrast is refined. */
+
+/* ---------- LIGHT MODE ---------- */
+html[data-rdm-theme="light"] body{
+  background:
+    radial-gradient(circle at 10% 0%,rgba(85,190,255,.16),transparent 28%),
+    radial-gradient(circle at 92% 8%,rgba(112,225,190,.13),transparent 26%),
+    linear-gradient(180deg,#f7fcff 0%,#eef8ff 48%,#f9fcff 100%)!important;
+  color:#153a59!important;
+}
+html[data-rdm-theme="light"] .top{
+  background:rgba(249,253,255,.94)!important;
+  border-bottom:1px solid #d5e8f3!important;
+  box-shadow:0 8px 24px rgba(54,111,151,.08)!important;
+}
+html[data-rdm-theme="light"] .nav{
+  background:rgba(242,250,255,.96)!important;
+  border-bottom:1px solid #d7e9f4!important;
+}
+html[data-rdm-theme="light"] .nav button{
+  background:linear-gradient(135deg,#ffffff,#eef8ff)!important;
+  color:#365f7d!important;
+  -webkit-text-fill-color:#365f7d!important;
+  border:1px solid #d3e7f2!important;
+}
+html[data-rdm-theme="light"] .nav button.active{
+  background:linear-gradient(135deg,#247eea,#37bfe8)!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  border-color:transparent!important;
+}
+html[data-rdm-theme="light"] .hero{
+  background:
+    radial-gradient(circle at 90% 10%,rgba(58,187,238,.18),transparent 36%),
+    radial-gradient(circle at 10% 95%,rgba(74,211,163,.11),transparent 33%),
+    linear-gradient(145deg,#ffffff,#eef9ff)!important;
+  border-color:#cfe5f1!important;
+  box-shadow:0 20px 45px rgba(53,112,151,.10)!important;
+}
+html[data-rdm-theme="light"] :is(
+  .card,.player,.miniMatch,.recordCard,.leaderCard,.tournamentCard,.socialCard,.honour,
+  .gallery figure,.galleryCard,.profileCard,.leadCard,.statCard,.homeLeadership,.updateCard,
+  .lineupCard,.availabilityRow,.v62Help,.list>article,.honours>article,.socialGrid>article
+){
+  background:linear-gradient(145deg,#ffffff 0%,#f1f9ff 100%)!important;
+  color:#173c5d!important;
+  border-color:#cfe4f0!important;
+  box-shadow:0 14px 32px rgba(45,104,145,.09)!important;
+}
+html[data-rdm-theme="light"] :is(.profileIdentity,.profileOfficial,.profileEditMenu,.profileEditRow,.statNums b,.scoreLine b,.xiGrid span,.matchDetails>div,.albumFilters,#gallery #albumFilters){
+  background:linear-gradient(145deg,#f8fcff,#edf8ff)!important;
+  color:#234e6d!important;
+  border-color:#d3e8f2!important;
+}
+html[data-rdm-theme="light"] :is(.sectionHead h2,.leadTitle h2,.page h1,.page h2,.page h3,.page h4,.pbody h3,.card h3,.profileCard h2,.recordCard h3,.leaderCard h3,.updateCard h3,.miniMatch h3){
+  color:#173d60!important;
+  -webkit-text-fill-color:#173d60!important;
+}
+html[data-rdm-theme="light"] :is(.pbody p,.card p,.sectionHead p,.gallery figcaption,.profileBio,.profileNick,.statCard p,.v62Note,.v62Help,.mutedMini,.miniMatch p,.updateCard p){
+  color:#58758b!important;
+  -webkit-text-fill-color:#58758b!important;
+}
+html[data-rdm-theme="light"] .secondary,
+html[data-rdm-theme="light"] .tinyBtn,
+html[data-rdm-theme="light"] .profileEditRow,
+html[data-rdm-theme="light"] .recordTypeBtn{
+  background:linear-gradient(135deg,#ffffff,#edf8ff)!important;
+  color:#245b83!important;
+  -webkit-text-fill-color:#245b83!important;
+  border-color:#c7e0ee!important;
+}
+html[data-rdm-theme="light"] .primary,
+html[data-rdm-theme="light"] .profileEditMain,
+html[data-rdm-theme="light"] .profileDownloadMain,
+html[data-rdm-theme="light"] .shareProfileBtn{
+  background:linear-gradient(135deg,#247eea,#37bfe8)!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  border-color:transparent!important;
+}
+html[data-rdm-theme="light"] .dialog,
+html[data-rdm-theme="light"] .publicDialog,
+html[data-rdm-theme="light"] .rdmUnifiedDialog,
+html[data-rdm-theme="light"] .profileEditDialog,
+html[data-rdm-theme="light"] .profileDownloadDialog,
+html[data-rdm-theme="light"] .rdmConfirmDialog{
+  background:linear-gradient(155deg,#ffffff,#eef9ff)!important;
+  color:#173d60!important;
+  border-color:#c7e1ef!important;
+  box-shadow:0 26px 75px rgba(43,100,142,.20)!important;
+}
+html[data-rdm-theme="light"] input,
+html[data-rdm-theme="light"] textarea,
+html[data-rdm-theme="light"] select{
+  background:#fff!important;
+  color:#173d60!important;
+  -webkit-text-fill-color:#173d60!important;
+  border-color:#c9e1ed!important;
+}
+html[data-rdm-theme="light"] footer{
+  background:rgba(246,252,255,.92)!important;
+  color:#607d91!important;
+  border-top-color:#d6e9f3!important;
+}
+
+/* ---------- DARK MODE ---------- */
+html[data-rdm-theme="dark"] body{
+  background:
+    radial-gradient(circle at 8% 0%,rgba(29,135,188,.20),transparent 28%),
+    radial-gradient(circle at 94% 9%,rgba(25,157,125,.16),transparent 26%),
+    linear-gradient(180deg,#081621 0%,#0b1d2a 46%,#0b2130 100%)!important;
+  color:#f1f9fd!important;
+}
+html[data-rdm-theme="dark"] .top{
+  background:rgba(9,27,40,.95)!important;
+  border-bottom:1px solid #24485b!important;
+  box-shadow:0 8px 28px rgba(0,0,0,.24)!important;
+}
+html[data-rdm-theme="dark"] .nav{
+  background:rgba(10,31,45,.97)!important;
+  border-bottom:1px solid #24485b!important;
+}
+html[data-rdm-theme="dark"] .nav button{
+  background:linear-gradient(135deg,#143447,#173d50)!important;
+  color:#d8eaf3!important;
+  -webkit-text-fill-color:#d8eaf3!important;
+  border:1px solid #31576a!important;
+}
+html[data-rdm-theme="dark"] .nav button.active{
+  background:linear-gradient(135deg,#1977c9,#169f9a)!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  border-color:#4ab4c1!important;
+}
+html[data-rdm-theme="dark"] .hero{
+  background:
+    radial-gradient(circle at 88% 8%,rgba(26,153,202,.17),transparent 37%),
+    radial-gradient(circle at 10% 95%,rgba(24,158,126,.13),transparent 35%),
+    linear-gradient(145deg,#102b3c,#0c2130)!important;
+  border-color:#2c5367!important;
+  box-shadow:0 20px 48px rgba(0,0,0,.24)!important;
+}
+html[data-rdm-theme="dark"] :is(
+  .card,.player,.miniMatch,.recordCard,.leaderCard,.tournamentCard,.socialCard,.honour,
+  .gallery figure,.galleryCard,.profileCard,.leadCard,.statCard,.homeLeadership,.updateCard,
+  .lineupCard,.availabilityRow,.v62Help,.list>article,.honours>article,.socialGrid>article,
+  #news .card,#updates .card,#lineupList .card
+){
+  background:linear-gradient(145deg,#133246 0%,#102a3b 100%)!important;
+  color:#f2f9fd!important;
+  border-color:#31586c!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.22)!important;
+}
+html[data-rdm-theme="dark"] :is(.profileIdentity,.profileOfficial,.profileEditMenu,.profileEditRow,.statNums b,.scoreLine b,.xiGrid span,.matchDetails>div,.albumFilters,#gallery #albumFilters){
+  background:linear-gradient(145deg,#173a4e,#123145)!important;
+  color:#eaf6fb!important;
+  border-color:#376176!important;
+}
+html[data-rdm-theme="dark"] :is(
+  .sectionHead h2,.leadTitle h2,.page h1,.page h2,.page h3,.page h4,.pbody h3,.card h3,
+  .profileCard h2,.recordCard h3,.leaderCard h3,.updateCard h3,.miniMatch h3,.dialog h2,.rdmUnifiedDialog h2,
+  .brand b,footer b
+){
+  color:#f4fbff!important;
+  -webkit-text-fill-color:#f4fbff!important;
+}
+html[data-rdm-theme="dark"] :is(
+  .pbody p,.card p,.sectionHead p,.gallery figcaption,.profileBio,.profileNick,.statCard p,.v62Note,
+  .v62Help,.mutedMini,.miniMatch p,.updateCard p,.dialog label,.rdmUnifiedFields label,.brand small,footer
+){
+  color:#b9d1de!important;
+  -webkit-text-fill-color:#b9d1de!important;
+}
+html[data-rdm-theme="dark"] :is(.identityItem strong,.profileOfficial,.profileOfficial b,.statNums b,.scoreLine b,.xiGrid span,.matchDetails>div,.availabilityRow,.availabilityRow span,.availabilityRow b,.recordValue,.metrics strong){
+  color:#f0f9fd!important;
+  -webkit-text-fill-color:#f0f9fd!important;
+}
+html[data-rdm-theme="dark"] :is(.identityItem span,.statNums small,.metrics span){
+  color:#aac5d4!important;
+  -webkit-text-fill-color:#aac5d4!important;
+}
+html[data-rdm-theme="dark"] .secondary,
+html[data-rdm-theme="dark"] .tinyBtn,
+html[data-rdm-theme="dark"] .profileEditRow,
+html[data-rdm-theme="dark"] .recordTypeBtn{
+  background:linear-gradient(135deg,#173d52,#153549)!important;
+  color:#e6f5fb!important;
+  -webkit-text-fill-color:#e6f5fb!important;
+  border-color:#3b6578!important;
+}
+html[data-rdm-theme="dark"] .primary,
+html[data-rdm-theme="dark"] .profileEditMain,
+html[data-rdm-theme="dark"] .profileDownloadMain,
+html[data-rdm-theme="dark"] .shareProfileBtn{
+  background:linear-gradient(135deg,#1977c9,#159f98)!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  border-color:#50b8bd!important;
+}
+html[data-rdm-theme="dark"] .dialog,
+html[data-rdm-theme="dark"] .publicDialog,
+html[data-rdm-theme="dark"] .rdmUnifiedDialog,
+html[data-rdm-theme="dark"] .profileEditDialog,
+html[data-rdm-theme="dark"] .profileDownloadDialog,
+html[data-rdm-theme="dark"] .rdmConfirmDialog{
+  background:linear-gradient(155deg,#123247,#0d2636)!important;
+  color:#f1f9fd!important;
+  border-color:#3a6579!important;
+  box-shadow:0 28px 80px rgba(0,0,0,.42)!important;
+}
+html[data-rdm-theme="dark"] input,
+html[data-rdm-theme="dark"] textarea,
+html[data-rdm-theme="dark"] select{
+  background:#102c3e!important;
+  color:#f0f8fc!important;
+  -webkit-text-fill-color:#f0f8fc!important;
+  border-color:#3b6275!important;
+}
+html[data-rdm-theme="dark"] input::placeholder,
+html[data-rdm-theme="dark"] textarea::placeholder{
+  color:#8fb0c1!important;
+  -webkit-text-fill-color:#8fb0c1!important;
+}
+html[data-rdm-theme="dark"] select option{background:#102c3e!important;color:#f0f8fc!important}
+html[data-rdm-theme="dark"] .close{
+  background:#1a4359!important;
+  color:#f0fbff!important;
+  -webkit-text-fill-color:#f0fbff!important;
+  border-color:#4d778a!important;
+}
+html[data-rdm-theme="dark"] footer{
+  background:rgba(9,29,42,.94)!important;
+  color:#adc8d6!important;
+  border-top-color:#294e61!important;
+}
+
+/* Premium theme picker: compact, readable in both modes. */
+.themeMenu{
+  border-radius:18px!important;
+  padding:7px!important;
+  box-shadow:0 18px 44px rgba(26,78,112,.18)!important;
+}
+html[data-rdm-theme="light"] .themeMenu{
+  background:rgba(250,253,255,.98)!important;
+  border-color:#cde4ef!important;
+}
+html[data-rdm-theme="light"] .themeMenu button{color:#315f7c!important;-webkit-text-fill-color:#315f7c!important}
+html[data-rdm-theme="light"] .themeMenu button.active{background:linear-gradient(135deg,#247eea,#37bfe8)!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+html[data-rdm-theme="dark"] .themeMenu{
+  background:rgba(13,40,55,.98)!important;
+  border-color:#3a6478!important;
+}
+html[data-rdm-theme="dark"] .themeMenu button{color:#cbe0ea!important;-webkit-text-fill-color:#cbe0ea!important}
+html[data-rdm-theme="dark"] .themeMenu button.active{background:linear-gradient(135deg,#1977c9,#159f98)!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+
+
+/* =========================================================
+   V6.8.49 — RDM PREMIUM CHAMPIONSHIP THEME
+   Clean sports-club palette. Removes stray decorative blobs.
+   ========================================================= */
+
+/* Remove decorative pseudo-elements/blobs that can protrude in wide mode */
+.hero::before,.hero::after,
+.heroCard::before,.heroCard::after,
+.homeHero::before,.homeHero::after,
+.heroWrap::before,.heroWrap::after,
+body::before,body::after,
+main::before,main::after{
+  content:none!important;
+  display:none!important;
+}
+
+/* LIGHT — Championship Ice */
+:root,
+html[data-theme="light"],
+body[data-theme="light"]{
+  --rdm-bg:#f4f8fc;
+  --rdm-bg2:#eef6fb;
+  --rdm-surface:#ffffff;
+  --rdm-surface2:#f7fbfe;
+  --rdm-ink:#0b2945;
+  --rdm-muted:#526b80;
+  --rdm-line:#d7e4ed;
+  --rdm-blue:#1167a8;
+  --rdm-cyan:#20a9c7;
+  --rdm-gold:#c89a32;
+  --rdm-shadow:0 12px 34px rgba(24,73,105,.09);
+}
+
+/* Keep the light canvas calm and premium instead of pastel blobs */
+html[data-theme="light"] body,
+body[data-theme="light"]{
+  background:linear-gradient(180deg,#f8fbfd 0%,#eef7fb 52%,#f8fafc 100%)!important;
+  color:var(--rdm-ink)!important;
+}
+html[data-theme="light"] .card,
+html[data-theme="light"] .panel,
+html[data-theme="light"] .profileCard,
+html[data-theme="light"] .playerCard,
+html[data-theme="light"] .statCard,
+html[data-theme="light"] .recordCard,
+html[data-theme="light"] .socialCard,
+html[data-theme="light"] .matchCard,
+html[data-theme="light"] .updateCard,
+html[data-theme="light"] .newsCard,
+body[data-theme="light"] .card,
+body[data-theme="light"] .panel,
+body[data-theme="light"] .profileCard,
+body[data-theme="light"] .playerCard,
+body[data-theme="light"] .statCard,
+body[data-theme="light"] .recordCard,
+body[data-theme="light"] .socialCard,
+body[data-theme="light"] .matchCard,
+body[data-theme="light"] .updateCard,
+body[data-theme="light"] .newsCard{
+  background:linear-gradient(145deg,#ffffff,#f7fbfe)!important;
+  color:var(--rdm-ink)!important;
+  border-color:var(--rdm-line)!important;
+  box-shadow:var(--rdm-shadow)!important;
+}
+
+/* DARK — Midnight Stadium */
+html[data-theme="dark"],
+body[data-theme="dark"]{
+  --rdm-bg:#071522;
+  --rdm-bg2:#0b2031;
+  --rdm-surface:#102a3d;
+  --rdm-surface2:#133247;
+  --rdm-ink:#eef7fb;
+  --rdm-muted:#abc1d1;
+  --rdm-line:rgba(143,195,220,.18);
+  --rdm-blue:#5db7e8;
+  --rdm-cyan:#59d3dc;
+  --rdm-gold:#e0b75a;
+  --rdm-shadow:0 14px 34px rgba(0,0,0,.22);
+}
+html[data-theme="dark"] body,
+body[data-theme="dark"]{
+  background:linear-gradient(180deg,#071522 0%,#0a1d2b 48%,#071522 100%)!important;
+  color:var(--rdm-ink)!important;
+}
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .panel,
+html[data-theme="dark"] .profileCard,
+html[data-theme="dark"] .playerCard,
+html[data-theme="dark"] .statCard,
+html[data-theme="dark"] .recordCard,
+html[data-theme="dark"] .socialCard,
+html[data-theme="dark"] .matchCard,
+html[data-theme="dark"] .updateCard,
+html[data-theme="dark"] .newsCard,
+body[data-theme="dark"] .card,
+body[data-theme="dark"] .panel,
+body[data-theme="dark"] .profileCard,
+body[data-theme="dark"] .playerCard,
+body[data-theme="dark"] .statCard,
+body[data-theme="dark"] .recordCard,
+body[data-theme="dark"] .socialCard,
+body[data-theme="dark"] .matchCard,
+body[data-theme="dark"] .updateCard,
+body[data-theme="dark"] .newsCard{
+  background:linear-gradient(145deg,#102a3d,#0c2334)!important;
+  color:var(--rdm-ink)!important;
+  border-color:var(--rdm-line)!important;
+  box-shadow:var(--rdm-shadow)!important;
+}
+
+/* Reliable readable typography */
+html[data-theme="light"] h1,html[data-theme="light"] h2,html[data-theme="light"] h3,
+html[data-theme="light"] h4,html[data-theme="light"] .title,
+body[data-theme="light"] h1,body[data-theme="light"] h2,body[data-theme="light"] h3,
+body[data-theme="light"] h4,body[data-theme="light"] .title{
+  color:#0b3d66!important;
+}
+html[data-theme="dark"] h1,html[data-theme="dark"] h2,html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,html[data-theme="dark"] .title,
+body[data-theme="dark"] h1,body[data-theme="dark"] h2,body[data-theme="dark"] h3,
+body[data-theme="dark"] h4,body[data-theme="dark"] .title{
+  color:#f1f8fc!important;
+}
+html[data-theme="dark"] p,html[data-theme="dark"] .muted,html[data-theme="dark"] small,
+body[data-theme="dark"] p,body[data-theme="dark"] .muted,body[data-theme="dark"] small{
+  color:#b6c9d6!important;
+}
+
+/* Premium pill buttons: compact, athletic, consistent */
+.primary,.profileEditMain,.socialAction,.homeUpdateOpen,
+button.primary{
+  background:linear-gradient(135deg,#126bb0,#25b5cf)!important;
+  color:#fff!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:0 7px 18px rgba(18,107,176,.18)!important;
+}
+.secondary,.tinyBtn,.switchBtn,.viewProfileBtn,.albumTab,.recordTypeBtn{
+  border-radius:999px!important;
+}
+html[data-theme="light"] .secondary,
+html[data-theme="light"] .tinyBtn,
+html[data-theme="light"] .switchBtn,
+html[data-theme="light"] .viewProfileBtn,
+body[data-theme="light"] .secondary,
+body[data-theme="light"] .tinyBtn,
+body[data-theme="light"] .switchBtn,
+body[data-theme="light"] .viewProfileBtn{
+  background:#f8fbfd!important;
+  color:#174c72!important;
+  border-color:#cfe0ea!important;
+}
+html[data-theme="dark"] .secondary,
+html[data-theme="dark"] .tinyBtn,
+html[data-theme="dark"] .switchBtn,
+html[data-theme="dark"] .viewProfileBtn,
+body[data-theme="dark"] .secondary,
+body[data-theme="dark"] .tinyBtn,
+body[data-theme="dark"] .switchBtn,
+body[data-theme="dark"] .viewProfileBtn{
+  background:#132f43!important;
+  color:#e8f5fb!important;
+  border-color:rgba(126,190,220,.25)!important;
+}
+
+/* Gold only for premium highlights — not large surfaces */
+.leadershipBadge,.pinnedLabel,.sectionEyebrow{
+  color:var(--rdm-gold)!important;
+}
+
+/* Theme icon stays clean */
+#themeToggle,.themeToggle{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
