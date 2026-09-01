@@ -1261,3 +1261,1122 @@ footer{
   flex:0 0 auto!important;
   margin-top:auto!important;
 }
+
+/* V6.8.35 — AUTO / LIGHT / DARK theme selector */
+html{color-scheme:light}
+.themeControl{position:relative;display:flex;align-items:center;justify-content:center;flex:0 0 auto;z-index:80}
+.themeToggle{
+  width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important;
+  padding:0!important;margin:0!important;border:0!important;border-radius:50%!important;
+  display:grid!important;place-items:center!important;background:transparent!important;box-shadow:none!important;
+  color:#1d628e!important;-webkit-text-fill-color:#1d628e!important;font-size:20px!important;font-weight:900!important;
+  line-height:1!important;cursor:pointer!important;transition:transform .18s ease,color .18s ease!important;
+}
+.themeToggle:hover,.themeToggle:focus,.themeToggle:active{background:transparent!important;box-shadow:none!important;color:#158bc3!important;-webkit-text-fill-color:#158bc3!important;transform:scale(1.08)!important}
+.themeMenu{
+  position:absolute;right:0;top:calc(100% + 10px);width:132px;padding:7px;display:grid;gap:5px;
+  border:1px solid #bddfeb;border-radius:16px;background:rgba(250,254,255,.98);backdrop-filter:blur(18px);
+  box-shadow:0 14px 36px rgba(42,104,145,.18);z-index:9999;
+}
+.themeMenu[hidden]{display:none!important}
+.themeMenu button{
+  min-height:36px;padding:8px 10px;border:1px solid transparent;border-radius:11px;background:transparent;
+  color:#315d7c;font-size:9px;font-weight:900;letter-spacing:.08em;text-align:left;cursor:pointer;
+}
+.themeMenu button:hover{background:#edf8ff;border-color:#d1e9f4}
+.themeMenu button.active{background:linear-gradient(135deg,#e8f7ff,#effff7);border-color:#9ed8e8;color:#155d89;box-shadow:inset 3px 0 #35bdd8}
+
+/* Space-management: theme icon stays tiny beside account controls. */
+.headActions{position:relative!important;gap:6px!important;flex:0 0 auto!important}
+@media(max-width:600px){
+  .themeToggle{width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;font-size:18px!important}
+  .themeMenu{right:-4px;top:calc(100% + 9px);width:124px!important}
+  .headActions{gap:3px!important}
+  .top{padding-left:12px!important;padding-right:12px!important}
+  .brand{gap:8px!important;min-width:0!important;flex:1 1 auto!important}
+  .brand b{font-size:9.2px!important;letter-spacing:.9px!important;white-space:nowrap!important}
+  .brand img{flex:0 0 auto!important}
+}
+@media(max-width:390px){
+  .brand b{font-size:8.2px!important;letter-spacing:.65px!important}
+  .themeToggle{width:28px!important;height:28px!important;min-width:28px!important;min-height:28px!important;font-size:17px!important}
+  #loginOpen,#switchBtn{min-width:66px!important;padding-left:7px!important;padding-right:7px!important}
+}
+
+/* DARK: deep navy/teal cricket-night palette — no pure black surfaces. */
+html[data-rdm-theme="dark"]{color-scheme:dark;--rdm-dark-bg:#0f2235;--rdm-dark-card:#17344d;--rdm-dark-card2:#173b45;--rdm-dark-line:#315a72;--rdm-dark-text:#ecf8ff;--rdm-dark-muted:#a7bfd0;--rdm-dark-cyan:#55d6f2;--rdm-dark-gold:#ffd166}
+html[data-rdm-theme="dark"] body{
+  color:var(--rdm-dark-text)!important;
+  background:linear-gradient(145deg,#0f2235 0%,#172b46 36%,#133b43 70%,#182c42 100%)!important;
+}
+html[data-rdm-theme="dark"] body:before{
+  background:radial-gradient(circle at 10% 8%,rgba(67,183,246,.18),transparent 26%),radial-gradient(circle at 90% 16%,rgba(142,108,255,.13),transparent 24%),radial-gradient(circle at 78% 82%,rgba(45,210,157,.14),transparent 28%),radial-gradient(circle at 18% 82%,rgba(255,196,73,.10),transparent 24%)!important;
+}
+html[data-rdm-theme="dark"] body:after{
+  opacity:.22!important;border-color:rgba(90,219,163,.18)!important;
+  background:repeating-linear-gradient(90deg,rgba(52,190,124,.12) 0 54px,rgba(44,139,102,.08) 54px 108px)!important;
+  box-shadow:0 -30px 80px rgba(50,185,127,.07)!important;
+}
+html[data-rdm-theme="dark"] .top,
+html[data-rdm-theme="dark"] .nav,
+html[data-rdm-theme="dark"] header{
+  background:rgba(15,34,53,.94)!important;color:var(--rdm-dark-text)!important;border-color:#294d66!important;box-shadow:0 8px 30px rgba(5,22,38,.28)!important;
+}
+html[data-rdm-theme="dark"] .brand b,
+html[data-rdm-theme="dark"] footer b{color:var(--rdm-dark-text)!important;-webkit-text-fill-color:var(--rdm-dark-text)!important}
+html[data-rdm-theme="dark"] .brand small{color:#9cb8ca!important}
+html[data-rdm-theme="dark"] .nav button{
+  background:#173047!important;color:#b7cbda!important;-webkit-text-fill-color:#b7cbda!important;border-color:#31556c!important;
+}
+html[data-rdm-theme="dark"] .nav button.active,
+html[data-rdm-theme="dark"] .nav .active{
+  background:linear-gradient(135deg,#377de5,#36c9c7)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:transparent!important;box-shadow:0 8px 20px rgba(54,171,213,.20)!important;
+}
+html[data-rdm-theme="dark"] #loginOpen,
+html[data-rdm-theme="dark"] #switchBtn{
+  background:#17374f!important;color:#dff5ff!important;-webkit-text-fill-color:#dff5ff!important;border-color:#39627a!important;box-shadow:none!important;
+}
+html[data-rdm-theme="dark"] .themeToggle{color:#76def3!important;-webkit-text-fill-color:#76def3!important}
+html[data-rdm-theme="dark"] .themeMenu{background:rgba(18,43,62,.98)!important;border-color:#3a657a!important;box-shadow:0 14px 38px rgba(5,20,35,.38)!important}
+html[data-rdm-theme="dark"] .themeMenu button{color:#c5dce9!important;-webkit-text-fill-color:#c5dce9!important}
+html[data-rdm-theme="dark"] .themeMenu button:hover{background:#20435c!important;border-color:#416c82!important}
+html[data-rdm-theme="dark"] .themeMenu button.active{background:linear-gradient(135deg,#214b68,#1d574f)!important;border-color:#4a91a0!important;color:#ecfbff!important;-webkit-text-fill-color:#ecfbff!important;box-shadow:inset 3px 0 #59d8ed!important}
+
+html[data-rdm-theme="dark"] .hero{
+  color:var(--rdm-dark-text)!important;background:linear-gradient(135deg,#173651 0%,#1a4056 45%,#264452 100%)!important;border-color:#37657c!important;box-shadow:0 24px 62px rgba(5,24,42,.34)!important;
+}
+html[data-rdm-theme="dark"] .hero:before{opacity:.30!important}
+html[data-rdm-theme="dark"] .heroTeam,
+html[data-rdm-theme="dark"] .hero h1,
+html[data-rdm-theme="dark"] .hero h1 span,
+html[data-rdm-theme="dark"] .heroPlace,
+html[data-rdm-theme="dark"] .hero p{color:var(--rdm-dark-text)!important;-webkit-text-fill-color:currentColor!important;text-shadow:none!important}
+html[data-rdm-theme="dark"] .heroPlace,
+html[data-rdm-theme="dark"] .hero p{color:#b9cfdd!important}
+html[data-rdm-theme="dark"] .heroLogo{background:#eaf6fb!important;border-color:#d4b35d!important;box-shadow:0 0 0 7px rgba(80,207,230,.08),0 16px 36px rgba(4,22,38,.30)!important}
+
+html[data-rdm-theme="dark"] .sectionHead h2,
+html[data-rdm-theme="dark"] .leadTitle h2,
+html[data-rdm-theme="dark"] .page h2,
+html[data-rdm-theme="dark"] .page h3{color:var(--rdm-dark-text)!important;-webkit-text-fill-color:currentColor!important}
+html[data-rdm-theme="dark"] .sectionHead p,
+html[data-rdm-theme="dark"] .pbody p,
+html[data-rdm-theme="dark"] .card p,
+html[data-rdm-theme="dark"] .gallery figcaption,
+html[data-rdm-theme="dark"] .profileBio,
+html[data-rdm-theme="dark"] .profileNick,
+html[data-rdm-theme="dark"] .statCard p,
+html[data-rdm-theme="dark"] .v62Note,
+html[data-rdm-theme="dark"] .v62Help,
+html[data-rdm-theme="dark"] .mutedMini{color:var(--rdm-dark-muted)!important;-webkit-text-fill-color:currentColor!important}
+html[data-rdm-theme="dark"] .sectionHead span,
+html[data-rdm-theme="dark"] .eyebrow,
+html[data-rdm-theme="dark"] .galleryAlbumName,
+html[data-rdm-theme="dark"] .seasonTag{color:var(--rdm-dark-gold)!important;-webkit-text-fill-color:currentColor!important}
+
+html[data-rdm-theme="dark"] .card,
+html[data-rdm-theme="dark"] .player,
+html[data-rdm-theme="dark"] .miniMatch,
+html[data-rdm-theme="dark"] .recordCard,
+html[data-rdm-theme="dark"] .leaderCard,
+html[data-rdm-theme="dark"] .tournamentCard,
+html[data-rdm-theme="dark"] .socialCard,
+html[data-rdm-theme="dark"] .honour,
+html[data-rdm-theme="dark"] .gallery figure,
+html[data-rdm-theme="dark"] .galleryCard,
+html[data-rdm-theme="dark"] .profileCard,
+html[data-rdm-theme="dark"] .leadCard,
+html[data-rdm-theme="dark"] .statCard,
+html[data-rdm-theme="dark"] .homeLeadership,
+html[data-rdm-theme="dark"] .list>article,
+html[data-rdm-theme="dark"] .honours>article,
+html[data-rdm-theme="dark"] .socialGrid>article,
+html[data-rdm-theme="dark"] #news .card,
+html[data-rdm-theme="dark"] #updates .card,
+html[data-rdm-theme="dark"] .updateCard,
+html[data-rdm-theme="dark"] .lineupCard,
+html[data-rdm-theme="dark"] #lineupList .card,
+html[data-rdm-theme="dark"] .availabilityRow,
+html[data-rdm-theme="dark"] .v62Help{
+  color:var(--rdm-dark-text)!important;background:linear-gradient(145deg,#18364f,#173b45)!important;border-color:#376079!important;box-shadow:0 14px 36px rgba(4,22,38,.26)!important;
+}
+html[data-rdm-theme="dark"] .player:nth-child(4n+1),html[data-rdm-theme="dark"] .recordCard:nth-child(4n+1){background:linear-gradient(145deg,#173a55,#17364b)!important}
+html[data-rdm-theme="dark"] .player:nth-child(4n+2),html[data-rdm-theme="dark"] .recordCard:nth-child(4n+2){background:linear-gradient(145deg,#3a3a4b,#294050)!important}
+html[data-rdm-theme="dark"] .player:nth-child(4n+3),html[data-rdm-theme="dark"] .recordCard:nth-child(4n+3){background:linear-gradient(145deg,#17453f,#173b49)!important}
+html[data-rdm-theme="dark"] .player:nth-child(4n),html[data-rdm-theme="dark"] .recordCard:nth-child(4n){background:linear-gradient(145deg,#343451,#203b50)!important}
+html[data-rdm-theme="dark"] .photo,
+html[data-rdm-theme="dark"] .trophy{background:#173149!important;border-color:#365b72!important}
+html[data-rdm-theme="dark"] .metrics div{
+  background:linear-gradient(145deg,#18364f,#173b45)!important;color:var(--rdm-dark-text)!important;border-color:#365d74!important;box-shadow:0 10px 25px rgba(4,22,38,.20)!important;
+}
+html[data-rdm-theme="dark"] .metrics strong{color:#eefaff!important;-webkit-text-fill-color:#eefaff!important}
+html[data-rdm-theme="dark"] .metrics span{color:#aac3d2!important}
+
+html[data-rdm-theme="dark"] .profileIdentity,
+html[data-rdm-theme="dark"] .profileOfficial,
+html[data-rdm-theme="dark"] .profileEditMenu,
+html[data-rdm-theme="dark"] .profileEditRow,
+html[data-rdm-theme="dark"] .statNums b,
+html[data-rdm-theme="dark"] .scoreLine b,
+html[data-rdm-theme="dark"] .xiGrid span,
+html[data-rdm-theme="dark"] .matchDetails>div,
+html[data-rdm-theme="dark"] .albumFilters,
+html[data-rdm-theme="dark"] #gallery #albumFilters{
+  background:linear-gradient(145deg,#193950,#193d48)!important;color:var(--rdm-dark-text)!important;border-color:#3b6278!important;box-shadow:none!important;
+}
+html[data-rdm-theme="dark"] .identityItem strong,
+html[data-rdm-theme="dark"] .profileOfficial,
+html[data-rdm-theme="dark"] .profileOfficial b,
+html[data-rdm-theme="dark"] .statNums b,
+html[data-rdm-theme="dark"] .scoreLine b,
+html[data-rdm-theme="dark"] .xiGrid span,
+html[data-rdm-theme="dark"] .matchDetails>div,
+html[data-rdm-theme="dark"] .availabilityRow,
+html[data-rdm-theme="dark"] .availabilityRow span,
+html[data-rdm-theme="dark"] .availabilityRow b,
+html[data-rdm-theme="dark"] .recordValue{color:var(--rdm-dark-text)!important;-webkit-text-fill-color:currentColor!important}
+html[data-rdm-theme="dark"] .identityItem span,
+html[data-rdm-theme="dark"] .statNums small{color:#a9c0ce!important}
+html[data-rdm-theme="dark"] .identityDivider{background:#66879a!important}
+html[data-rdm-theme="dark"] .albumFilters .albumTab{background:#19384e!important;color:#bdd2df!important;border-color:#3b6278!important}
+html[data-rdm-theme="dark"] .albumFilters .albumTab.on{background:linear-gradient(135deg,#377de5,#36c9c7)!important;color:#fff!important;border-color:transparent!important}
+
+html[data-rdm-theme="dark"] .secondary,
+html[data-rdm-theme="dark"] .tinyBtn,
+html[data-rdm-theme="dark"] .profileEditRow,
+html[data-rdm-theme="dark"] .recordTypeBtn{
+  background:#1a3b53!important;color:#d9eff9!important;-webkit-text-fill-color:#d9eff9!important;border-color:#41677c!important;box-shadow:none!important;
+}
+html[data-rdm-theme="dark"] .secondary:hover,
+html[data-rdm-theme="dark"] .tinyBtn:hover,
+html[data-rdm-theme="dark"] .profileEditRow:hover{background:#214860!important;border-color:#5791a7!important}
+html[data-rdm-theme="dark"] .primary{background:linear-gradient(135deg,#397fe9,#38c4d6)!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+html[data-rdm-theme="dark"] .profileDownloadMain,
+html[data-rdm-theme="dark"] .shareProfileBtn{
+  background:linear-gradient(135deg,#dff5ff,#e8fff5)!important;color:#194e70!important;-webkit-text-fill-color:#194e70!important;border-color:#8fc9d8!important;
+}
+
+html[data-rdm-theme="dark"] .modal{background:rgba(8,23,38,.76)!important}
+html[data-rdm-theme="dark"] .dialog,
+html[data-rdm-theme="dark"] .publicDialog,
+html[data-rdm-theme="dark"] .rdmUnifiedDialog,
+html[data-rdm-theme="dark"] .profileEditDialog,
+html[data-rdm-theme="dark"] .profileDownloadDialog,
+html[data-rdm-theme="dark"] .rdmConfirmDialog{
+  background:linear-gradient(155deg,#18364e,#163945)!important;color:var(--rdm-dark-text)!important;border-color:#447087!important;box-shadow:0 26px 70px rgba(4,18,32,.42)!important;
+}
+html[data-rdm-theme="dark"] .dialog h2,
+html[data-rdm-theme="dark"] .rdmUnifiedDialog h2{color:#eefaff!important;-webkit-text-fill-color:#eefaff!important}
+html[data-rdm-theme="dark"] .dialog label,
+html[data-rdm-theme="dark"] .rdmUnifiedFields label{color:#b6ccda!important}
+html[data-rdm-theme="dark"] .dialog input,
+html[data-rdm-theme="dark"] .dialog textarea,
+html[data-rdm-theme="dark"] .dialog select,
+html[data-rdm-theme="dark"] input,
+html[data-rdm-theme="dark"] textarea,
+html[data-rdm-theme="dark"] select{
+  background:#132f46!important;color:#edf9ff!important;-webkit-text-fill-color:#edf9ff!important;border-color:#476d82!important;
+}
+html[data-rdm-theme="dark"] .dialog option,
+html[data-rdm-theme="dark"] select option{background:#17344d!important;color:#edf9ff!important}
+html[data-rdm-theme="dark"] .close{background:#1e4258!important;color:#dff7ff!important;-webkit-text-fill-color:#dff7ff!important;border-color:#4d7890!important}
+html[data-rdm-theme="dark"] #loginModal .eyeBtn,
+html[data-rdm-theme="dark"] #loginModal #togglePassword{background:transparent!important;color:#8ee5f2!important;-webkit-text-fill-color:initial!important}
+
+html[data-rdm-theme="dark"] .empty{color:#aec4d1!important;border-color:#45677a!important;background:rgba(23,53,74,.32)!important}
+html[data-rdm-theme="dark"] .noticeBanner,
+html[data-rdm-theme="dark"] .posterPreview{background:linear-gradient(145deg,#1a3b52,#1b4148)!important;color:#e8f7ff!important;border-color:#416d83!important}
+html[data-rdm-theme="dark"] .noticeBanner *,
+html[data-rdm-theme="dark"] .posterPreview *{color:#e8f7ff!important;-webkit-text-fill-color:currentColor!important}
+html[data-rdm-theme="dark"] #home .miniMatch,
+html[data-rdm-theme="dark"] #home .miniMatch h3,
+html[data-rdm-theme="dark"] #home .miniMatch b,
+html[data-rdm-theme="dark"] #home .miniMatch strong,
+html[data-rdm-theme="dark"] #home .miniMatch p,
+html[data-rdm-theme="dark"] #home .miniMatch small,
+html[data-rdm-theme="dark"] #home .miniMatch .countdown,
+html[data-rdm-theme="dark"] #homeNextMatch{color:#eefaff!important;-webkit-text-fill-color:#eefaff!important}
+html[data-rdm-theme="dark"] #updates .updateCard h3{color:#eefaff!important}
+html[data-rdm-theme="dark"] #updates .updateCard p{color:#b6ccda!important}
+html[data-rdm-theme="dark"] #updates .updateEditBtn{background:#1c4964!important;color:#bdefff!important;-webkit-text-fill-color:#bdefff!important;border-color:#4c8096!important}
+html[data-rdm-theme="dark"] #updates .updatePinBtn{background:#4a4025!important;color:#ffe49a!important;-webkit-text-fill-color:#ffe49a!important;border-color:#7d6c37!important}
+html[data-rdm-theme="dark"] #updates .updateDeleteBtn{background:#4a2d38!important;color:#ffc4cf!important;-webkit-text-fill-color:#ffc4cf!important;border-color:#795061!important}
+html[data-rdm-theme="dark"] footer{background:rgba(15,34,53,.92)!important;color:#a8c1d0!important;border-top-color:#345a70!important}
+html[data-rdm-theme="dark"] #toast{background:#dff6ff!important;color:#153e5b!important}
+
+/* Explicit LIGHT mode remains the current colourful premium design, regardless of phone theme. */
+html[data-rdm-theme="light"]{color-scheme:light}
+
+/* V6.8.36 — complete LIGHT/DARK contrast pass + premium theme control */
+:root{
+  --rdm-light-text:#173b63;
+  --rdm-light-muted:#5f7c91;
+  --rdm-light-soft:#edf8ff;
+  --rdm-night-bg:#0b1c2c;
+  --rdm-night-bg2:#102a3f;
+  --rdm-night-card:#15344a;
+  --rdm-night-card2:#173d43;
+  --rdm-night-line:#345f76;
+  --rdm-night-text:#f2fbff;
+  --rdm-night-muted:#b6cedc;
+}
+
+/* Premium compact theme control — stays small in the header. */
+.themeToggle{
+  width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important;
+  border-radius:50%!important;
+  border:1px solid rgba(89,174,214,.34)!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(228,247,255,.52))!important;
+  box-shadow:0 5px 15px rgba(42,111,153,.12),inset 0 1px rgba(255,255,255,.9)!important;
+  backdrop-filter:blur(10px)!important;
+  color:#176a98!important;-webkit-text-fill-color:#176a98!important;
+  font-size:18px!important;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease!important;
+}
+.themeToggle:hover,.themeToggle:focus-visible{
+  transform:translateY(-1px) scale(1.04)!important;
+  border-color:rgba(42,174,212,.58)!important;
+  box-shadow:0 7px 18px rgba(38,127,172,.18),0 0 0 3px rgba(62,191,223,.10)!important;
+}
+.themeMenu{
+  width:140px!important;padding:8px!important;border-radius:18px!important;
+  border:1px solid rgba(101,177,211,.35)!important;
+  background:rgba(250,254,255,.96)!important;
+  box-shadow:0 16px 42px rgba(38,100,141,.20)!important;
+}
+.themeMenu button{border-radius:12px!important;min-height:38px!important;padding:9px 10px!important}
+.themeMenu button.active{background:linear-gradient(135deg,#e7f6ff,#e9fff5)!important;color:#155d89!important;-webkit-text-fill-color:#155d89!important;border-color:#9fd7e7!important}
+
+/* LIGHT — every light/pastel surface uses dark readable text. */
+html[data-rdm-theme="light"] body{color:var(--rdm-light-text)!important}
+html[data-rdm-theme="light"] .top,
+html[data-rdm-theme="light"] .nav,
+html[data-rdm-theme="light"] footer,
+html[data-rdm-theme="light"] .page,
+html[data-rdm-theme="light"] .card,
+html[data-rdm-theme="light"] .player,
+html[data-rdm-theme="light"] .recordCard,
+html[data-rdm-theme="light"] .leaderCard,
+html[data-rdm-theme="light"] .tournamentCard,
+html[data-rdm-theme="light"] .socialCard,
+html[data-rdm-theme="light"] .honour,
+html[data-rdm-theme="light"] .galleryCard,
+html[data-rdm-theme="light"] .gallery figure,
+html[data-rdm-theme="light"] .profileCard,
+html[data-rdm-theme="light"] .statCard,
+html[data-rdm-theme="light"] .miniMatch,
+html[data-rdm-theme="light"] .availabilityRow,
+html[data-rdm-theme="light"] .updateCard,
+html[data-rdm-theme="light"] .lineupCard,
+html[data-rdm-theme="light"] .dialog{
+  color:var(--rdm-light-text)!important;
+}
+html[data-rdm-theme="light"] :is(.sectionHead h2,.leadTitle h2,.page h2,.page h3,.pbody h3,.card h3,.profileCard h2,.recordCard h3,.leaderCard h3,.updateCard h3,.miniMatch h3){
+  color:#174c80!important;-webkit-text-fill-color:#174c80!important;
+}
+html[data-rdm-theme="light"] :is(.pbody p,.card p,.sectionHead p,.gallery figcaption,.profileBio,.profileNick,.statCard p,.v62Note,.v62Help,.mutedMini,.miniMatch p,.updateCard p){
+  color:var(--rdm-light-muted)!important;-webkit-text-fill-color:var(--rdm-light-muted)!important;
+}
+html[data-rdm-theme="light"] :is(.identityItem strong,.profileOfficial,.profileOfficial b,.statNums b,.scoreLine b,.xiGrid span,.matchDetails>div,.availabilityRow,.availabilityRow span,.availabilityRow b,.recordValue){
+  color:#204d70!important;-webkit-text-fill-color:#204d70!important;
+}
+html[data-rdm-theme="light"] :is(.identityItem span,.statNums small,.metrics span){color:#607d91!important;-webkit-text-fill-color:#607d91!important}
+html[data-rdm-theme="light"] .empty{color:#60798e!important;-webkit-text-fill-color:#60798e!important}
+html[data-rdm-theme="light"] .noticeBanner *,
+html[data-rdm-theme="light"] .posterPreview *{color:#244d6b!important;-webkit-text-fill-color:#244d6b!important}
+html[data-rdm-theme="light"] .primary,
+html[data-rdm-theme="light"] .nav button.active,
+html[data-rdm-theme="light"] .badge,
+html[data-rdm-theme="light"] .leadershipBadge{color:#fff!important;-webkit-text-fill-color:#fff!important}
+html[data-rdm-theme="light"] input,
+html[data-rdm-theme="light"] textarea,
+html[data-rdm-theme="light"] select{color:#173b63!important;-webkit-text-fill-color:#173b63!important;background:#fff!important}
+
+/* DARK — full website uses dark navy/teal surfaces and light text. */
+html[data-rdm-theme="dark"]{color-scheme:dark}
+html[data-rdm-theme="dark"] body{
+  color:var(--rdm-night-text)!important;
+  background:linear-gradient(145deg,var(--rdm-night-bg) 0%,#10273b 36%,#11383d 72%,#12283b 100%)!important;
+}
+html[data-rdm-theme="dark"] main,
+html[data-rdm-theme="dark"] .page{color:var(--rdm-night-text)!important}
+html[data-rdm-theme="dark"] .top,
+html[data-rdm-theme="dark"] .nav,
+html[data-rdm-theme="dark"] footer{
+  background:rgba(11,28,44,.95)!important;
+  color:var(--rdm-night-text)!important;
+  border-color:#294d64!important;
+}
+html[data-rdm-theme="dark"] .brand b,
+html[data-rdm-theme="dark"] footer b{color:var(--rdm-night-text)!important;-webkit-text-fill-color:var(--rdm-night-text)!important}
+html[data-rdm-theme="dark"] .brand small,
+html[data-rdm-theme="dark"] footer{color:#a9c3d3!important}
+html[data-rdm-theme="dark"] .themeToggle{
+  color:#91e8f4!important;-webkit-text-fill-color:#91e8f4!important;
+  background:linear-gradient(145deg,rgba(29,66,88,.72),rgba(20,52,70,.64))!important;
+  border-color:rgba(105,215,235,.34)!important;
+  box-shadow:0 6px 18px rgba(0,12,24,.30),inset 0 1px rgba(178,237,247,.10)!important;
+}
+html[data-rdm-theme="dark"] .themeMenu{background:rgba(18,43,62,.98)!important;border-color:#3a657a!important}
+html[data-rdm-theme="dark"] .themeMenu button{color:#c9e0eb!important;-webkit-text-fill-color:#c9e0eb!important}
+html[data-rdm-theme="dark"] .themeMenu button.active{background:linear-gradient(135deg,#234d67,#1c5a50)!important;color:#f2fbff!important;-webkit-text-fill-color:#f2fbff!important;border-color:#4f8d9b!important}
+
+html[data-rdm-theme="dark"] :is(.card,.player,.miniMatch,.recordCard,.leaderCard,.tournamentCard,.socialCard,.honour,.gallery figure,.galleryCard,.profileCard,.leadCard,.statCard,.homeLeadership,.list>article,.honours>article,.socialGrid>article,#news .card,#updates .card,.updateCard,.lineupCard,#lineupList .card,.availabilityRow,.v62Help){
+  background:linear-gradient(145deg,var(--rdm-night-card),var(--rdm-night-card2))!important;
+  color:var(--rdm-night-text)!important;
+  border-color:var(--rdm-night-line)!important;
+  box-shadow:0 14px 34px rgba(3,16,29,.26)!important;
+}
+html[data-rdm-theme="dark"] :is(.profileIdentity,.profileOfficial,.profileEditMenu,.profileEditRow,.statNums b,.scoreLine b,.xiGrid span,.matchDetails>div,.albumFilters,#gallery #albumFilters){
+  background:linear-gradient(145deg,#17384e,#173d43)!important;
+  color:var(--rdm-night-text)!important;
+  border-color:#3a657a!important;
+}
+html[data-rdm-theme="dark"] :is(.sectionHead h2,.leadTitle h2,.page h1,.page h2,.page h3,.page h4,.pbody h3,.card h3,.profileCard h2,.recordCard h3,.leaderCard h3,.updateCard h3,.miniMatch h3,.dialog h2,.rdmUnifiedDialog h2){
+  color:var(--rdm-night-text)!important;-webkit-text-fill-color:var(--rdm-night-text)!important;
+}
+html[data-rdm-theme="dark"] :is(.pbody p,.card p,.sectionHead p,.gallery figcaption,.profileBio,.profileNick,.statCard p,.v62Note,.v62Help,.mutedMini,.miniMatch p,.updateCard p,.dialog label,.rdmUnifiedFields label){
+  color:var(--rdm-night-muted)!important;-webkit-text-fill-color:var(--rdm-night-muted)!important;
+}
+html[data-rdm-theme="dark"] :is(.identityItem strong,.profileOfficial,.profileOfficial b,.statNums b,.scoreLine b,.xiGrid span,.matchDetails>div,.availabilityRow,.availabilityRow span,.availabilityRow b,.recordValue,.metrics strong){
+  color:var(--rdm-night-text)!important;-webkit-text-fill-color:var(--rdm-night-text)!important;
+}
+html[data-rdm-theme="dark"] :is(.identityItem span,.statNums small,.metrics span){color:#afc8d6!important;-webkit-text-fill-color:#afc8d6!important}
+html[data-rdm-theme="dark"] .empty{background:rgba(21,52,74,.42)!important;color:#b9cfdb!important;-webkit-text-fill-color:#b9cfdb!important;border-color:#456d82!important}
+html[data-rdm-theme="dark"] .noticeBanner,
+html[data-rdm-theme="dark"] .posterPreview{background:linear-gradient(145deg,#17384e,#194248)!important;border-color:#3f6c82!important}
+html[data-rdm-theme="dark"] .noticeBanner *,
+html[data-rdm-theme="dark"] .posterPreview *{color:var(--rdm-night-text)!important;-webkit-text-fill-color:var(--rdm-night-text)!important}
+html[data-rdm-theme="dark"] input,
+html[data-rdm-theme="dark"] textarea,
+html[data-rdm-theme="dark"] select{
+  background:#102f45!important;color:var(--rdm-night-text)!important;-webkit-text-fill-color:var(--rdm-night-text)!important;border-color:#466f84!important;
+}
+html[data-rdm-theme="dark"] select option{background:#15344a!important;color:var(--rdm-night-text)!important}
+html[data-rdm-theme="dark"] .dialog,
+html[data-rdm-theme="dark"] .publicDialog,
+html[data-rdm-theme="dark"] .rdmUnifiedDialog,
+html[data-rdm-theme="dark"] .profileEditDialog,
+html[data-rdm-theme="dark"] .profileDownloadDialog,
+html[data-rdm-theme="dark"] .rdmConfirmDialog{
+  background:linear-gradient(155deg,#14324a,#153c42)!important;color:var(--rdm-night-text)!important;border-color:#47738a!important;
+}
+html[data-rdm-theme="dark"] .secondary,
+html[data-rdm-theme="dark"] .tinyBtn,
+html[data-rdm-theme="dark"] .profileEditRow,
+html[data-rdm-theme="dark"] .recordTypeBtn{
+  background:#183c53!important;color:#e5f6ff!important;-webkit-text-fill-color:#e5f6ff!important;border-color:#456f83!important;
+}
+html[data-rdm-theme="dark"] .primary,
+html[data-rdm-theme="dark"] .nav button.active,
+html[data-rdm-theme="dark"] .albumFilters .albumTab.on,
+html[data-rdm-theme="dark"] .badge,
+html[data-rdm-theme="dark"] .leadershipBadge{
+  color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+html[data-rdm-theme="dark"] .profileDownloadMain,
+html[data-rdm-theme="dark"] .shareProfileBtn{
+  background:linear-gradient(135deg,#1d465f,#1c554e)!important;
+  color:#e7f8ff!important;-webkit-text-fill-color:#e7f8ff!important;
+  border-color:#4d7f8e!important;
+}
+html[data-rdm-theme="dark"] #loginModal .eyeBtn,
+html[data-rdm-theme="dark"] #loginModal #togglePassword{
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  color:#a3ecf5!important;-webkit-text-fill-color:initial!important;
+}
+html[data-rdm-theme="dark"] .close{background:#1c4259!important;color:#e8f8ff!important;-webkit-text-fill-color:#e8f8ff!important;border-color:#4c758a!important}
+html[data-rdm-theme="dark"] #toast{background:#dff6ff!important;color:#153e5b!important;-webkit-text-fill-color:#153e5b!important}
+
+/* Keep status/action colours readable in both themes. */
+html[data-rdm-theme="dark"] .updateEditBtn{background:#1b4963!important;color:#c8f0ff!important;-webkit-text-fill-color:#c8f0ff!important}
+html[data-rdm-theme="dark"] .updatePinBtn{background:#514423!important;color:#ffe8a3!important;-webkit-text-fill-color:#ffe8a3!important}
+html[data-rdm-theme="dark"] .updateDeleteBtn{background:#4e2c39!important;color:#ffd0d9!important;-webkit-text-fill-color:#ffd0d9!important}
+
+@media(max-width:600px){
+  .themeToggle{width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;font-size:16px!important}
+  .themeMenu{width:132px!important}
+}
+
+
+/* V6.8.37 — compact pinned update + theme-correct surface */
+#homeUpdateHub.homeUpdateHub{
+  max-width:760px!important;
+  padding:16px 18px!important;
+  border-radius:20px!important;
+}
+#homeUpdateHub .homeUpdatePreview{
+  margin:10px auto 4px!important;
+  max-width:650px!important;
+  line-height:1.65!important;
+  font-size:10px!important;
+  letter-spacing:.055em!important;
+  display:-webkit-box!important;
+  -webkit-box-orient:vertical!important;
+  -webkit-line-clamp:3!important;
+  overflow:hidden!important;
+}
+#homeUpdateHub .homeUpdateOpen{
+  min-height:40px!important;
+  height:40px!important;
+  padding:0 16px!important;
+  border-radius:13px!important;
+  font-size:9px!important;
+  letter-spacing:.10em!important;
+}
+@media(max-width:520px){
+  #homeUpdateHub.homeUpdateHub{max-width:100%!important;padding:15px 14px!important;border-radius:18px!important}
+  #homeUpdateHub .homeUpdatePreview{font-size:9px!important;line-height:1.6!important;-webkit-line-clamp:3!important}
+}
+
+/* Light / Auto-light: pale card + dark text. */
+html:not([data-rdm-theme="dark"]) #homeUpdateHub.homeUpdateHub,
+html[data-rdm-theme="light"] #homeUpdateHub.homeUpdateHub{
+  background:linear-gradient(145deg,#ffffff,#eef9ff 62%,#fff8df)!important;
+  border:1px solid #c9dfeb!important;
+  box-shadow:0 14px 34px rgba(59,112,151,.12)!important;
+}
+html:not([data-rdm-theme="dark"]) #homeUpdateHub :is(.homeUpdatePreview,.homeUpdateTime),
+html[data-rdm-theme="light"] #homeUpdateHub :is(.homeUpdatePreview,.homeUpdateTime){
+  color:#506e86!important;-webkit-text-fill-color:#506e86!important;
+}
+html:not([data-rdm-theme="dark"]) #homeUpdateHub h3,
+html[data-rdm-theme="light"] #homeUpdateHub h3{color:#174f82!important;-webkit-text-fill-color:#174f82!important}
+
+/* Dark: card must stay dark and every readable text becomes light. */
+html[data-rdm-theme="dark"] #homeUpdateHub.homeUpdateHub{
+  background:linear-gradient(145deg,#17384e,#1a4053 58%,#214552)!important;
+  border:1px solid #426b80!important;
+  box-shadow:0 16px 40px rgba(3,18,31,.32)!important;
+}
+html[data-rdm-theme="dark"] #homeUpdateHub .homeUpdateTag{
+  color:#ffd978!important;-webkit-text-fill-color:#ffd978!important;
+}
+html[data-rdm-theme="dark"] #homeUpdateHub h3{
+  color:#f1fbff!important;-webkit-text-fill-color:#f1fbff!important;
+}
+html[data-rdm-theme="dark"] #homeUpdateHub :is(.homeUpdatePreview,.homeUpdateTime){
+  color:#c7dde9!important;-webkit-text-fill-color:#c7dde9!important;opacity:1!important;
+}
+html[data-rdm-theme="dark"] #homeUpdateHub .homeUpdateOpen{
+  background:linear-gradient(135deg,#204b64,#1f5a59)!important;
+  color:#f4fcff!important;-webkit-text-fill-color:#f4fcff!important;
+  border:1px solid #4e8192!important;
+}
+
+
+/* V6.8.39 — wide compact layout + perfect circular theme control + full pinned update */
+
+/* Use more of the screen width so pages feel wider and less vertically stretched. */
+main{
+  width:min(1320px,100%)!important;
+  padding-left:clamp(12px,2.4vw,30px)!important;
+  padding-right:clamp(12px,2.4vw,30px)!important;
+}
+.page{width:100%!important;max-width:none!important}
+.card,.recordCard,.leaderCard,.tournamentCard,.socialCard,.honour,.profileCard,.miniMatch,.updateCard,.lineupCard,.availabilityRow{
+  max-width:none!important;
+}
+
+/* Theme mode button: true circle, thin premium ring, icon exactly centered. */
+.themeControl{display:flex!important;align-items:center!important;justify-content:center!important}
+.themeToggle{
+  width:30px!important;
+  height:30px!important;
+  min-width:30px!important;
+  min-height:30px!important;
+  aspect-ratio:1/1!important;
+  padding:0!important;
+  margin:0!important;
+  border-radius:999px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  line-height:1!important;
+  font-size:16px!important;
+  border:1px solid rgba(76,171,211,.38)!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(226,247,255,.58))!important;
+  box-shadow:0 4px 12px rgba(48,111,150,.12),inset 0 1px rgba(255,255,255,.9)!important;
+  overflow:hidden!important;
+  text-align:center!important;
+}
+html[data-rdm-theme="dark"] .themeToggle{
+  background:linear-gradient(145deg,#1b4259,#17374c)!important;
+  color:#9beaf5!important;
+  -webkit-text-fill-color:#9beaf5!important;
+  border-color:#4d7b91!important;
+  box-shadow:0 4px 12px rgba(3,18,31,.28),inset 0 1px rgba(184,238,248,.08)!important;
+}
+
+/* Make the visible dialog scroll cue ultra-thin: indicator only. */
+#rdmUnifiedForm .rdmUnifiedDialog::-webkit-scrollbar,
+#editor .dialog::-webkit-scrollbar,
+#loginModal .dialog::-webkit-scrollbar,
+#cropModal .dialog::-webkit-scrollbar,
+#profileEditModal .profileEditDialog::-webkit-scrollbar,
+#profileDownloadModal .profileDownloadDialog::-webkit-scrollbar,
+#updateEditor .dialog::-webkit-scrollbar{
+  width:1px!important;
+  height:1px!important;
+}
+
+/* Full pinned update on Home, but use the available width and compact spacing. */
+#homeUpdateHub.homeUpdateHub{
+  width:100%!important;
+  max-width:1180px!important;
+  margin:14px auto 20px!important;
+  padding:18px clamp(18px,4vw,36px)!important;
+  border-radius:20px!important;
+  text-align:center!important;
+}
+#homeUpdateHub .homeUpdateTag{
+  display:block!important;
+  width:100%!important;
+  text-align:center!important;
+  margin:0 auto 8px!important;
+}
+#homeUpdateHub h3{
+  text-align:center!important;
+  margin:6px auto 10px!important;
+}
+#homeUpdateHub .homeUpdatePreview{
+  display:block!important;
+  overflow:visible!important;
+  -webkit-line-clamp:unset!important;
+  -webkit-box-orient:initial!important;
+  max-width:1080px!important;
+  margin:8px auto!important;
+  white-space:pre-wrap!important;
+  text-align:center!important;
+  line-height:1.48!important;
+  font-size:9.4px!important;
+  letter-spacing:.035em!important;
+}
+#homeUpdateHub .homeUpdateTime{
+  text-align:center!important;
+  margin:9px auto 11px!important;
+}
+#homeUpdateHub .homeUpdateOpen{
+  min-height:36px!important;
+  height:36px!important;
+  padding:0 14px!important;
+  border-radius:12px!important;
+  margin:0 auto!important;
+}
+
+/* Mobile: nearly edge-to-edge content, still with safe breathing room. */
+@media(max-width:600px){
+  main{
+    padding-left:8px!important;
+    padding-right:8px!important;
+    padding-top:18px!important;
+  }
+  .sectionHead{margin-left:2px!important;margin-right:2px!important}
+  #homeUpdateHub.homeUpdateHub{
+    width:100%!important;
+    max-width:100%!important;
+    padding:14px 12px!important;
+    border-radius:18px!important;
+  }
+  #homeUpdateHub .homeUpdatePreview{
+    max-width:100%!important;
+    font-size:8.8px!important;
+    line-height:1.45!important;
+    letter-spacing:.025em!important;
+  }
+  .themeToggle{
+    width:28px!important;height:28px!important;min-width:28px!important;min-height:28px!important;font-size:15px!important;
+  }
+}
+
+/* V6.8.41 — balanced wider layout + fixed palette theme button */
+
+/* Wider than the older layout, but keep premium side breathing room. */
+main{
+  width:min(1360px,100%)!important;
+  max-width:1360px!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  padding-left:clamp(14px,2.4vw,30px)!important;
+  padding-right:clamp(14px,2.4vw,30px)!important;
+}
+.page{
+  width:100%!important;
+  max-width:none!important;
+}
+.page>.sectionHead,
+.page>.leadTitle,
+.hero,
+.homeLeadership,
+#homeUpdateHub,
+.players,
+.list,
+.honours,
+.gallery,
+.socialGrid,
+#profileBody,
+#matchList,
+#newsList,
+#updatesList,
+#recordsList,
+#tournamentList,
+#opponentList,
+#statsList,
+#lineupList,
+#availabilityList{
+  width:100%!important;
+  max-width:none!important;
+}
+
+/* Mobile keeps a visible side margin instead of going edge-to-edge. */
+@media(max-width:700px){
+  main{
+    width:100%!important;
+    max-width:100%!important;
+    padding-left:12px!important;
+    padding-right:12px!important;
+  }
+  .sectionHead{
+    padding-left:2px!important;
+    padding-right:2px!important;
+  }
+  #homeUpdateHub.homeUpdateHub{
+    width:100%!important;
+    max-width:100%!important;
+  }
+  .profileCard{
+    width:100%!important;
+    max-width:100%!important;
+  }
+}
+@media(min-width:701px) and (max-width:1100px){
+  main{
+    padding-left:20px!important;
+    padding-right:20px!important;
+  }
+}
+
+/* Theme control is always the palette emoji — no circle, pill or background. */
+.themeControl{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 auto!important;
+}
+.themeToggle,
+html[data-rdm-theme="dark"] .themeToggle,
+html[data-rdm-theme="light"] .themeToggle{
+  width:30px!important;
+  height:30px!important;
+  min-width:30px!important;
+  min-height:30px!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  color:inherit!important;
+  -webkit-text-fill-color:initial!important;
+  display:grid!important;
+  place-items:center!important;
+  line-height:1!important;
+  font-size:20px!important;
+  cursor:pointer!important;
+  overflow:visible!important;
+}
+.themeToggle:hover,
+.themeToggle:focus,
+.themeToggle:active{
+  background:transparent!important;
+  box-shadow:none!important;
+  transform:scale(1.07)!important;
+}
+@media(max-width:520px){
+  .themeToggle,
+  html[data-rdm-theme="dark"] .themeToggle,
+  html[data-rdm-theme="light"] .themeToggle{
+    width:28px!important;
+    height:28px!important;
+    min-width:28px!important;
+    min-height:28px!important;
+    font-size:19px!important;
+  }
+}
+
+/* V6.8.42 — desktop-like wider mobile view */
+@media (min-width:781px) and (max-width:900px){
+  main{width:100%!important;max-width:100%!important;padding-left:22px!important;padding-right:22px!important}
+  .top{padding-left:22px!important;padding-right:22px!important}
+  .nav{padding-left:22px!important;padding-right:22px!important}
+  .players{grid-template-columns:repeat(3,1fr)!important}
+  .gallery{grid-template-columns:repeat(3,1fr)!important}
+  .socialGrid{grid-template-columns:repeat(3,1fr)!important}
+  .metrics{grid-template-columns:repeat(4,1fr)!important}
+}
+#themeToggle{font-size:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+#themeToggle::before{content:"🎨"!important;font-size:20px!important;line-height:1!important}
+
+/* V6.8.44 — layout-only refinements; keep V6.8.42 card design unchanged */
+/* One item per row for normal content grids; Gallery and Honours intentionally unchanged. */
+.players,
+.statsGrid,
+.socialGrid,
+.leaderGrid{
+  grid-template-columns:1fr!important;
+}
+
+/* Home summary cards: exactly two per row. */
+.metrics{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+
+/* All form/dialog boxes use more of the desktop-like wide viewport. */
+.dialog,
+.rdmUnifiedDialog,
+.profileEditDialog,
+.profileDownloadDialog,
+.rdmConfirmDialog,
+.galleryMoveDialog{
+  width:min(740px,calc(100vw - 48px))!important;
+  max-width:740px!important;
+}
+
+/* Keep scrolling safe on long forms while the dialog is wider. */
+.dialog,
+.rdmUnifiedDialog{
+  max-height:90dvh!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+}
+
+/* V6.8.45 — gallery single-row layout + premium button polish */
+
+/* Gallery: one photo/card per row in the wider desktop-like viewport. */
+.gallery,
+#galleryList{
+  grid-template-columns:1fr!important;
+}
+.gallery figure,
+.galleryCard{
+  width:100%!important;
+  max-width:none!important;
+}
+.gallery figure img,
+.galleryCard img{
+  width:100%!important;
+  height:auto!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+  object-fit:contain!important;
+}
+
+/* Keep Honours exactly as before. */
+
+/* Premium interaction polish without changing the existing colour system. */
+.primary,
+.secondary,
+.tinyBtn,
+.dashGrid button,
+.recordTypeBtn,
+.contentActions button,
+.updateActions button,
+.v62Actions button,
+.galleryActions button,
+.galleryAdminActions button,
+.profileEditRow,
+.profileDownloadChoices button,
+.rdmFormActions button,
+.socialAction,
+.viewProfileBtn,
+.backToTop{
+  position:relative!important;
+  overflow:hidden!important;
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,filter .18s ease!important;
+  box-shadow:0 7px 18px rgba(48,105,145,.10)!important;
+}
+
+.primary,
+.secondary,
+.dashGrid button,
+.recordTypeBtn,
+.contentActions button,
+.updateActions button,
+.v62Actions button,
+.galleryActions button,
+.galleryAdminActions button,
+.profileEditRow,
+.profileDownloadChoices button,
+.rdmFormActions button,
+.socialAction,
+.viewProfileBtn{
+  border-radius:14px!important;
+}
+
+.tinyBtn{
+  border-radius:11px!important;
+}
+
+.primary:hover,
+.secondary:hover,
+.tinyBtn:hover,
+.dashGrid button:hover,
+.recordTypeBtn:hover,
+.contentActions button:hover,
+.updateActions button:hover,
+.v62Actions button:hover,
+.galleryActions button:hover,
+.galleryAdminActions button:hover,
+.profileEditRow:hover,
+.profileDownloadChoices button:hover,
+.rdmFormActions button:hover,
+.socialAction:hover,
+.viewProfileBtn:hover{
+  transform:translateY(-1px)!important;
+  box-shadow:0 10px 24px rgba(48,105,145,.16)!important;
+  filter:saturate(1.03)!important;
+}
+
+.primary:active,
+.secondary:active,
+.tinyBtn:active,
+.dashGrid button:active,
+.recordTypeBtn:active,
+.contentActions button:active,
+.updateActions button:active,
+.v62Actions button:active,
+.galleryActions button:active,
+.galleryAdminActions button:active,
+.profileEditRow:active,
+.profileDownloadChoices button:active,
+.rdmFormActions button:active,
+.socialAction:active,
+.viewProfileBtn:active{
+  transform:scale(.985)!important;
+  box-shadow:0 4px 10px rgba(48,105,145,.10)!important;
+}
+
+/* Clear readable focus state for keyboard/touch accessibility. */
+.primary:focus-visible,
+.secondary:focus-visible,
+.tinyBtn:focus-visible,
+.dashGrid button:focus-visible,
+.recordTypeBtn:focus-visible,
+.contentActions button:focus-visible,
+.updateActions button:focus-visible,
+.v62Actions button:focus-visible,
+.galleryActions button:focus-visible,
+.galleryAdminActions button:focus-visible,
+.profileEditRow:focus-visible,
+.profileDownloadChoices button:focus-visible,
+.rdmFormActions button:focus-visible,
+.socialAction:focus-visible,
+.viewProfileBtn:focus-visible{
+  outline:2px solid rgba(53,189,216,.55)!important;
+  outline-offset:2px!important;
+}
+
+/* Dark theme keeps the same premium feel with a softer shadow. */
+html[data-rdm-theme="dark"] :is(
+  .primary,.secondary,.tinyBtn,.dashGrid button,.recordTypeBtn,
+  .contentActions button,.updateActions button,.v62Actions button,
+  .galleryActions button,.galleryAdminActions button,.profileEditRow,
+  .profileDownloadChoices button,.rdmFormActions button,.socialAction,.viewProfileBtn
+){
+  box-shadow:0 8px 20px rgba(2,16,29,.24)!important;
+}
+
+/* Mobile keeps gallery one-per-row with balanced breathing room. */
+@media(max-width:700px){
+  .gallery,#galleryList{grid-template-columns:1fr!important;gap:14px!important}
+  .gallery figure,.galleryCard{border-radius:18px!important}
+}
+
+
+/* V6.8.46 — unified pill-shaped premium buttons
+   Match the rounded SOCIALS/nav-button silhouette across the site. */
+
+/* Main action buttons */
+.primary,
+.secondary,
+.tinyBtn,
+.switchBtn,
+.socialAction,
+.viewProfileBtn,
+.shareProfileBtn,
+.profileEditMain,
+.profileDownloadMain,
+.profileDownloadChoices button,
+.dashGrid button,
+.recordTypeBtn,
+.albumTab,
+.contentActions button,
+.updateActions button,
+.updateEditBtn,
+.updatePinBtn,
+.updateDeleteBtn,
+.v62Actions button,
+.galleryActions button,
+.galleryAdminActions button,
+.rdmFormActions button,
+.deleteBtn,
+.deleteConfirmBtn,
+.manageUpdatesBtn,
+.homeUpdateOpen,
+.tabs button,
+.nav button{
+  border-radius:999px!important;
+}
+
+/* Keep full-width buttons looking like premium capsules, not bulky rectangles. */
+.primary,
+.secondary,
+.profileEditMain,
+.profileDownloadMain,
+.shareProfileBtn,
+.dashGrid button,
+.contentActions button,
+.updateActions button,
+.v62Actions button,
+.galleryActions button,
+.galleryAdminActions button,
+.rdmFormActions button,
+.socialAction{
+  padding-left:22px!important;
+  padding-right:22px!important;
+}
+
+/* Small action buttons also use the same pill language. */
+.tinyBtn,
+.viewProfileBtn,
+.recordTypeBtn,
+.albumTab,
+.updateEditBtn,
+.updatePinBtn,
+.updateDeleteBtn,
+.deleteBtn,
+.manageUpdatesBtn{
+  padding-left:15px!important;
+  padding-right:15px!important;
+}
+
+/* Controls that are intentionally circular/transparent stay unchanged. */
+.close,
+.eyeBtn,
+.backToTop{
+  border-radius:50%!important;
+}
+.themeToggle,
+#themeToggle{
+  border-radius:0!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+/* Mobile: preserve spacing while keeping the pill silhouette. */
+@media(max-width:700px){
+  .primary,
+  .secondary,
+  .profileEditMain,
+  .profileDownloadMain,
+  .shareProfileBtn,
+  .socialAction{
+    border-radius:999px!important;
+  }
+}
+
+
+/* V6.8.47 — slim premium pill buttons, same design language */
+/* Header account controls: compact like the earlier professional header. */
+#loginOpen,#switchBtn{
+  min-width:72px!important;
+  width:auto!important;
+  min-height:32px!important;
+  height:32px!important;
+  padding:5px 12px!important;
+  border-radius:999px!important;
+  font-size:8px!important;
+  line-height:1!important;
+  letter-spacing:.10em!important;
+  box-shadow:0 4px 11px rgba(47,109,151,.07)!important;
+}
+.headActions{gap:5px!important}
+
+/* Nav pills: keep the same silhouette, just slimmer. */
+.nav button{
+  min-height:32px!important;
+  height:32px!important;
+  padding:5px 14px!important;
+  border-radius:999px!important;
+  font-size:8.5px!important;
+  line-height:1!important;
+}
+
+/* Common small/medium action buttons across the site. */
+.tinyBtn,.viewProfileBtn,.recordTypeBtn,.albumTab,
+.updateEditBtn,.updatePinBtn,.updateDeleteBtn,.deleteBtn,.manageUpdatesBtn,
+.contentActions button,.updateActions button,.v62Actions button,
+.galleryActions button,.galleryAdminActions button{
+  min-height:32px!important;
+  height:auto!important;
+  padding:6px 14px!important;
+  border-radius:999px!important;
+  font-size:8px!important;
+  line-height:1.1!important;
+}
+
+/* Main CTA buttons remain prominent but no longer thick/bulky. */
+.sectionHead .primary,.actions .primary,.actions .secondary,
+.socialAction,.shareProfileBtn,.profileEditMain,.profileDownloadMain,
+.dashGrid button,.homeUpdateOpen{
+  min-height:38px!important;
+  height:auto!important;
+  padding:8px 18px!important;
+  border-radius:999px!important;
+  font-size:9px!important;
+  line-height:1.1!important;
+}
+
+/* Form save/cancel buttons need a little more touch area, still slim. */
+.rdmUnifiedDialog>.primary.wide,
+.rdmFormActions button,
+.profileDownloadChoices button,
+.rdmConfirmActions button,
+.tabs button{
+  min-height:40px!important;
+  height:40px!important;
+  padding:8px 18px!important;
+  border-radius:999px!important;
+  font-size:9px!important;
+  line-height:1!important;
+}
+
+/* Availability/change controls also stay compact. */
+#availabilityList button{
+  min-height:30px!important;
+  height:30px!important;
+  padding:5px 12px!important;
+  border-radius:999px!important;
+  font-size:7.5px!important;
+}
+
+/* Theme icon stays background-free and compact. */
+#themeToggle,.themeToggle{
+  width:28px!important;
+  height:28px!important;
+  min-width:28px!important;
+  min-height:28px!important;
+  padding:0!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+/* Don't let legacy rules fatten buttons again in the desktop-like mobile viewport. */
+@media (min-width:781px) and (max-width:900px){
+  #loginOpen,#switchBtn{min-height:32px!important;height:32px!important;padding:5px 12px!important}
+  .nav button{min-height:32px!important;height:32px!important;padding:5px 14px!important}
+  .sectionHead .primary,.socialAction,.profileEditMain,.profileDownloadMain{min-height:38px!important;padding:8px 18px!important}
+}
