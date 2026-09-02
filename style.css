@@ -2930,3 +2930,708 @@ html[data-theme="dark"] .sectionEyebrow{color:#65cbe2!important}
   content:none!important;
   display:none!important;
 }
+
+/* ==========================================================
+   V6.8.60 — COLOURED CARD SURFACES
+   Base: V6.8.50
+   Goal: remove white card areas throughout the site.
+   Buttons intentionally use one solid brand colour.
+   ========================================================== */
+
+:root{
+  --rdm-solid-btn:#1769aa;
+}
+
+/* ---------- SQUAD: ACTUAL .player CARDS ---------- */
+html[data-rdm-theme="light"] #squad .player:nth-child(6n+1),
+html[data-rdm-theme="light"] .players .player:nth-child(6n+1){
+  background:#e7f2ff!important;
+}
+html[data-rdm-theme="light"] #squad .player:nth-child(6n+2),
+html[data-rdm-theme="light"] .players .player:nth-child(6n+2){
+  background:#fff0dc!important;
+}
+html[data-rdm-theme="light"] #squad .player:nth-child(6n+3),
+html[data-rdm-theme="light"] .players .player:nth-child(6n+3){
+  background:#e8f7ee!important;
+}
+html[data-rdm-theme="light"] #squad .player:nth-child(6n+4),
+html[data-rdm-theme="light"] .players .player:nth-child(6n+4){
+  background:#f2eaff!important;
+}
+html[data-rdm-theme="light"] #squad .player:nth-child(6n+5),
+html[data-rdm-theme="light"] .players .player:nth-child(6n+5){
+  background:#ffe9ee!important;
+}
+html[data-rdm-theme="light"] #squad .player:nth-child(6n),
+html[data-rdm-theme="light"] .players .player:nth-child(6n){
+  background:#fff7cf!important;
+}
+
+html[data-rdm-theme="dark"] #squad .player:nth-child(6n+1),
+html[data-rdm-theme="dark"] .players .player:nth-child(6n+1){background:#173451!important}
+html[data-rdm-theme="dark"] #squad .player:nth-child(6n+2),
+html[data-rdm-theme="dark"] .players .player:nth-child(6n+2){background:#493525!important}
+html[data-rdm-theme="dark"] #squad .player:nth-child(6n+3),
+html[data-rdm-theme="dark"] .players .player:nth-child(6n+3){background:#1e4033!important}
+html[data-rdm-theme="dark"] #squad .player:nth-child(6n+4),
+html[data-rdm-theme="dark"] .players .player:nth-child(6n+4){background:#342c51!important}
+html[data-rdm-theme="dark"] #squad .player:nth-child(6n+5),
+html[data-rdm-theme="dark"] .players .player:nth-child(6n+5){background:#482b35!important}
+html[data-rdm-theme="dark"] #squad .player:nth-child(6n),
+html[data-rdm-theme="dark"] .players .player:nth-child(6n){background:#49401f!important}
+
+/* ---------- STATS: every card rotates colour ---------- */
+html[data-rdm-theme="light"] .statCard:nth-child(5n+1){background:#e7f2ff!important}
+html[data-rdm-theme="light"] .statCard:nth-child(5n+2){background:#e8f7ee!important}
+html[data-rdm-theme="light"] .statCard:nth-child(5n+3){background:#fff0dc!important}
+html[data-rdm-theme="light"] .statCard:nth-child(5n+4){background:#f2eaff!important}
+html[data-rdm-theme="light"] .statCard:nth-child(5n){background:#ffe9ee!important}
+html[data-rdm-theme="dark"] .statCard:nth-child(5n+1){background:#173451!important}
+html[data-rdm-theme="dark"] .statCard:nth-child(5n+2){background:#1e4033!important}
+html[data-rdm-theme="dark"] .statCard:nth-child(5n+3){background:#493525!important}
+html[data-rdm-theme="dark"] .statCard:nth-child(5n+4){background:#342c51!important}
+html[data-rdm-theme="dark"] .statCard:nth-child(5n){background:#482b35!important}
+
+/* Inner stat number cells: remove pale-white blocks too */
+html[data-rdm-theme="light"] .statCard .statNums b:nth-child(4n+1){background:#cfe5ff!important}
+html[data-rdm-theme="light"] .statCard .statNums b:nth-child(4n+2){background:#d8f0df!important}
+html[data-rdm-theme="light"] .statCard .statNums b:nth-child(4n+3){background:#ffe2bd!important}
+html[data-rdm-theme="light"] .statCard .statNums b:nth-child(4n){background:#e4d8ff!important}
+html[data-rdm-theme="dark"] .statCard .statNums b{background:#20364c!important;color:#f5f8ff!important}
+
+/* ---------- OTHER ACTUAL CARD FAMILIES ---------- */
+html[data-rdm-theme="light"] .recordCard:nth-child(4n+1),
+html[data-rdm-theme="light"] .leaderCard:nth-child(4n+1),
+html[data-rdm-theme="light"] .tournamentCard:nth-child(4n+1),
+html[data-rdm-theme="light"] .socialCard:nth-child(4n+1),
+html[data-rdm-theme="light"] .galleryCard:nth-child(4n+1),
+html[data-rdm-theme="light"] .gallery figure:nth-child(4n+1),
+html[data-rdm-theme="light"] .honour:nth-child(4n+1),
+html[data-rdm-theme="light"] .miniMatch:nth-child(4n+1),
+html[data-rdm-theme="light"] .updateCard:nth-child(4n+1),
+html[data-rdm-theme="light"] .availabilityRow:nth-child(4n+1),
+html[data-rdm-theme="light"] .lineupCard:nth-child(4n+1){background:#e7f2ff!important}
+
+html[data-rdm-theme="light"] .recordCard:nth-child(4n+2),
+html[data-rdm-theme="light"] .leaderCard:nth-child(4n+2),
+html[data-rdm-theme="light"] .tournamentCard:nth-child(4n+2),
+html[data-rdm-theme="light"] .socialCard:nth-child(4n+2),
+html[data-rdm-theme="light"] .galleryCard:nth-child(4n+2),
+html[data-rdm-theme="light"] .gallery figure:nth-child(4n+2),
+html[data-rdm-theme="light"] .honour:nth-child(4n+2),
+html[data-rdm-theme="light"] .miniMatch:nth-child(4n+2),
+html[data-rdm-theme="light"] .updateCard:nth-child(4n+2),
+html[data-rdm-theme="light"] .availabilityRow:nth-child(4n+2),
+html[data-rdm-theme="light"] .lineupCard:nth-child(4n+2){background:#e8f7ee!important}
+
+html[data-rdm-theme="light"] .recordCard:nth-child(4n+3),
+html[data-rdm-theme="light"] .leaderCard:nth-child(4n+3),
+html[data-rdm-theme="light"] .tournamentCard:nth-child(4n+3),
+html[data-rdm-theme="light"] .socialCard:nth-child(4n+3),
+html[data-rdm-theme="light"] .galleryCard:nth-child(4n+3),
+html[data-rdm-theme="light"] .gallery figure:nth-child(4n+3),
+html[data-rdm-theme="light"] .honour:nth-child(4n+3),
+html[data-rdm-theme="light"] .miniMatch:nth-child(4n+3),
+html[data-rdm-theme="light"] .updateCard:nth-child(4n+3),
+html[data-rdm-theme="light"] .availabilityRow:nth-child(4n+3),
+html[data-rdm-theme="light"] .lineupCard:nth-child(4n+3){background:#fff0dc!important}
+
+html[data-rdm-theme="light"] .recordCard:nth-child(4n),
+html[data-rdm-theme="light"] .leaderCard:nth-child(4n),
+html[data-rdm-theme="light"] .tournamentCard:nth-child(4n),
+html[data-rdm-theme="light"] .socialCard:nth-child(4n),
+html[data-rdm-theme="light"] .galleryCard:nth-child(4n),
+html[data-rdm-theme="light"] .gallery figure:nth-child(4n),
+html[data-rdm-theme="light"] .honour:nth-child(4n),
+html[data-rdm-theme="light"] .miniMatch:nth-child(4n),
+html[data-rdm-theme="light"] .updateCard:nth-child(4n),
+html[data-rdm-theme="light"] .availabilityRow:nth-child(4n),
+html[data-rdm-theme="light"] .lineupCard:nth-child(4n){background:#f2eaff!important}
+
+/* Generic page cards that otherwise stay white */
+html[data-rdm-theme="light"] #news .card:nth-child(odd),
+html[data-rdm-theme="light"] #updates .card:nth-child(odd),
+html[data-rdm-theme="light"] .list>article:nth-child(odd){background:#e9f3ff!important}
+html[data-rdm-theme="light"] #news .card:nth-child(even),
+html[data-rdm-theme="light"] #updates .card:nth-child(even),
+html[data-rdm-theme="light"] .list>article:nth-child(even){background:#fff0dc!important}
+
+/* Profile/leadership/dialog surfaces also coloured, not white */
+html[data-rdm-theme="light"] .profileCard{background:#e9f1ff!important}
+html[data-rdm-theme="light"] .leadCard{background:#fff0dc!important}
+html[data-rdm-theme="light"] .homeLeadership{background:#e8f7ee!important}
+html[data-rdm-theme="light"] .dialog,
+html[data-rdm-theme="light"] .rdmUnifiedDialog,
+html[data-rdm-theme="light"] .profileEditDialog,
+html[data-rdm-theme="light"] .profileDownloadDialog,
+html[data-rdm-theme="light"] .rdmConfirmDialog,
+html[data-rdm-theme="light"] .galleryMoveDialog{background:#edf3ff!important}
+
+/* Search / form white rectangles */
+html[data-rdm-theme="light"] input,
+html[data-rdm-theme="light"] textarea,
+html[data-rdm-theme="light"] select{
+  background:#edf4ff!important;
+  border-color:#c7d9ec!important;
+}
+
+/* ONE SOLID COLOUR FOR ACTION BUTTONS — no rainbow/gradient */
+html[data-rdm-theme] button,
+html[data-rdm-theme] .btn,
+html[data-rdm-theme] .primary,
+html[data-rdm-theme] .secondary,
+html[data-rdm-theme] .tinyBtn,
+html[data-rdm-theme] .viewProfileBtn,
+html[data-rdm-theme] .profileEditMain,
+html[data-rdm-theme] .socialAction,
+html[data-rdm-theme] .homeUpdateOpen,
+html[data-rdm-theme] .switchBtn{
+  background:var(--rdm-solid-btn)!important;
+  background-image:none!important;
+  color:#fff!important;
+  border-color:var(--rdm-solid-btn)!important;
+}
+/* Preserve intentionally icon-only transparent theme palette */
+html[data-rdm-theme] #themeToggle,
+html[data-rdm-theme] .themeToggle{
+  background:transparent!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+/* close/eye/back-to-top keep their special shapes, but same solid family where applicable */
+
+/* V6.8.61 MIDNIGHT NEON THEME */
+:root{--rdm-solid-btn:#245f9f}
+html[data-rdm-theme="light"] body{background:linear-gradient(135deg,#d9f0f5,#e6e2f7 52%,#f5e4d0)!important;color:#173750!important}
+html[data-rdm-theme="dark"] body{background:linear-gradient(135deg,#071521,#101d33 52%,#20192e)!important;color:#eef8ff!important}
+html[data-rdm-theme="light"] .top,html[data-rdm-theme="light"] .nav{background:#cfe7f1!important;border-color:#abcddd!important}
+html[data-rdm-theme="dark"] .top,html[data-rdm-theme="dark"] .nav{background:#10243d!important;border-color:#29465f!important}
+html[data-rdm-theme="light"] .page{background:linear-gradient(145deg,rgba(207,237,244,.7),rgba(226,220,246,.65))!important}
+html[data-rdm-theme="dark"] .page{background:linear-gradient(145deg,rgba(15,39,57,.75),rgba(31,25,50,.72))!important}
+html[data-rdm-theme="light"] .player:nth-child(6n+1){background:#cbe8f4!important}
+html[data-rdm-theme="light"] .player:nth-child(6n+2){background:#ddd6f4!important}
+html[data-rdm-theme="light"] .player:nth-child(6n+3){background:#cfeadb!important}
+html[data-rdm-theme="light"] .player:nth-child(6n+4){background:#f3ddbc!important}
+html[data-rdm-theme="light"] .player:nth-child(6n+5){background:#ecd3e1!important}
+html[data-rdm-theme="light"] .player:nth-child(6n){background:#cfddf1!important}
+html[data-rdm-theme="dark"] .player:nth-child(6n+1){background:#14364a!important}
+html[data-rdm-theme="dark"] .player:nth-child(6n+2){background:#302a51!important}
+html[data-rdm-theme="dark"] .player:nth-child(6n+3){background:#1a3d34!important}
+html[data-rdm-theme="dark"] .player:nth-child(6n+4){background:#493722!important}
+html[data-rdm-theme="dark"] .player:nth-child(6n+5){background:#452b40!important}
+html[data-rdm-theme="dark"] .player:nth-child(6n){background:#213650!important}
+html[data-rdm-theme="light"] .statCard:nth-child(5n+1){background:#cbe8f4!important}
+html[data-rdm-theme="light"] .statCard:nth-child(5n+2){background:#ddd6f4!important}
+html[data-rdm-theme="light"] .statCard:nth-child(5n+3){background:#cfeadb!important}
+html[data-rdm-theme="light"] .statCard:nth-child(5n+4){background:#f3ddbc!important}
+html[data-rdm-theme="light"] .statCard:nth-child(5n){background:#ecd3e1!important}
+html[data-rdm-theme="dark"] .statCard:nth-child(5n+1){background:#14364a!important}
+html[data-rdm-theme="dark"] .statCard:nth-child(5n+2){background:#302a51!important}
+html[data-rdm-theme="dark"] .statCard:nth-child(5n+3){background:#1a3d34!important}
+html[data-rdm-theme="dark"] .statCard:nth-child(5n+4){background:#493722!important}
+html[data-rdm-theme="dark"] .statCard:nth-child(5n){background:#452b40!important}
+html[data-rdm-theme="light"] .card,html[data-rdm-theme="light"] .recordCard,html[data-rdm-theme="light"] .leaderCard,html[data-rdm-theme="light"] .tournamentCard,html[data-rdm-theme="light"] .socialCard,html[data-rdm-theme="light"] .honour,html[data-rdm-theme="light"] .galleryCard,html[data-rdm-theme="light"] .gallery figure,html[data-rdm-theme="light"] .profileCard,html[data-rdm-theme="light"] .miniMatch,html[data-rdm-theme="light"] .availabilityRow,html[data-rdm-theme="light"] .updateCard,html[data-rdm-theme="light"] .lineupCard,html[data-rdm-theme="light"] .leadCard{background:#d5e6f1!important;border-color:#adc8da!important}
+html[data-rdm-theme="dark"] .card,html[data-rdm-theme="dark"] .recordCard,html[data-rdm-theme="dark"] .leaderCard,html[data-rdm-theme="dark"] .tournamentCard,html[data-rdm-theme="dark"] .socialCard,html[data-rdm-theme="dark"] .honour,html[data-rdm-theme="dark"] .galleryCard,html[data-rdm-theme="dark"] .gallery figure,html[data-rdm-theme="dark"] .profileCard,html[data-rdm-theme="dark"] .miniMatch,html[data-rdm-theme="dark"] .availabilityRow,html[data-rdm-theme="dark"] .updateCard,html[data-rdm-theme="dark"] .lineupCard,html[data-rdm-theme="dark"] .leadCard{background:#172f48!important;border-color:#294b66!important}
+html[data-rdm-theme] button,html[data-rdm-theme] .btn,html[data-rdm-theme] .primary,html[data-rdm-theme] .secondary,html[data-rdm-theme] .tinyBtn,html[data-rdm-theme] .viewProfileBtn,html[data-rdm-theme] .profileEditMain,html[data-rdm-theme] .socialAction,html[data-rdm-theme] .homeUpdateOpen,html[data-rdm-theme] .switchBtn{background:#245f9f!important;background-image:none!important;color:#fff!important;border-color:#245f9f!important}
+html[data-rdm-theme] #themeToggle,html[data-rdm-theme] .themeToggle{background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+html[data-rdm-theme="light"] input,html[data-rdm-theme="light"] textarea,html[data-rdm-theme="light"] select{background:#dce8f3!important;border-color:#b4cada!important}
+html[data-rdm-theme="dark"] input,html[data-rdm-theme="dark"] textarea,html[data-rdm-theme="dark"] select{background:#142b42!important;color:#eef8ff!important;border-color:#2c4b65!important}
+html[data-rdm-theme="light"] footer{background:#ccdfeb!important;color:#23445d!important}
+html[data-rdm-theme="dark"] footer{background:#10243d!important;color:#dcecff!important}
+
+/* V6.8.62 — TEXT VISIBILITY / CONTRAST FIX
+   Keep V6.8.61 Midnight Neon design; only improve readability. */
+
+/* Light mode: force dark readable text across coloured cards */
+html[data-rdm-theme="light"] .player,
+html[data-rdm-theme="light"] .statCard,
+html[data-rdm-theme="light"] .card,
+html[data-rdm-theme="light"] .recordCard,
+html[data-rdm-theme="light"] .leaderCard,
+html[data-rdm-theme="light"] .tournamentCard,
+html[data-rdm-theme="light"] .socialCard,
+html[data-rdm-theme="light"] .honour,
+html[data-rdm-theme="light"] .galleryCard,
+html[data-rdm-theme="light"] .gallery figure,
+html[data-rdm-theme="light"] .profileCard,
+html[data-rdm-theme="light"] .miniMatch,
+html[data-rdm-theme="light"] .availabilityRow,
+html[data-rdm-theme="light"] .updateCard,
+html[data-rdm-theme="light"] .lineupCard,
+html[data-rdm-theme="light"] .leadCard{
+ color:#173750!important;
+}
+html[data-rdm-theme="light"] .player *,
+html[data-rdm-theme="light"] .statCard *,
+html[data-rdm-theme="light"] .recordCard *,
+html[data-rdm-theme="light"] .leaderCard *,
+html[data-rdm-theme="light"] .tournamentCard *,
+html[data-rdm-theme="light"] .honour *,
+html[data-rdm-theme="light"] .profileCard *,
+html[data-rdm-theme="light"] .miniMatch *,
+html[data-rdm-theme="light"] .availabilityRow *,
+html[data-rdm-theme="light"] .updateCard *,
+html[data-rdm-theme="light"] .lineupCard *,
+html[data-rdm-theme="light"] .leadCard *{
+ color:#173750;
+}
+html[data-rdm-theme="light"] .muted,
+html[data-rdm-theme="light"] .sub,
+html[data-rdm-theme="light"] small,
+html[data-rdm-theme="light"] .playerMeta,
+html[data-rdm-theme="light"] .meta{
+ color:#526b80!important;
+}
+
+/* Dark mode: force light readable text */
+html[data-rdm-theme="dark"] .player,
+html[data-rdm-theme="dark"] .statCard,
+html[data-rdm-theme="dark"] .card,
+html[data-rdm-theme="dark"] .recordCard,
+html[data-rdm-theme="dark"] .leaderCard,
+html[data-rdm-theme="dark"] .tournamentCard,
+html[data-rdm-theme="dark"] .socialCard,
+html[data-rdm-theme="dark"] .honour,
+html[data-rdm-theme="dark"] .galleryCard,
+html[data-rdm-theme="dark"] .gallery figure,
+html[data-rdm-theme="dark"] .profileCard,
+html[data-rdm-theme="dark"] .miniMatch,
+html[data-rdm-theme="dark"] .availabilityRow,
+html[data-rdm-theme="dark"] .updateCard,
+html[data-rdm-theme="dark"] .lineupCard,
+html[data-rdm-theme="dark"] .leadCard{
+ color:#f3f8ff!important;
+}
+html[data-rdm-theme="dark"] .player *,
+html[data-rdm-theme="dark"] .statCard *,
+html[data-rdm-theme="dark"] .recordCard *,
+html[data-rdm-theme="dark"] .leaderCard *,
+html[data-rdm-theme="dark"] .tournamentCard *,
+html[data-rdm-theme="dark"] .honour *,
+html[data-rdm-theme="dark"] .profileCard *,
+html[data-rdm-theme="dark"] .miniMatch *,
+html[data-rdm-theme="dark"] .availabilityRow *,
+html[data-rdm-theme="dark"] .updateCard *,
+html[data-rdm-theme="dark"] .lineupCard *,
+html[data-rdm-theme="dark"] .leadCard *{
+ color:#f3f8ff;
+}
+html[data-rdm-theme="dark"] .muted,
+html[data-rdm-theme="dark"] .sub,
+html[data-rdm-theme="dark"] small,
+html[data-rdm-theme="dark"] .playerMeta,
+html[data-rdm-theme="dark"] .meta{
+ color:#b9cbe0!important;
+}
+
+/* Buttons must always retain white labels after wildcard text fixes */
+html[data-rdm-theme] button,
+html[data-rdm-theme] button *,
+html[data-rdm-theme] .btn,
+html[data-rdm-theme] .btn *,
+html[data-rdm-theme] .primary,
+html[data-rdm-theme] .primary *,
+html[data-rdm-theme] .secondary,
+html[data-rdm-theme] .secondary *,
+html[data-rdm-theme] .tinyBtn,
+html[data-rdm-theme] .tinyBtn *,
+html[data-rdm-theme] .viewProfileBtn,
+html[data-rdm-theme] .viewProfileBtn *,
+html[data-rdm-theme] .profileEditMain,
+html[data-rdm-theme] .socialAction,
+html[data-rdm-theme] .homeUpdateOpen,
+html[data-rdm-theme] .switchBtn{
+ color:#fff!important;
+}
+
+/* IDs / badges need stronger contrast */
+html[data-rdm-theme="light"] .playerId,
+html[data-rdm-theme="light"] .badge,
+html[data-rdm-theme="light"] .chip{
+ color:#183a58!important;
+ background:#c9deee!important;
+}
+html[data-rdm-theme="dark"] .playerId,
+html[data-rdm-theme="dark"] .badge,
+html[data-rdm-theme="dark"] .chip{
+ color:#f5f9ff!important;
+ background:#28425b!important;
+}
+
+/* Headings */
+html[data-rdm-theme="light"] h1,html[data-rdm-theme="light"] h2,
+html[data-rdm-theme="light"] h3,html[data-rdm-theme="light"] h4{
+ color:#153b5d!important;
+}
+html[data-rdm-theme="dark"] h1,html[data-rdm-theme="dark"] h2,
+html[data-rdm-theme="dark"] h3,html[data-rdm-theme="dark"] h4{
+ color:#f5f9ff!important;
+}
+
+/* Inputs and placeholders */
+html[data-rdm-theme="light"] input,
+html[data-rdm-theme="light"] textarea,
+html[data-rdm-theme="light"] select{color:#173750!important}
+html[data-rdm-theme="dark"] input,
+html[data-rdm-theme="dark"] textarea,
+html[data-rdm-theme="dark"] select{color:#f3f8ff!important}
+html[data-rdm-theme="light"] input::placeholder,
+html[data-rdm-theme="light"] textarea::placeholder{color:#60778b!important;opacity:1!important}
+html[data-rdm-theme="dark"] input::placeholder,
+html[data-rdm-theme="dark"] textarea::placeholder{color:#afc1d3!important;opacity:1!important}
+
+/* Keep palette icon unaffected */
+html[data-rdm-theme] #themeToggle,
+html[data-rdm-theme] #themeToggle *,
+html[data-rdm-theme] .themeToggle,
+html[data-rdm-theme] .themeToggle *{color:inherit!important}
+
+/* V6.8.63 — COMPLETE CONTRAST FIX */
+
+/* LIGHT MODE — all normal text */
+html[data-rdm-theme="light"] body,
+html[data-rdm-theme="light"] main,
+html[data-rdm-theme="light"] .page,
+html[data-rdm-theme="light"] .card,
+html[data-rdm-theme="light"] .player,
+html[data-rdm-theme="light"] .statCard,
+html[data-rdm-theme="light"] .galleryCard,
+html[data-rdm-theme="light"] .gallery figure,
+html[data-rdm-theme="light"] .recordCard,
+html[data-rdm-theme="light"] .leaderCard,
+html[data-rdm-theme="light"] .tournamentCard,
+html[data-rdm-theme="light"] .socialCard,
+html[data-rdm-theme="light"] .honour,
+html[data-rdm-theme="light"] .profileCard,
+html[data-rdm-theme="light"] .miniMatch,
+html[data-rdm-theme="light"] .updateCard,
+html[data-rdm-theme="light"] .lineupCard,
+html[data-rdm-theme="light"] .availabilityRow{
+ color:#173653!important;
+}
+html[data-rdm-theme="light"] p,
+html[data-rdm-theme="light"] span,
+html[data-rdm-theme="light"] label,
+html[data-rdm-theme="light"] strong,
+html[data-rdm-theme="light"] b,
+html[data-rdm-theme="light"] small{
+ color:#36536b;
+}
+
+/* headings remain strong */
+html[data-rdm-theme="light"] h1,
+html[data-rdm-theme="light"] h2,
+html[data-rdm-theme="light"] h3,
+html[data-rdm-theme="light"] h4,
+html[data-rdm-theme="light"] .player h3,
+html[data-rdm-theme="light"] .player h4{
+ color:#123e62!important;
+}
+
+/* muted text made darker */
+html[data-rdm-theme="light"] .muted,
+html[data-rdm-theme="light"] .meta,
+html[data-rdm-theme="light"] .sub,
+html[data-rdm-theme="light"] .eyebrow,
+html[data-rdm-theme="light"] .kicker{
+ color:#526b7e!important;
+ opacity:1!important;
+}
+
+/* BUTTONS — fix invisible blue-on-blue labels */
+html[data-rdm-theme] button,
+html[data-rdm-theme] button *,
+html[data-rdm-theme] .btn,
+html[data-rdm-theme] .btn *,
+html[data-rdm-theme] a.btn,
+html[data-rdm-theme] a.btn *,
+html[data-rdm-theme] .primary,
+html[data-rdm-theme] .primary *,
+html[data-rdm-theme] .secondary,
+html[data-rdm-theme] .secondary *,
+html[data-rdm-theme] .tinyBtn,
+html[data-rdm-theme] .tinyBtn *,
+html[data-rdm-theme] .viewProfileBtn,
+html[data-rdm-theme] .viewProfileBtn *,
+html[data-rdm-theme] .profileEditMain,
+html[data-rdm-theme] .profileEditMain *,
+html[data-rdm-theme] .socialAction,
+html[data-rdm-theme] .socialAction *,
+html[data-rdm-theme] .homeUpdateOpen,
+html[data-rdm-theme] .homeUpdateOpen *,
+html[data-rdm-theme] .switchBtn,
+html[data-rdm-theme] .switchBtn *{
+ color:#fff!important;
+ -webkit-text-fill-color:#fff!important;
+ opacity:1!important;
+ text-shadow:none!important;
+}
+
+/* nav inactive = dark text on pale button; active = white */
+html[data-rdm-theme="light"] .nav button:not(.active),
+html[data-rdm-theme="light"] .nav a:not(.active){
+ color:#244760!important;
+ -webkit-text-fill-color:#244760!important;
+}
+html[data-rdm-theme] .nav .active,
+html[data-rdm-theme] .nav .active *{
+ color:#fff!important;
+ -webkit-text-fill-color:#fff!important;
+}
+
+/* gallery album buttons */
+html[data-rdm-theme="light"] .albumTab:not(.active){
+ background:#d6e6f1!important;
+ color:#244760!important;
+ -webkit-text-fill-color:#244760!important;
+}
+html[data-rdm-theme] .albumTab.active{
+ background:#245f9f!important;
+ color:#fff!important;
+ -webkit-text-fill-color:#fff!important;
+}
+
+/* IDs and jersey text */
+html[data-rdm-theme="light"] .playerId,
+html[data-rdm-theme="light"] .playerId *,
+html[data-rdm-theme="light"] .badge,
+html[data-rdm-theme="light"] .badge *,
+html[data-rdm-theme="light"] .chip,
+html[data-rdm-theme="light"] .chip *{
+ color:#244760!important;
+ -webkit-text-fill-color:#244760!important;
+}
+
+/* HOME bottom metric cards — remove white + improve contrast */
+html[data-rdm-theme="light"] .metrics>*:nth-child(1),
+html[data-rdm-theme="light"] .homeMetrics>*:nth-child(1){background:#d3e7ff!important}
+html[data-rdm-theme="light"] .metrics>*:nth-child(2),
+html[data-rdm-theme="light"] .homeMetrics>*:nth-child(2){background:#f5dfad!important}
+html[data-rdm-theme="light"] .metrics>*:nth-child(3),
+html[data-rdm-theme="light"] .homeMetrics>*:nth-child(3){background:#cfead9!important}
+html[data-rdm-theme="light"] .metrics>*:nth-child(4),
+html[data-rdm-theme="light"] .homeMetrics>*:nth-child(4){background:#ded3f5!important}
+html[data-rdm-theme="light"] .metrics>*,
+html[data-rdm-theme="light"] .metrics>* *,
+html[data-rdm-theme="light"] .homeMetrics>*,
+html[data-rdm-theme="light"] .homeMetrics>* *{
+ color:#173653!important;
+ -webkit-text-fill-color:#173653!important;
+ opacity:1!important;
+}
+
+/* Home hero buttons */
+html[data-rdm-theme] .hero button *,
+html[data-rdm-theme] .hero .btn *,
+html[data-rdm-theme] .homeHero button *,
+html[data-rdm-theme] .homeHero .btn *{
+ color:#fff!important;
+ -webkit-text-fill-color:#fff!important;
+}
+
+/* Gallery bottom action buttons */
+html[data-rdm-theme] .galleryCard button,
+html[data-rdm-theme] .galleryCard button *,
+html[data-rdm-theme] .gallery figure button,
+html[data-rdm-theme] .gallery figure button *{
+ color:#fff!important;
+ -webkit-text-fill-color:#fff!important;
+}
+
+/* DARK MODE */
+html[data-rdm-theme="dark"] body,
+html[data-rdm-theme="dark"] main,
+html[data-rdm-theme="dark"] .page,
+html[data-rdm-theme="dark"] .card,
+html[data-rdm-theme="dark"] .player,
+html[data-rdm-theme="dark"] .statCard,
+html[data-rdm-theme="dark"] .galleryCard,
+html[data-rdm-theme="dark"] .gallery figure,
+html[data-rdm-theme="dark"] .recordCard,
+html[data-rdm-theme="dark"] .leaderCard,
+html[data-rdm-theme="dark"] .tournamentCard,
+html[data-rdm-theme="dark"] .socialCard,
+html[data-rdm-theme="dark"] .honour,
+html[data-rdm-theme="dark"] .profileCard,
+html[data-rdm-theme="dark"] .miniMatch,
+html[data-rdm-theme="dark"] .updateCard,
+html[data-rdm-theme="dark"] .lineupCard,
+html[data-rdm-theme="dark"] .availabilityRow{
+ color:#f2f7ff!important;
+}
+html[data-rdm-theme="dark"] p,
+html[data-rdm-theme="dark"] span,
+html[data-rdm-theme="dark"] label,
+html[data-rdm-theme="dark"] strong,
+html[data-rdm-theme="dark"] b,
+html[data-rdm-theme="dark"] small{
+ color:#d3e1ee;
+}
+html[data-rdm-theme="dark"] h1,
+html[data-rdm-theme="dark"] h2,
+html[data-rdm-theme="dark"] h3,
+html[data-rdm-theme="dark"] h4{
+ color:#f5f9ff!important;
+}
+
+/* Theme palette button must remain icon-only */
+html[data-rdm-theme] #themeToggle,
+html[data-rdm-theme] #themeToggle *,
+html[data-rdm-theme] .themeToggle,
+html[data-rdm-theme] .themeToggle *{
+ background:transparent!important;
+ -webkit-text-fill-color:initial!important;
+}
+
+/* footer visibility */
+html[data-rdm-theme="light"] footer,html[data-rdm-theme="light"] footer *{color:#274760!important}
+html[data-rdm-theme="dark"] footer,html[data-rdm-theme="dark"] footer *{color:#e4effa!important}
+
+/* V6.8.64 — FINAL SITE-WIDE BUTTON/TEXT VISIBILITY FIX */
+
+/* HEADER ACCOUNT CONTROLS: solid background + white label */
+html[data-rdm-theme="light"] .headActions #loginOpen,
+html[data-rdm-theme="light"] .headActions #switchBtn,
+html[data-rdm-theme="dark"] .headActions #loginOpen,
+html[data-rdm-theme="dark"] .headActions #switchBtn{
+ background:#245f9f!important;
+ background-image:none!important;
+ color:#fff!important;
+ -webkit-text-fill-color:#fff!important;
+ border-color:#245f9f!important;
+}
+html[data-rdm-theme] .headActions #loginOpen *,
+html[data-rdm-theme] .headActions #switchBtn *{
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+
+/* INACTIVE NAV = pale surface + dark text in light mode */
+html[data-rdm-theme="light"] .nav button:not(.active){
+ background:#f7fbff!important;
+ background-image:none!important;
+ color:#294b65!important;
+ -webkit-text-fill-color:#294b65!important;
+ border-color:#d2e2ed!important;
+}
+html[data-rdm-theme="light"] .nav button:not(.active) *{
+ color:#294b65!important;-webkit-text-fill-color:#294b65!important;
+}
+/* ACTIVE NAV */
+html[data-rdm-theme] .nav button.active{
+ background:#245f9f!important;background-image:none!important;
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+ border-color:#245f9f!important;
+}
+
+/* DARK inactive nav */
+html[data-rdm-theme="dark"] .nav button:not(.active){
+ background:#1b334b!important;background-image:none!important;
+ color:#dceafa!important;-webkit-text-fill-color:#dceafa!important;
+ border-color:#31506a!important;
+}
+
+/* ALBUM / RECORD / FILTER TABS */
+html[data-rdm-theme="light"] .albumTab:not(.on):not(.active),
+html[data-rdm-theme="light"] .recordTypeBtn:not(.active),
+html[data-rdm-theme="light"] .tabs button:not(.active){
+ background:#dce8f2!important;background-image:none!important;
+ color:#294b65!important;-webkit-text-fill-color:#294b65!important;
+ border-color:#bfd3e2!important;
+}
+html[data-rdm-theme] .albumTab.on,
+html[data-rdm-theme] .albumTab.active,
+html[data-rdm-theme] .recordTypeBtn.active,
+html[data-rdm-theme] .tabs button.active{
+ background:#245f9f!important;background-image:none!important;
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+ border-color:#245f9f!important;
+}
+html[data-rdm-theme="dark"] .albumTab:not(.on):not(.active),
+html[data-rdm-theme="dark"] .recordTypeBtn:not(.active),
+html[data-rdm-theme="dark"] .tabs button:not(.active){
+ background:#1d354d!important;background-image:none!important;
+ color:#dceafa!important;-webkit-text-fill-color:#dceafa!important;
+ border-color:#31506a!important;
+}
+
+/* THEME MENU — readable, not white-on-white */
+html[data-rdm-theme="light"] .themeMenu button{
+ background:#f4f9fd!important;background-image:none!important;
+ color:#294b65!important;-webkit-text-fill-color:#294b65!important;
+ border-color:#d1e1eb!important;
+}
+html[data-rdm-theme="dark"] .themeMenu button{
+ background:#1b334b!important;background-image:none!important;
+ color:#e1edf8!important;-webkit-text-fill-color:#e1edf8!important;
+ border-color:#31506a!important;
+}
+
+/* ALL TRUE ACTION BUTTONS = solid blue + white */
+html[data-rdm-theme] :is(
+ .sectionHead .primary,.actions .primary,.actions .secondary,
+ .viewProfileBtn,.tinyBtn,.profileEditMain,.profileDownloadMain,
+ .shareProfileBtn,.socialAction,.homeUpdateOpen,.galleryActions button,
+ .galleryAdminActions button,#availabilityList button,.rdmUnifiedDialog>.primary.wide,
+ .profileEditBack,.squadBackBtn
+){
+ background:#245f9f!important;background-image:none!important;
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+ border-color:#245f9f!important;
+}
+html[data-rdm-theme] :is(
+ .sectionHead .primary,.actions .primary,.actions .secondary,
+ .viewProfileBtn,.tinyBtn,.profileEditMain,.profileDownloadMain,
+ .shareProfileBtn,.socialAction,.homeUpdateOpen,.galleryActions button,
+ .galleryAdminActions button,#availabilityList button,.rdmUnifiedDialog>.primary.wide,
+ .profileEditBack,.squadBackBtn
+) *{
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+
+/* Login/dialog labels */
+html[data-rdm-theme="light"] .dialog,
+html[data-rdm-theme="light"] .dialog label,
+html[data-rdm-theme="light"] .rdmUnifiedDialog,
+html[data-rdm-theme="light"] .rdmUnifiedDialog label{
+ color:#24445e!important;-webkit-text-fill-color:#24445e!important;
+}
+html[data-rdm-theme="dark"] .dialog,
+html[data-rdm-theme="dark"] .dialog label,
+html[data-rdm-theme="dark"] .rdmUnifiedDialog,
+html[data-rdm-theme="dark"] .rdmUnifiedDialog label{
+ color:#edf6ff!important;-webkit-text-fill-color:#edf6ff!important;
+}
+
+/* Inputs and selected values */
+html[data-rdm-theme="light"] input,
+html[data-rdm-theme="light"] textarea,
+html[data-rdm-theme="light"] select,
+html[data-rdm-theme="light"] option{
+ color:#203f58!important;-webkit-text-fill-color:#203f58!important;
+}
+html[data-rdm-theme="dark"] input,
+html[data-rdm-theme="dark"] textarea,
+html[data-rdm-theme="dark"] select{
+ color:#edf6ff!important;-webkit-text-fill-color:#edf6ff!important;
+}
+
+/* Explicitly repair common metadata/text that old theme rules made too pale */
+html[data-rdm-theme="light"] :is(
+ .brand b,.brand small,.heroTeam,.heroPlace,.hero p,.sectionHead p,
+ .pbody p,.profileBio,.profileNick,.gallery figcaption,.contentTime,.updateMeta,
+ .statCard p,.miniMatch p,.updateCard p,.v62Help,.v62Note
+){opacity:1!important}
+html[data-rdm-theme="dark"] :is(
+ .brand b,.brand small,.heroTeam,.heroPlace,.hero p,.sectionHead p,
+ .pbody p,.profileBio,.profileNick,.gallery figcaption,.contentTime,.updateMeta,
+ .statCard p,.miniMatch p,.updateCard p,.v62Help,.v62Note
+){opacity:1!important}
+
+/* palette icon remains transparent */
+html[data-rdm-theme] #themeToggle,
+html[data-rdm-theme] .themeToggle{
+ background:transparent!important;background-image:none!important;
+ border-color:transparent!important;box-shadow:none!important;
+ -webkit-text-fill-color:initial!important;
+}
