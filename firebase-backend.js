@@ -31,7 +31,7 @@ async function rdmProfileUid(playerId){const p=D.players.find(x=>x.id===playerId
 async function rdmProfileWrite(p,extra={}){const uid=await rdmProfileUid(p.id);if(!uid)throw new Error('PROFILE_ACCOUNT_NOT_FOUND');if(!rdmAdmin()&&(!rdmAuth.currentUser||session?.playerId!==p.id))throw new Error('NOT_ALLOWED');const data={playerId:p.id,jersey:p.jersey||'',nick:p.nick||'',bio:p.bio||'',socials:Array.isArray(p.socials)?p.socials.slice(0,3):[],image:p.image||'',updatedAt:rdmStamp(),...extra};await rdmDB.collection('PlayerProfiles').doc(uid).set(data,{merge:true});p._profileUid=uid}
 
 function socialObj(x,i){return typeof x==='string'?{name:'SOCIAL '+(i+1),url:x}:x||{}}
-function profileHtml(p,editable=false,adminEdit=false){const socials=(p.socials||[]).map(socialObj).filter(s=>s.url||s.name);const sh=socials.length?`<div class="profileSocialList">${socials.map((s,i)=>`<div class="profileSocialRow"><a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener">${mini(s.name||('SOCIAL '+(i+1)))} ↗</a>${editable?`<button class="tinyBtn" onclick="editOwnSocial(${i})">✎</button><button class="tinyBtn danger" onclick="deleteOwnSocial(${i})">×</button>`:''}</div>`).join('')}</div>`:'<p class="mutedMini">ɴᴏ ꜱᴏᴄɪᴀʟ ʟɪɴᴋꜱ</p>';
+function profileHtml(p,editable=false,adminEdit=false){const socials=(p.socials||[]).map(socialObj).filter(s=>s.url||s.name);const sh=socials.length?`<div class="profileSocialList">${socials.map((s,i)=>`<div class="profileSocialRow"><a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener">${mini(s.name||('SOCIAL '+(i+1)))}</a></div>`).join('')}</div>`:'<p class="mutedMini">ɴᴏ ꜱᴏᴄɪᴀʟ ʟɪɴᴋꜱ</p>';
   return `<article class="profileCard publicProfileCard"><img class="profileAvatar" src="${esc(p.image||'assets/logo.jpg')}"><h2>${mini(p.name)}</h2><div class="profileIdentity"><div class="identityItem"><span>ᴘʟᴀʏᴇʀ ɪᴅ</span><strong>${miniId(p.id)}</strong></div><div class="identityDivider"></div><div class="identityItem"><span>ᴊᴇʀꜱᴇʏ ɴᴜᴍʙᴇʀ</span><strong>${p.jersey?'#'+esc(p.jersey):'—'}</strong></div></div>${p.nick?`<p class="profileNick">${mini(p.nick)}</p>`:''}<div class="profileOfficial"><b>${mini(p.role)}</b><br>${mini(p.detail)}</div>${p.bio?`<div class="profileBio">${mini(p.bio)}</div>`:''}${sh}${editable?`<div class="profileEditHub"><button type="button" class="primary profileEditMain" onclick="openProfileEditMenu()">⚙ ᴇᴅɪᴛ ᴘʀᴏꜰɪʟᴇ</button><button type="button" class="secondary profileDownloadMain" onclick="openProfileDownload()">⬇ ᴅᴏᴡɴʟᴏᴀᴅ ᴘʀᴏꜰɪʟᴇ</button></div>`:''}${adminEdit?'':''}</article>`}
 
 render=function(){q('#players').innerHTML=D.players.map(p=>{const n=(p.name||'').toUpperCase();const lead=n==='REHAN AKHTAR'?'CAPTAIN':n==='SAIF ALI'?'VICE-CAPTAIN':n==='SOAIB AKHTAR'?'WICKET-KEEPER':'';return `<article class="player clickablePlayer" onclick="openPlayerProfile('${p.id}')"><div class="photo"><img src="${esc(p.image||'assets/logo.jpg')}" alt="${esc(p.name)}"></div>${lead?`<div class="leadershipBadge ${lead==='VICE-CAPTAIN'?'vice':lead==='WICKET-KEEPER'?'keeper':''}">${lead==='CAPTAIN'?'♛':lead==='VICE-CAPTAIN'?'★':'🧤'} ${mini(lead)}</div>`:''}<div class="pbody"><span class="simplePlayerId">${miniId(p.id)}${p.jersey?' <em>#'+esc(p.jersey)+'</em>':''}</span><h3>${mini(p.name)}</h3><b>${mini(p.role)}</b><p>${mini(p.detail)}</p>${p.nick?`<p>ɴɪᴄᴋɴᴀᴍᴇ • ${mini(p.nick)}</p>`:''}<button class="tinyBtn viewProfileBtn" onclick="event.stopPropagation();openPlayerProfile('${p.id}')">ᴠɪᴇᴡ ᴘʀᴏꜰɪʟᴇ</button>${rdmAdmin()?`<button class="tinyBtn" onclick="event.stopPropagation();editPlayer('${p.id}')">✎ ᴇᴅɪᴛ</button>`:''}</div></article>`}).join('');
@@ -50,7 +50,7 @@ function rdmOpenSimpleModal(title,fields,onSave){
 }
 function closeProfileEditMenu(){document.getElementById('profileEditModal')?.remove()}
 function profileEditRows(){
-  return `<div class="profileEditMenu show profileEditMenuModal"><button class="profileEditRow" type="button" onclick="runProfileEditAction('photo')"><span>📷</span><b>ᴘʀᴏꜰɪʟᴇ ᴘʜᴏᴛᴏ</b><i>›</i></button><button class="profileEditRow" type="button" onclick="runProfileEditAction('jersey')"><span>🏏</span><b>ᴊᴇʀꜱᴇʏ ɴᴜᴍʙᴇʀ</b><i>›</i></button><button class="profileEditRow" type="button" onclick="runProfileEditAction('nick')"><span>✦</span><b>ɴɪᴄᴋɴᴀᴍᴇ</b><i>›</i></button><button class="profileEditRow" type="button" onclick="runProfileEditAction('bio')"><span>✎</span><b>ʙɪᴏ</b><i>›</i></button><button class="profileEditRow" type="button" onclick="runProfileEditAction('socials')"><span>↗</span><b>ꜱᴏᴄɪᴀʟꜱ</b><i>›</i></button><button class="profileEditRow" type="button" onclick="runProfileEditAction('pass')"><span>🔐</span><b>ᴘᴀꜱꜱᴡᴏʀᴅ</b><i>›</i></button></div>`
+  return `<div class="profileEditMenu show profileEditMenuModal"><button class="profileEditRow" type="button" onclick="runProfileEditAction('photo')"><span>📷</span><b>ᴘʀᴏꜰɪʟᴇ ᴘʜᴏᴛᴏ</b><i>›</i></button><button class="profileEditRow" type="button" onclick="runProfileEditAction('jersey')"><span>🏏</span><b>ᴊᴇʀꜱᴇʏ ɴᴜᴍʙᴇʀ</b><i>›</i></button><button class="profileEditRow" type="button" onclick="runProfileEditAction('nick')"><span>✦</span><b>ɴɪᴄᴋɴᴀᴍᴇ</b><i>›</i></button><button class="profileEditRow" type="button" onclick="runProfileEditAction('bio')"><span>✎</span><b>ʙɪᴏ</b><i>›</i></button><button class="profileEditRow" type="button" onclick="runProfileEditAction('socials')"><span>🔗</span><b>ꜱᴏᴄɪᴀʟꜱ</b><i>›</i></button><button class="profileEditRow" type="button" onclick="runProfileEditAction('pass')"><span>🔐</span><b>ᴘᴀꜱꜱᴡᴏʀᴅ</b><i>›</i></button></div>`
 }
 window.openProfileEditMenu=function(){
   closeProfileEditMenu();
@@ -70,7 +70,7 @@ window.runProfileEditAction=function(action){
   closeProfileEditMenu();
   setTimeout(()=>{
     if(action==='photo') return chooseDP();
-    if(action==='socials') return addOwnSocial();
+    if(action==='socials') return openOwnSocialManager();
     return selfEdit(action);
   },40);
 };
@@ -113,6 +113,18 @@ window.selfEdit=async k=>{
     });
   }
   return toast('ꜰᴏʀᴍ ʟᴏᴀᴅɪɴɢ')
+};
+window.openOwnSocialManager=function(){
+  const p=rdmPlayer();if(!p)return;
+  document.getElementById('ownSocialManager')?.remove();
+  const socials=(p.socials||[]).map(socialObj);
+  const m=document.createElement('div');m.id='ownSocialManager';m.className='modal show profileEditOverlay';
+  m.innerHTML=`<div class="dialog rdmUnifiedDialog socialManagerDialog"><button class="close" type="button">×</button><h2>SOCIAL LINKS</h2><div class="socialManagerList">${socials.length?socials.map((s,i)=>`<div class="socialManagerRow"><b>${mini(s.name||('SOCIAL '+(i+1)))}</b><div><button type="button" class="tinyBtn" data-edit="${i}">✏️ ᴇᴅɪᴛ</button><button type="button" class="tinyBtn danger" data-delete="${i}">🗑️ ᴅᴇʟᴇᴛᴇ</button></div></div>`).join(''):'<p class="mutedMini">ɴᴏ ꜱᴏᴄɪᴀʟ ʟɪɴᴋꜱ</p>'}</div>${socials.length<3?'<button type="button" class="primary wide socialManagerAdd">＋ ᴀᴅᴅ ꜱᴏᴄɪᴀʟ</button>':''}</div>`;
+  document.body.appendChild(m);window.rdmMiniFormUI?.(m);
+  const close=()=>m.remove();m.querySelector('.close').onclick=close;m.onclick=e=>{if(e.target===m)close()};
+  m.querySelector('.socialManagerAdd')?.addEventListener('click',()=>{close();addOwnSocial()});
+  m.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const i=+b.dataset.edit;close();editOwnSocial(i)});
+  m.querySelectorAll('[data-delete]').forEach(b=>b.onclick=async()=>{const i=+b.dataset.delete;close();await deleteOwnSocial(i)});
 };
 window.addOwnSocial=async()=>{
   const p=rdmPlayer();if(!p)return;
@@ -220,3 +232,9 @@ window.openProfileDownload=function(){
 
 window.toggleProfileEditMenu=function(force){ if(force===false) closeProfileEditMenu(); else openProfileEditMenu(); };
 
+
+/* V6.8.67 FULL PROFILE + STATS INSIDE SQUAD */
+function squadStatsHtml(p){const s=(typeof XD!=='undefined'&&XD.stats||[]).find(z=>z.playerId===p.id)||{},n=v=>Number(v||0)||0;return `<div class="squadStats"><div class="squadStatsTitle">ᴘʟᴀʏᴇʀ ꜱᴛᴀᴛꜱ</div><div class="statNums"><b>${n(s.matches)}<small>ᴍᴀᴛᴄʜᴇꜱ</small></b><b>${n(s.runs)}<small>ʀᴜɴꜱ</small></b><b>${n(s.wickets)}<small>ᴡɪᴄᴋᴇᴛꜱ</small></b><b>${n(s.highScore)}<small>ʜɪɢʜ ꜱᴄᴏʀᴇ</small></b><b>${n(s.fours)}<small>4ꜱ</small></b><b>${n(s.sixes)}<small>6ꜱ</small></b><b>${n(s.fifties)}<small>50ꜱ</small></b><b>${n(s.hundreds)}<small>100ꜱ</small></b><b>${n(s.runOuts)}<small>ʀᴜɴ ᴏᴜᴛꜱ</small></b><b>${n(s.strikeRate)}<small>ꜱᴛʀɪᴋᴇ ʀᴀᴛᴇ</small></b><b>${n(s.economy)}<small>ᴇᴄᴏɴᴏᴍʏ</small></b><b>${n(s.ballsFaced)}<small>ʙᴀʟʟꜱ ꜰᴀᴄᴇᴅ</small></b></div><div class="squadStatLines"><p>ʙᴇꜱᴛ ʙᴏᴡʟɪɴɢ • ${esc(s.bestBowling||'—')}</p><p>ʟᴀꜱᴛ 5 • ${esc(s.last5||'—')} • ꜱᴇᴀꜱᴏɴ • ${esc(s.season||'2027')}</p></div></div>`}
+function renderSquadFullProfiles(){const box=q('#players');if(!box)return;box.innerHTML=D.players.map(p=>{const n=(p.name||'').toUpperCase(),lead=n==='REHAN AKHTAR'?'CAPTAIN':n==='SAIF ALI'?'VICE-CAPTAIN':n==='SOAIB AKHTAR'?'WICKET-KEEPER':'';const socials=(p.socials||[]).map(socialObj).filter(s=>s.url||s.name);return `<article class="player squadFullProfile">${rdmAdmin()?`<button type="button" class="squadEditFab" aria-label="Edit ${esc(p.name)}" title="Edit" onclick="openSquadEditMenu('${p.id}')">✏️</button>`:''}<div class="photo"><img src="${esc(p.image||'assets/logo.jpg')}" alt="${esc(p.name)}"></div>${lead?`<div class="leadershipBadge ${lead==='VICE-CAPTAIN'?'vice':lead==='WICKET-KEEPER'?'keeper':''}">${lead==='CAPTAIN'?'♛':lead==='VICE-CAPTAIN'?'★':'🧤'} ${mini(lead)}</div>`:''}<div class="pbody"><div class="squadIdentity"><span>${miniId(p.id)}</span><span>${p.jersey?'#'+esc(p.jersey):'—'}</span></div><h3>${mini(p.name)}</h3><b>${mini(p.role)}</b><p>${mini(p.detail)}</p>${p.nick?`<p>ɴɪᴄᴋɴᴀᴍᴇ • ${mini(p.nick)}</p>`:''}${p.bio?`<div class="profileBio">${mini(p.bio)}</div>`:''}${socials.length?`<div class="squadSocials">${socials.map((s,i)=>`<a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener">${mini(s.name||('SOCIAL '+(i+1)))}</a>`).join('')}</div>`:''}${squadStatsHtml(p)}</div></article>`}).join('')}
+window.openSquadEditMenu=function(id){if(!rdmAdmin())return;document.getElementById('squadEditModal')?.remove();const p=D.players.find(x=>x.id===id);if(!p)return;const m=document.createElement('div');m.id='squadEditModal';m.className='modal show';m.innerHTML=`<div class="dialog rdmUnifiedDialog squadEditDialog"><button class="close" type="button" aria-label="Close">×</button><h2>ᴇᴅɪᴛ ${mini(p.name)}</h2><div class="squadEditChoices"><button class="squadEditChoice" type="button">👤 <span><b>ᴘʟᴀʏᴇʀ ᴅᴇᴛᴀɪʟꜱ</b><small>ᴘʀᴏꜰɪʟᴇ • ᴊᴇʀꜱᴇʏ • ʀᴏʟᴇ • ʙɪᴏ • ꜱᴏᴄɪᴀʟꜱ</small></span></button><button class="squadEditChoice" type="button">📊 <span><b>ᴘʟᴀʏᴇʀ ꜱᴛᴀᴛꜱ</b><small>ᴍᴀᴛᴄʜᴇꜱ • ʀᴜɴꜱ • ᴡɪᴄᴋᴇᴛꜱ • ʙᴀʟʟꜱ ꜰᴀᴄᴇᴅ</small></span></button></div></div>`;document.body.appendChild(m);const choices=m.querySelectorAll('.squadEditChoice');choices[0].onclick=()=>{m.remove();editPlayer(id)};choices[1].onclick=()=>{m.remove();editStats(id)};m.querySelector('.close').onclick=()=>m.remove();m.onclick=e=>{if(e.target===m)m.remove()}}
+const renderBeforeSquadFull=render;render=function(){renderBeforeSquadFull();renderSquadFullProfiles()};

@@ -7,7 +7,7 @@ async function xload(){try{const [s,a,v,l]=await Promise.all([rdmDB.collection(X
 const xv=id=>(document.getElementById(id)?.value||'').trim();
 const xp=(label,def='')=>null;
 const xnum=v=>Number(v||0)||0;
-function xrender(){renderHomeExtras();renderStats();renderAchievements();renderAvailability();renderLineups();window.renderGalleryAlbums?.();renderPinnedNews();}
+function xrender(){renderHomeExtras();renderStats();renderAchievements();renderAvailability();renderLineups();window.renderGalleryAlbums?.();renderPinnedNews();if(typeof renderSquadFullProfiles==='function')renderSquadFullProfiles();}
 function renderHomeExtras(){let box=document.getElementById('homeMatchHub');if(!box){box=document.createElement('div');box.id='homeMatchHub';box.className='homeMatchHub';document.querySelector('#home .metrics').insertAdjacentElement('beforebegin',box)}
  const upcoming=D.matches.find(m=>!/won|lost|draw|result/i.test((m.note||'')+' '+(m.status||'')))||D.matches[0];const recent=D.matches.find(m=>/won|lost|draw|result/i.test((m.note||'')+' '+(m.status||'')));
  box.innerHTML=`<div class="miniMatch"><span>ɴᴇxᴛ ᴍᴀᴛᴄʜ</span>${upcoming?`<h3>${mini(upcoming.opponent)}</h3><p>${mini(upcoming.date||'')} • ${mini(upcoming.venue||'')}</p>`:'<p>ɴᴏ ᴜᴘᴄᴏᴍɪɴɢ ᴍᴀᴛᴄʜ</p>'}</div><div class="miniMatch"><span>ʀᴇᴄᴇɴᴛ ʀᴇꜱᴜʟᴛ</span>${recent?`<h3>${mini(recent.opponent)}</h3><p>${mini(recent.note||recent.status||'')}</p>`:'<p>ɴᴏ ʀᴇꜱᴜʟᴛ ᴀᴅᴅᴇᴅ ʏᴇᴛ</p>'}</div>`}

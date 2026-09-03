@@ -3635,3 +3635,475 @@ html[data-rdm-theme] .themeToggle{
  border-color:transparent!important;box-shadow:none!important;
  -webkit-text-fill-color:initial!important;
 }
+
+/* V6.8.65 PREMIUM BUTTON THEME */
+html[data-rdm-theme] :is(.primary,.viewProfileBtn,.profileEditMain,.profileDownloadMain,.shareProfileBtn,.socialAction,.homeUpdateOpen,.switchBtn,.galleryActions button,.galleryAdminActions button,.sectionHead .primary,.actions .primary,.actions .secondary,#availabilityList button,.profileEditBack,.squadBackBtn){
+background:#155f91!important;background-image:none!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border:1px solid #155f91!important;border-radius:999px!important;box-shadow:0 7px 18px rgba(21,95,145,.20)!important}
+html[data-rdm-theme="light"] .headActions button:not(#themeToggle){background:#edf6fb!important;background-image:none!important;color:#214b65!important;-webkit-text-fill-color:#214b65!important;border:1px solid #b8d3e3!important;box-shadow:0 4px 12px rgba(37,79,108,.08)!important}
+html[data-rdm-theme="dark"] .headActions button:not(#themeToggle){background:#19364d!important;background-image:none!important;color:#eef8ff!important;-webkit-text-fill-color:#eef8ff!important;border:1px solid #345a73!important}
+html[data-rdm-theme="light"] .nav button{background:#edf5fa!important;background-image:none!important;color:#244b64!important;-webkit-text-fill-color:#244b64!important;border:1px solid #c6dce8!important;box-shadow:0 3px 10px rgba(32,75,100,.06)!important}
+html[data-rdm-theme="dark"] .nav button{background:#193249!important;background-image:none!important;color:#dcebf5!important;-webkit-text-fill-color:#dcebf5!important;border:1px solid #31536c!important}
+html[data-rdm-theme] .nav button.active{background:#155f91!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:#155f91!important;box-shadow:0 6px 15px rgba(21,95,145,.23)!important}
+html[data-rdm-theme="light"] :is(.albumTab,.recordTypeBtn,.tabs button){background:#e6f1f7!important;background-image:none!important;color:#244b64!important;-webkit-text-fill-color:#244b64!important;border:1px solid #bfd7e5!important}
+html[data-rdm-theme="dark"] :is(.albumTab,.recordTypeBtn,.tabs button){background:#1b354c!important;background-image:none!important;color:#dcebf5!important;-webkit-text-fill-color:#dcebf5!important;border:1px solid #34566f!important}
+html[data-rdm-theme] :is(.albumTab.active,.albumTab.on,.recordTypeBtn.active,.tabs button.active){background:#155f91!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:#155f91!important}
+html[data-rdm-theme] .tinyBtn{background:#155f91!important;background-image:none!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border:1px solid #155f91!important;border-radius:999px!important;box-shadow:0 4px 11px rgba(21,95,145,.16)!important}
+html[data-rdm-theme] :is(.danger,.deleteBtn,.removeBtn){background:#a94852!important;background-image:none!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:#a94852!important}
+html[data-rdm-theme] #themeToggle,html[data-rdm-theme] .themeToggle{background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+
+/* V6.8.66 — UNIFIED NAV-STYLE PILLS
+   Make section tabs/filters match the TOP NAV exactly:
+   same pill shape, same inactive treatment, same selected treatment. */
+
+/* Shared geometry for top nav + all section selectors */
+html[data-rdm-theme] :is(
+ .nav button,
+ .albumTab,
+ .recordTypeBtn,
+ .tabs button,
+ .galleryAlbums button,
+ .galleryTabs button,
+ .filterTabs button,
+ .subTabs button,
+ .segmented button
+){
+ border-radius:999px!important;
+ min-height:36px!important;
+ padding:8px 18px!important;
+ line-height:1!important;
+ font-weight:800!important;
+ letter-spacing:.08em!important;
+ box-shadow:0 3px 10px rgba(32,75,100,.06)!important;
+}
+
+/* LIGHT — unselected exactly like top nav */
+html[data-rdm-theme="light"] :is(
+ .nav button:not(.active),
+ .albumTab:not(.active):not(.on),
+ .recordTypeBtn:not(.active),
+ .tabs button:not(.active),
+ .galleryAlbums button:not(.active),
+ .galleryTabs button:not(.active),
+ .filterTabs button:not(.active),
+ .subTabs button:not(.active),
+ .segmented button:not(.active)
+){
+ background:#edf5fa!important;
+ background-image:none!important;
+ color:#244b64!important;
+ -webkit-text-fill-color:#244b64!important;
+ border:1px solid #c6dce8!important;
+}
+
+/* DARK — unselected exactly like top nav */
+html[data-rdm-theme="dark"] :is(
+ .nav button:not(.active),
+ .albumTab:not(.active):not(.on),
+ .recordTypeBtn:not(.active),
+ .tabs button:not(.active),
+ .galleryAlbums button:not(.active),
+ .galleryTabs button:not(.active),
+ .filterTabs button:not(.active),
+ .subTabs button:not(.active),
+ .segmented button:not(.active)
+){
+ background:#193249!important;
+ background-image:none!important;
+ color:#dcebf5!important;
+ -webkit-text-fill-color:#dcebf5!important;
+ border:1px solid #31536c!important;
+}
+
+/* SELECTED — same as active top nav */
+html[data-rdm-theme] :is(
+ .nav button.active,
+ .albumTab.active,.albumTab.on,
+ .recordTypeBtn.active,
+ .tabs button.active,
+ .galleryAlbums button.active,
+ .galleryTabs button.active,
+ .filterTabs button.active,
+ .subTabs button.active,
+ .segmented button.active
+){
+ background:#155f91!important;
+ background-image:none!important;
+ color:#fff!important;
+ -webkit-text-fill-color:#fff!important;
+ border:1px solid #155f91!important;
+ box-shadow:0 6px 15px rgba(21,95,145,.23)!important;
+}
+
+/* Some JS may use aria-selected instead of .active */
+html[data-rdm-theme] :is(
+ .albumTab[aria-selected="true"],
+ .recordTypeBtn[aria-selected="true"],
+ .tabs button[aria-selected="true"],
+ .galleryAlbums button[aria-selected="true"],
+ .galleryTabs button[aria-selected="true"],
+ .filterTabs button[aria-selected="true"],
+ .subTabs button[aria-selected="true"]
+){
+ background:#155f91!important;
+ background-image:none!important;
+ color:#fff!important;
+ -webkit-text-fill-color:#fff!important;
+ border-color:#155f91!important;
+}
+
+/* Keep all selector labels readable */
+html[data-rdm-theme] :is(
+ .nav button,.albumTab,.recordTypeBtn,.tabs button,
+ .galleryAlbums button,.galleryTabs button,.filterTabs button,
+ .subTabs button,.segmented button
+) *{
+ color:inherit!important;
+ -webkit-text-fill-color:inherit!important;
+}
+
+/* Horizontal section bars stay clean and aligned */
+:is(.galleryAlbums,.galleryTabs,.filterTabs,.subTabs,.tabs,.segmented){
+ align-items:center!important;
+ gap:10px!important;
+}
+
+/* Icon-only theme control remains untouched */
+html[data-rdm-theme] #themeToggle,
+html[data-rdm-theme] .themeToggle{
+ min-height:0!important;padding:0!important;
+ background:transparent!important;border:0!important;
+ box-shadow:none!important;
+}
+
+/* V6.8.67 FULL PROFILE + STATS IN SQUAD */
+.squadFullProfile{cursor:default!important}.squadFullProfile .pbody{width:100%!important}
+.squadIdentity{display:flex;justify-content:center;gap:10px;margin:12px 0}.squadIdentity span{padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.38);border:1px solid rgba(48,86,113,.14);font-weight:800}
+.squadFullProfile .profileBio{max-width:700px;margin:14px auto!important;padding:14px 18px;border-radius:18px;background:rgba(255,255,255,.25)}
+.squadSocials{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:12px 0}.squadSocials a{padding:7px 14px;border-radius:999px;background:#155f91;color:#fff!important;text-decoration:none;font-weight:800}
+.squadStats{margin:18px auto 10px;max-width:760px;padding:16px;border-radius:22px;background:rgba(255,255,255,.24);border:1px solid rgba(56,94,120,.14)}
+.squadStatsTitle{text-align:center;font-weight:900;letter-spacing:.12em;margin-bottom:12px}.squadStats .statNums{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important}
+.squadStats .statNums b{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70px;padding:8px;border-radius:15px;background:rgba(255,255,255,.38)!important;color:inherit!important}.squadStats .statNums small{display:block;margin-top:5px;font-size:.68em;color:inherit!important;opacity:.78}
+.squadStatLines{text-align:center;margin:10px 0}.squadStatLines p{margin:5px 0!important;color:inherit!important}
+html[data-rdm-theme="dark"] .squadIdentity span,html[data-rdm-theme="dark"] .squadFullProfile .profileBio,html[data-rdm-theme="dark"] .squadStats,html[data-rdm-theme="dark"] .squadStats .statNums b{background:rgba(5,18,32,.24)!important}
+
+/* V6.8.68 — clean squad edit menu + balanced wide action controls */
+.squadFullProfile{position:relative!important}
+.squadEditFab{position:absolute!important;top:18px!important;right:18px!important;z-index:8!important;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;padding:0!important;border-radius:50%!important;display:grid!important;place-items:center!important;background:#155f91!important;color:#fff!important;border:1px solid rgba(255,255,255,.55)!important;box-shadow:0 8px 20px rgba(21,95,145,.24)!important;font-size:18px!important}
+.squadEditDialog{width:min(680px,88vw)!important;padding:24px!important}.squadEditDialog h2{text-align:center!important;padding:0 48px!important}.squadEditChoices{display:grid!important;gap:12px!important;margin-top:18px!important}.squadEditChoice{width:100%!important;min-height:68px!important;padding:12px 18px!important;border-radius:18px!important;display:grid!important;grid-template-columns:44px 1fr!important;align-items:center!important;text-align:left!important;background:#f4faff!important;color:#174c88!important;border:1px solid #bcdff2!important}.squadEditChoice>span{display:grid!important;gap:5px!important}.squadEditChoice small{opacity:.72!important;font-size:8px!important}.squadEditDialog .close{position:absolute!important;top:16px!important;right:16px!important}
+.squadSocials a{min-width:150px!important;padding:9px 22px!important;text-align:center!important}
+/* Wider action pills site-wide; My Profile controls intentionally excluded. */
+body :is(.galleryAdminActions,.updateActions,.newsActions,.v62Actions,.adminActions,.cardActions) :is(button,.tinyBtn,.secondary,.primary),
+body :is(.updatePinBtn,.deleteBtn){min-width:132px!important;padding-left:20px!important;padding-right:20px!important;border-radius:999px!important}
+#myProfile :is(button,.tinyBtn,.secondary,.primary),.profileCard :is(button,.tinyBtn,.secondary,.primary){min-width:unset!important}
+html[data-rdm-theme="dark"] .squadEditChoice{background:#193249!important;color:#dcebf5!important;border-color:#31536c!important}
+
+/* V6.8.69 FINAL BALANCE PATCH */
+/* Gallery + Records selectors: top-nav style; only selected is blue. */
+html[data-rdm-theme="light"] :is(.albumTab,.recordTypeBtn,.tabs button):not(.active):not(.on):not([aria-selected="true"]){background:#edf5fa!important;color:#244b64!important;-webkit-text-fill-color:#244b64!important;border:1px solid #c6dce8!important;box-shadow:0 3px 10px rgba(32,75,100,.06)!important}
+html[data-rdm-theme="dark"] :is(.albumTab,.recordTypeBtn,.tabs button):not(.active):not(.on):not([aria-selected="true"]){background:#193249!important;color:#dcebf5!important;-webkit-text-fill-color:#dcebf5!important;border:1px solid #31536c!important}
+html[data-rdm-theme] :is(.albumTab.active,.albumTab.on,.recordTypeBtn.active,.tabs button.active,.albumTab[aria-selected="true"],.recordTypeBtn[aria-selected="true"]){background:#155f91!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:#155f91!important}
+
+/* Wider site action pills requested; My Profile main controls remain unchanged. */
+body :is(.honour,.gallery figure,.updateCard,.newsCard,.card,.availabilityRow,.availabilityItem) :is(.tinyBtn,.deleteBtn,.danger,button){min-width:150px!important;padding-left:24px!important;padding-right:24px!important}
+#availabilityList button{min-width:150px!important;padding-left:24px!important;padding-right:24px!important}
+
+/* Home hero: both wider, Contact Captain outlined/unfilled. */
+.homeActions{width:min(620px,86%)!important;margin-left:auto!important;margin-right:auto!important;display:grid!important;grid-template-columns:1fr!important;gap:12px!important}
+.homeActions .primary,.homeActions .secondary{width:100%!important;min-height:44px!important;display:grid!important;place-items:center!important;text-align:center!important;border-radius:999px!important}
+html[data-rdm-theme="light"] .homeActions .secondary{background:transparent!important;background-image:none!important;color:#155f91!important;-webkit-text-fill-color:#155f91!important;border:1.5px solid #9fc4da!important;box-shadow:none!important}
+html[data-rdm-theme="dark"] .homeActions .secondary{background:transparent!important;background-image:none!important;color:#e5f3fb!important;-webkit-text-fill-color:#e5f3fb!important;border:1.5px solid #496c83!important;box-shadow:none!important}
+
+/* Squad socials: one link per row and wider. */
+.squadSocials{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;width:min(560px,88%)!important;margin:14px auto!important}
+.squadSocials a{width:100%!important;min-width:0!important;min-height:42px!important;padding:10px 28px!important;display:grid!important;place-items:center!important;border-radius:999px!important;text-align:center!important}
+
+/* My Profile social row: keep link wide; edit/delete are equal circles with centered icons. */
+#profile .profileSocialRow{grid-template-columns:1fr 46px 46px!important;gap:10px!important;align-items:center!important}
+#profile .profileSocialRow>button{width:46px!important;height:46px!important;min-width:46px!important;max-width:46px!important;padding:0!important;margin:0!important;border-radius:50%!important;display:grid!important;place-items:center!important;line-height:1!important;font-size:17px!important;text-align:center!important}
+#profile .profileSocialRow>button *{margin:auto!important}
+
+/* V6.8.70 VERIFIED UI PATCH */
+/* Gallery + Records: same geometry as top nav, inactive light, selected blue */
+html[data-rdm-theme] :is(.albumTab,.recordTypeBtn){border-radius:999px!important;min-height:36px!important;padding:8px 18px!important;font-weight:800!important;letter-spacing:.08em!important}
+html[data-rdm-theme="light"] :is(.albumTab,.recordTypeBtn):not(.on){background:#edf5fa!important;background-image:none!important;color:#244b64!important;-webkit-text-fill-color:#244b64!important;border:1px solid #c6dce8!important;box-shadow:0 3px 10px rgba(32,75,100,.06)!important}
+html[data-rdm-theme="dark"] :is(.albumTab,.recordTypeBtn):not(.on){background:#193249!important;background-image:none!important;color:#dcebf5!important;-webkit-text-fill-color:#dcebf5!important;border:1px solid #31536c!important}
+html[data-rdm-theme] :is(.albumTab.on,.recordTypeBtn.on){background:#155f91!important;background-image:none!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border:1px solid #155f91!important;box-shadow:0 6px 15px rgba(21,95,145,.23)!important}
+/* Squad social links: strict one link per row, wide */
+.squadFullProfile .squadSocials{display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:center!important;gap:10px!important;width:min(600px,90%)!important;margin:14px auto!important}
+.squadFullProfile .squadSocials>a{display:flex!important;width:100%!important;min-width:100%!important;min-height:42px!important;align-items:center!important;justify-content:center!important;padding:10px 30px!important;margin:0!important;border-radius:999px!important}
+/* Wider CHANGE / DELETE action buttons, without changing My Profile main buttons */
+#availabilityList button{min-width:128px!important;padding:9px 22px!important;border-radius:999px!important}
+.honour .deleteBtn,.honour button[onclick*="delete" i],#updates .updateDeleteBtn,.galleryCard .deleteBtn{min-width:128px!important;padding:9px 22px!important;border-radius:999px!important}
+/* Home hero buttons: wider; second remains unfilled */
+#home .homeActions{width:min(650px,92%)!important;margin:28px auto 0!important;display:grid!important;grid-template-columns:1fr!important;gap:12px!important}
+#home .homeActions>.primary,#home .homeActions>.secondary{width:100%!important;min-height:44px!important;border-radius:999px!important;display:flex!important;align-items:center!important;justify-content:center!important}
+html[data-rdm-theme="light"] #home .homeActions>.secondary{background:transparent!important;background-image:none!important;color:#155f91!important;-webkit-text-fill-color:#155f91!important;border:1.5px solid #9fc4da!important;box-shadow:none!important}
+html[data-rdm-theme="dark"] #home .homeActions>.secondary{background:transparent!important;background-image:none!important;color:#e5f3fb!important;-webkit-text-fill-color:#e5f3fb!important;border:1.5px solid #496c83!important;box-shadow:none!important}
+/* My Profile: only social edit/delete icon buttons; keep rest untouched */
+#profile .profileSocialRow{display:grid!important;grid-template-columns:minmax(0,1fr) 46px 46px!important;gap:10px!important;align-items:center!important}
+#profile .profileSocialRow>button{position:relative!important;width:46px!important;height:46px!important;min-width:46px!important;max-width:46px!important;min-height:46px!important;max-height:46px!important;padding:0!important;margin:0!important;border-radius:50%!important;display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;font-size:0!important;line-height:1!important}
+#profile .profileSocialRow>button:nth-of-type(1)::before{content:'✏️';font-size:18px!important;line-height:1!important;display:block!important}
+#profile .profileSocialRow>button:nth-of-type(2)::before{content:'🗑️';font-size:18px!important;line-height:1!important;display:block!important}
+
+/* V6.8.71 — requested selector/profile/action balance fixes */
+/* Gallery + Records selectors: top-nav pill geometry, inactive light, only .on selected blue. */
+html[data-rdm-theme] :is(.albumTab,.recordTypeBtn){
+  border-radius:999px!important;min-height:42px!important;padding:10px 24px!important;
+  font-weight:800!important;letter-spacing:.08em!important;background-image:none!important;
+}
+html[data-rdm-theme="light"] :is(.albumTab,.recordTypeBtn):not(.on){
+  background:#edf5fa!important;color:#244b64!important;-webkit-text-fill-color:#244b64!important;
+  border:1px solid #c6dce8!important;box-shadow:0 3px 10px rgba(32,75,100,.06)!important;
+}
+html[data-rdm-theme="dark"] :is(.albumTab,.recordTypeBtn):not(.on){
+  background:#193249!important;color:#dcebf5!important;-webkit-text-fill-color:#dcebf5!important;
+  border:1px solid #31536c!important;
+}
+html[data-rdm-theme] :is(.albumTab.on,.recordTypeBtn.on){
+  background:#155f91!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
+  border:1px solid #155f91!important;box-shadow:0 6px 15px rgba(21,95,145,.23)!important;
+}
+#albumFilters,#recordTypeFilters{display:flex!important;align-items:center!important;gap:12px!important;overflow-x:auto!important;white-space:nowrap!important}
+
+/* Squad social links: one wide row each, platform name only. */
+.squadFullProfile .squadSocials{display:flex!important;flex-direction:column!important;width:min(620px,92%)!important;gap:10px!important;margin:14px auto!important}
+.squadFullProfile .squadSocials>a{width:100%!important;min-width:100%!important;min-height:44px!important;padding:10px 30px!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:999px!important}
+
+/* My Profile: display links only; edit/delete management lives inside Edit Profile > Socials. */
+#profile .profileSocialList{width:min(760px,88%)!important;display:grid!important;gap:9px!important}
+#profile .profileSocialRow{display:block!important;width:100%!important}
+#profile .profileSocialRow>a{display:flex!important;width:100%!important;min-height:42px!important;padding:9px 22px!important;align-items:center!important;justify-content:center!important;border-radius:14px!important;text-align:center!important}
+.socialManagerDialog{width:min(680px,90vw)!important}.socialManagerList{display:grid!important;gap:10px!important;margin:16px 0!important}.socialManagerRow{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;padding:12px 14px!important;border:1px solid rgba(70,120,150,.18)!important;border-radius:16px!important}.socialManagerRow>div{display:flex!important;gap:8px!important}.socialManagerRow button{min-height:36px!important;padding:7px 16px!important;border-radius:999px!important}.socialManagerAdd{width:100%!important;min-height:40px!important;border-radius:999px!important}
+
+/* Updates action buttons: wide but slimmer. */
+#updates .updateActions{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
+#updates .updateActions button{width:100%!important;min-width:0!important;min-height:34px!important;height:34px!important;padding:5px 14px!important;border-radius:999px!important}
+
+/* Requested wider CHANGE / DELETE pills while keeping them visually slim. */
+#availabilityList button,.honour button[onclick*="removeItem"],.galleryAdminActions button,.galleryActions button{min-width:138px!important;min-height:34px!important;padding:5px 20px!important;border-radius:999px!important}
+
+/* ===== V6.8.72 FINAL UI OVERRIDES ===== */
+/* All modal close buttons: visible, circular, top-right, centered. */
+.modal .dialog,.modal .light,.rdmUnifiedDialog{position:relative!important}
+.modal .close,.rdmUnifiedDialog .close,.profileEditDialog .close,.socialManagerDialog .close,.squadEditDialog .close{
+ position:absolute!important;top:14px!important;right:14px!important;left:auto!important;bottom:auto!important;
+ width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;max-width:40px!important;max-height:40px!important;
+ padding:0!important;margin:0!important;border-radius:50%!important;display:flex!important;align-items:center!important;justify-content:center!important;
+ font-family:Arial,sans-serif!important;font-size:24px!important;font-weight:500!important;line-height:1!important;text-indent:0!important;
+ background:#edf7fb!important;background-image:none!important;color:#174c68!important;-webkit-text-fill-color:#174c68!important;
+ border:1px solid #c8e0eb!important;box-shadow:0 4px 12px rgba(23,76,104,.10)!important;z-index:100!important;opacity:1!important;visibility:visible!important;
+}
+html[data-rdm-theme="dark"] .modal .close,html[data-rdm-theme="dark"] .rdmUnifiedDialog .close{
+ background:#1d4057!important;color:#eefaff!important;-webkit-text-fill-color:#eefaff!important;border-color:#416b82!important;
+}
+/* Profile edit menu text/icon contrast. */
+.profileEditDialog{padding-top:26px!important}
+.profileEditDialog h2,.socialManagerDialog h2{color:#173f5d!important;-webkit-text-fill-color:#173f5d!important;padding:0 50px!important}
+.profileEditRow{color:#173f5d!important;-webkit-text-fill-color:#173f5d!important;background:#f7fbfd!important;border:1px solid #d6e7ef!important}
+.profileEditRow b,.profileEditRow i,.profileEditRow span{color:#173f5d!important;-webkit-text-fill-color:#173f5d!important;opacity:1!important;visibility:visible!important}
+html[data-rdm-theme="dark"] .profileEditDialog h2,html[data-rdm-theme="dark"] .socialManagerDialog h2,html[data-rdm-theme="dark"] .profileEditRow,html[data-rdm-theme="dark"] .profileEditRow b,html[data-rdm-theme="dark"] .profileEditRow i,html[data-rdm-theme="dark"] .profileEditRow span{color:#eefaff!important;-webkit-text-fill-color:#eefaff!important}
+html[data-rdm-theme="dark"] .profileEditRow{background:#193249!important;border-color:#31536c!important}
+/* Profile links: same visual width as Edit Profile button, balanced height, platform name only. */
+#profile .profileSocialList{width:92%!important;max-width:none!important;margin:14px auto!important;display:grid!important;gap:10px!important}
+#profile .profileSocialRow{display:block!important;width:100%!important;margin:0!important}
+#profile .profileSocialRow>a{box-sizing:border-box!important;width:100%!important;min-height:48px!important;padding:12px 24px!important;border-radius:16px!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important}
+/* Gallery + Records section selectors: same pill family as top nav. Inactive light, only selected blue. */
+#albumFilters .albumTab,#recordTypeFilters .recordTypeBtn{
+ min-height:48px!important;padding:10px 28px!important;border-radius:999px!important;background:#edf5fa!important;background-image:none!important;color:#244b64!important;-webkit-text-fill-color:#244b64!important;border:1px solid #c6dce8!important;box-shadow:0 3px 10px rgba(32,75,100,.06)!important;
+}
+#albumFilters .albumTab.on,#recordTypeFilters .recordTypeBtn.on{
+ background:#155f91!important;background-image:none!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:#155f91!important;box-shadow:0 6px 15px rgba(21,95,145,.23)!important;
+}
+html[data-rdm-theme="dark"] #albumFilters .albumTab:not(.on),html[data-rdm-theme="dark"] #recordTypeFilters .recordTypeBtn:not(.on){background:#193249!important;color:#dcebf5!important;-webkit-text-fill-color:#dcebf5!important;border-color:#31536c!important}
+.albumFilters,#recordTypeFilters{display:flex!important;align-items:center!important;gap:12px!important;overflow-x:auto!important;white-space:nowrap!important}
+/* Keep squad social links one per row and wide. */
+.squadFullProfile .squadSocials{display:flex!important;flex-direction:column!important;width:92%!important;max-width:620px!important;gap:10px!important;margin:14px auto!important}
+.squadFullProfile .squadSocials>a{box-sizing:border-box!important;width:100%!important;min-width:100%!important;min-height:46px!important;padding:11px 28px!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:999px!important}
+/* Slim wide update action buttons. */
+.updateCard .updateActions button,.updateActions button{min-height:36px!important;height:36px!important;padding:6px 24px!important;border-radius:999px!important}
+
+/* ===== V6.8.73 FINAL SELECTOR STATE FIX =====
+   Records + Gallery use one identical pill system.
+   Inactive = light, selected (.on) = blue only. */
+html[data-rdm-theme="light"] #recordTypeFilters > button.recordTypeBtn:not(.on),
+html[data-rdm-theme="light"] #albumFilters > button.albumTab:not(.on){
+  background:#edf5fa!important;background-image:none!important;
+  color:#244b64!important;-webkit-text-fill-color:#244b64!important;
+  border:1px solid #c6dce8!important;box-shadow:0 3px 10px rgba(32,75,100,.06)!important;
+}
+html[data-rdm-theme="dark"] #recordTypeFilters > button.recordTypeBtn:not(.on),
+html[data-rdm-theme="dark"] #albumFilters > button.albumTab:not(.on){
+  background:#193249!important;background-image:none!important;
+  color:#dcebf5!important;-webkit-text-fill-color:#dcebf5!important;
+  border:1px solid #31536c!important;box-shadow:none!important;
+}
+#recordTypeFilters > button.recordTypeBtn,
+#albumFilters > button.albumTab{
+  box-sizing:border-box!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  flex:0 0 auto!important;width:auto!important;min-width:108px!important;height:48px!important;min-height:48px!important;
+  padding:0 28px!important;margin:0!important;border-radius:999px!important;white-space:nowrap!important;
+  font-size:.68rem!important;font-weight:800!important;letter-spacing:.08em!important;transform:none!important;
+}
+#recordTypeFilters > button.recordTypeBtn.on,
+#albumFilters > button.albumTab.on{
+  background:#155f91!important;background-image:none!important;
+  color:#fff!important;-webkit-text-fill-color:#fff!important;
+  border:1px solid #155f91!important;box-shadow:0 6px 15px rgba(21,95,145,.23)!important;
+}
+#recordTypeFilters,#albumFilters{
+  display:flex!important;align-items:center!important;gap:12px!important;overflow-x:auto!important;white-space:nowrap!important;
+  padding:12px!important;border-radius:24px!important;
+}
+
+/* ===== V6.8.74 EXACT TOP-NAV SHAPE + PROFILE MENU VISIBILITY ===== */
+/* Section selectors use EXACT same geometry as top NEWS/GALLERY nav buttons. */
+#recordTypeFilters > button.recordTypeBtn,
+#albumFilters > button.albumTab{
+  box-sizing:border-box!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  flex:0 0 auto!important;width:auto!important;min-width:0!important;
+  height:32px!important;min-height:32px!important;max-height:32px!important;
+  padding:5px 14px!important;margin:0!important;
+  border-radius:999px!important;
+  font-size:8.5px!important;line-height:1!important;font-weight:800!important;letter-spacing:.08em!important;
+  transform:none!important;
+}
+html[data-rdm-theme="light"] #recordTypeFilters > button.recordTypeBtn:not(.on),
+html[data-rdm-theme="light"] #albumFilters > button.albumTab:not(.on){
+  background:#edf5fa!important;background-image:none!important;
+  color:#244b64!important;-webkit-text-fill-color:#244b64!important;
+  border:1px solid #c6dce8!important;
+  box-shadow:0 3px 10px rgba(32,75,100,.06)!important;
+}
+html[data-rdm-theme="dark"] #recordTypeFilters > button.recordTypeBtn:not(.on),
+html[data-rdm-theme="dark"] #albumFilters > button.albumTab:not(.on){
+  background:#193249!important;background-image:none!important;
+  color:#dcebf5!important;-webkit-text-fill-color:#dcebf5!important;
+  border:1px solid #31536c!important;box-shadow:none!important;
+}
+#recordTypeFilters > button.recordTypeBtn.on,
+#albumFilters > button.albumTab.on{
+  background:#155f91!important;background-image:none!important;
+  color:#fff!important;-webkit-text-fill-color:#fff!important;
+  border:1px solid #155f91!important;
+  box-shadow:0 6px 15px rgba(21,95,145,.23)!important;
+}
+#recordTypeFilters,#albumFilters{
+  gap:9px!important;padding:10px!important;border-radius:18px!important;
+}
+/* Edit Profile menu: force readable labels in light/dark modes. */
+html[data-rdm-theme="light"] #profileEditModal .profileEditRow,
+html[data-rdm-theme="light"] #profileEditModal .profileEditRow b,
+html[data-rdm-theme="light"] #profileEditModal .profileEditRow i{
+  color:#173f5d!important;-webkit-text-fill-color:#173f5d!important;opacity:1!important;visibility:visible!important;
+}
+html[data-rdm-theme="light"] #profileEditModal .profileEditRow{background:#f7fbfd!important;border-color:#d6e7ef!important}
+html[data-rdm-theme="dark"] #profileEditModal .profileEditRow,
+html[data-rdm-theme="dark"] #profileEditModal .profileEditRow b,
+html[data-rdm-theme="dark"] #profileEditModal .profileEditRow i{
+  color:#eefaff!important;-webkit-text-fill-color:#eefaff!important;opacity:1!important;visibility:visible!important;
+}
+#profileEditModal .profileEditRow span{opacity:1!important;visibility:visible!important}
+
+/* ===== V6.8.75 FINAL NEWS-STYLE SECTION SELECTORS ===== */
+/* Gallery + Records selectors: same pill silhouette as top NEWS nav; only selected is blue. */
+#recordTypeFilters > .recordTypeBtn,
+#albumFilters > .albumTab{
+  height:32px!important;min-height:32px!important;max-height:32px!important;
+  padding:5px 14px!important;
+  border-radius:16px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  flex:0 0 auto!important;
+  font-size:8.5px!important;line-height:1!important;font-weight:800!important;letter-spacing:.08em!important;
+  background-image:none!important;transform:none!important;
+}
+html[data-rdm-theme="light"] #recordTypeFilters > .recordTypeBtn:not(.on),
+html[data-rdm-theme="light"] #albumFilters > .albumTab:not(.on){
+  background:#edf5fa!important;color:#244b64!important;-webkit-text-fill-color:#244b64!important;
+  border:1px solid #c6dce8!important;box-shadow:0 3px 10px rgba(32,75,100,.06)!important;
+}
+html[data-rdm-theme="dark"] #recordTypeFilters > .recordTypeBtn:not(.on),
+html[data-rdm-theme="dark"] #albumFilters > .albumTab:not(.on){
+  background:#193249!important;color:#dcebf5!important;-webkit-text-fill-color:#dcebf5!important;
+  border:1px solid #31536c!important;box-shadow:none!important;
+}
+#recordTypeFilters > .recordTypeBtn.on,
+#albumFilters > .albumTab.on{
+  background:#155f91!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
+  border:1px solid #155f91!important;box-shadow:0 6px 15px rgba(21,95,145,.23)!important;
+}
+
+/* ===== V6.8.76 EXACT NEWS NAV SELECTOR SHAPE ===== */
+/* Records + Gallery selectors inherit the same geometry as top navigation buttons. */
+#recordTypeFilters > .recordTypeBtn,
+#albumFilters > .albumTab{
+  box-sizing:border-box!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:0!important;
+  min-height:36px!important;
+  height:36px!important;
+  max-height:none!important;
+  padding:8px 18px!important;
+  margin:0!important;
+  border-radius:999px!important;
+  line-height:1!important;
+  font-size:8.5px!important;
+  font-weight:800!important;
+  letter-spacing:.08em!important;
+  background-image:none!important;
+  transform:none!important;
+}
+html[data-rdm-theme="light"] #recordTypeFilters > .recordTypeBtn:not(.on),
+html[data-rdm-theme="light"] #albumFilters > .albumTab:not(.on){
+  background:#edf5fa!important;
+  color:#244b64!important;
+  -webkit-text-fill-color:#244b64!important;
+  border:1px solid #c6dce8!important;
+  box-shadow:0 3px 10px rgba(32,75,100,.06)!important;
+}
+html[data-rdm-theme="dark"] #recordTypeFilters > .recordTypeBtn:not(.on),
+html[data-rdm-theme="dark"] #albumFilters > .albumTab:not(.on){
+  background:#193249!important;
+  color:#dcebf5!important;
+  -webkit-text-fill-color:#dcebf5!important;
+  border:1px solid #31536c!important;
+  box-shadow:0 3px 10px rgba(0,0,0,.12)!important;
+}
+#recordTypeFilters > .recordTypeBtn.on,
+#albumFilters > .albumTab.on{
+  background:#155f91!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  border:1px solid #155f91!important;
+  box-shadow:0 6px 15px rgba(21,95,145,.23)!important;
+}
+#recordTypeFilters,#albumFilters{
+  display:flex!important;
+  align-items:center!important;
+  gap:12px!important;
+  overflow-x:auto!important;
+  white-space:nowrap!important;
+  padding:10px!important;
+  border-radius:22px!important;
+}
+
+/* ===== V6.8.77 HARD UI FIX ===== */
+/* Edit Profile: force every label readable, regardless of older theme rules. */
+#profileEditModal .profileEditDialog{background:#f7fbff!important;color:#173f5d!important}
+#profileEditModal .profileEditMenu{background:transparent!important}
+#profileEditModal .profileEditRow{background:#f8fcff!important;border:1px solid #d3e6ef!important;color:#173f5d!important;-webkit-text-fill-color:#173f5d!important;border-radius:16px!important}
+#profileEditModal .profileEditRow b,#profileEditModal .profileEditRow i{color:#173f5d!important;-webkit-text-fill-color:#173f5d!important;opacity:1!important}
+#profileEditModal .profileEditRow span{opacity:1!important}
+#profileEditModal .close{background:#edf7fb!important;color:#173f5d!important;-webkit-text-fill-color:#173f5d!important}
+html[data-rdm-theme="dark"] #profileEditModal .profileEditDialog{background:#132b3d!important;color:#eefaff!important}
+html[data-rdm-theme="dark"] #profileEditModal .profileEditRow{background:#193249!important;border-color:#31536c!important;color:#eefaff!important;-webkit-text-fill-color:#eefaff!important}
+html[data-rdm-theme="dark"] #profileEditModal .profileEditRow b,html[data-rdm-theme="dark"] #profileEditModal .profileEditRow i{color:#eefaff!important;-webkit-text-fill-color:#eefaff!important}
+
+/* Gallery + Records: noticeably round NEWS-style capsules. */
+#recordTypeFilters>.recordTypeBtn,#albumFilters>.albumTab{height:38px!important;min-height:38px!important;padding:8px 20px!important;border-radius:20px!important}
+html[data-rdm-theme="light"] #recordTypeFilters>.recordTypeBtn:not(.on),html[data-rdm-theme="light"] #albumFilters>.albumTab:not(.on){background:#f4f9fc!important;color:#244b64!important;-webkit-text-fill-color:#244b64!important;border:1px solid #d0e1ea!important}
+#recordTypeFilters>.recordTypeBtn.on,#albumFilters>.albumTab.on{background:#155f91!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:#155f91!important}
