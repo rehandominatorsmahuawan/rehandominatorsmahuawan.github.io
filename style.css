@@ -4107,3 +4107,148 @@ html[data-rdm-theme="dark"] #profileEditModal .profileEditRow b,html[data-rdm-th
 #recordTypeFilters>.recordTypeBtn,#albumFilters>.albumTab{height:38px!important;min-height:38px!important;padding:8px 20px!important;border-radius:20px!important}
 html[data-rdm-theme="light"] #recordTypeFilters>.recordTypeBtn:not(.on),html[data-rdm-theme="light"] #albumFilters>.albumTab:not(.on){background:#f4f9fc!important;color:#244b64!important;-webkit-text-fill-color:#244b64!important;border:1px solid #d0e1ea!important}
 #recordTypeFilters>.recordTypeBtn.on,#albumFilters>.albumTab.on{background:#155f91!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:#155f91!important}
+
+/* RDM V6.8.78 professional cricket manager */
+.proDialog{width:min(760px,92vw)!important;max-height:88vh!important;padding:22px!important;border-radius:28px!important;overflow:auto!important}.proTitle{text-align:center;margin:0 42px 18px}.proTitle h2{margin:0 0 5px;font-size:22px}.proTitle p{margin:0;font-size:9px;letter-spacing:.16em;opacity:.62}.proGroup{margin:12px 0;padding:15px;border:1px solid rgba(31,112,160,.14);border-radius:20px;background:rgba(255,255,255,.34)}.proGroup h3{margin:0 0 13px;font-size:12px;letter-spacing:.12em;color:#155f91}.proGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.proField{display:flex!important;flex-direction:column;gap:6px;margin:0!important}.proField>span{font-size:9px!important;font-weight:900;letter-spacing:.12em}.proField input,.proField select,.proField textarea{width:100%;box-sizing:border-box;border-radius:14px!important;min-height:43px!important;padding:10px 12px!important}.proFull{margin-top:11px!important}.proLocationActions{display:flex;align-items:center;gap:12px;margin-top:12px}.proLocate{width:auto!important;min-width:190px!important;padding:10px 16px!important;border-radius:16px!important}.proLocStatus{font-size:9px;font-weight:800;opacity:.7}.proMapWrap{margin-top:12px;border-radius:18px;overflow:hidden;border:1px solid rgba(31,112,160,.18);background:#eef7fb}.proMap{display:block;width:100%;height:190px;border:0}.proMapOpen{display:block;text-align:center;padding:9px;font-size:10px;font-weight:900;color:#155f91;text-decoration:none}.proBottom{display:grid;grid-template-columns:1fr 1.6fr;gap:10px;margin-top:15px}.proBottom button{min-height:42px!important;border-radius:16px!important}.proDataCard{padding:18px!important;border-radius:24px!important}.proCardHead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:14px}.proCardHead h3{margin:8px 0 0}.proCardHead h3 span{opacity:.55;font-size:.8em}.proStatus{display:inline-flex;padding:5px 9px;border-radius:999px;background:rgba(21,95,145,.1);font-size:8px;font-weight:900;letter-spacing:.1em}.proInfoGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.proInfoGrid p{margin:0;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.38);font-size:10px}.proInfoGrid b{display:block;font-size:8px;letter-spacing:.1em;margin-bottom:5px;opacity:.65}.proWide{grid-column:1/-1}.proMiniMap{margin-top:12px;overflow:hidden;border-radius:17px}.proMiniMap iframe{display:block;width:100%;height:160px;border:0}.proNote{white-space:pre-wrap;padding:12px;border-radius:14px;background:rgba(255,255,255,.3)}.proCardActions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.proCardActions button{width:100%!important;min-height:36px!important;border-radius:14px!important;margin:0!important}html[data-rdm-theme="dark"] .proGroup,html[data-rdm-theme="dark"] .proInfoGrid p,html[data-rdm-theme="dark"] .proNote{background:rgba(9,37,55,.72)}html[data-rdm-theme="dark"] .proGroup h3{color:#8fdcff}@media(max-width:600px){.proGrid,.proInfoGrid{grid-template-columns:1fr}.proWide{grid-column:auto}.proDialog{padding:17px!important}.proLocationActions{align-items:stretch;flex-direction:column}.proLocate{width:100%!important}.proBottom{grid-template-columns:1fr 1.4fr}}
+
+/* ===== V6.8.79 FINAL BACK-TO-TOP SAFE POSITION FIX ===== */
+#backToTop.backToTop{
+  position:fixed!important;
+  left:auto!important;
+  right:max(18px,env(safe-area-inset-right))!important;
+  bottom:max(22px,calc(env(safe-area-inset-bottom) + 18px))!important;
+  width:44px!important;
+  min-width:44px!important;
+  max-width:44px!important;
+  height:44px!important;
+  min-height:44px!important;
+  max-height:44px!important;
+  padding:0!important;
+  margin:0!important;
+  border-radius:50%!important;
+  display:none!important;
+  align-items:center!important;
+  justify-content:center!important;
+  line-height:1!important;
+  text-align:center!important;
+  overflow:visible!important;
+  z-index:9999!important;
+  box-sizing:border-box!important;
+  transform:none!important;
+}
+#backToTop.backToTop.show{display:flex!important}
+@media(max-width:700px){
+ #backToTop.backToTop{right:18px!important;bottom:24px!important;width:42px!important;min-width:42px!important;max-width:42px!important;height:42px!important;min-height:42px!important;max-height:42px!important}
+}
+
+/* V6.8.80 tournament + map hard fix */
+#tournamentList .tournamentCard,#tournamentList .tournamentCard *{font-variant:normal}
+#tournamentList .proCardActions{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+#tournamentList .proCardActions button{min-width:0!important;width:100%!important}
+.proClickableMap{position:relative!important;min-height:180px!important;background:#eef7fb!important}
+.proClickableMap iframe{width:100%!important;height:180px!important;display:block!important;border:0!important;pointer-events:none!important}
+.proMapOverlay{position:absolute!important;left:12px!important;right:12px!important;bottom:12px!important;min-height:38px!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;border-radius:999px!important;background:#155f91!important;color:#fff!important;-webkit-text-fill-color:#fff!important;text-decoration:none!important;font-size:10px!important;font-weight:900!important;letter-spacing:.06em!important;box-shadow:0 7px 20px rgba(21,95,145,.24)!important}
+.proMapOverlay:active{transform:scale(.985)}
+
+/* V6.8.81 — map action below map, never over map */
+.proMapCardBlock{margin-top:12px!important;width:100%!important}
+.proMapCardBlock .proMiniMap{margin:0!important;overflow:hidden!important;border-radius:17px!important;border:1px solid rgba(31,112,160,.16)!important}
+.proMapBelowBtn{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;box-sizing:border-box!important;min-height:38px!important;margin-top:8px!important;padding:9px 14px!important;border-radius:999px!important;background:#155f91!important;color:#fff!important;-webkit-text-fill-color:#fff!important;text-decoration:none!important;font-size:10px!important;font-weight:900!important;letter-spacing:.06em!important;box-shadow:0 7px 20px rgba(21,95,145,.18)!important}
+.proMapBelowBtn:active{transform:scale(.99)}
+.proMapOverlay{display:none!important}
+#tournamentList .proCardActions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+#tournamentList .proCardActions button{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-height:36px!important;margin:0!important}
+/* V6.8.82 balanced match/tournament action controls */
+#matchList .proCardActions,#tournamentList .proCardActions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;width:100%!important}
+#matchList .proCardActions>button,#tournamentList .proCardActions>button{width:100%!important;min-width:0!important;min-height:38px!important;margin:0!important;border-radius:16px!important;display:flex!important;align-items:center!important;justify-content:center!important}
+#matchList .proCardActions>button:not(.deleteBtn),#tournamentList .proCardActions>button:not(.deleteBtn){background:linear-gradient(135deg,#edf7ff,#e2f2ff)!important;color:#155f91!important;-webkit-text-fill-color:#155f91!important;border:1px solid #b8dcef!important}
+#matchList .proCardActions>.deleteBtn,#tournamentList .proCardActions>.deleteBtn{background:linear-gradient(135deg,#fff3f4,#ffe7eb)!important;color:#b42335!important;-webkit-text-fill-color:#b42335!important;border:1px solid #ffc5cc!important}
+html[data-rdm-theme="dark"] #matchList .proCardActions>button:not(.deleteBtn),html[data-rdm-theme="dark"] #tournamentList .proCardActions>button:not(.deleteBtn){background:#173e57!important;color:#a8dcff!important;-webkit-text-fill-color:#a8dcff!important;border-color:#315e79!important}
+html[data-rdm-theme="dark"] #matchList .proCardActions>.deleteBtn,html[data-rdm-theme="dark"] #tournamentList .proCardActions>.deleteBtn{background:#4a2d38!important;color:#ffc4cf!important;-webkit-text-fill-color:#ffc4cf!important;border-color:#795061!important}
+#matchList .proCardActions>button:nth-child(2):not(.deleteBtn){grid-column:1/-1;grid-row:1}
+#matchList .proCardActions>button:nth-child(2):not(.deleteBtn)~.deleteBtn{grid-column:2;grid-row:2}
+#matchList .proCardActions>button:first-child{grid-column:1;grid-row:2}
+#matchList .proCardActions>.deleteBtn:nth-child(2){grid-column:2;grid-row:2}
+
+/* V6.8.83 — required admin actions + site-wide mini display */
+#matchList .proDataCard,
+#matchList .proDataCard *,
+#tournamentList .proDataCard,
+#tournamentList .proDataCard *{
+  font-variant:small-caps!important;
+  letter-spacing:.055em;
+}
+#matchList .proDataCard .proCardHead h3,
+#tournamentList .proDataCard .proCardHead h3{font-size:17px!important;letter-spacing:.065em!important}
+#matchList .proDataCard :is(p,b,span,button,a),
+#tournamentList .proDataCard :is(p,b,span,button,a){font-size:10px!important}
+#matchList .proCardActions,
+#tournamentList .proCardActions{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  gap:10px!important;
+  width:100%!important;
+  margin-top:12px!important;
+}
+#matchList .proCardActions>button,
+#tournamentList .proCardActions>button{
+  grid-column:auto!important;grid-row:auto!important;
+  width:100%!important;min-width:0!important;min-height:38px!important;
+  margin:0!important;border-radius:16px!important;
+}
+#matchList .proCardActions>button:not(.deleteBtn),
+#tournamentList .proCardActions>button:not(.deleteBtn){background:#e7f4fc!important;color:#155f91!important;-webkit-text-fill-color:#155f91!important;border:1px solid #b8dcef!important}
+#matchList .proCardActions>.deleteBtn,
+#tournamentList .proCardActions>.deleteBtn{background:#ffedf0!important;color:#b42335!important;-webkit-text-fill-color:#b42335!important;border:1px solid #ffc5cc!important}
+/* Hardcoded/manual values inherit the compact site typography too. */
+body :is(.card,.player,.profileCard,.miniMatch,.recordCard,.leaderCard,.tournamentCard,.galleryCard,.updateCard,.lineupCard,.availabilityRow,.honour,.socialCard) :is(p,span,b,strong,small,a,button){font-variant:small-caps}
+
+/* V6.8.84 HARD CSS — cannot be overridden by older rules */
+#tournamentList .rdmHardAdminActions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;width:100%!important;margin:12px 0 0!important}
+#tournamentList .rdmHardAdminActions>button{display:flex!important;visibility:visible!important;opacity:1!important;position:static!important;width:100%!important;min-width:0!important;height:38px!important;min-height:38px!important;margin:0!important;padding:0 12px!important;border-radius:16px!important;align-items:center!important;justify-content:center!important;font-size:10px!important;font-weight:900!important}
+#tournamentList .rdmHardAdminActions>.rdmEditBtn{background:#e7f4fc!important;color:#155f91!important;-webkit-text-fill-color:#155f91!important;border:1px solid #b8dcef!important}
+#tournamentList .rdmHardAdminActions>.rdmDeleteBtn{background:#ffedf0!important;color:#b42335!important;-webkit-text-fill-color:#b42335!important;border:1px solid #ffc5cc!important}
+#matchList .rdmHardMiniMatch,#matchList .rdmHardMiniMatch *{font-variant:small-caps!important;letter-spacing:.06em!important}
+#matchList .rdmHardMiniMatch h3{font-size:16px!important}
+#matchList .rdmHardMiniMatch :is(p,b,span,a,button,small,strong){font-size:9px!important}
+
+/* V6.8.85 VERIFIED HARD FIX */
+#tournamentList .rdmHardAdminActions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;margin-top:10px!important}
+#tournamentList .rdmHardAdminActions .rdmEditBtn{background:#e7f4fc!important;color:#155f91!important;-webkit-text-fill-color:#155f91!important}
+#tournamentList .rdmHardAdminActions .rdmDeleteBtn{background:#ffedf0!important;color:#b42335!important;-webkit-text-fill-color:#b42335!important}
+
+/* V6.8.86 — FINAL SITE-WIDE TRUE MINI FONT VISUAL LOCK */
+html,body,body *{font-variant:normal!important}
+body :is(input,textarea,select,option,button,label,p,span,b,strong,small,a,h1,h2,h3,h4,h5,h6,li,td,th,legend){letter-spacing:.055em}
+body :is(input,textarea,select,option){font-family:Arial,Helvetica,sans-serif!important}
+body input::placeholder,body textarea::placeholder{font-family:Arial,Helvetica,sans-serif!important;letter-spacing:.055em!important}
+
+/* V6.8.87 — UNIFIED ADMIN ACTION COLOURS (MATCH STYLE SITE-WIDE) */
+body button.rdmDeleteAction,
+body .deleteBtn,
+body .danger,
+body .rdmDeleteBtn,
+body .updateDeleteBtn{
+  background:linear-gradient(135deg,#fff3f4,#ffe7eb)!important;
+  color:#b42335!important;-webkit-text-fill-color:#b42335!important;
+  border:1px solid #ffc5cc!important;
+  box-shadow:0 4px 11px rgba(180,35,53,.08)!important;
+}
+body button.rdmEditAction,
+body .rdmEditBtn,
+body .updateEditBtn{
+  background:linear-gradient(135deg,#edf7ff,#e2f2ff)!important;
+  color:#155f91!important;-webkit-text-fill-color:#155f91!important;
+  border:1px solid #b8dcef!important;
+  box-shadow:0 4px 11px rgba(21,95,145,.08)!important;
+}
+body button.rdmPinAction,
+body .updatePinBtn{
+  background:linear-gradient(135deg,#fff8e8,#ffefd0)!important;
+  color:#b66a08!important;-webkit-text-fill-color:#b66a08!important;
+  border:1px solid #f4c97c!important;
+  box-shadow:0 4px 11px rgba(182,106,8,.08)!important;
+}
+html[data-rdm-theme="dark"] body button.rdmDeleteAction{background:#4a2d38!important;color:#ffc4cf!important;-webkit-text-fill-color:#ffc4cf!important;border-color:#795061!important}
+html[data-rdm-theme="dark"] body button.rdmEditAction{background:#173e57!important;color:#a8dcff!important;-webkit-text-fill-color:#a8dcff!important;border-color:#315e79!important}
+html[data-rdm-theme="dark"] body button.rdmPinAction{background:#4a3a22!important;color:#ffd894!important;-webkit-text-fill-color:#ffd894!important;border-color:#765d32!important}
