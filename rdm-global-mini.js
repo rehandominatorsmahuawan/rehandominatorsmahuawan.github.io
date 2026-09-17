@@ -1,10 +1,10 @@
 /* RDM V6.8.86 — TRUE MINI FONT EVERYWHERE */
 (function(){
 'use strict';
-const MAP={A:'ᴀ',B:'ʙ',C:'ᴄ',D:'ᴅ',E:'ᴇ',F:'ꜰ',G:'ɢ',H:'ʜ',I:'ɪ',J:'ᴊ',K:'ᴋ',L:'ʟ',M:'ᴍ',N:'ɴ',O:'ᴏ',P:'ᴘ',Q:'ǫ',R:'ʀ',S:'ꜱ',T:'ᴛ',U:'ᴜ',V:'ᴠ',W:'ᴡ',X:'x',Y:'ʏ',Z:'ᴢ'};
-const mini=s=>String(s??'').replace(/[A-Za-z]/g,c=>MAP[c.toUpperCase()]||c);
+const MAP={A:'ᴀ',B:'ʙ',C:'ᴄ',D:'ᴅ',E:'ᴇ',F:'ꜰ',G:'ɢ',H:'ʜ',I:'i',J:'ᴊ',K:'ᴋ',L:'ʟ',M:'ᴍ',N:'ɴ',O:'ᴏ',P:'ᴘ',Q:'ǫ',R:'ʀ',S:'ꜱ',T:'ᴛ',U:'ᴜ',V:'ᴠ',W:'ᴡ',X:'x',Y:'ʏ',Z:'ᴢ'};
+const mini=s=>String(s??'').replace(/ɪ/g,'i').replace(/[A-Za-z]/g,c=>MAP[c.toUpperCase()]||c);
 const SKIP=new Set(['SCRIPT','STYLE','NOSCRIPT','IFRAME','SVG','PATH','CODE','PRE']);
-function textNode(n){const p=n.parentElement;if(!p||SKIP.has(p.tagName)||p.closest('[data-rdm-no-mini]'))return;if(/[A-Za-z]/.test(n.nodeValue||''))n.nodeValue=mini(n.nodeValue)}
+function textNode(n){const p=n.parentElement;if(!p||SKIP.has(p.tagName)||p.closest('[data-rdm-no-mini]'))return;const v=n.nodeValue||'';if(/[A-Za-zɪ]/.test(v))n.nodeValue=mini(v)}
 function control(el){
  if(el.closest?.('[data-rdm-no-mini]'))return;
  if(el.placeholder)el.placeholder=mini(el.placeholder);
