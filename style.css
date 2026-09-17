@@ -4252,3 +4252,31 @@ body .updatePinBtn{
 html[data-rdm-theme="dark"] body button.rdmDeleteAction{background:#4a2d38!important;color:#ffc4cf!important;-webkit-text-fill-color:#ffc4cf!important;border-color:#795061!important}
 html[data-rdm-theme="dark"] body button.rdmEditAction{background:#173e57!important;color:#a8dcff!important;-webkit-text-fill-color:#a8dcff!important;border-color:#315e79!important}
 html[data-rdm-theme="dark"] body button.rdmPinAction{background:#4a3a22!important;color:#ffd894!important;-webkit-text-fill-color:#ffd894!important;border-color:#765d32!important}
+
+/* RDM V6.8.93 — PLAYER PHOTOS ALWAYS CIRCULAR */
+.player .photo,
+.squadFullProfile .photo {
+  width:132px!important;
+  height:132px!important;
+  aspect-ratio:1/1!important;
+  border-radius:50%!important;
+  overflow:hidden!important;
+  margin:22px auto 0!important;
+  flex:0 0 132px!important;
+}
+.player .photo img,
+.squadFullProfile .photo img,
+.profileAvatar,
+.statCard img {
+  width:100%!important;
+  height:100%!important;
+  border-radius:50%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  display:block!important;
+}
+.statCard img{width:84px!important;height:84px!important;margin-left:auto!important;margin-right:auto!important}
+.profileAvatar{width:126px!important;height:126px!important;margin-left:auto!important;margin-right:auto!important}
+@media(max-width:480px){
+  .player .photo,.squadFullProfile .photo{width:122px!important;height:122px!important;flex-basis:122px!important}
+}

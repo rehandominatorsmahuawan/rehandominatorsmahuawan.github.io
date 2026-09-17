@@ -7,7 +7,23 @@ let D;try{D=JSON.parse(localStorage.getItem(K))||fresh()}catch{D=fresh()}
 // Repair incomplete/blank saved data automatically
 if(!D||!Array.isArray(D.players)||D.players.length===0){D=fresh();saveLater=true}else{var saveLater=false}
 if(!Array.isArray(D.honours)||D.honours.length===0)D.honours=fresh().honours;
+
 if(!Array.isArray(D.socials)||D.socials.length===0)D.socials=fresh().socials;
+// V6.8.92 — rebuild the two Sahil squad cards from the same plain-data model as every other player.
+// Preserve account/photo/profile-linked fields, but repair the card identity fields before rendering.
+const rdmSahilCards={
+ RDM005:{name:'SAHIL ALI',role:'BATSMAN',detail:'RIGHT-HANDED • MIDDLE ORDER • FINISHER'},
+ RDM011:{name:'SAHIL ANSARI',role:'BATSMAN',detail:'RIGHT-HANDED • MIDDLE ORDER',jersey:'57'}
+};
+function rdmRepairSahilCards(){
+ if(!Array.isArray(D.players))return;
+ Object.entries(rdmSahilCards).forEach(([id,fix])=>{
+   const p=D.players.find(x=>x.id===id); if(!p)return;
+   p.name=fix.name; p.role=fix.role; p.detail=fix.detail;
+   if(id==='RDM011')p.jersey='57';
+ });
+}
+rdmRepairSahilCards();
 const requiredSocials=fresh().socials;requiredSocials.forEach(def=>{let found=D.socials.find(x=>String((Array.isArray(x)?x[0]:x.name)||'').toUpperCase().includes(def.name));if(!found)D.socials.push({...def});else if(!Array.isArray(found)){if(found.image===undefined)found.image='';if(!found.icon)found.icon=def.icon;}});
 D.players.forEach(p=>{const d=playerDefaults[p.id];if(d){if(!p.nick)p.nick=d.nick;if(!p.bio)p.bio=d.bio;}});if(!Array.isArray(D.matches))D.matches=[];if(!Array.isArray(D.news))D.news=[];if(!Array.isArray(D.gallery))D.gallery=[];let session=null;try{session=JSON.parse(localStorage.getItem(SK))}catch{}let loginMode='player',editMode='',editObj=null;
 const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)],save=()=>localStorage.setItem(K,JSON.stringify(D));
