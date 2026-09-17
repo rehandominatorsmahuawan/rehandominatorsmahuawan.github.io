@@ -45,7 +45,19 @@ q('#loginForm').onsubmit=async e=>{
       const playerId=q('#pid').value.trim().toUpperCase();
       const playerName=q('#pname').value.trim().toUpperCase();
       if(!/^RDM\d{3}$/.test(playerId)) throw new Error('INVALID_PLAYER');
-      const cred=await rdmAuth.signInWithEmailAndPassword(playerId.toLowerCase()+'@rdm.invalid',password);
+      let cred;
+      // RDM011 was reassigned from Anish to Sahil Ansari. Prefer Sahil's new
+      // internal auth email, but keep the old ID-based address as a safe
+      // migration fallback until Firebase Authentication is updated.
+      const loginEmails = playerId==='RDM011'
+        ? ['sahilansari@rdm.invalid','rdm011@rdm.invalid']
+        : [playerId.toLowerCase()+'@rdm.invalid'];
+      let lastLoginError=null;
+      for(const email of loginEmails){
+        try{ cred=await rdmAuth.signInWithEmailAndPassword(email,password); break; }
+        catch(err){ lastLoginError=err; }
+      }
+      if(!cred) throw lastLoginError || new Error('INVALID_PLAYER');
       const a=await rdmAccountFor(cred.user);
       if(!a || a.role!=='player' || a.playerId!==playerId || String(a.displayName||'').toUpperCase()!==playerName || a.active===false){ await rdmAuth.signOut(); throw new Error('INVALID_PLAYER'); }
       session={mode:'player',realRole:'player',playerId:a.playerId,canSwitch:a.playerId==='RDM001',uid:cred.user.uid};
