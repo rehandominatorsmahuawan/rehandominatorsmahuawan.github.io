@@ -1,7 +1,7 @@
 (function(){
 'use strict';
 const standalone=matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
-function splash(){if(!standalone)return;const x=document.createElement('div');x.className='rdmSplash';x.innerHTML='<div class="rdmSplashBox"><img src="assets/favicon-192.png" alt="RDM"><b>REHAN DOMINATORS MAHUAWAN</b><small>ONE TEAM • ONE DREAM • ONE DOMINATION</small></div>';document.body.appendChild(x);setTimeout(()=>x.classList.add('hide'),1250);setTimeout(()=>x.remove(),1700)}
+function splash(){if(!standalone)return;const x=document.getElementById('rdmAppSplash');if(!x)return;requestAnimationFrame(()=>x.classList.add('ready'));setTimeout(()=>x.classList.add('hide'),1250);setTimeout(()=>x.remove(),1700)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',splash,{once:true});else splash();
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js?v=6890').catch(console.warn));
 let promptEvent=null,bar=null;
