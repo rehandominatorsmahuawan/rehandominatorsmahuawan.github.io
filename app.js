@@ -12,14 +12,14 @@ if(!Array.isArray(D.socials)||D.socials.length===0)D.socials=fresh().socials;
 // V6.8.92 — rebuild the two Sahil squad cards from the same plain-data model as every other player.
 // Preserve account/photo/profile-linked fields, but repair the card identity fields before rendering.
 const rdmSahilCards={
- RDM005:{name:'SAHIL ALI',role:'BATSMAN',detail:'RIGHT-HANDED • MIDDLE ORDER • FINISHER'},
- RDM011:{name:'SAHIL ANSARI',role:'BATSMAN',detail:'RIGHT-HANDED • MIDDLE ORDER',jersey:'57'}
+ RDM005:{name:'SAHIL ALI',role:'BATSMAN',detail:'RIGHT-HANDED • MIDDLE ORDER • FINISHER',nick:'THE FINISHER',bio:'A CALM MIDDLE-ORDER BATSMAN WHO BACKS HIS SHOTS AND LOOKS TO FINISH INNINGS WITH CONFIDENCE.'},
+ RDM011:{name:'SAHIL ANSARI',role:'BATSMAN',detail:'RIGHT-HANDED • MIDDLE ORDER',jersey:'57',nick:'THE MIDDLE ORDER MAESTRO',bio:'A RIGHT-HANDED MIDDLE-ORDER BATSMAN WHO ADDS STABILITY AND DEPTH TO THE BATTING LINE-UP.'}
 };
 function rdmRepairSahilCards(){
  if(!Array.isArray(D.players))return;
  Object.entries(rdmSahilCards).forEach(([id,fix])=>{
    const p=D.players.find(x=>x.id===id); if(!p)return;
-   p.name=fix.name; p.role=fix.role; p.detail=fix.detail;
+   p.name=fix.name; p.role=fix.role; p.detail=fix.detail; p.nick=fix.nick; p.bio=fix.bio;
    if(id==='RDM011')p.jersey='57';
  });
 }
