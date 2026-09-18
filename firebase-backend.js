@@ -29,7 +29,27 @@ async function rdmLoadAll(){if(rdmLoading)return;rdmLoading=true;try{const[ps,ms
 window.rdmBackendAuthReady=async(user,account)=>{if(account?.role==='admin')await rdmSeedIfNeeded();await rdmLoadAll()};rdmLoadAll();document.addEventListener('visibilitychange',()=>{if(!document.hidden)rdmLoadAll()});
 
 async function rdmProfileUid(playerId){const p=D.players.find(x=>x.id===playerId);/* A logged-in player must always write to their own UID document. Old/stale profile UIDs can otherwise cause Firestore permission-denied and SAVE FAILED. */if(session?.mode==='player'&&session.playerId===playerId&&rdmAuth.currentUser?.uid)return rdmAuth.currentUser.uid;if(p?._profileUid)return p._profileUid;if(rdmAdmin()){const s=await rdmDB.collection('Accounts').where('playerId','==',playerId).limit(1).get();return s.empty?null:s.docs[0].id}return null}
-async function rdmProfileWrite(p,extra={}){const uid=await rdmProfileUid(p.id);if(!uid)throw new Error('PROFILE_ACCOUNT_NOT_FOUND');if(!rdmAdmin()&&(!rdmAuth.currentUser||session?.playerId!==p.id))throw new Error('NOT_ALLOWED');const data={playerId:p.id,jersey:p.jersey||'',nick:p.nick||'',bio:p.bio||'',socials:Array.isArray(p.socials)?p.socials.slice(0,3):[],image:p.image||'',updatedAt:rdmStamp(),...extra};await rdmDB.collection('PlayerProfiles').doc(uid).set(data,{merge:true});p._profileUid=uid}
+async function rdmProfileWrite(p,extra={}){const uid=await rdmProfileUid(p.id);if(!uid)throw new Error('PROFILE_ACCOUNT_NOT_FOUND');if(!rdmAdmin()&&(!rdmAuth.currentUser||session?.playerId!==p.id))throw new Error('NOT_ALLOWED');const data={playerId:p.id,jersey:p.jersey||'',nick:p.nick||'',bio:p.bio||'',socials:Array.isArray(p.socials)?p.socials.slice(0,3):[],image:p.image||'',updatedAt:rdmStamp(),...extra};try{
+await rdmDB.collection('PlayerProfiles').doc(uid).set(data,{merge:true});
+p._profileUid=uid
+}catch(e){
+console.error('RDM PROFILE WRITE ERROR',{
+code:e?.code,
+message:e?.message,
+uid:uid,
+authUid:rdmAuth.currentUser?.uid,
+playerId:p.id,
+sessionPlayerId:session?.playerId
+});
+alert(
+'FIREBASE SAVE ERROR\n\n'+
+'CODE: '+(e?.code||'UNKNOWN')+'\n'+
+'MESSAGE: '+(e?.message||e)+'\n'+
+'PLAYER: '+p.id+'\n'+
+'UID MATCH: '+(uid===rdmAuth.currentUser?.uid)
+);
+throw e
+}}
 
 function socialObj(x,i){return typeof x==='string'?{name:'SOCIAL '+(i+1),url:x}:x||{}}
 function profileHtml(p,editable=false,adminEdit=false){const socials=(p.socials||[]).map(socialObj).filter(s=>s.url||s.name);const sh=socials.length?`<div class="profileSocialList">${socials.map((s,i)=>`<div class="profileSocialRow"><a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener">${mini(s.name||('SOCIAL '+(i+1)))}</a></div>`).join('')}</div>`:'<p class="mutedMini">ɴᴏ ꜱᴏᴄɪᴀʟ ʟɪɴᴋꜱ</p>';
