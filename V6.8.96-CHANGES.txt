@@ -1,0 +1,8 @@
+RDM V6.8.96
+- Removed visible LOGIN / LOGOUT / SWITCH controls and login modal.
+- Public URL is view-only.
+- Added private-link routing for each of 17 players and admin.
+- Replaced visible RDM001-style IDs with short player codes. Internal RDM IDs are retained for Firebase compatibility.
+- Removed password-edit button from player profile.
+- Firebase Authentication + Firestore rules remain write authorization; URL keys are not passwords.
+- Existing 17-player roster, photos, mini-font fixes and V6.8.95 data preserved.

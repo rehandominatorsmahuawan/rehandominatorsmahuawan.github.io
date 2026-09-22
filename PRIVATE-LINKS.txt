@@ -1,0 +1,25 @@
+RDM V6.8.96 PRIVATE ACCESS LINKS
+
+PUBLIC VIEW: https://rehandominatorsmahuawan.github.io/
+
+ADMIN: https://rehandominatorsmahuawan.github.io/?key=0AqlZ35wF8lcXYiAkgz04KjzGeiSfnHs
+
+REHAN AKHTAR [RA08]: https://rehandominatorsmahuawan.github.io/?key=yJjA_yyMuR6OyPJgfvspRUmD
+SAIF ALI [SA-V]: https://rehandominatorsmahuawan.github.io/?key=iGo217fTX-irxYyJoPfrlXBf
+SOAIB AKHTAR [SO-WK]: https://rehandominatorsmahuawan.github.io/?key=RLnuOF9niHZMV0yemW4-Mm5O
+AKIB ANSARI [AKA]: https://rehandominatorsmahuawan.github.io/?key=pArgda-19Jz59OJc6D-WszY4
+ASIF ALI [ASI]: https://rehandominatorsmahuawan.github.io/?key=6tYIAzsx4WM534_Ovd1mDaE1
+WASIM [WSM]: https://rehandominatorsmahuawan.github.io/?key=ubl_kIeHJdMlhTrMeV39LTjq
+JUBED [JBD]: https://rehandominatorsmahuawan.github.io/?key=HthzwXsiP1scviZJJUWIymep
+GULAM [GLM]: https://rehandominatorsmahuawan.github.io/?key=kSHlVvpggLEs9wpLrlUfTMxs
+SAHIL ANSARI [SHA57]: https://rehandominatorsmahuawan.github.io/?key=GgSPtAUgj_zIrTTY2WMeLeXW
+SAHIL ALI [SAL02]: https://rehandominatorsmahuawan.github.io/?key=2GJogYcYn4dG23ug5zkC9c-D
+LUCKY [LKY]: https://rehandominatorsmahuawan.github.io/?key=mxXlPl2zOIzz-Lig_jsx6MEm
+KAIF LEFTY [KLF]: https://rehandominatorsmahuawan.github.io/?key=UpcsKFrMOK6GEnBLjTCZcdBk
+SK. HANIF [SKH]: https://rehandominatorsmahuawan.github.io/?key=88DTqmDck9JVXCybKZXajzzG
+ABUSHAD [ABS]: https://rehandominatorsmahuawan.github.io/?key=uwN3JA0MPpUewH_BFcRVoiJX
+SABRE ALAM [SBA]: https://rehandominatorsmahuawan.github.io/?key=wKTMjxcXSV3sweGJWQ4AKZoX
+ZISHAN [ZSN]: https://rehandominatorsmahuawan.github.io/?key=FYnhheOTlpei4tJD6C43Qc66
+JAVED [JVD]: https://rehandominatorsmahuawan.github.io/?key=YvKJ8KIvznZlq_7OQc9AYyvG
+
+NOTE: These links open the correct private view. Firebase Authentication and Firestore rules remain the actual write-security layer; the URL token itself is not treated as a password.

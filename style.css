@@ -4283,3 +4283,6 @@ html[data-rdm-theme="dark"] body button.rdmPinAction{background:#4a3a22!importan
 
 /* RDM V6.8.95 squad/photo hardening */
 .player .photo,.squadFullProfile .photo{aspect-ratio:1/1!important;border-radius:50%!important;overflow:hidden!important}.player .photo img,.squadFullProfile .photo img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;border-radius:50%!important}.profileAvatar{object-fit:cover!important;object-position:center!important;border-radius:50%!important}.pbody p,.profileBio{overflow-wrap:anywhere!important;word-break:normal!important}
+
+/* V6.8.96 link-access cleanup */
+#loginModal,#loginOpen,#switchBtn{display:none!important}
