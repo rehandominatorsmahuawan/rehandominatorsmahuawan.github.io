@@ -9,12 +9,8 @@ function control(el){
  if(el.closest?.('[data-rdm-no-mini]'))return;
  if(el.placeholder)el.placeholder=mini(el.placeholder);
  if(el.tagName==='SELECT'){el.querySelectorAll('option').forEach(o=>{if(!o.dataset.rdmValueSaved){o.dataset.rdmValueSaved='1';if(!o.hasAttribute('value'))o.value=o.textContent}o.textContent=mini(o.textContent)});return}
- if(el.tagName==='TEXTAREA'){if(/[A-Za-z]/.test(el.value))el.value=mini(el.value);return}
- if(el.tagName==='INPUT'){
-   const t=(el.type||'text').toLowerCase();
-   if(['password','email','url','file','date','time','datetime-local','month','week','number','range','color','checkbox','radio','hidden'].includes(t))return;
-   if(/[A-Za-z]/.test(el.value))el.value=mini(el.value);
- }
+ if(el.tagName==='TEXTAREA')return;
+ if(el.tagName==='INPUT')return;
 }
 function scan(root=document){
  if(root.nodeType===3){textNode(root);return}

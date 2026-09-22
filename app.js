@@ -1,6 +1,41 @@
 const seed=[
-['RDM001','REHAN AKHTAR','CAPTAIN • ALL-ROUNDER','RIGHT-HANDED • RIGHT-ARM FAST • MIDDLE ORDER • MIDDLE OVERS','','assets/rehan.png','08'],['RDM002','ASIF ALI','BATSMAN','RIGHT-HANDED • TOP ORDER','','assets/logo.jpg',''],['RDM003','SAIF ALI','VICE-CAPTAIN • ALL-ROUNDER','BOTH-HANDED • FAST • NON-STRIKER OPENER • ALL PHASES','','assets/logo.jpg',''],['RDM004','AKIB ANSARI','ALL-ROUNDER','RIGHT-HANDED • FAST • STRIKER OPENER • MIDDLE + DEATH','','assets/logo.jpg',''],['RDM005','SAHIL ALI','BATSMAN','RIGHT-HANDED • MIDDLE ORDER • FINISHER','','assets/logo.jpg',''],['RDM006','SOAIB AKHTAR','WICKET-KEEPER • BATSMAN','RIGHT-HANDED • LEFT-ARM FAST • TOP ORDER • FINISHER','','assets/logo.jpg',''],['RDM007','WASIM','ALL-ROUNDER','RIGHT-HANDED • FAST • TOP ORDER • ALL PHASES','','assets/logo.jpg',''],['RDM008','JUBED','BATSMAN','RIGHT-HANDED • MIDDLE ORDER','','assets/logo.jpg',''],['RDM009','SHEIKH HANIF','BATSMAN','RIGHT-HANDED • FINISHER','','assets/logo.jpg',''],['RDM010','GULAM','ALL-ROUNDER','RIGHT-HANDED • FAST • FINISHER • EMERGENCY BOWLING','','assets/logo.jpg',''],['RDM011','SAHIL ANSARI','BATSMAN','RIGHT-HANDED • MIDDLE ORDER','','assets/logo.jpg','57'],['RDM012','LUCKY','SUBSTITUTE • ALL-ROUNDER','RIGHT-HANDED • FAST • MIDDLE ORDER • MIDDLE OVERS','','assets/logo.jpg',''],['RDM013','ABUSHAD','SUBSTITUTE • ALL-ROUNDER','RIGHT-HANDED • FAST • MIDDLE ORDER + FINISHER • MIDDLE + DEATH','','assets/logo.jpg',''],['RDM014','SABRE ALAM','SUBSTITUTE • BATSMAN','RIGHT-HANDED • FINISHER','','assets/logo.jpg',''],['RDM015','ZISHAN','SUBSTITUTE • BATSMAN','RIGHT-HANDED • FINISHER','','assets/logo.jpg','']];
-const playerDefaults={"RDM001": {"nick": "THE SKIPPER", "bio": "CAPTAIN AND ALL-ROUNDER WHO LEADS FROM THE FRONT WITH DISCIPLINE, CONFIDENCE AND TEAM-FIRST CRICKET."}, "RDM002": {"nick": "THE ANCHOR", "bio": "A RELIABLE TOP-ORDER BATSMAN WHO VALUES A SOLID START, SMART SHOT SELECTION AND STEADY RUNS."}, "RDM003": {"nick": "THE GAME CHANGER", "bio": "VICE-CAPTAIN AND ALL-ROUNDER WHO BRINGS FLEXIBILITY, ENERGY AND IMPACT THROUGH EVERY PHASE OF THE GAME."}, "RDM004": {"nick": "THE ATTACKER", "bio": "AN AGGRESSIVE STRIKE OPENER AND FAST-BOWLING ALL-ROUNDER BUILT TO SET THE TEMPO AND DELIVER UNDER PRESSURE."}, "RDM005": {"nick": "THE FINISHER", "bio": "A CALM MIDDLE-ORDER BATSMAN WHO BACKS HIS SHOTS AND LOOKS TO FINISH INNINGS WITH CONFIDENCE."}, "RDM006": {"nick": "THE GLOVEMAN", "bio": "THE TEAM’S MAIN WICKET-KEEPER AND A VERSATILE BATSMAN WHO ADDS ENERGY, AWARENESS AND BALANCE TO THE XI."}, "RDM007": {"nick": "THE COMPLETE PACKAGE", "bio": "A TOP-ORDER ALL-ROUNDER WHO CAN CONTRIBUTE WITH BAT AND BALL ACROSS EVERY PHASE OF THE MATCH."}, "RDM008": {"nick": "THE MIDDLE ROCK", "bio": "A DEPENDABLE MIDDLE-ORDER BATSMAN FOCUSED ON BUILDING PARTNERSHIPS AND KEEPING THE INNINGS MOVING."}, "RDM009": {"nick": "THE CLOSER", "bio": "A FINISHER WHO ENJOYS THE PRESSURE MOMENTS AND LOOKS TO GIVE THE TEAM A STRONG END TO THE INNINGS."}, "RDM010": {"nick": "THE IMPACT PLAYER", "bio": "A USEFUL ALL-ROUNDER AND FINISHER WHO CAN CHANGE MOMENTUM WITH QUICK RUNS AND EMERGENCY BOWLING."}, "RDM011": {"nick": "THE MIDDLE ORDER MAESTRO", "bio": "A RIGHT-HANDED MIDDLE-ORDER BATSMAN WHO ADDS STABILITY AND DEPTH TO THE BATTING LINE-UP."}, "RDM012": {"nick": "THE READY RESERVE", "bio": "A VERSATILE SUBSTITUTE ALL-ROUNDER WHO STAYS READY TO CONTRIBUTE WITH BAT OR BALL WHEN THE TEAM NEEDS HIM."}, "RDM013": {"nick": "THE UTILITY ACE", "bio": "A FLEXIBLE SUBSTITUTE ALL-ROUNDER WHO CAN FINISH WITH THE BAT AND HANDLE IMPORTANT MIDDLE OR DEATH OVERS."}, "RDM014": {"nick": "THE POWER FINISHER", "bio": "A SUBSTITUTE BATSMAN WITH A FINISHER’S ROLE, READY TO ADD QUICK RUNS AND IMPACT WHEN CALLED UPON."}, "RDM015": {"nick": "THE LAST-OVER HITTER", "bio": "A SUBSTITUTE FINISHER WHO PLAYS WITH INTENT AND STAYS READY FOR HIGH-PRESSURE BATTING OPPORTUNITIES."}};
+['RDM001','REHAN AKHTAR','CAPTAIN • ALL-ROUNDER','RIGHT-HANDED • RIGHT-ARM FAST • MIDDLE ORDER • MIDDLE OVERS','','assets/rehan.png','08'],
+['RDM003','SAIF ALI','VICE-CAPTAIN • ALL-ROUNDER','BOTH-HANDED • FAST • NON-STRIKER OPENER • ALL PHASES','','assets/logo.jpg',''],
+['RDM006','SOAIB AKHTAR','WICKET-KEEPER • BATSMAN','RIGHT-HANDED • LEFT-ARM FAST • TOP ORDER • FINISHER','','assets/logo.jpg',''],
+['RDM004','AKIB ANSARI','ALL-ROUNDER','RIGHT-HANDED • FAST • STRIKER OPENER • MIDDLE + DEATH','','assets/logo.jpg',''],
+['RDM002','ASIF ALI','BATSMAN','RIGHT-HANDED • TOP ORDER','','assets/logo.jpg',''],
+['RDM007','WASIM','ALL-ROUNDER','RIGHT-HANDED • FAST • TOP ORDER • ALL PHASES','','assets/players/wasim.jpg',''],
+['RDM008','JUBED','BATSMAN','RIGHT-HANDED • MIDDLE ORDER','','assets/logo.jpg',''],
+['RDM010','GULAM','ALL-ROUNDER','RIGHT-HANDED • FAST • FINISHER • EMERGENCY BOWLING','','assets/logo.jpg',''],
+['RDM011','SAHIL ANSARI','BATSMAN','RIGHT-HANDED • MIDDLE ORDER','','assets/logo.jpg','57'],
+['RDM005','SAHIL ALI','BATSMAN','RIGHT-HANDED • MIDDLE ORDER • FINISHER','','assets/logo.jpg','02'],
+['RDM012','LUCKY','ALL-ROUNDER','RIGHT-HANDED • FAST • MIDDLE ORDER • MIDDLE OVERS','','assets/players/lucky.jpg',''],
+['RDM016','KAIF LEFTY','BATSMAN','LEFT-HANDED • MIDDLE ORDER','','assets/players/kaif-lefty.png',''],
+['RDM009','SK. HANIF','BATSMAN','RIGHT-HANDED • FINISHER','','assets/logo.jpg',''],
+['RDM013','ABUSHAD','ALL-ROUNDER','RIGHT-HANDED • FAST • MIDDLE ORDER + FINISHER • MIDDLE + DEATH','','assets/logo.jpg',''],
+['RDM014','SABRE ALAM','BATSMAN','RIGHT-HANDED • FINISHER','','assets/logo.jpg',''],
+['RDM015','ZISHAN','BATSMAN','RIGHT-HANDED • FINISHER','','assets/players/zishan.jpg',''],
+['RDM017','JAVED','BATSMAN','RIGHT-HANDED • FINISHER','','assets/players/javed.jpg','']
+];
+const playerDefaults={
+'RDM001':{nick:'THE SKIPPER',bio:'CAPTAIN AND ALL-ROUNDER WHO LEADS FROM THE FRONT WITH DISCIPLINE, CONFIDENCE AND TEAM-FIRST CRICKET.'},
+'RDM002':{nick:'THE ANCHOR',bio:'A RELIABLE TOP-ORDER BATSMAN WHO VALUES A SOLID START, SMART SHOT SELECTION AND STEADY RUNS.'},
+'RDM003':{nick:'THE GAME CHANGER',bio:'VICE-CAPTAIN AND ALL-ROUNDER WHO BRINGS FLEXIBILITY, ENERGY AND IMPACT THROUGH EVERY PHASE OF THE GAME.'},
+'RDM004':{nick:'THE ATTACKER',bio:'AN AGGRESSIVE STRIKE OPENER AND FAST-BOWLING ALL-ROUNDER BUILT TO SET THE TEMPO AND DELIVER UNDER PRESSURE.'},
+'RDM005':{nick:'THE FINISHER',bio:'A CALM MIDDLE-ORDER BATSMAN WHO BACKS HIS SHOTS AND LOOKS TO FINISH INNINGS WITH CONFIDENCE.'},
+'RDM006':{nick:'THE GLOVEMAN',bio:'THE TEAM MAIN WICKET-KEEPER AND A VERSATILE BATSMAN WHO ADDS ENERGY, AWARENESS AND BALANCE TO THE TEAM.'},
+'RDM007':{nick:'THE COMPLETE PACKAGE',bio:'A TOP-ORDER ALL-ROUNDER WHO CAN CONTRIBUTE WITH BAT AND BALL ACROSS EVERY PHASE OF THE MATCH.'},
+'RDM008':{nick:'THE MIDDLE ROCK',bio:'A DEPENDABLE MIDDLE-ORDER BATSMAN FOCUSED ON BUILDING PARTNERSHIPS AND KEEPING THE INNINGS MOVING.'},
+'RDM009':{nick:'THE CLOSER',bio:'A FINISHER WHO ENJOYS PRESSURE MOMENTS AND LOOKS TO GIVE THE TEAM A STRONG END TO THE INNINGS.'},
+'RDM010':{nick:'THE IMPACT PLAYER',bio:'A USEFUL ALL-ROUNDER AND FINISHER WHO CAN CHANGE MOMENTUM WITH QUICK RUNS AND EMERGENCY BOWLING.'},
+'RDM011':{nick:'THE MIDDLE ORDER MAESTRO',bio:'A RIGHT-HANDED MIDDLE-ORDER BATSMAN WHO ADDS STABILITY AND DEPTH TO THE BATTING LINE-UP.'},
+'RDM012':{nick:'THE ALL-ROUNDER',bio:'A VERSATILE ALL-ROUNDER WHO CAN CONTRIBUTE WITH BAT OR BALL WHEN THE TEAM NEEDS HIM.'},
+'RDM013':{nick:'THE UTILITY ACE',bio:'A FLEXIBLE ALL-ROUNDER WHO CAN FINISH WITH THE BAT AND HANDLE IMPORTANT MIDDLE OR DEATH OVERS.'},
+'RDM014':{nick:'THE POWER FINISHER',bio:'A BATSMAN WITH A FINISHER ROLE WHO LOOKS TO ADD QUICK RUNS AND IMPACT.'},
+'RDM015':{nick:'THE LAST-OVER HITTER',bio:'A FINISHER WHO PLAYS WITH INTENT IN HIGH-PRESSURE BATTING MOMENTS.'},
+'RDM016':{nick:'THE LEFTY',bio:'A LEFT-HANDED MIDDLE-ORDER BATSMAN WHO ADDS VARIETY AND BALANCE TO THE BATTING LINE-UP.'},
+'RDM017':{nick:'THE FINISHER',bio:'A RIGHT-HANDED BATSMAN WHO SPECIALISES IN THE FINISHER ROLE AND LOOKS TO CLOSE INNINGS STRONGLY.'}
+};
 const K='RDM_V33_DATA',SK='RDM_V33_SESSION';
 const fresh=()=>({players:seed.map(x=>({id:x[0],name:x[1],role:x[2],detail:x[3],pass:x[4],image:x[5],jersey:x[6],nick:(playerDefaults[x[0]]?.nick||''),bio:(playerDefaults[x[0]]?.bio||''),socials:[]})),matches:[],news:[],gallery:[],honours:[{year:'2024',title:'WINNER',sub:'MAHUAWAN PREMIER LEAGUE 1',image:'assets/trophy-2024.png'},{year:'2025',title:'WINNER',sub:'MAHUAWAN PREMIER LEAGUE 2',image:'assets/trophy-2025.png'},{year:'2026',title:'RUNNER-UP',sub:'TOURNAMENT NAME • TO BE ADDED',image:'assets/trophy-2026.png'}],socials:[{name:'INSTAGRAM',url:'',icon:'IG',image:''},{name:'FACEBOOK',url:'',icon:'f',image:''},{name:'YOUTUBE',url:'https://www.youtube.com/@rehan_dominators_mahuawan',icon:'▶',image:''},{name:'TELEGRAM',url:'',icon:'✈',image:''},{name:'WHATSAPP',url:'https://wa.me/918521254605',icon:'◉',image:''}]});
 let D;try{D=JSON.parse(localStorage.getItem(K))||fresh()}catch{D=fresh()}
@@ -9,21 +44,21 @@ if(!D||!Array.isArray(D.players)||D.players.length===0){D=fresh();saveLater=true
 if(!Array.isArray(D.honours)||D.honours.length===0)D.honours=fresh().honours;
 
 if(!Array.isArray(D.socials)||D.socials.length===0)D.socials=fresh().socials;
-// V6.8.92 — rebuild the two Sahil squad cards from the same plain-data model as every other player.
-// Preserve account/photo/profile-linked fields, but repair the card identity fields before rendering.
-const rdmSahilCards={
- RDM005:{name:'SAHIL ALI',role:'BATSMAN',detail:'RIGHT-HANDED • MIDDLE ORDER • FINISHER',nick:'THE FINISHER',bio:'A CALM MIDDLE-ORDER BATSMAN WHO BACKS HIS SHOTS AND LOOKS TO FINISH INNINGS WITH CONFIDENCE.'},
- RDM011:{name:'SAHIL ANSARI',role:'BATSMAN',detail:'RIGHT-HANDED • MIDDLE ORDER',jersey:'57',nick:'THE MIDDLE ORDER MAESTRO',bio:'A RIGHT-HANDED MIDDLE-ORDER BATSMAN WHO ADDS STABILITY AND DEPTH TO THE BATTING LINE-UP.'}
-};
-function rdmRepairSahilCards(){
- if(!Array.isArray(D.players))return;
- Object.entries(rdmSahilCards).forEach(([id,fix])=>{
-   const p=D.players.find(x=>x.id===id); if(!p)return;
-   p.name=fix.name; p.role=fix.role; p.detail=fix.detail; p.nick=fix.nick; p.bio=fix.bio;
-   if(id==='RDM011')p.jersey='57';
- });
+// V6.8.95 — canonical 17-player RDM squad. No permanent PLAYING/SUBSTITUTE labels.
+const rdmRoster2026=Object.fromEntries(seed.map((x,i)=>[x[0],{id:x[0],name:x[1],role:x[2],detail:x[3],image:x[5],jersey:x[6],order:i+1}]));
+function rdmRepairRoster2026(){
+ if(!Array.isArray(D.players))D.players=[];
+ for(const x of seed){
+   let p=D.players.find(v=>v.id===x[0]);
+   if(!p){p={id:x[0],name:x[1],role:x[2],detail:x[3],pass:x[4],image:x[5],jersey:x[6],nick:'',bio:'',socials:[]};D.players.push(p)}
+   const c=rdmRoster2026[x[0]]; p.name=c.name;p.role=c.role;p.detail=c.detail;p.order=c.order;
+   if(c.jersey)p.jersey=c.jersey;
+   if(['RDM007','RDM012','RDM015','RDM016','RDM017'].includes(p.id))p.image=c.image;
+   const d=playerDefaults[p.id];if(d){p.nick=d.nick;p.bio=d.bio}
+ }
+ const keep=new Set(seed.map(x=>x[0]));D.players=D.players.filter(p=>keep.has(p.id)).sort((a,b)=>(rdmRoster2026[a.id]?.order||999)-(rdmRoster2026[b.id]?.order||999));
 }
-rdmRepairSahilCards();
+rdmRepairRoster2026();
 const requiredSocials=fresh().socials;requiredSocials.forEach(def=>{let found=D.socials.find(x=>String((Array.isArray(x)?x[0]:x.name)||'').toUpperCase().includes(def.name));if(!found)D.socials.push({...def});else if(!Array.isArray(found)){if(found.image===undefined)found.image='';if(!found.icon)found.icon=def.icon;}});
 D.players.forEach(p=>{const d=playerDefaults[p.id];if(d){if(!p.nick)p.nick=d.nick;if(!p.bio)p.bio=d.bio;}});if(!Array.isArray(D.matches))D.matches=[];if(!Array.isArray(D.news))D.news=[];if(!Array.isArray(D.gallery))D.gallery=[];let session=null;try{session=JSON.parse(localStorage.getItem(SK))}catch{}let loginMode='player',editMode='',editObj=null;
 const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)],save=()=>localStorage.setItem(K,JSON.stringify(D));

@@ -22,34 +22,15 @@ async function rdmSeedIfNeeded(){if(!rdmAdmin())return;
 }
 async function rdmLoadAll(){if(rdmLoading)return;rdmLoading=true;try{const[ps,ms,ns,hs,gs,ss,profiles]=await Promise.all([rdmDB.collection(RCOL.players).get(),rdmDB.collection(RCOL.matches).get(),rdmDB.collection(RCOL.news).get(),rdmDB.collection(RCOL.honours).get(),rdmDB.collection(RCOL.gallery).get(),rdmDB.collection(RCOL.socials).get(),rdmDB.collection('PlayerProfiles').get()]);
   if(!ps.empty)D.players=ps.docs.map(rdmDocData).sort((a,b)=>(a.order||999)-(b.order||999)).map(p=>({id:p.id,name:p.name,role:p.role,detail:p.detail,image:p.image||'assets/logo.jpg',jersey:p.jersey||'',nick:'',bio:'',socials:[],_docId:p._docId}));
-  if(typeof rdmRepairSahilCards==='function')rdmRepairSahilCards();
+  if(typeof rdmRepairRoster2026==='function')rdmRepairRoster2026();
   D.matches=ms.docs.map(rdmDocData).sort((a,b)=>(b.createdMs||0)-(a.createdMs||0));D.news=ns.docs.map(rdmDocData).sort((a,b)=>(b.createdMs||0)-(a.createdMs||0));if(!hs.empty)D.honours=hs.docs.map(rdmDocData).sort((a,b)=>(a.order||999)-(b.order||999));D.gallery=gs.docs.map(rdmDocData).sort((a,b)=>(b.createdMs||0)-(a.createdMs||0));if(!ss.empty)D.socials=ss.docs.map(rdmDocData).sort((a,b)=>(a.order||999)-(b.order||999));
-  [...profiles.docs].sort((a,b)=>{const uid=rdmAuth.currentUser?.uid||'';return (a.id===uid?1:0)-(b.id===uid?1:0)}).forEach(d=>{const pr=d.data(),p=D.players.find(x=>x.id===pr.playerId);if(p){['jersey','nick','bio','image'].forEach(k=>{if(pr[k]!==undefined&&pr[k]!==null&&pr[k]!=='')p[k]=pr[k]});if(Array.isArray(pr.socials))p.socials=pr.socials;p._profileUid=d.id;}});D.players.forEach(p=>{const d=(typeof playerDefaults!=='undefined'&&playerDefaults[p.id])||null;if(d){if(!p.nick)p.nick=d.nick;if(!p.bio)p.bio=d.bio;}});if(typeof rdmRepairSahilCards==='function')rdmRepairSahilCards();rdmRemoteReady=true;rdmRefresh();
+  [...profiles.docs].sort((a,b)=>{const uid=rdmAuth.currentUser?.uid||'';return (a.id===uid?1:0)-(b.id===uid?1:0)}).forEach(d=>{const pr=d.data(),p=D.players.find(x=>x.id===pr.playerId);if(p){['jersey','nick','bio','image'].forEach(k=>{if(pr[k]!==undefined&&pr[k]!==null&&pr[k]!=='')p[k]=pr[k]});if(Array.isArray(pr.socials))p.socials=pr.socials;p._profileUid=d.id;}});D.players.forEach(p=>{const d=(typeof playerDefaults!=='undefined'&&playerDefaults[p.id])||null;if(d){if(!p.nick)p.nick=d.nick;if(!p.bio)p.bio=d.bio;}});if(typeof rdmRepairRoster2026==='function')rdmRepairRoster2026();rdmRemoteReady=true;rdmRefresh();
 }catch(e){console.error(e);toast('ᴅᴀᴛᴀ ꜱʏɴᴄ ᴇʀʀᴏʀ')}finally{rdmLoading=false}}
-window.rdmBackendAuthReady=async(user,account)=>{if(account?.role==='admin')await rdmSeedIfNeeded();await rdmLoadAll()};rdmLoadAll();document.addEventListener('visibilitychange',()=>{if(!document.hidden)rdmLoadAll()});
+async function rdmSyncRoster2026(){if(!rdmAdmin()||typeof rdmRoster2026==='undefined')return;const b=rdmDB.batch();Object.values(rdmRoster2026).forEach(c=>{const photoIds=['RDM007','RDM012','RDM015','RDM016','RDM017'];const data={id:c.id,name:c.name,role:c.role,detail:c.detail,jersey:c.jersey||'',order:c.order,active:true,updatedAt:rdmStamp(),...(photoIds.includes(c.id)?{image:c.image}:{})};b.set(rdmDB.collection(RCOL.players).doc(c.id),data,{merge:true})});await b.commit()}
+window.rdmBackendAuthReady=async(user,account)=>{if(account?.role==='admin'){await rdmSeedIfNeeded();try{await rdmSyncRoster2026()}catch(e){console.warn('ROSTER SYNC',e)}}await rdmLoadAll()};rdmLoadAll();document.addEventListener('visibilitychange',()=>{if(!document.hidden)rdmLoadAll()});
 
 async function rdmProfileUid(playerId){const p=D.players.find(x=>x.id===playerId);/* A logged-in player must always write to their own UID document. Old/stale profile UIDs can otherwise cause Firestore permission-denied and SAVE FAILED. */if(session?.mode==='player'&&session.playerId===playerId&&rdmAuth.currentUser?.uid)return rdmAuth.currentUser.uid;if(p?._profileUid)return p._profileUid;if(rdmAdmin()){const s=await rdmDB.collection('Accounts').where('playerId','==',playerId).limit(1).get();return s.empty?null:s.docs[0].id}return null}
-async function rdmProfileWrite(p,extra={}){const uid=await rdmProfileUid(p.id);if(!uid)throw new Error('PROFILE_ACCOUNT_NOT_FOUND');if(!rdmAdmin()&&(!rdmAuth.currentUser||session?.playerId!==p.id))throw new Error('NOT_ALLOWED');const data={playerId:p.id,jersey:p.jersey||'',nick:p.nick||'',bio:p.bio||'',socials:Array.isArray(p.socials)?p.socials.slice(0,3):[],image:p.image||'',updatedAt:rdmStamp(),...extra};try{
-await rdmDB.collection('PlayerProfiles').doc(uid).set(data,{merge:true});
-p._profileUid=uid
-}catch(e){
-console.error('RDM PROFILE WRITE ERROR',{
-code:e?.code,
-message:e?.message,
-uid:uid,
-authUid:rdmAuth.currentUser?.uid,
-playerId:p.id,
-sessionPlayerId:session?.playerId
-});
-alert(
-'FIREBASE SAVE ERROR\n\n'+
-'CODE: '+(e?.code||'UNKNOWN')+'\n'+
-'MESSAGE: '+(e?.message||e)+'\n'+
-'PLAYER: '+p.id+'\n'+
-'UID MATCH: '+(uid===rdmAuth.currentUser?.uid)
-);
-throw e
-}}
+async function rdmProfileWrite(p,extra={}){const uid=await rdmProfileUid(p.id);if(!uid)throw new Error('PROFILE_ACCOUNT_NOT_FOUND');if(!rdmAdmin()&&(!rdmAuth.currentUser||session?.playerId!==p.id))throw new Error('NOT_ALLOWED');const data={playerId:p.id,jersey:p.jersey||'',nick:p.nick||'',bio:p.bio||'',socials:Array.isArray(p.socials)?p.socials.slice(0,3):[],updatedAt:rdmStamp(),...extra};await rdmDB.collection('PlayerProfiles').doc(uid).set(data,{merge:true});p._profileUid=uid}
 
 function socialObj(x,i){return typeof x==='string'?{name:'SOCIAL '+(i+1),url:x}:x||{}}
 function profileHtml(p,editable=false,adminEdit=false){const socials=(p.socials||[]).map(socialObj).filter(s=>s.url||s.name);const sh=socials.length?`<div class="profileSocialList">${socials.map((s,i)=>`<div class="profileSocialRow"><a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener">${mini(s.name||('SOCIAL '+(i+1)))}</a></div>`).join('')}</div>`:'<p class="mutedMini">ɴᴏ ꜱᴏᴄɪᴀʟ ʟɪɴᴋꜱ</p>';
@@ -182,7 +163,7 @@ window.deleteOwnSocial=async i=>{const p=rdmPlayer();if(!p)return;p.socials.spli
 const originalChooseDP=window.chooseDP;
 window.chooseDP=()=>{rdmCropTarget=rdmPlayer()?.id||null;originalChooseDP()};
 window.adminChooseDP=id=>{if(!rdmAdmin())return;rdmCropTarget=id;originalChooseDP()};
-q('#cropSave').onclick=async()=>{const p=D.players.find(x=>x.id===(rdmCropTarget||rdmPlayer()?.id));if(!p||!crop.img)return;const src=q('#cropCanvas'),out=document.createElement('canvas');out.width=320;out.height=320;out.getContext('2d').drawImage(src,0,0,320,320);p.image=out.toDataURL('image/jpeg',.72);try{if(rdmAdmin())await rdmDB.collection(RCOL.players).doc(p.id).set({image:p.image,updatedAt:rdmStamp()},{merge:true});await rdmProfileWrite(p);q('#cropModal').classList.remove('show');rdmCropTarget=null;await rdmLoadAll();toast('ᴅᴘ ꜱᴀᴠᴇᴅ ᴏɴʟɪɴᴇ')}catch(e){console.error(e);toast('ᴅᴘ ꜱᴀᴠᴇ ꜰᴀɪʟᴇᴅ')}};
+q('#cropSave').onclick=async()=>{const p=D.players.find(x=>x.id===(rdmCropTarget||rdmPlayer()?.id));if(!p||!crop.img)return;const src=q('#cropCanvas'),out=document.createElement('canvas');out.width=320;out.height=320;out.getContext('2d').drawImage(src,0,0,320,320);p.image=out.toDataURL('image/jpeg',.72);try{if(rdmAdmin())await rdmDB.collection(RCOL.players).doc(p.id).set({image:p.image,updatedAt:rdmStamp()},{merge:true});await rdmProfileWrite(p,{image:p.image});q('#cropModal').classList.remove('show');rdmCropTarget=null;await rdmLoadAll();toast('ᴅᴘ ꜱᴀᴠᴇᴅ ᴏɴʟɪɴᴇ')}catch(e){console.error(e);toast('ᴅᴘ ꜱᴀᴠᴇ ꜰᴀɪʟᴇᴅ')}};
 
 window.removeItem=async(k,i)=>{if(!rdmAdmin())return toast('ᴀᴅᴍɪɴ ᴏɴʟʏ');const item=D[k]?.[i],col=RCOL[k];if(!item||!col)return;const run=async()=>{try{if(item._docId)await rdmDB.collection(col).doc(item._docId).delete();D[k].splice(i,1);rdmRefresh();toast('ᴅᴇʟᴇᴛᴇᴅ ᴏɴʟɪɴᴇ')}catch(e){console.error(e);toast('ᴅᴇʟᴇᴛᴇ ꜰᴀɪʟᴇᴅ');throw e}};if(typeof window.rdmConfirmModal==='function')return window.rdmConfirmModal('DELETE ITEM','THIS ACTION CANNOT BE UNDONE.',run);return run()};
 window.editPlayer=id=>{if(rdmAdmin())openEdit('editPlayer',D.players.find(x=>x.id===id))};
