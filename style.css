@@ -4304,3 +4304,9 @@ html[data-rdm-theme="dark"] body button.rdmPinAction{background:#4a3a22!importan
 
 /* V6.9.00 leadership profile-photo fallback */
 .leaderInitials{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;border:2px solid #38c58f;background:linear-gradient(145deg,#eaf7ff,#d9f1ff);color:#155f91;font-size:18px;font-weight:1000;letter-spacing:1px}.leadCard.captain .leaderInitials{border-color:#d8bd67}@media(max-width:620px){.leaderInitials{width:62px;height:62px}}
+
+/* V6.9.01 — requested narrow patch: nav untouched */
+#downloadApplicationBtn.downloadAppBtn{min-width:220px;padding-left:28px!important;padding-right:28px!important}
+@media(max-width:600px){#downloadApplicationBtn.downloadAppBtn{width:min(280px,92%);margin-left:auto;margin-right:auto}}
+/* The download page owns the install CTA; suppress the old floating install bar. */
+.rdmInstall{display:none!important}

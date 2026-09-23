@@ -1,0 +1,10 @@
+RDM V6.9.01
+- Navigation untouched.
+- Home Captain/Vice-Captain sync strengthened from the same live squad/player data.
+- Download App button made slightly wider.
+- Old floating/duplicate PWA install bar hidden; premium Download Application card remains.
+- Actual PWA install flow preserved.
+- Added user-triggered notification permission control; no automatic permission prompt.
+- Notification consent preference/status + timestamp stored locally on the device for app preference history; browser permission remains authoritative.
+- No unnecessary location/microphone/contacts permissions added.
+- SEO/search names and existing structured SEO preserved.
