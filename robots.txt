@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
+# Private access URLs use query keys; canonical points to the public homepage.
 Sitemap: https://rehandominatorsmahuawan.github.io/sitemap.xml

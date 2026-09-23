@@ -1,0 +1,14 @@
+RDM V6.8.98 SEARCH SEO UPDATE
+- Stronger descriptive title and meta description
+- Canonical homepage retained
+- Googlebot/index directives improved
+- WebSite alternate names expanded with genuine RDM variants
+- SportsTeam structured data expanded with cricket + Mahuawan/Gopalganj/Bihar context
+- Crawlable English team description added to homepage
+- All 17 official player names added naturally to public team description
+- Registered player count corrected from 15 to 17
+- robots.txt and sitemap.xml refreshed
+- No 1000-keyword stuffing; uses genuine descriptive variants to stay within search quality guidance
+- Private/admin key URLs are not added to sitemap
+
+After deployment: Search Console > URL Inspection > homepage > Request Indexing, then submit sitemap.xml.

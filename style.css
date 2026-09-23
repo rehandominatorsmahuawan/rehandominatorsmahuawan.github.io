@@ -4291,3 +4291,10 @@ html[data-rdm-theme="dark"] body button.rdmPinAction{background:#4a3a22!importan
 .adminPlayerManager{margin:0 0 24px;padding:18px;border:1px solid #d8e5ef;border-radius:20px;background:rgba(255,255,255,.04)}
 .adminPlayerGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.adminPlayerGrid button{display:flex;align-items:center;gap:11px;text-align:left;padding:10px;border-radius:14px;border:1px solid #d6e2eb;background:rgba(255,255,255,.06);color:inherit;cursor:pointer}.adminPlayerGrid img{width:48px;height:48px;border-radius:50%;object-fit:cover;flex:0 0 48px}.adminPlayerGrid span{display:grid;gap:4px;min-width:0;flex:1}.adminPlayerGrid b{font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.adminPlayerGrid small{font-size:8px;opacity:.68}.adminPlayerGrid i{font-style:normal;font-size:20px}.adminPlayerActions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px}.adminPlayerDialog{max-width:720px!important}
 @media(max-width:600px){.adminPlayerGrid{grid-template-columns:1fr}.adminPlayerActions{grid-template-columns:1fr}}
+
+/* V6.8.98 SEO: useful crawlable team description, visually integrated */
+.rdmSeoIntro{max-width:980px;margin:18px auto 8px;padding:18px 20px;border-radius:20px;background:rgba(255,255,255,.72);border:1px solid rgba(20,85,125,.12);text-align:center}
+.rdmSeoIntro h2{margin:0 0 8px;font-size:clamp(17px,2.2vw,23px);letter-spacing:.01em}
+.rdmSeoIntro p{margin:6px auto;max-width:850px;font-size:12px;line-height:1.65;opacity:.82}
+.rdmSeoIntro .rdmSeoNames{font-size:11px;opacity:.72}
+[data-rdm-theme="dark"] .rdmSeoIntro{background:rgba(16,31,44,.72);border-color:rgba(255,255,255,.10)}
