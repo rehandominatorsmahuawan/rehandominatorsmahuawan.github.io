@@ -1,0 +1,6 @@
+RDM V6.8.99
+- Replaced official website/PWA/favicon logo with user-provided RDM logo.
+- Preserved V6.8.98 SEO/search names, sitemap, robots and structured data.
+- Home Captain/Vice-Captain cards now sync from live D.players data after Firebase load/render.
+- Added DOWNLOAD APP navigation/page with PWA install prompt support.
+- Bumped service-worker cache.
