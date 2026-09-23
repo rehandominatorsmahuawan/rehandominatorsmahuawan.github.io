@@ -20,7 +20,8 @@ function route(){
   }
   if(requestedPlayer){
     if(session?.mode==='player'&&session.playerId===requestedPlayer){updateAuthUI();render();go('profile');return;}
-    if(session?.mode==='admin'){session={...session,mode:'player',playerId:requestedPlayer};updateAuthUI();render();go('profile');return;}
+    /* Never convert an authenticated admin session into a player session. Doing so made profile writes use the admin UID and overwrite another player's profile. */
+    if(session?.mode==='admin'){updateAuthUI();render();go('admin');setTimeout(()=>window.adminOpenPlayerProfile?.(requestedPlayer),80);return;}
     publicMode();return;
   }
   session=null;publicMode();render();go('home');

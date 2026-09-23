@@ -29,7 +29,18 @@ async function rdmLoadAll(){if(rdmLoading)return;rdmLoading=true;try{const[ps,ms
 async function rdmSyncRoster2026(){if(!rdmAdmin()||typeof rdmRoster2026==='undefined')return;const b=rdmDB.batch();Object.values(rdmRoster2026).forEach(c=>{const photoIds=['RDM007','RDM012','RDM015','RDM016','RDM017'];const data={id:c.id,name:c.name,role:c.role,detail:c.detail,jersey:c.jersey||'',order:c.order,active:true,updatedAt:rdmStamp(),...(photoIds.includes(c.id)?{image:c.image}:{})};b.set(rdmDB.collection(RCOL.players).doc(c.id),data,{merge:true})});await b.commit()}
 window.rdmBackendAuthReady=async(user,account)=>{if(account?.role==='admin'){await rdmSeedIfNeeded();try{await rdmSyncRoster2026()}catch(e){console.warn('ROSTER SYNC',e)}}await rdmLoadAll()};rdmLoadAll();document.addEventListener('visibilitychange',()=>{if(!document.hidden)rdmLoadAll()});
 
-async function rdmProfileUid(playerId){const p=D.players.find(x=>x.id===playerId);/* A logged-in player must always write to their own UID document. Old/stale profile UIDs can otherwise cause Firestore permission-denied and SAVE FAILED. */if(session?.mode==='player'&&session.playerId===playerId&&rdmAuth.currentUser?.uid)return rdmAuth.currentUser.uid;if(p?._profileUid)return p._profileUid;if(rdmAdmin()){const s=await rdmDB.collection('Accounts').where('playerId','==',playerId).limit(1).get();return s.empty?null:s.docs[0].id}return null}
+async function rdmProfileUid(playerId){
+  /* V6.8.97: a player always writes only to their own auth UID. Admin resolves the target player's profile/account UID and never reuses the admin UID. */
+  if(session?.mode==='player'&&session.playerId===playerId&&rdmAuth.currentUser?.uid)return rdmAuth.currentUser.uid;
+  if(rdmAdmin()){
+    const existing=await rdmDB.collection('PlayerProfiles').where('playerId','==',playerId).limit(1).get();
+    if(!existing.empty)return existing.docs[0].id;
+    const a=await rdmDB.collection('Accounts').where('playerId','==',playerId).limit(1).get();
+    if(!a.empty)return a.docs[0].id;
+    return 'profile_'+playerId; // admin-owned fallback for players whose account has not been created yet
+  }
+  return null
+}
 async function rdmProfileWrite(p,extra={}){const uid=await rdmProfileUid(p.id);if(!uid)throw new Error('PROFILE_ACCOUNT_NOT_FOUND');if(!rdmAdmin()&&(!rdmAuth.currentUser||session?.playerId!==p.id))throw new Error('NOT_ALLOWED');const data={playerId:p.id,jersey:p.jersey||'',nick:p.nick||'',bio:p.bio||'',socials:Array.isArray(p.socials)?p.socials.slice(0,3):[],updatedAt:rdmStamp(),...extra};await rdmDB.collection('PlayerProfiles').doc(uid).set(data,{merge:true});p._profileUid=uid}
 
 function socialObj(x,i){return typeof x==='string'?{name:'SOCIAL '+(i+1),url:x}:x||{}}
@@ -240,3 +251,36 @@ function squadStatsHtml(p){const s=(typeof XD!=='undefined'&&XD.stats||[]).find(
 function renderSquadFullProfiles(){const box=q('#players');if(!box)return;box.innerHTML=D.players.map(p=>{const n=(p.name||'').toUpperCase(),lead=n==='REHAN AKHTAR'?'CAPTAIN':n==='SAIF ALI'?'VICE-CAPTAIN':n==='SOAIB AKHTAR'?'WICKET-KEEPER':'';const socials=(p.socials||[]).map(socialObj).filter(s=>s.url||s.name);return `<article class="player squadFullProfile">${rdmAdmin()?`<button type="button" class="squadEditFab" aria-label="Edit ${esc(p.name)}" title="Edit" onclick="openSquadEditMenu('${p.id}')">✏️</button>`:''}<div class="photo"><img src="${esc(p.image||'assets/logo.jpg')}" alt="${esc(p.name)}"></div>${lead?`<div class="leadershipBadge ${lead==='VICE-CAPTAIN'?'vice':lead==='WICKET-KEEPER'?'keeper':''}">${lead==='CAPTAIN'?'♛':lead==='VICE-CAPTAIN'?'★':'🧤'} ${mini(lead)}</div>`:''}<div class="pbody"><div class="squadIdentity"><span>${miniId(p.id)}</span><span>${p.jersey?'#'+esc(p.jersey):'—'}</span></div><h3>${mini(p.name)}</h3><b>${mini(p.role)}</b><p>${mini(p.detail)}</p>${p.nick?`<p>ɴɪᴄᴋɴᴀᴍᴇ • ${mini(p.nick)}</p>`:''}${p.bio?`<div class="profileBio">${mini(p.bio)}</div>`:''}${socials.length?`<div class="squadSocials">${socials.map((s,i)=>`<a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener">${mini(s.name||('SOCIAL '+(i+1)))}</a>`).join('')}</div>`:''}${squadStatsHtml(p)}</div></article>`}).join('')}
 window.openSquadEditMenu=function(id){if(!rdmAdmin())return;document.getElementById('squadEditModal')?.remove();const p=D.players.find(x=>x.id===id);if(!p)return;const m=document.createElement('div');m.id='squadEditModal';m.className='modal show';m.innerHTML=`<div class="dialog rdmUnifiedDialog squadEditDialog"><button class="close" type="button" aria-label="Close">×</button><h2>ᴇᴅɪᴛ ${mini(p.name)}</h2><div class="squadEditChoices"><button class="squadEditChoice" type="button">👤 <span><b>ᴘʟᴀʏᴇʀ ᴅᴇᴛᴀɪʟꜱ</b><small>ᴘʀᴏꜰɪʟᴇ • ᴊᴇʀꜱᴇʏ • ʀᴏʟᴇ • ʙɪᴏ • ꜱᴏᴄɪᴀʟꜱ</small></span></button><button class="squadEditChoice" type="button">📊 <span><b>ᴘʟᴀʏᴇʀ ꜱᴛᴀᴛꜱ</b><small>ᴍᴀᴛᴄʜᴇꜱ • ʀᴜɴꜱ • ᴡɪᴄᴋᴇᴛꜱ • ʙᴀʟʟꜱ ꜰᴀᴄᴇᴅ</small></span></button></div></div>`;document.body.appendChild(m);const choices=m.querySelectorAll('.squadEditChoice');choices[0].onclick=()=>{m.remove();editPlayer(id)};choices[1].onclick=()=>{m.remove();editStats(id)};m.querySelector('.close').onclick=()=>m.remove();m.onclick=e=>{if(e.target===m)m.remove()}}
 const renderBeforeSquadFull=render;render=function(){renderBeforeSquadFull();renderSquadFullProfiles()};
+
+
+/* V6.8.97 — isolated Admin Player Profile Manager. Every save targets exactly one player document. */
+window.adminOpenPlayerProfile=function(id){
+  if(!rdmAdmin())return toast('ᴀᴅᴍɪɴ ᴏɴʟʏ');
+  const p=D.players.find(x=>x.id===id);if(!p)return;
+  let m=document.getElementById('adminPlayerProfileModal');
+  if(!m){m=document.createElement('div');m.id='adminPlayerProfileModal';m.className='modal';m.innerHTML='<div class="dialog publicDialog adminPlayerDialog"><button class="close" type="button">×</button><div id="adminPlayerProfileBody"></div></div>';document.body.appendChild(m);m.querySelector('.close').onclick=()=>m.classList.remove('show');m.onclick=e=>{if(e.target===m)m.classList.remove('show')}}
+  document.getElementById('adminPlayerProfileBody').innerHTML=profileHtml(p,false,false)+`<div class="adminPlayerActions"><button class="primary" onclick="adminEditPlayerProfile('${p.id}')">✎ ᴇᴅɪᴛ ᴘʀᴏꜰɪʟᴇ</button><button class="secondary" onclick="adminChooseDP('${p.id}')">📷 ᴄʜᴀɴɢᴇ ᴘʜᴏᴛᴏ</button></div>`;
+  m.classList.add('show');
+};
+window.adminEditPlayerProfile=function(id){
+  if(!rdmAdmin())return;const p=D.players.find(x=>x.id===id);if(!p)return;
+  rdmOpenSimpleModal('EDIT PLAYER PROFILE',[
+    {name:'jersey',label:'JERSEY NUMBER',value:p.jersey||''},
+    {name:'nick',label:'NICKNAME',value:p.nick||''},
+    {name:'bio',label:'BIO',type:'textarea',value:p.bio||'',rows:5},
+    {name:'social1',label:'SOCIAL 1 LINK',value:(socialObj(p.socials?.[0],0).url||'')},
+    {name:'social2',label:'SOCIAL 2 LINK',value:(socialObj(p.socials?.[1],1).url||'')},
+    {name:'social3',label:'SOCIAL 3 LINK',value:(socialObj(p.socials?.[2],2).url||'')}
+  ],async d=>{
+    const links=[d.social1,d.social2,d.social3].map(x=>String(x||'').trim()).filter(Boolean);
+    if(links.some(x=>!safeUrl(x))){toast('ᴠᴀʟɪᴅ ꜱᴏᴄɪᴀʟ ʟɪɴᴋ ʀᴇǫᴜɪʀᴇᴅ');throw Error('VALIDATION')}
+    const nextSocials=links.map((url,i)=>({name:p.socials?.[i]?.name||('SOCIAL '+(i+1)),url}));
+    /* Do not mutate another player while saving. Build an isolated payload first. */
+    const next={...p,jersey:String(d.jersey||'').trim(),nick:String(d.nick||'').trim(),bio:String(d.bio||'').trim(),socials:nextSocials};
+    await rdmDB.collection(RCOL.players).doc(id).set({jersey:next.jersey,updatedAt:rdmStamp()},{merge:true});
+    await rdmProfileWrite(next);
+    await rdmLoadAll();
+    window.adminOpenPlayerProfile(id);
+    toast('ᴘʀᴏꜰɪʟᴇ ꜱᴀᴠᴇᴅ');
+  });
+};

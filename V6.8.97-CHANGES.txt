@@ -1,0 +1,11 @@
+RDM V6.8.97 TAGDA UPDATE
+
+- Fixed critical cross-player profile overwrite bug.
+- Admin session is never converted into a player session.
+- Every player profile save resolves and writes only that player profile document.
+- Added Admin > ALL PLAYER PROFILES manager for all 17 players.
+- Admin can open/edit profile and change photo per player.
+- Public site remains view-only.
+- Player private links remain isolated to their own profile when authenticated.
+- Removed Playing XI/Substitute wording from Squad header.
+- Existing private links retained.

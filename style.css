@@ -4286,3 +4286,8 @@ html[data-rdm-theme="dark"] body button.rdmPinAction{background:#4a3a22!importan
 
 /* V6.8.96 link-access cleanup */
 #loginModal,#loginOpen,#switchBtn{display:none!important}
+
+/* V6.8.97 Admin Player Manager */
+.adminPlayerManager{margin:0 0 24px;padding:18px;border:1px solid #d8e5ef;border-radius:20px;background:rgba(255,255,255,.04)}
+.adminPlayerGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.adminPlayerGrid button{display:flex;align-items:center;gap:11px;text-align:left;padding:10px;border-radius:14px;border:1px solid #d6e2eb;background:rgba(255,255,255,.06);color:inherit;cursor:pointer}.adminPlayerGrid img{width:48px;height:48px;border-radius:50%;object-fit:cover;flex:0 0 48px}.adminPlayerGrid span{display:grid;gap:4px;min-width:0;flex:1}.adminPlayerGrid b{font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.adminPlayerGrid small{font-size:8px;opacity:.68}.adminPlayerGrid i{font-style:normal;font-size:20px}.adminPlayerActions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px}.adminPlayerDialog{max-width:720px!important}
+@media(max-width:600px){.adminPlayerGrid{grid-template-columns:1fr}.adminPlayerActions{grid-template-columns:1fr}}
