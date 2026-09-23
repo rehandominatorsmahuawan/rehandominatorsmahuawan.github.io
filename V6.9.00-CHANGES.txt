@@ -1,0 +1,8 @@
+RDM V6.9.00
+- Captain and Vice-Captain Home cards reliably re-sync after Firebase renders/loads.
+- Leadership cards use the latest saved player image from D.players / PlayerProfiles.
+- Team logo is no longer used as Vice-Captain profile-photo fallback; initials appear if no player photo is saved.
+- Download App button now shares the real browser PWA install prompt with the install banner.
+- Service-worker cache bumped to rdm-v6900.
+- V6.8.98 SEO/search names, sitemap, robots and structured data preserved.
+- V6.8.99 official RDM logo preserved.
