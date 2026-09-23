@@ -25,7 +25,7 @@
     if(n)n.textContent=m(p.name);
     if(d)d.textContent=m([p.role,p.detail].filter(Boolean).join(' • '));
   }
-  function sync(){setLeader(player('REHAN AKHTAR'),'homeCaptain','assets/rehan.png');setLeader(player('SAIF ALI'),'homeVice','')}
+  function sync(){setLeader(player('REHAN AKHTAR'),'homeCaptain','');setLeader(player('SAIF ALI'),'homeVice','')}
   window.rdmSyncLeadership=sync;
   var old=window.render;
   if(typeof old==='function')window.render=function(){var r=old.apply(this,arguments);queueMicrotask(sync);return r};

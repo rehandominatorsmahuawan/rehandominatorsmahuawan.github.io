@@ -1,0 +1,7 @@
+RDM V6.9.02
+- Removed bundled static player photos (assets/players and assets/rehan.png).
+- Preserved required default team logo/favicons and trophy 2024/2025/2026 images.
+- Player photos now rely on saved profile/Firebase data; missing photos use generated initials placeholder.
+- Added Admin Branding Manager for website logo, favicon, PWA/app icon and social/SEO preview image.
+- Branding settings persist in Firestore BrandSettings/main (admin write, public read).
+- Navigation and SEO/search-name content preserved.

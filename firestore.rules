@@ -38,6 +38,10 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
     }
+    match /BrandSettings/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
     match /PlayerStats/{id} { allow read: if true; allow write: if isAdmin(); }
     match /Achievements/{id} { allow read: if true; allow write: if isAdmin(); }
     match /PlayingXI/{id} { allow read: if true; allow write: if isAdmin(); }

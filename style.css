@@ -4310,3 +4310,7 @@ html[data-rdm-theme="dark"] body button.rdmPinAction{background:#4a3a22!importan
 @media(max-width:600px){#downloadApplicationBtn.downloadAppBtn{width:min(280px,92%);margin-left:auto;margin-right:auto}}
 /* The download page owns the install CTA; suppress the old floating install bar. */
 .rdmInstall{display:none!important}
+
+/* V6.9.02 admin branding */
+.brandAdminBox{margin-top:22px;padding:18px;border:1px solid var(--line,#d8e8f1);border-radius:22px;background:rgba(255,255,255,.62)}
+.brandAdminGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.brandAdminGrid label{display:grid;gap:8px;padding:14px;border:1px solid var(--line,#d8e8f1);border-radius:16px;background:rgba(255,255,255,.72);font-size:11px;font-weight:800}.brandAdminGrid input[type=file]{width:100%;font-size:10px}.brandAdminGrid .primary{width:100%}@media(max-width:640px){.brandAdminGrid{grid-template-columns:1fr}}
