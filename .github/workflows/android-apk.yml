@@ -25,7 +25,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: .
-        run: npm ci --no-audit --no-fund
+        run: npm install --no-audit --no-fund
 
       - name: Build Android web assets & sync Capacitor
         working-directory: .
