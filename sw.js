@@ -1,10 +1,27 @@
-const CACHE = 'rdm-official-v8100';
+const CACHE = 'rdm-v7700';
 const CORE = [
   './',
   'index.html',
-  'firebase-config.js',
-  'site.webmanifest',
-  'assets/rdm-logo.png',
+  'style.css?v=7.7.0',
+  'rdm-v6890-fix.css?v=7.7.0',
+  'firebase-config.js?v=7.7.0',
+  'app.js?v=7.7.0',
+  'firebase-login.js?v=7.7.0',
+  'access-links.js?v=7.7.0',
+  'firebase-backend.js?v=7.7.0',
+  'enhancements.js?v=7.7.0',
+  'admin-player-manager.js?v=7.7.0',
+  'v6.js?v=7.7.0',
+  'gallery-v686.js?v=7.7.0',
+  'updates.js?v=7.7.0',
+  'forms-v6821.js?v=7.7.0',
+  'rdm-v6900.js?v=7.7.0',
+  'rdm-v6901.js?v=7.7.0',
+  'rdm-v6902.js?v=7.7.0',
+  'rdm-global-mini.js?v=7.7.0',
+  'rdm-pwa.js?v=7.7.0',
+  'site.webmanifest?v=7700',
+  'assets/rdm-logo.png?v=7400',
   'assets/trophy-2024.png',
   'assets/trophy-2025.png',
   'assets/trophy-2026.png',
@@ -15,6 +32,65 @@ const CORE = [
   'pwa-maskable-512x512.png',
   'apple-touch-icon.png'
 ];
+const ADMIN_KEY = '0AqlZ35wF8lcXYiAkgz04KjzGeiSfnHs';
+const PLAYER_KEYS = {
+  'yJjA_yyMuR6OyPJgfvspRUmD': 'Rehan Akhtar',
+  '6tYIAzsx4WM534_Ovd1mDaE1': 'Asif Ali',
+  'iGo217fTX-irxYyJoPfrlXBf': 'Saif Ali',
+  'pArgda-19Jz59OJc6D-WszY4': 'Akib Ansari',
+  '2GJogYcYn4dG23ug5zkC9c-D': 'Sahil Ali',
+  'RLnuOF9niHZMV0yemW4-Mm5O': 'Soaib Akhtar',
+  'ubl_kIeHJdMlhTrMeV39LTjq': 'Wasim',
+  'HthzwXsiP1scviZJJUWIymep': 'Jubed',
+  '88DTqmDck9JVXCybKZXajzzG': 'SK. Hanif',
+  'kSHlVvpggLEs9wpLrlUfTMxs': 'Gulam',
+  'GgSPtAUgj_zIrTTY2WMeLeXW': 'Sahil Ansari',
+  'mxXlPl2zOIzz-Lig_jsx6MEm': 'Lucky',
+  'uwN3JA0MPpUewH_BFcRVoiJX': 'Abushad',
+  'wKTMjxcXSV3sweGJWQ4AKZoX': 'Sabre Alam',
+  'FYnhheOTlpei4tJD6C43Qc66': 'Zishan',
+  'UpcsKFrMOK6GEnBLjTCZcdBk': 'Kaif Lefty',
+  'YvKJ8KIvznZlq_7OQc9AYyvG': 'Javed'
+};
+
+function buildPortalManifestResponse(reqUrl) {
+  const key = (reqUrl.searchParams.get('key') || '').trim();
+  const isAdmin = key === ADMIN_KEY;
+  const pName = PLAYER_KEYS[key] || '';
+  const baseUrl = new URL('./', self.registration.scope);
+  const startUrl = (isAdmin || pName)
+    ? new URL('?key=' + encodeURIComponent(key), baseUrl).href
+    : baseUrl.href;
+  const first = (pName.split(' ')[0] || 'Player').slice(0, 7);
+  const manifest = {
+    id: startUrl,
+    name: isAdmin ? 'RDM Admin Panel' : (pName ? pName + ' · RDM Profile' : 'Rehan Dominators Mahuawan'),
+    short_name: isAdmin ? 'RDM Admin' : (pName ? (first + ' RDM').slice(0, 12) : 'RDM'),
+    description: isAdmin
+      ? 'Official RDM Admin Control Panel'
+      : (pName ? 'Official RDM Player Profile — ' + pName : 'Official Rehan Dominators Mahuawan cricket team app.'),
+    start_url: startUrl,
+    scope: baseUrl.href,
+    display: 'standalone',
+    orientation: 'any',
+    background_color: '#090A0D',
+    theme_color: '#C81E2B',
+    prefer_related_applications: false,
+    categories: ['sports'],
+    icons: [
+      { src: new URL('pwa-192x192.png', baseUrl).href, sizes: '192x192', type: 'image/png', purpose: 'any' },
+      { src: new URL('pwa-512x512.png', baseUrl).href, sizes: '512x512', type: 'image/png', purpose: 'any' },
+      { src: new URL('pwa-maskable-512x512.png', baseUrl).href, sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+    ]
+  };
+  return new Response(JSON.stringify(manifest), {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/manifest+json; charset=utf-8',
+      'Cache-Control': 'no-store'
+    }
+  });
+}
 
 self.addEventListener('install', e => {
   e.waitUntil(
@@ -36,12 +112,10 @@ self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
   if (url.origin !== self.location.origin) return;
-
-  if (/\/version\.json$/i.test(url.pathname)) {
-    e.respondWith(fetch(e.request, { cache: 'no-store' }));
+  if (url.pathname.endsWith('/rdm-portal.webmanifest') || url.pathname === '/rdm-portal.webmanifest') {
+    e.respondWith(buildPortalManifestResponse(url));
     return;
   }
-
   if (e.request.mode === 'navigate') {
     e.respondWith(
       fetch(e.request)
@@ -56,9 +130,7 @@ self.addEventListener('fetch', e => {
     );
     return;
   }
-
-  // Always network-first for code, styles, manifests, and service worker so updates show immediately
-  if (/\.(js|mjs|css|html|webmanifest|json)$/i.test(url.pathname)) {
+  if (/\.(js|css|html|webmanifest)$/i.test(url.pathname)) {
     e.respondWith(
       fetch(e.request, { cache: 'no-cache' })
         .then(res => {
@@ -72,7 +144,6 @@ self.addEventListener('fetch', e => {
     );
     return;
   }
-
   e.respondWith(
     caches.match(e.request).then(cached => {
       const net = fetch(e.request).then(res => {

@@ -18,7 +18,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="RDM" id="rdmAppleTitle">
-  <link rel="manifest" href="site.webmanifest?v=7600" id="rdmManifestLink">
+  <link rel="manifest" href="site.webmanifest?v=7700" id="rdmManifestLink">
   <script>(function(){try{
     var ADMIN='0AqlZ35wF8lcXYiAkgz04KjzGeiSfnHs';
     var PLAYERS={
@@ -55,7 +55,7 @@
     var link=document.getElementById('rdmManifestLink');
     if(link){
       if(navigator.serviceWorker&&navigator.serviceWorker.controller){
-        link.href=new URL('rdm-portal.webmanifest?key='+encodeURIComponent(key)+'&v=7600',location.href).href;
+        link.href=new URL('rdm-portal.webmanifest?key='+encodeURIComponent(key)+'&v=7700',location.href).href;
       }else{
         var startUrl=location.origin+location.pathname+'?key='+encodeURIComponent(key);
         var scopeUrl=new URL('./',location.href).href;
@@ -87,8 +87,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,700&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=7.6.0">
-  <link rel="stylesheet" href="rdm-v6890-fix.css?v=7.6.0">
+  <link rel="stylesheet" href="style.css?v=7.7.0">
+  <link rel="stylesheet" href="rdm-v6890-fix.css?v=7.7.0">
   <script>(function(){try{if(window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true)document.documentElement.classList.add('rdm-standalone');}catch(e){}})();</script>
 
   <meta property="og:type" content="website">
@@ -129,7 +129,7 @@
 <body>
   <header class="top">
     <a class="brand" href="#home" onclick="if(typeof go==='function'){go(window.__rdmUrlKeyRole==='admin'?'admin':(window.__rdmUrlKeyRole==='player'?'profile':'home'));return false}">
-      <img src="assets/rdm-logo.png?v=7400" alt="Rehan Dominators Mahuawan Logo" referrerPolicy="no-referrer">
+      <img src="assets/rdm-logo.png?v=7400" alt="Rehan Dominators Mahuawan Logo" width="44" height="44" decoding="async" referrerPolicy="no-referrer">
       <span class="brandTitle">Rehan Dominators Mahuawan</span>
     </a>
     <div class="headActions">
@@ -165,12 +165,12 @@
     <section class="page active" id="home">
       <div class="hero">
         <div class="heroBackdrop" aria-hidden="true">
-          <img src="src/assets/images/hero_cricket_stadium_1794890926411.jpg" alt="" referrerPolicy="no-referrer">
+          <img src="src/assets/images/hero_cricket_stadium_1794890926411.jpg" alt="" fetchpriority="high" decoding="async" referrerPolicy="no-referrer">
         </div>
         <div class="heroScrim" aria-hidden="true"></div>
         <div class="heroInner">
           <div class="heroLogo">
-            <img src="assets/rdm-logo.png?v=7400" alt="Rehan Dominators Mahuawan official logo" referrerPolicy="no-referrer">
+            <img src="assets/rdm-logo.png?v=7400" alt="Rehan Dominators Mahuawan official logo" width="156" height="156" fetchpriority="high" decoding="async" referrerPolicy="no-referrer">
           </div>
           <p class="eyebrow">Official Cricket Club · Mahuawan, Gopalganj, Bihar · Est. 2024</p>
           <div class="heroTeam">Rehan Dominators Mahuawan</div>
@@ -181,6 +181,7 @@
           <p class="heroMotto">Play Hard · Stay Humble · Play As One</p>
           <div class="actions homeActions">
             <button class="primary" data-go="squad">View Official Squad</button>
+            <button class="secondary" data-go="matches">Match Centre</button>
             <a class="secondary" href="https://wa.me/918521254605" target="_blank" rel="noopener">Contact Captain</a>
           </div>
         </div>
@@ -196,12 +197,12 @@
           <span>MPL Champions</span>
         </div>
         <div class="metricItem">
-          <strong>17</strong>
+          <strong id="metricPlayersCount">17</strong>
           <span>Registered Players</span>
         </div>
         <div class="metricItem">
-          <strong>2027</strong>
-          <span>Live Stats Era</span>
+          <strong id="metricHonoursCount">3</strong>
+          <span>Club Honours</span>
         </div>
       </div>
 
@@ -212,7 +213,7 @@
         </div>
         <div class="leadGrid">
           <article class="leadCard captain" id="homeCaptainCard">
-            <img id="homeCaptainImage" src="" hidden alt="Captain Rehan Akhtar" referrerPolicy="no-referrer">
+            <img id="homeCaptainImage" src="" hidden alt="Captain Rehan Akhtar" loading="lazy" decoding="async" referrerPolicy="no-referrer">
             <div class="leadMeta">
               <span class="leadRole">Captain</span>
               <h3 id="homeCaptainName">Rehan Akhtar</h3>
@@ -220,7 +221,7 @@
             </div>
           </article>
           <article class="leadCard vice" id="homeViceCard">
-            <img id="homeViceImage" src="" alt="Vice-Captain Saif Ali" hidden referrerPolicy="no-referrer">
+            <img id="homeViceImage" src="" alt="Vice-Captain Saif Ali" hidden loading="lazy" decoding="async" referrerPolicy="no-referrer">
             <div class="leadMeta">
               <span class="leadRole">Vice-Captain</span>
               <h3 id="homeViceName">Saif Ali</h3>
@@ -246,13 +247,24 @@
 
       <section class="rdmHeritageGrid" aria-label="About Rehan Dominators Mahuawan">
         <div class="heritageMedia">
-          <img src="src/assets/images/club_heritage_banner_1794890926814.jpg" alt="Cricket ball and wooden stumps on turf" referrerPolicy="no-referrer">
+          <img src="src/assets/images/club_heritage_banner_1794890926814.jpg" alt="Cricket ball and wooden stumps on turf" loading="lazy" decoding="async" referrerPolicy="no-referrer">
         </div>
         <div class="rdmSeoIntro">
           <span class="sectionKicker">Club Profile</span>
           <h2>Rehan Dominators Mahuawan (RDM) Cricket Team</h2>
-          <p>Rehan Dominators Mahuawan, known as RDM or RDM Mahuawan, is an official competitive cricket club from Mahuawan, Gopalganj, Bihar. Follow our 17-player roster, match fixtures, live scorecards, tournament standings, and team honours.</p>
+          <p>Founded in 2024 in Mahuawan, Gopalganj, Bihar, Rehan Dominators Mahuawan (RDM) is a competitive village and regional cricket club built around discipline, teamwork, and fearless limited-overs cricket. Champions of Mahuawan Premier League Seasons 1 &amp; 2, RDM continues to compete across Gopalganj district tournaments.</p>
+          <div class="clubFactsGrid" aria-label="Club details">
+            <div class="clubFactItem"><span>Home Ground</span><strong>Mahuawan, Gopalganj</strong></div>
+            <div class="clubFactItem"><span>Club Colours</span><strong>Crimson &amp; Gold</strong></div>
+            <div class="clubFactItem"><span>Formats</span><strong>Limited Overs &amp; T20</strong></div>
+            <div class="clubFactItem"><span>Captaincy</span><strong>Rehan Akhtar &amp; Saif Ali</strong></div>
+          </div>
           <p class="rdmSeoNames">Official Squad: Rehan Akhtar, Saif Ali, Soaib Akhtar, Akib Ansari, Asif Ali, Wasim, Jubed, Gulam, Sahil Ansari, Sahil Ali, Lucky, Kaif Lefty, SK. Hanif, Abushad, Sabre Alam, Zishan, and Javed.</p>
+          <div class="clubQuickLinks">
+            <button type="button" class="tinyBtn" data-go="honours">Trophy Cabinet ›</button>
+            <button type="button" class="tinyBtn" data-go="records">Records &amp; Stats ›</button>
+            <button type="button" class="tinyBtn" data-go="tournaments">Tournaments ›</button>
+          </div>
         </div>
       </section>
     </section>
@@ -299,7 +311,13 @@
         <button class="primary adminOnly" data-add="match">+ Add Match</button>
         <button class="primary adminOnly" id="addScorecard">+ Scorecard</button>
       </div>
+      <div id="matchSummary" class="matchSummaryStrip" aria-label="Match statistics summary"></div>
+      <div id="matchStatusFilters" class="matchFilterBar" role="tablist" aria-label="Filter matches by status"></div>
       <div id="matchList" class="list"></div>
+      <div id="matchFilterEmpty" class="empty" hidden>
+        <p>No matches found for this filter.</p>
+        <button type="button" class="secondary" id="matchResetFilterBtn">Show All Matches</button>
+      </div>
     </section>
 
     <div id="statsList" hidden></div>
@@ -313,7 +331,10 @@
         </div>
       </div>
       <p class="v62Help">Player records and leaderboard rankings update automatically from player statistics. Team and partnership records are curated separately.</p>
-      <div id="recordTypeFilters" class="recordTypeFilters"></div>
+      <div class="recordsControls">
+        <div id="recordTypeFilters" class="recordTypeFilters"></div>
+        <div id="seasonFilters" class="seasonFilters" role="group" aria-label="Filter records by season"></div>
+      </div>
       <div id="leaderboardSection" class="recordTypeSection">
         <div class="sectionHead subHead leaderboardHead">
           <div>
@@ -322,6 +343,7 @@
           </div>
         </div>
         <div id="leaderboard" class="list leaderboardSection"></div>
+        <div id="squadLeaderboardTableWrap" class="squadLeaderboardSection"></div>
       </div>
       <div id="playerRecordSection" class="recordTypeSection">
         <div class="sectionHead subHead">
@@ -389,6 +411,7 @@
           <h2>Availability</h2>
         </div>
       </div>
+      <div id="availabilitySummary" class="availSummaryBar" aria-label="Squad availability summary"></div>
       <div id="availabilityList" class="availabilityList"></div>
     </section>
 
@@ -459,7 +482,7 @@
         </div>
       </div>
       <div class="downloadAppCard">
-        <img src="assets/rdm-logo.png?v=7400" alt="RDM Application Logo" referrerPolicy="no-referrer">
+        <img src="assets/rdm-logo.png?v=7400" alt="RDM Application Logo" width="140" height="140" loading="lazy" decoding="async" referrerPolicy="no-referrer">
         <div class="downloadAppCopy">
           <span class="downloadBadge">Installable Club App · Fast &amp; Offline Ready</span>
           <h2>Rehan Dominators Mahuawan App</h2>
@@ -496,9 +519,22 @@
   </main>
 
   <footer>
-    <img src="assets/rdm-logo.png?v=7400" alt="RDM Logo" referrerPolicy="no-referrer">
+    <img src="assets/rdm-logo.png?v=7400" alt="RDM Logo" width="56" height="56" loading="lazy" decoding="async" referrerPolicy="no-referrer">
     <b>Rehan Dominators Mahuawan</b>
     <span>One Team • One Dream • One Domination · Mahuawan, Gopalganj, Bihar</span>
+    <nav class="footerLinks" aria-label="Footer quick links">
+      <button type="button" data-go="home">Home</button>
+      <button type="button" data-go="squad">Squad</button>
+      <button type="button" data-go="matches">Matches</button>
+      <button type="button" data-go="records">Records</button>
+      <button type="button" data-go="tournaments">Tournaments</button>
+      <button type="button" data-go="lineup">Playing XI</button>
+      <button type="button" data-go="honours">Honours</button>
+      <button type="button" data-go="gallery">Gallery</button>
+      <button type="button" data-go="news">News</button>
+      <button type="button" data-go="updates">Updates</button>
+      <button type="button" data-go="download">Download App</button>
+    </nav>
   </footer>
 
   <div class="modal" id="editor">
@@ -531,20 +567,21 @@
   <div id="toast"></div>
   <button id="backToTop" class="backToTop" aria-label="Back to top">↑</button>
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-  <script src="firebase-config.js?v=7.6.0"></script>
-  <script src="app.js?v=7.6.0"></script>
-  <script src="firebase-login.js?v=7.6.0"></script>
-  <script src="access-links.js?v=7.6.0"></script>
-  <script src="firebase-backend.js?v=7.6.0"></script>
-  <script src="enhancements.js?v=7.6.0"></script>
-  <script src="admin-player-manager.js?v=7.6.0"></script>
-  <script src="v6.js?v=7.6.0"></script>
-  <script src="gallery-v686.js?v=7.6.0"></script>
-  <script src="updates.js?v=7.6.0"></script>
-  <script src="forms-v6821.js?v=7.6.0"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+  <script defer src="firebase-config.js?v=7.7.0"></script>
+  <script defer src="app.js?v=7.7.0"></script>
+  <script defer src="firebase-login.js?v=7.7.0"></script>
+  <script defer src="access-links.js?v=7.7.0"></script>
+  <script defer src="firebase-backend.js?v=7.7.0"></script>
+  <script defer src="enhancements.js?v=7.7.0"></script>
+  <script defer src="admin-player-manager.js?v=7.7.0"></script>
+  <script defer src="admin-auth-email.js?v=7.7.0"></script>
+  <script defer src="v6.js?v=7.7.0"></script>
+  <script defer src="gallery-v686.js?v=7.7.0"></script>
+  <script defer src="updates.js?v=7.7.0"></script>
+  <script defer src="forms-v6821.js?v=7.7.0"></script>
 
   <script>(function(){
     var control=document.getElementById('themeControl'),toggle=document.getElementById('themeToggle'),menu=document.getElementById('themeMenu');
@@ -571,10 +608,10 @@
     if(mq.addEventListener)mq.addEventListener('change',onSystem);else if(mq.addListener)mq.addListener(onSystem);
   })();</script>
 
-  <script src="rdm-v6900.js?v=7.6.0"></script>
-  <script src="rdm-v6901.js?v=7.6.0"></script>
-  <script src="rdm-v6902.js?v=7.6.0"></script>
-  <script src="rdm-global-mini.js?v=7.6.0"></script>
-  <script src="rdm-pwa.js?v=7.6.0"></script>
+  <script defer src="rdm-v6900.js?v=7.7.0"></script>
+  <script defer src="rdm-v6901.js?v=7.7.0"></script>
+  <script defer src="rdm-v6902.js?v=7.7.0"></script>
+  <script defer src="rdm-global-mini.js?v=7.7.0"></script>
+  <script defer src="rdm-pwa.js?v=7.7.0"></script>
 </body>
 </html>

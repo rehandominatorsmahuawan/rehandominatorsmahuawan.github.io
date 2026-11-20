@@ -6,7 +6,7 @@
     if (role !== 'admin' && role !== 'player') return null;
     const key = (new URLSearchParams(location.search).get('key') || '').trim();
     if (!key) return null;
-    return new URL('rdm-portal.webmanifest?key=' + encodeURIComponent(key) + '&v=7600', location.href).href;
+    return new URL('rdm-portal.webmanifest?key=' + encodeURIComponent(key) + '&v=7700', location.href).href;
   }
 
   function upgradePortalManifestUrl(){
@@ -19,9 +19,15 @@
     }
   }
 
+  const isDevPreviewHost = /^(localhost|127\.0\.0\.1)$/i.test(location.hostname) || /\.run\.app$/i.test(location.hostname);
+
   if ('serviceWorker' in navigator) {
     const regSW = () => {
-      navigator.serviceWorker.register('sw.js?v=7600').then(reg => {
+      if (isDevPreviewHost) {
+        navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister())).catch(() => {});
+        return;
+      }
+      navigator.serviceWorker.register('sw.js?v=7700').then(reg => {
         if (reg && reg.active) upgradePortalManifestUrl();
       }).catch(console.warn);
       navigator.serviceWorker.addEventListener('controllerchange', upgradePortalManifestUrl);

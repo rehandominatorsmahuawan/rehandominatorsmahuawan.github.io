@@ -92,18 +92,38 @@ function rdmSocialSvg(name=''){
   return '';
 }
 window.rdmSocialSvg=rdmSocialSvg;
-function go(id){
+const VALID_PUBLIC_PAGES=new Set(['home','squad','matches','records','tournaments','lineup','honours','socials','gallery','news','updates','download']);
+function go(id,opts={}){
   const role=window.__rdmUrlKeyRole||'public';
   if(role==='admin'){id='admin';}
   else if(role==='player'){id='profile';}
-  else if(id==='admin'||id==='profile'){id='home';}
+  else if(id==='admin'||id==='profile'||!VALID_PUBLIC_PAGES.has(id)){id='home';}
   qa('.page').forEach(x=>x.classList.toggle('active',x.id===id));
-  qa('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===id));
+  qa('.nav button').forEach(x=>{
+    const on=x.dataset.page===id;
+    x.classList.toggle('active',on);
+    if(on){
+      x.setAttribute('aria-current','page');
+      try{x.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});}catch{}
+    }else{
+      x.removeAttribute('aria-current');
+    }
+  });
+  if(role==='public'&&opts.updateHash!==false&&!String(location.hash||'').startsWith('#player=')){
+    const targetHash=id==='home'?'':'#'+id;
+    if((location.hash||'')!==targetHash){
+      try{history.replaceState(null,'',location.pathname+location.search+targetHash);}catch{}
+    }
+  }
   if(id==='profile')renderProfile();
   if(id==='admin')renderAdmin();
   scrollTo({top:0,behavior:'smooth'});
 }
-qa('[data-page]').forEach(b=>b.onclick=()=>go(b.dataset.page));qa('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
+qa('[data-page]').forEach(b=>b.onclick=()=>go(b.dataset.page));
+document.addEventListener('click',e=>{
+  const b=e.target.closest?.('[data-go]');
+  if(b){e.preventDefault();go(b.dataset.go);}
+});
 function isAdmin(){return session?.mode==='admin'&&window.__rdmUrlKeyRole==='admin'}function currentPlayer(){return D.players.find(p=>p.id===session?.playerId)}
 function updateAuthUI(){
   const urlRole=window.__rdmUrlKeyRole||'public';
@@ -118,7 +138,7 @@ q('#honourList').innerHTML=D.honours.map((h,i)=>`<article class="honour"><div cl
 q('#matchList').innerHTML=D.matches.length?D.matches.map((m,i)=>`<article class="card"><h3>${mini(m.opponent)}</h3><p>${mini(m.date)} • ${mini(m.venue)}</p><p>${mini(m.note)}</p>${isAdmin()?`<button class="tinyBtn deleteBtn" onclick="removeItem('matches',${i})">ᴅᴇʟᴇᴛᴇ</button>`:''}</article>`).join(''):'<div class="empty">ɴᴏ ᴍᴀᴛᴄʜ ᴀᴅᴅᴇᴅ ʏᴇᴛ</div>';
 q('#newsList').innerHTML=D.news.length?D.news.map((n,i)=>`<article class="card"><h3>${mini(n.title)}</h3><p>${mini(n.text)}</p>${isAdmin()?`<button class="tinyBtn deleteBtn" onclick="removeItem('news',${i})">ᴅᴇʟᴇᴛᴇ</button>`:''}</article>`).join(''):'<div class="empty">ɴᴏ ᴀɴɴᴏᴜɴᴄᴇᴍᴇɴᴛ ʏᴇᴛ</div>';
 q('#galleryList').innerHTML=D.gallery.length?D.gallery.map((g,i)=>`<figure><img src="${g.image}" onclick="zoom('${g.image}')"><figcaption>${mini(g.caption||'RDM MEMORY')}</figcaption>${isAdmin()?`<button class="tinyBtn deleteBtn" onclick="removeItem('gallery',${i})">ᴅᴇʟᴇᴛᴇ</button>`:''}</figure>`).join(''):'<div class="empty">ɴᴏ ɢᴀʟʟᴇʀʏ ᴘʜᴏᴛᴏ ᴀᴅᴅᴇᴅ ʏᴇᴛ</div>';
-q('#socialList').innerHTML=D.socials.map((s,i)=>{let o=Array.isArray(s)?{name:s[0],url:s[1],icon:'↗',image:''}:s;let svg=rdmSocialSvg(o.name);let media=(o.image&&!/CRICKET_YOUR_TAGLINE_HERE|logo\.jpg/i.test(o.image))?`<img src="${o.image}" alt="${o.name}">`:(svg||`<span>${o.icon||'↗'}</span>`);let open=o.url?`<a class="primary socialAction" href="${o.url}" target="_blank" rel="noopener">Open</a>`:`<button class="secondary socialAction" disabled>Link Not Added</button>`;return `<article class="socialCard"><div class="socialIcon">${media}</div><h3>${mini(o.name)}</h3><div class="socialActions">${open}${isAdmin()?`<button class="tinyBtn socialAction" onclick="editSocial(${i})">✎ Edit</button>`:''}</div></article>`}).join('');updateAuthUI()}
+q('#socialList').innerHTML=D.socials.map((s,i)=>{let o=Array.isArray(s)?{name:s[0],url:s[1],icon:'↗',image:''}:s;let svg=rdmSocialSvg(o.name);let media=(o.image&&!/CRICKET_YOUR_TAGLINE_HERE|logo\.jpg/i.test(o.image))?`<img src="${o.image}" alt="${o.name}" loading="lazy" decoding="async" referrerPolicy="no-referrer">`:(svg||`<span>${o.icon||'↗'}</span>`);let open=o.url?`<a class="primary socialAction" href="${o.url}" target="_blank" rel="noopener">Open</a>`:`<button class="secondary socialAction" disabled>Link Not Added</button>`;return `<article class="socialCard"><div class="socialIcon">${media}</div><h3>${mini(o.name)}</h3><div class="socialActions">${open}${isAdmin()?`<button class="tinyBtn socialAction" onclick="editSocial(${i})">✎ Edit</button>`:''}</div></article>`}).join('');const mp=q('#metricPlayersCount');if(mp&&Array.isArray(D.players))mp.textContent=D.players.length;const mh=q('#metricHonoursCount');if(mh&&Array.isArray(D.honours))mh.textContent=D.honours.length;updateAuthUI()}
 window.removeItem=(k,i)=>{if(!isAdmin())return;D[k].splice(i,1);save();render();toast('ᴅᴇʟᴇᴛᴇᴅ')};window.zoom=src=>{q('#lightImg').src=src;q('#lightbox').classList.add('show')};qa('.modal .close').forEach(b=>b.onclick=()=>b.closest('.modal').classList.remove('show'));
 function renderProfile(){let p=currentPlayer();if(!p)return;let socials=p.socials?.length?`<div class="ownSocials">${p.socials.map((x,i)=>`<a href="${x}" target="_blank">ꜱᴏᴄɪᴀʟ ${i+1} ↗</a>`).join('')}</div>`:'';q('#profileBody').innerHTML=`<article class="profileCard"><img class="profileAvatar" src="${p.image}"><h2>${mini(p.name)}</h2><div class="profileIdentity"><div class="identityItem"><span>ᴘʟᴀʏᴇʀ ᴄᴏᴅᴇ</span><strong>${mini(playerCode(p.id))}</strong></div><div class="identityDivider"></div><div class="identityItem"><span>ᴊᴇʀꜱᴇʏ ɴᴜᴍʙᴇʀ</span><strong>${p.jersey?'#'+p.jersey:'—'}</strong></div></div>${p.nick?`<p>${mini(p.nick)}</p>`:''}<div class="profileOfficial"><b>${mini(p.role)}</b><br>${mini(p.detail)}<div class="officialLock">🔒 ᴏꜰꜰɪᴄɪᴀʟ ᴛᴇᴀᴍ ᴅᴀᴛᴀ • ᴀᴅᴍɪɴ ᴏɴʟʏ</div></div>${p.bio?`<p>${mini(p.bio)}</p>`:''}${socials}<div class="profileActions"><button class="secondary" onclick="chooseDP()">✎ ᴘʜᴏᴛᴏ</button><button class="secondary" onclick="selfEdit('jersey')">✎ ᴊᴇʀꜱᴇʏ</button><button class="secondary" onclick="selfEdit('nick')">✎ ɴɪᴄᴋɴᴀᴍᴇ</button><button class="secondary" onclick="selfEdit('bio')">✎ ʙɪᴏ</button><button class="secondary" onclick="selfEdit('socials')">✎ ꜱᴏᴄɪᴀʟꜱ</button></div></article>`}
 window.selfEdit=k=>{if(window.__rdmUrlKeyRole!=='player'&&!isAdmin())return;let p=currentPlayer();if(!p)return;if(typeof window.rdmUnifiedModal!=='function')return toast('ꜰᴏʀᴍ ʟᴏᴀᴅɪɴɢ');const cfg={jersey:['EDIT JERSEY NUMBER','JERSEY NUMBER','text',p.jersey||''],nick:['EDIT NICKNAME','NICKNAME','text',p.nick||''],bio:['EDIT BIO','BIO','textarea',p.bio||''],socials:['EDIT SOCIAL LINKS','MAX 3 SOCIAL LINKS • COMMA SEPARATED','textarea',(p.socials||[]).join(', ')],pass:['CHANGE PASSWORD','NEW PASSWORD','password','']}[k];if(!cfg)return;window.rdmUnifiedModal(cfg[0],[{name:'value',label:cfg[1],type:cfg[2],value:cfg[3]}],async d=>{const v=String(d.value||'').trim();if(k==='socials')p.socials=v.split(',').map(x=>x.trim()).filter(Boolean).slice(0,3);else if(k==='pass'){if(v.length<4){toast('ᴘᴀꜱꜱᴡᴏʀᴅ ᴛᴏᴏ ꜱʜᴏʀᴛ');throw Error('VALIDATION')}p.pass=v}else p[k]=v;save();render();renderProfile();toast('ꜱᴀᴠᴇᴅ')})};

@@ -57,27 +57,41 @@ window.rdmTickHomeCountdown=function(){
   cd.hidden=false;
   if(note)note.hidden=true;
 };
+function rdmClassifyMatchStatus(m){
+  if(!m)return 'UPCOMING';
+  const blob=[m.matchStatus,m.status,m.result,m.note].filter(Boolean).join(' ').toUpperCase();
+  if(/\bLIVE\b/.test(String(m.matchStatus||m.status||'').toUpperCase()))return 'LIVE';
+  if(/COMPLETED|RESULT|FINISHED|WON|LOST|DRAW|TIE|NO RESULT/.test(blob))return 'COMPLETED';
+  if(/CANCEL/.test(blob))return 'CANCELLED';
+  return 'UPCOMING';
+}
 window.rdmRenderHomeMatchHub=function(){
   const hub=document.getElementById('homeMatchHub');
   if(!hub)return;
   const matches=Array.isArray(window.D?.matches)?D.matches:[];
-  const upcoming=matches.find(x=>!/RESULT|COMPLETED|FINISHED|WON|LOST|DRAW/i.test((x.status||'')+' '+(x.note||'')));
-  const recent=matches.find(x=>/RESULT|COMPLETED|FINISHED|WON|LOST|DRAW/i.test((x.status||'')+' '+(x.note||'')));
-  const target=rdmParseMatchDateTime(upcoming);
+  const liveMatch=matches.find(x=>rdmClassifyMatchStatus(x)==='LIVE');
+  const upcoming=liveMatch||matches.find(x=>rdmClassifyMatchStatus(x)==='UPCOMING');
+  const recent=matches.find(x=>rdmClassifyMatchStatus(x)==='COMPLETED');
+  const isLive=!!liveMatch;
+  const target=isLive?null:rdmParseMatchDateTime(upcoming);
   const targetMs=target?target.getTime():0;
   const sig=JSON.stringify([
-    upcoming?.opponent||'',upcoming?.date||'',upcoming?.time||'',upcoming?.venue||'',targetMs,
-    recent?.opponent||'',recent?.note||recent?.status||''
+    isLive?'LIVE':'NEXT',
+    upcoming?.opponent||'',upcoming?.date||'',upcoming?.time||'',upcoming?.venueName||upcoming?.venue||'',upcoming?.ourScore||'',upcoming?.oppScore||'',targetMs,
+    recent?.opponent||'',recent?.ourScore||'',recent?.oppScore||'',recent?.result||recent?.note||recent?.status||''
   ]);
   if(hub.dataset.hubSig!==sig){
     hub.dataset.hubSig=sig;
-    const upMeta=[upcoming?.date,upcoming?.time,upcoming?.venue].filter(Boolean).map(mini).join(' · ');
-    const recentMeta=recent?mini(recent.note||recent.status||''):'Latest scorecard updates will appear here';
+    const upVenue=upcoming?.venueName||upcoming?.venue||'';
+    const upMeta=[upcoming?.date,upcoming?.time,upVenue].filter(Boolean).map(mini).join(' · ');
+    const upScore=isLive&&(upcoming?.ourScore||upcoming?.oppScore)?`RDM ${esc(upcoming.ourScore||'—')} vs ${esc(upcoming.oppScore||'—')}`:'';
+    const recentScore=recent&&(recent.ourScore||recent.oppScore)?`RDM ${esc(recent.ourScore||'—')} · ${mini(recent.opponent||'Opp')} ${esc(recent.oppScore||'—')}`:'';
+    const recentText=recent?[recentScore,mini(recent.result||recent.note||recent.status||'')].filter(Boolean).join(' — '):'Latest scorecard updates will appear here';
     hub.innerHTML=`<div class="miniMatch miniMatchNext">
-      <span>Next Match</span>
+      <span>${isLive?'Live Match':'Next Match'}</span>
       <b id="homeNextMatch">${upcoming?'RDM vs '+mini(upcoming.opponent||'Opponent'):'No upcoming match'}</b>
-      ${upcoming&&upMeta?`<small>${upMeta}</small>`:'<small>Check Fixtures for upcoming schedule</small>'}
-      <div class="countdownTimer" id="homeCountdown" data-target-ms="${targetMs||''}" data-has-upcoming="${upcoming?'1':'0'}" hidden>
+      ${upcoming?(upScore?`<small>${upScore}${upMeta?' · '+upMeta:''}</small>`:(upMeta?`<small>${upMeta}</small>`:'<small>Date &amp; venue to be confirmed</small>')):'<small>Check Match Centre for upcoming schedule</small>'}
+      <div class="countdownTimer" id="homeCountdown" data-target-ms="${targetMs||''}" data-has-upcoming="${upcoming&&!isLive?'1':'0'}" hidden>
         <div class="cdUnit"><strong id="cdDays">00</strong><span>Days</span></div>
         <span class="cdSep" aria-hidden="true">:</span>
         <div class="cdUnit"><strong id="cdHours">00</strong><span>Hours</span></div>
@@ -85,11 +99,13 @@ window.rdmRenderHomeMatchHub=function(){
         <div class="cdUnit"><strong id="cdMinutes">00</strong><span>Minutes</span></div>
       </div>
       <span class="countdown" id="homeCountdownNote" hidden></span>
+      <button type="button" class="miniMatchLink" data-go="matches">Match Centre ›</button>
     </div>
     <div class="miniMatch miniMatchRecent">
       <span>Recent Result</span>
-      <b>${recent?'RDM vs '+mini(recent.opponent||'Opponent'):'No result added yet'}</b>
-      <small>${recentMeta}</small>
+      <b class="${recent?'':'mutedTitle'}">${recent?'RDM vs '+mini(recent.opponent||'Opponent'):'No result added yet'}</b>
+      <small>${recentText}</small>
+      <button type="button" class="miniMatchLink" data-go="matches">View Scorecards ›</button>
     </div>`;
   }
   window.rdmTickHomeCountdown();
@@ -100,7 +116,7 @@ window.rdmRenderHomeMatchHub=function(){
     const pinSig=JSON.stringify([pin.title||'',pin.text||'']);
     if(b.dataset.pinSig!==pinSig){
       b.dataset.pinSig=pinSig;
-      b.innerHTML=`📌 <b>${mini(pin.title||'TEAM UPDATE')}</b><div class="preserveLines">${mini(pin.text||'')}</div>`;
+      b.innerHTML=`<div class="noticeBannerMain"><span class="pinTag">Team Notice</span><b>${mini(pin.title||'Team Update')}</b><div class="preserveLines">${mini(pin.text||'')}</div></div><button type="button" class="tinyBtn" data-go="news">Open News ›</button>`;
     }
   }else if(b){
     b.remove();
@@ -207,22 +223,119 @@ function v6Search(){
   applySquadFilter();
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',v6Search,{once:true});else v6Search();
-function v6EnhanceMatches(){document.querySelectorAll('#matchList .scoreCard').forEach((el,i)=>{const m=D.matches[i];if(!m||el.dataset.v6)return;el.dataset.v6='1';let details='';if(m.tossWinner)details+=`<div>🪙 ᴛᴏꜱꜱ • ${mini(m.tossWinner)} — ${mini(m.tossDecision||'')}</div>`;if(m.batting||m.bowling)details+=`<div class="preserveLines">🏏 ʙᴀᴛᴛɪɴɢ • ${mini(m.batting||'—')}<br>🎯 ʙᴏᴡʟɪɴɢ • ${mini(m.bowling||'—')}</div>`;if(m.partnerships||m.fow)details+=`<div class="preserveLines">🤝 ${mini(m.partnerships||'')}<br>📉 ${mini(m.fow||'')}</div>`;if(details)el.insertAdjacentHTML('beforeend',`<div class="matchDetails">${details}</div>`);if(rdmAdmin())el.insertAdjacentHTML('beforeend',`<button class="tinyBtn" onclick="v6EditMatch('${m._docId}')">✎ ꜰᴜʟʟ ꜱᴄᴏʀᴇᴄᴀʀᴅ</button> <button class="tinyBtn" onclick="v6Poster('${m._docId}')">▣ ᴍᴀᴛᴄʜ ᴘᴏꜱᴛᴇʀ</button>`)})}
+let v6MatchFilter='ALL';
+window.v6SetMatchStatusFilter=function(st){
+  v6MatchFilter=st||'ALL';
+  window.rdmEnhanceMatchCentre();
+};
+window.rdmEnhanceMatchCentre=function(){
+  const list=document.getElementById('matchList');
+  if(!list||typeof D==='undefined')return;
+  const matches=Array.isArray(D.matches)?D.matches:[];
+  const counts={ALL:matches.length,UPCOMING:0,LIVE:0,COMPLETED:0};
+  let wins=0;
+  matches.forEach(m=>{
+    const st=rdmClassifyMatchStatus(m);
+    if(st==='LIVE')counts.LIVE++;
+    else if(st==='COMPLETED')counts.COMPLETED++;
+    else counts.UPCOMING++;
+    if(/\bRDM WON\b|\bWON\b/i.test([m.result,m.note].filter(Boolean).join(' ')))wins++;
+  });
+  const sumEl=document.getElementById('matchSummary');
+  if(sumEl){
+    if(matches.length){
+      const winRate=counts.COMPLETED>0?Math.round((wins/counts.COMPLETED)*100)+'%':'—';
+      sumEl.innerHTML=`<div class="matchSummaryItem"><strong>${matches.length}</strong><span>Total Fixtures</span></div><div class="matchSummaryItem"><strong>${wins}</strong><span>RDM Wins</span></div><div class="matchSummaryItem"><strong>${counts.UPCOMING}</strong><span>Upcoming</span></div><div class="matchSummaryItem"><strong>${winRate}</strong><span>Win Rate</span></div>`;
+    }else{
+      sumEl.innerHTML='';
+    }
+  }
+  const fBar=document.getElementById('matchStatusFilters');
+  if(fBar){
+    if(matches.length){
+      const tabs=[['ALL','All',counts.ALL],['UPCOMING','Upcoming',counts.UPCOMING],['LIVE','Live',counts.LIVE],['COMPLETED','Completed',counts.COMPLETED]];
+      fBar.innerHTML=tabs.map(([k,lbl,cnt])=>`<button type="button" class="matchFilterBtn ${v6MatchFilter===k?'on':''}" data-match-filter="${k}" role="tab" aria-selected="${v6MatchFilter===k}">${lbl} (${cnt})</button>`).join('');
+    }else{
+      fBar.innerHTML='';
+    }
+  }
+  const cards=[...list.querySelectorAll('.proDataCard, .scoreCard')];
+  let shown=0;
+  cards.forEach((el,i)=>{
+    const m=matches[i];
+    if(!m)return;
+    const st=rdmClassifyMatchStatus(m);
+    const badge=el.querySelector('.proStatus');
+    if(badge)badge.setAttribute('data-status',st);
+    el.dataset.matchStatus=st;
+    const matchVisible=v6MatchFilter==='ALL'||(v6MatchFilter==='UPCOMING'&&st==='UPCOMING')||(v6MatchFilter==='LIVE'&&st==='LIVE')||(v6MatchFilter==='COMPLETED'&&st==='COMPLETED');
+    el.hidden=!matchVisible;
+    el.style.display=matchVisible?'':'none';
+    if(matchVisible)shown++;
+
+    const sig=JSON.stringify([m.tossWinner||'',m.tossDecision||'',m.potm||'',m.batting||'',m.bowling||'',m.partnerships||'',m.fow||'',m.venueName||m.venue||'']);
+    if(el.dataset.rdmMatchSig===sig)return;
+    el.dataset.rdmMatchSig=sig;
+    el.querySelector('.matchDetails')?.remove();
+    el.querySelector('.matchScorecardAccordion')?.remove();
+    el.querySelector('.matchVenueMapRow')?.remove();
+
+    const blocks=[];
+    if(m.tossWinner&&m.tossWinner!=='NOT DECIDED'&&!el.classList.contains('proDataCard'))blocks.push(`<div class="matchScorecardBlock"><b>Toss</b>${mini(m.tossWinner)}${m.tossDecision?' · '+mini(m.tossDecision):''}</div>`);
+    if(m.potm&&!el.classList.contains('proDataCard'))blocks.push(`<div class="matchScorecardBlock"><b>Player of the Match</b>${mini(m.potm)}</div>`);
+    if(m.batting)blocks.push(`<div class="matchScorecardBlock preserveLines"><b>Batting Scorecard</b>${mini(m.batting)}</div>`);
+    if(m.bowling)blocks.push(`<div class="matchScorecardBlock preserveLines"><b>Bowling Scorecard</b>${mini(m.bowling)}</div>`);
+    if(m.partnerships)blocks.push(`<div class="matchScorecardBlock preserveLines"><b>Partnerships</b>${mini(m.partnerships)}</div>`);
+    if(m.fow)blocks.push(`<div class="matchScorecardBlock preserveLines"><b>Fall of Wickets</b>${mini(m.fow)}</div>`);
+
+    const actionsEl=el.querySelector('.proCardActions');
+    if(blocks.length){
+      const html=`<details class="matchScorecardAccordion"><summary>Full Scorecard &amp; Match Details</summary><div class="matchScorecardBody">${blocks.join('')}</div></details>`;
+      if(actionsEl)actionsEl.insertAdjacentHTML('beforebegin',html);
+      else el.insertAdjacentHTML('beforeend',html);
+    }
+    const venueText=m.venueName||m.venue||'';
+    if(venueText&&!el.querySelector('.proMapCardBlock')){
+      const mapRow=`<div class="matchVenueMapRow"><a class="tinyBtn mapBtn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(venueText)}">View Venue on Map ↗</a></div>`;
+      if(actionsEl)actionsEl.insertAdjacentHTML('beforebegin',mapRow);
+      else el.insertAdjacentHTML('beforeend',mapRow);
+    }
+  });
+  const emptyEl=document.getElementById('matchFilterEmpty');
+  if(emptyEl)emptyEl.hidden=!(matches.length>0&&shown===0);
+};
+function v6EnhanceMatches(){window.rdmEnhanceMatchCentre();}
 async function v6EditMatch(id){if(!rdmAdmin())return;const m=D.matches.find(x=>x._docId===id);if(!m)return;const tossWinner=xp('Toss winner',m.tossWinner||'');const tossDecision=xp('Toss decision: Bat / Bowl',m.tossDecision||'');const batting=xp('Batting scorecard: Name Runs(Balls), 4s, 6s — one player per line',m.batting||'');const bowling=xp('Bowling: Name Overs-Runs-Wickets — one bowler per line',m.bowling||'');const partnerships=xp('Partnerships',m.partnerships||'');const fow=xp('Fall of wickets',m.fow||'');const potm=xp('Player of the Match',m.potm||'');await rdmDB.collection('Matches').doc(id).set({tossWinner,tossDecision,batting,bowling,partnerships,fow,potm,updatedAt:rdmStamp()},{merge:true});await rdmLoadAll();setTimeout(v6render,100)}
 function v6Poster(id){const m=D.matches.find(x=>x._docId===id);if(!m)return;document.getElementById('v6PosterModal')?.remove();const box=document.createElement('div');box.id='v6PosterModal';box.className='modal show rdmUnifiedModal';box.innerHTML=`<div class="dialog rdmUnifiedDialog matchPosterDialog"><button class="close" type="button" aria-label="Close">×</button><div class="matchPosterCard"><span class="sectionKicker">Rehan Dominators Mahuawan</span><h2>RDM vs ${esc(m.opponent||'Opponent')}</h2><p class="posterMeta">${esc(m.date||'')} · ${esc(m.venue||'')}</p>${m.ourScore||m.oppScore?`<div class="posterScore">${esc(m.ourScore||'—')}${m.oppScore?' — '+esc(m.oppScore):''}</div>`:''}<p>${esc(m.note||'Upcoming Match')}</p><small>ONE TEAM • ONE DREAM • ONE DOMINATION</small></div></div>`;document.body.appendChild(box);box.querySelector('.close').onclick=()=>box.remove();box.addEventListener('click',e=>{if(e.target===box)box.remove()})}
 window.v6AddTournament=v6AddTournament;window.v6AddOpponent=v6AddOpponent;window.v6AddRecord=v6AddRecord;window.v6Delete=v6Delete;window.v6EditMatch=v6EditMatch;window.v6Poster=v6Poster;
-document.addEventListener('click',e=>{if(e.target?.id==='addRecord')v6AddRecord();if(e.target?.id==='addTournament')v6AddTournament();if(e.target?.id==='addOpponent')v6AddOpponent()});
+document.addEventListener('click',e=>{
+  if(e.target?.id==='addRecord')v6AddRecord();
+  if(e.target?.id==='addTournament')v6AddTournament();
+  if(e.target?.id==='addOpponent')v6AddOpponent();
+  const mf=e.target.closest?.('[data-match-filter]');
+  if(mf){window.v6SetMatchStatusFilter(mf.dataset.matchFilter);return;}
+  if(e.target?.id==='matchResetFilterBtn'){window.v6SetMatchStatusFilter('ALL');return;}
+});
 const bt=document.getElementById('backToTop');window.addEventListener('scroll',()=>bt?.classList.toggle('show',scrollY>500));bt?.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
-setTimeout(()=>{v6load();window.rdmRenderHomeMatchHub?.();},400);
+setTimeout(()=>{
+  v6load();
+  window.rdmRenderHomeMatchHub?.();
+  const ml=document.getElementById('matchList');
+  if(ml&&!window.__rdmMatchListObs){
+    window.__rdmMatchListObs=true;
+    new MutationObserver(()=>queueMicrotask(()=>window.rdmEnhanceMatchCentre())).observe(ml,{childList:true});
+  }
+  window.rdmEnhanceMatchCentre();
+},400);
 if(!window.__rdmCountdownTimerStarted){
   window.__rdmCountdownTimerStarted=true;
   setInterval(()=>window.rdmTickHomeCountdown?.(),1000);
 }
 // V6 finishing touches: captain badges, player form, maps, admin edit controls
-function v6Decorate(){document.querySelectorAll('#players .player').forEach((el,i)=>{const p=D.players[i];if(!p)return;const n=(p.name||'').toUpperCase();if((n==='REHAN AKHTAR'||n==='SAIF ALI')&&!el.querySelector('.captainBadge')&&!el.querySelector('.leadershipBadge')){const h=el.querySelector('h3')||el.querySelector('b');h?.insertAdjacentHTML('beforeend',` <span class="captainBadge">${n==='REHAN AKHTAR'?'CAPTAIN':'VICE-CAPTAIN'}</span>`)}});document.querySelectorAll('#matchList .scoreCard').forEach((el,i)=>{const m=D.matches[i];if(m?.venue&&!el.querySelector('.mapBtn'))el.insertAdjacentHTML('beforeend',`<a class="tinyBtn mapBtn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(m.venue)}">📍 ᴍᴀᴘ</a>`)})}
-const v6oldRenderStats=window.renderStats;window.renderStats=function(){v6oldRenderStats();document.querySelectorAll('#statsList .statCard').forEach((el,i)=>{const p=D.players[i],s=statFor(p);if(s.last5&&!el.querySelector('.playerForm'))el.insertAdjacentHTML('beforeend',`<p class="playerForm">ʟᴀꜱᴛ 5 • ${mini(s.last5)}</p>`)})};
+function v6Decorate(){document.querySelectorAll('#players .player').forEach((el,i)=>{const p=D.players[i];if(!p)return;const n=(p.name||'').toUpperCase();if((n==='REHAN AKHTAR'||n==='SAIF ALI')&&!el.querySelector('.captainBadge')&&!el.querySelector('.leadershipBadge')){const h=el.querySelector('h3')||el.querySelector('b');h?.insertAdjacentHTML('beforeend',` <span class="captainBadge">${n==='REHAN AKHTAR'?'CAPTAIN':'VICE-CAPTAIN'}</span>`)}});window.rdmEnhanceMatchCentre();}
+const v6oldRenderStats=window.renderStats;window.renderStats=function(){v6oldRenderStats();document.querySelectorAll('#statsList .statCard').forEach((el,i)=>{const p=D.players[i],s=statFor(p);if(s.last5&&!el.querySelector('.playerForm'))el.insertAdjacentHTML('beforeend',`<p class="playerForm">Last 5 · ${mini(s.last5)}</p>`)})};
 window.editStats=async function(id){if(!rdmAdmin())return;const s=XD.stats.find(z=>z.playerId===id)||{};const matches=xp('Matches',s.matches||0);if(matches===null)return;const runs=xp('Runs',s.runs||0),wickets=xp('Wickets',s.wickets||0),highScore=xp('Highest Score',s.highScore||0),bestBowling=xp('Best Bowling',s.bestBowling||''),last5=xp('Last 5 match form / scores',s.last5||''),season=xp('Season / Year',s.season||'2027');await rdmDB.collection(XCOL.stats).doc(id).set({playerId:id,matches:xnum(matches),runs:xnum(runs),wickets:xnum(wickets),highScore:xnum(highScore),bestBowling:bestBowling||'',last5:last5||'',season:season||'',updatedAt:rdmStamp()},{merge:true});await xload()};
-window.renderAchievements=function(){const el=document.getElementById('achievementList');if(!el)return;el.innerHTML=XD.achievements.length?XD.achievements.map(a=>`<article class="card"><h3>🏆 ${mini(a.title)}</h3><p>${mini(a.playerName||'TEAM')} • ${mini(a.detail||'')}</p>${rdmAdmin()?`<button class="tinyBtn" onclick="v6EditAchievement('${a._docId}')">✎ ᴇᴅɪᴛ</button> <button class="tinyBtn deleteBtn" onclick="xdelete('${XCOL.achievements}','${a._docId}')">ᴅᴇʟᴇᴛᴇ</button>`:''}</article>`).join(''):'<div class="empty">ɴᴏ ᴀᴄʜɪᴇᴠᴇᴍᴇɴᴛ ᴀᴅᴅᴇᴅ ʏᴇᴛ</div>'};
+window.renderAchievements=function(){const el=document.getElementById('achievementList');if(!el)return;el.innerHTML=XD.achievements.length?XD.achievements.map(a=>`<article class="card"><h3>🏆 ${mini(a.title)}</h3><p>${mini(a.playerName||'TEAM')} • ${mini(a.detail||'')}</p>${rdmAdmin()?`<button class="tinyBtn" onclick="v6EditAchievement('${a._docId}')">✎ ᴇᴅɪᴛ</button> <button class="tinyBtn deleteBtn" onclick="xdelete('${XCOL.achievements}','${a._docId}')">ᴅᴇʟᴇᴛᴇ</button>`:''}</article>`).join(''):'<div class="empty">No achievement added yet</div>'};
 async function v6EditAchievement(id){const a=XD.achievements.find(x=>x._docId===id);if(!a||!rdmAdmin())return;const title=xp('Achievement / Award',a.title);if(!title)return;const playerName=xp('Player Name (or TEAM)',a.playerName||'TEAM'),detail=xp('Details',a.detail||'');await rdmDB.collection(XCOL.achievements).doc(id).set({title,playerName,detail,updatedAt:rdmStamp()},{merge:true});await xload()}window.v6EditAchievement=v6EditAchievement;
 setInterval(v6Decorate,1200);
 
@@ -231,18 +344,7 @@ function v61Home(){
   window.rdmRenderHomeMatchHub?.();
 }
 function v61MatchDetails(){
-  document.querySelectorAll('#matchList .scoreCard').forEach((el,i)=>{
-    const m=D.matches[i]; if(!m)return;
-    let x=el.querySelector('.v61extra'); if(x)x.remove();
-    const bits=[];
-    if(m.tossWinner)bits.push(`<div>🪙 <b>ᴛᴏꜱꜱ</b><br>${mini(m.tossWinner)}${m.tossDecision?' • '+mini(m.tossDecision):''}</div>`);
-    if(m.potm)bits.push(`<div>🏅 <b>ᴘʟᴀʏᴇʀ ᴏꜰ ᴛʜᴇ ᴍᴀᴛᴄʜ</b><br>${mini(m.potm)}</div>`);
-    if(m.batting)bits.push(`<div class="preserveLines">🏏 <b>ʙᴀᴛᴛɪɴɢ ꜱᴄᴏʀᴇᴄᴀʀᴅ</b><br>${mini(m.batting)}</div>`);
-    if(m.bowling)bits.push(`<div class="preserveLines">🎯 <b>ʙᴏᴡʟɪɴɢ ꜱᴄᴏʀᴇᴄᴀʀᴅ</b><br>${mini(m.bowling)}</div>`);
-    if(m.partnerships)bits.push(`<div class="preserveLines">🤝 <b>ᴘᴀʀᴛɴᴇʀꜱʜɪᴘꜱ</b><br>${mini(m.partnerships)}</div>`);
-    if(m.fow)bits.push(`<div class="preserveLines">📉 <b>ꜰᴀʟʟ ᴏꜰ ᴡɪᴄᴋᴇᴛꜱ</b><br>${mini(m.fow)}</div>`);
-    if(bits.length)el.insertAdjacentHTML('beforeend',`<div class="matchDetails v61extra">${bits.join('')}</div>`);
-  });
+  window.rdmEnhanceMatchCentre();
 }
 let _rdmCurrentAdminManager=null;
 function admEsc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -460,16 +562,37 @@ function v63Type(x){if(x.recordType)return x.recordType;const c=String(x.categor
 function v63Date(d){if(!d)return '';const a=String(d).split('-');if(a.length!==3)return d;const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return `${Number(a[2])} ${m[Number(a[1])-1]||a[1]} ${a[0]}`}
 function v63Card(x,editFn){return `<article class="recordCard"><div class="v62Meta"><span class="seasonTag">${mini(x.season||'ALL TIME')}</span>${x.category?`<span class="v62Chip">${mini(x.category)}</span>`:''}</div><h3>${mini(x.title||'Record')}</h3><div class="recordValue">${mini(x.value||'—')}</div>${x.player?`<p>👤 ${mini(x.player)}</p>`:''}${x.player2?`<p>👥 ${mini(x.player2)}</p>`:''}${x.wicket?`<p>🏏 ${mini(x.wicket)}</p>`:''}${x.opponent?`<p>🆚 ${mini(x.opponent)}</p>`:''}${x.date?`<p>📅 ${mini(v63Date(x.date))}</p>`:''}${x.note?`<p class="v62Note">${mini(x.note)}</p>`:''}${rdmAdmin()?`<div class="v62Actions"><button class="tinyBtn" onclick="${editFn}('${x._docId}')">✎ ᴇᴅɪᴛ</button><button class="tinyBtn deleteBtn" onclick="v6Delete('${V6COL.records}','${x._docId}')">🗑 ᴅᴇʟᴇᴛᴇ</button></div>`:''}</article>`}
 function v63List(id,arr,editFn,empty){const el=document.getElementById(id);if(el)el.innerHTML=arr.length?arr.map(x=>v63Card(x,editFn)).join(''):`<div class="empty">${empty}</div>`}
+function v6SetSeason(season){v6Season=season||'ALL';v6Records();}
+window.v6SetSeason=v6SetSeason;
 function v6Records(){
- const tabs=['PLAYER','TEAM','PARTNERSHIP','LEADERBOARD'];const rf=document.getElementById('recordTypeFilters');if(rf)rf.innerHTML=tabs.map(x=>`<button class="tinyBtn recordTypeBtn ${v6RecordType===x?'on':''}" onclick="v6SetRecordType('${x}')">${mini(x)}</button>`).join('');
+ const tabs=[['PLAYER','Player Records'],['TEAM','Team Records'],['PARTNERSHIP','Partnerships'],['LEADERBOARD','Leaderboard & Stats']];
+ const rf=document.getElementById('recordTypeFilters');
+ if(rf)rf.innerHTML=tabs.map(([k,lbl])=>`<button type="button" class="tinyBtn recordTypeBtn ${v6RecordType===k?'on':''}" onclick="v6SetRecordType('${k}')">${lbl}</button>`).join('');
+ const seasons=[...new Set([...XD.stats.map(s=>s.season),...V6.records.map(r=>r.season)].map(s=>String(s||'').trim()).filter(Boolean))].sort((a,b)=>b.localeCompare(a));
+ const sf=document.getElementById('seasonFilters');
+ if(sf){
+   sf.innerHTML=seasons.length?[`<button type="button" class="seasonFilterBtn ${v6Season==='ALL'?'on':''}" onclick="v6SetSeason('ALL')">All Seasons</button>`,...seasons.map(y=>`<button type="button" class="seasonFilterBtn ${String(v6Season)===y?'on':''}" onclick="v6SetSeason('${esc(y)}')">${esc(y)}</button>`)].join(''):'';
+ }
  const stats=v6Season==='ALL'?XD.stats:XD.stats.filter(s=>String(s.season||'')===String(v6Season));
  const total=p=>stats.filter(s=>s.playerId===p.id).reduce((a,z)=>{['matches','runs','wickets','highScore','fours','sixes','fifties','hundreds','runOuts'].forEach(k=>a[k]=(k==='highScore'?Math.max(xnum(a[k]),xnum(z[k])):xnum(a[k])+xnum(z[k])));a.strikeRate=Math.max(xnum(a.strikeRate),xnum(z.strikeRate));a.economy=a.economy?Math.min(xnum(a.economy),xnum(z.economy)):xnum(z.economy);a.bestBowling=z.bestBowling||a.bestBowling||'';return a},{matches:0,runs:0,wickets:0,highScore:0,fours:0,sixes:0,fifties:0,hundreds:0,runOuts:0,strikeRate:0,economy:0,bestBowling:''});
  const ranked=D.players.map(p=>({p,s:total(p)}));const best=(k,low=false)=>[...ranked].filter(x=>x.s[k]>0).sort((a,b)=>low?a.s[k]-b.s[k]:b.s[k]-a.s[k])[0];
  const awards={};XD.achievements.forEach(a=>{if(/player of the match|potm/i.test(a.title||''))awards[a.playerName]=(awards[a.playerName]||0)+1});const potm=Object.entries(awards).sort((a,b)=>b[1]-a[1])[0];
- const lb=document.getElementById('leaderboard');if(lb){const items=[['🏏','ᴛᴏᴘ ʀᴜɴ ꜱᴄᴏʀᴇʀ',best('runs'),'runs'],['🎯','ᴛᴏᴘ ᴡɪᴄᴋᴇᴛ ᴛᴀᴋᴇʀ',best('wickets'),'wickets'],['💥','ᴍᴏꜱᴛ ꜱɪxᴇꜱ',best('sixes'),'sixes'],['4️⃣','ᴍᴏꜱᴛ ꜰᴏᴜʀꜱ',best('fours'),'fours']];lb.innerHTML=`<div class="leaderGrid">${items.map(([i,t,x,k])=>`<div class="leaderCard">${i} ${t}<b>${x?mini(x.p.name)+' • '+x.s[k]:'ɴᴏ ꜱᴛᴀᴛꜱ ʏᴇᴛ'}</b></div>`).join('')}<div class="leaderCard">🏅 ᴍᴏꜱᴛ ᴘᴏᴛᴍ<b>${potm?mini(potm[0])+' • '+potm[1]:'ɴᴏ ᴘᴏᴛᴍ ʏᴇᴛ'}</b></div></div>`}
+ const lb=document.getElementById('leaderboard');
+ if(lb){
+   const items=[['🏏','Top Run Scorer',best('runs'),'runs'],['🎯','Top Wicket Taker',best('wickets'),'wickets'],['💥','Most Sixes',best('sixes'),'sixes'],['4️⃣','Most Fours',best('fours'),'fours']];
+   lb.innerHTML=`<div class="leaderGrid">${items.map(([i,t,x,k])=>`<div class="leaderCard">${i} ${t}<b>${x?mini(x.p.name)+' · '+x.s[k]:'No stats recorded yet'}</b></div>`).join('')}<div class="leaderCard">🏅 Most POTM<b>${potm?mini(potm[0])+' · '+potm[1]:'No POTM awards yet'}</b></div></div>`;
+ }
+ const tblWrap=document.getElementById('squadLeaderboardTableWrap');
+ if(tblWrap){
+   const rows=[...ranked].sort((a,b)=>(b.s.runs-a.s.runs)||(b.s.wickets-a.s.wickets)||(b.s.matches-a.s.matches));
+   const hasAnyStats=rows.some(r=>r.s.matches>0||r.s.runs>0||r.s.wickets>0);
+   tblWrap.innerHTML=`<div class="squadLeaderboardTitleRow"><h3>Squad Career Statistics</h3><span>${hasAnyStats?'Tap any player row to view full profile':'Stats update automatically when player figures are logged'}</span></div><div class="statsTableScroll"><table class="statsLeaderboardTable"><thead><tr><th>#</th><th>Player</th><th>Mat</th><th>Runs</th><th>HS</th><th>SR</th><th>4s/6s</th><th>Wkts</th><th>Econ</th></tr></thead><tbody>${rows.map((r,idx)=>`<tr onclick="openPlayerProfile?.('${esc(r.p.id)}')" title="View ${esc(mini(r.p.name))} profile"><td class="statsRankNum">${idx+1}</td><td class="statsPlayerCell">${mini(r.p.name)}<small>${mini(r.p.role)}</small></td><td>${r.s.matches}</td><td class="statsHighlightVal">${r.s.runs}</td><td>${r.s.highScore}</td><td>${r.s.strikeRate||'—'}</td><td>${r.s.fours}/${r.s.sixes}</td><td class="statsHighlightVal">${r.s.wickets}</td><td>${r.s.economy||'—'}</td></tr>`).join('')}</tbody></table></div>`;
+ }
  const autoDefs=[['Highest Individual Score','highScore',' Runs'],['Most Runs','runs',' Runs'],['Most Wickets','wickets',' Wickets'],['Most Sixes','sixes',' Sixes'],['Most Fours','fours',' Fours'],['Most 50s','fifties',''],['Most 100s','hundreds',''],['Most Run Outs','runOuts',''],['Best Strike Rate','strikeRate',''],['Best Economy','economy','',true]];
- const pr=document.getElementById('playerRecordList');if(pr)pr.innerHTML=autoDefs.map(([title,k,suf,low])=>{const x=best(k,!!low);return `<article class="recordCard"><span class="v62Chip">ᴀᴜᴛᴏ • ꜱᴛᴀᴛꜱ</span><h3>${mini(title)}</h3><div class="recordValue">${x?mini(String(x.s[k])+suf):'—'}</div><p>👤 ${x?mini(x.p.name):'ɴᴏ ꜱᴛᴀᴛꜱ ʏᴇᴛ'}</p></article>`}).join('');
- const all=V6.records.sort((a,b)=>(b.createdMs||0)-(a.createdMs||0));v63List('teamRecordList',all.filter(x=>v63Type(x)==='TEAM'),'v63AddTeamRecord','ɴᴏ ᴛᴇᴀᴍ ʀᴇᴄᴏʀᴅꜱ ʏᴇᴛ');v63List('partnershipRecordList',all.filter(x=>v63Type(x)==='PARTNERSHIP'),'v63AddPartnershipRecord','ɴᴏ ᴘᴀʀᴛɴᴇʀꜱʜɪᴘ ʀᴇᴄᴏʀᴅꜱ ʏᴇᴛ');
+ const pr=document.getElementById('playerRecordList');if(pr)pr.innerHTML=autoDefs.map(([title,k,suf,low])=>{const x=best(k,!!low);return `<article class="recordCard"><span class="v62Chip">Auto Stats</span><h3>${mini(title)}</h3><div class="recordValue">${x?mini(String(x.s[k])+suf):'—'}</div><p>👤 ${x?mini(x.p.name):'No stats recorded yet'}</p></article>`}).join('');
+ const all=(v6Season==='ALL'?V6.records:V6.records.filter(x=>String(x.season||'')===String(v6Season))).sort((a,b)=>(b.createdMs||0)-(a.createdMs||0));
+ v63List('teamRecordList',all.filter(x=>v63Type(x)==='TEAM'),'v63AddTeamRecord','No team records added yet');
+ v63List('partnershipRecordList',all.filter(x=>v63Type(x)==='PARTNERSHIP'),'v63AddPartnershipRecord','No partnership records added yet');
  const map={PLAYER:'playerRecordSection',TEAM:'teamRecordSection',PARTNERSHIP:'partnershipRecordSection',LEADERBOARD:'leaderboardSection'};Object.entries(map).forEach(([t,id])=>{const el=document.getElementById(id);if(el)el.hidden=v6RecordType!==t});
 }
 function v6SetRecordType(t){v6RecordType=t;if(t==='TOURNAMENT'){document.querySelector('[data-page="tournaments"]')?.click();setTimeout(()=>document.getElementById('tournamentList')?.scrollIntoView({behavior:'smooth',block:'start'}),80);return}if(t==='H2H'){document.querySelector('[data-page="tournaments"]')?.click();setTimeout(()=>document.getElementById('opponentList')?.scrollIntoView({behavior:'smooth',block:'start'}),80);return}v6Records()}
@@ -478,3 +601,17 @@ function v63AddPlayerRecord(id){if(!rdmAdmin())return;const x=V6.records.find(z=
 function v63AddTeamRecord(id){if(!rdmAdmin())return;const x=V6.records.find(z=>z._docId===id)||{};v62Modal(id?'ᴇᴅɪᴛ ᴛᴇᴀᴍ ʀᴇᴄᴏʀᴅ':'ᴀᴅᴅ ᴛᴇᴀᴍ ʀᴇᴄᴏʀᴅ',[{k:'category',label:'ᴛʏᴘᴇ',type:'select',options:['TEAM','CHASE','WIN','STREAK','OTHER']},{k:'season',label:'ꜱᴇᴀꜱᴏɴ / ʏᴇᴀʀ',ph:'2027'},{k:'title',label:'ʀᴇᴄᴏʀᴅ ɴᴀᴍᴇ',ph:'Highest Team Score',full:true},{k:'value',label:'ʀᴇᴄᴏʀᴅ ᴠᴀʟᴜᴇ',ph:'185/6'},{k:'opponent',label:'ᴠꜱ ᴏᴘᴘᴏɴᴇɴᴛ',ph:'Team name'},{k:'date',label:'ᴅᴀᴛᴇ',type:'date'},{k:'note',label:'ɴᴏᴛᴇ',type:'textarea',full:true}],x,d=>v63Save(id,x,d,'TEAM'))}
 function v63AddPartnershipRecord(id){if(!rdmAdmin())return;const x=V6.records.find(z=>z._docId===id)||{};v62Modal(id?'ᴇᴅɪᴛ ᴘᴀʀᴛɴᴇʀꜱʜɪᴘ':'ᴀᴅᴅ ᴘᴀʀᴛɴᴇʀꜱʜɪᴘ ʀᴇᴄᴏʀᴅ',[{k:'season',label:'ꜱᴇᴀꜱᴏɴ / ʏᴇᴀʀ',ph:'2027'},{k:'player',label:'ᴘʟᴀʏᴇʀ 1',ph:'Rehan Akhtar'},{k:'player2',label:'ᴘʟᴀʏᴇʀ 2',ph:'Saif Ali'},{k:'wicket',label:'ᴡɪᴄᴋᴇᴛ',ph:'1st Wicket'},{k:'title',label:'ʀᴇᴄᴏʀᴅ ɴᴀᴍᴇ',ph:'Highest Partnership',full:true},{k:'value',label:'ʀᴜɴꜱ',ph:'120 Runs'},{k:'opponent',label:'ᴠꜱ ᴏᴘᴘᴏɴᴇɴᴛ',ph:'Team name'},{k:'date',label:'ᴅᴀᴛᴇ',type:'date'},{k:'note',label:'ɴᴏᴛᴇ',type:'textarea',full:true}],x,d=>{d.category='PARTNERSHIP';return v63Save(id,x,d,'PARTNERSHIP')})}
 window.v63AddPlayerRecord=v63AddPlayerRecord;window.v63AddTeamRecord=v63AddTeamRecord;window.v63AddPartnershipRecord=v63AddPartnershipRecord;
+
+(function rdmPublicHashRouter(){
+  function syncFromHash(){
+    if((window.__rdmUrlKeyRole||'public')!=='public')return;
+    const h=String(location.hash||'').replace(/^#/,'').trim().toLowerCase();
+    if(!h||h.startsWith('player='))return;
+    if(typeof VALID_PUBLIC_PAGES!=='undefined'&&VALID_PUBLIC_PAGES.has(h)&&typeof go==='function'){
+      go(h,{updateHash:false});
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',syncFromHash,{once:true});
+  else syncFromHash();
+  window.addEventListener('hashchange',syncFromHash);
+})();
