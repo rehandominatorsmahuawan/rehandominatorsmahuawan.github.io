@@ -1,8 +1,8 @@
 {
-  "versionName": "1.1.0",
-  "versionCode": 2,
+  "versionName": "1.2.0",
+  "versionCode": 3,
   "apkDownloadUrl": "https://github.com/RehanDominatorsMahuawan/RehanDominatorsMahuawan.github.io/releases/latest/download/RDM-Official.apk",
   "apkReleasesUrl": "https://github.com/RehanDominatorsMahuawan/RehanDominatorsMahuawan.github.io/releases/latest",
-  "notes": "• Unified Website, PWA & Android APK experience\n• Embedded Admin Panel inside Android APK & Website\n• Live In-App APK Update Popup with direct download\n• Extended About RDM story & native APK-style navigation",
+  "notes": "• Consistent APK release signing so future app updates install smoothly without package conflicts\n• Password-only Admin Panel unlock inside the Android APK\n• Redesigned RDM Official Website with unified live Firebase sync",
   "forceUpdate": false
 }

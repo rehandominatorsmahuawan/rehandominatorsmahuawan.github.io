@@ -50,16 +50,25 @@ jobs:
           accept-android-sdk-licenses: true
           packages: platform-tools platforms;android-36 build-tools;35.0.0
 
-      - name: Build Debug APK with Gradle
+      - name: Build Signed Release APK with Gradle
         working-directory: android
+        env:
+          RDM_KEYSTORE_PASSWORD: ${{ secrets.RDM_KEYSTORE_PASSWORD || 'rdmofficial2026' }}
+          RDM_KEY_ALIAS: ${{ secrets.RDM_KEY_ALIAS || 'rdmkey' }}
+          RDM_KEY_PASSWORD: ${{ secrets.RDM_KEY_PASSWORD || 'rdmofficial2026' }}
         run: |
+          if [ -n "${{ secrets.RDM_KEYSTORE_BASE64 }}" ]; then
+            echo "${{ secrets.RDM_KEYSTORE_BASE64 }}" | base64 -d > app/rdm-custom.keystore
+            export RDM_KEYSTORE_PATH="rdm-custom.keystore"
+            export RDM_KEYSTORE_TYPE="JKS"
+          fi
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          ./gradlew assembleRelease --no-daemon --stacktrace
 
       - name: Prepare RDM-Official.apk
         run: |
-          test -f android/app/build/outputs/apk/debug/app-debug.apk
-          cp android/app/build/outputs/apk/debug/app-debug.apk RDM-Official.apk
+          test -f android/app/build/outputs/apk/release/app-release.apk
+          cp android/app/build/outputs/apk/release/app-release.apk RDM-Official.apk
 
       - name: Upload RDM Official APK Artifact
         uses: actions/upload-artifact@v4
@@ -67,7 +76,7 @@ jobs:
           name: RDM-Official-apk
           path: |
             RDM-Official.apk
-            android/app/build/outputs/apk/debug/app-debug.apk
+            android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 30
 

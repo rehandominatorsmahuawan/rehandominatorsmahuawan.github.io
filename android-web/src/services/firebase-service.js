@@ -1,5 +1,6 @@
 import {
   APP_BUILD_INFO,
+  APK_ADMIN_EMAILS,
   CLUB_INFO,
   DEFAULT_SOCIALS,
   PLAYER_DEFAULTS,
@@ -10,6 +11,33 @@ import {
   isLegacyBrokenImage,
   resolveLoginIdentifier
 } from '../data/roster.js';
+
+const APK_ADMIN_PW_HASH = '73442ec47da8d19de47638438c8563bb266e880cf4ce8cafa5579ed20d2b94be';
+const APK_ADMIN_SESSION_KEY = 'rdm_apk_admin_unlocked_v1';
+
+async function sha256Hex(str) {
+  const bytes = new TextEncoder().encode(String(str ?? ''));
+  if (globalThis.crypto?.subtle?.digest) {
+    const buf = await globalThis.crypto.subtle.digest('SHA-256', bytes);
+    return Array.from(new Uint8Array(buf), b => b.toString(16).padStart(2, '0')).join('');
+  }
+  return '';
+}
+
+function readApkAdminFlag() {
+  try {
+    return sessionStorage.getItem(APK_ADMIN_SESSION_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function writeApkAdminFlag(active) {
+  try {
+    if (active) sessionStorage.setItem(APK_ADMIN_SESSION_KEY, '1');
+    else sessionStorage.removeItem(APK_ADMIN_SESSION_KEY);
+  } catch {}
+}
 
 function getAuth() {
   return window.rdmAuth || (typeof rdmAuth !== 'undefined' ? rdmAuth : null);
@@ -30,6 +58,7 @@ export const state = {
   loadingData: false,
   loadError: '',
   authChecked: false,
+  apkAdminUnlocked: readApkAdminFlag(),
   user: null,
   account: null, // Verified Accounts/{uid} doc
   role: 'guest', // 'guest' | 'player' | 'admin'
@@ -58,7 +87,7 @@ export const state = {
   opponents: []
 };
 
-export function isVerifiedAdmin() {
+export function isFirebaseCloudAdmin() {
   return Boolean(
     state.user &&
     state.account &&
@@ -66,6 +95,10 @@ export function isVerifiedAdmin() {
     state.account.role === 'admin' &&
     state.role === 'admin'
   );
+}
+
+export function isVerifiedAdmin() {
+  return Boolean(isFirebaseCloudAdmin() || state.apkAdminUnlocked);
 }
 
 export function getVerifiedPlayer() {
@@ -429,6 +462,48 @@ export async function loginWithEmailPassword(identifier, password) {
   return check;
 }
 
+export async function loginAdminWithPassword(password) {
+  const cleanPass = String(password || '');
+  if (!cleanPass) {
+    const err = new Error('PASSWORD_REQUIRED');
+    err.code = 'PASSWORD_REQUIRED';
+    throw err;
+  }
+
+  const digest = await sha256Hex(cleanPass);
+  const matched = digest ? digest === APK_ADMIN_PW_HASH : false;
+  if (!matched) {
+    const err = new Error('INVALID_ADMIN_PASSWORD');
+    err.code = 'INVALID_ADMIN_PASSWORD';
+    throw err;
+  }
+
+  state.apkAdminUnlocked = true;
+  state.role = 'admin';
+  writeApkAdminFlag(true);
+
+  let cloudSynced = isFirebaseCloudAdmin();
+  const auth = getAuth();
+  if (auth && !cloudSynced) {
+    for (const email of APK_ADMIN_EMAILS) {
+      try {
+        const cred = await auth.signInWithEmailAndPassword(email, cleanPass);
+        const check = await verifyAccountRole(cred.user);
+        if (check.ok && check.role === 'admin') {
+          cloudSynced = true;
+          break;
+        }
+      } catch (_) {}
+    }
+  }
+
+  try {
+    await loadClubData();
+  } catch (_) {}
+
+  return { ok: true, role: 'admin', cloudSynced };
+}
+
 export async function sendResetPasswordEmail(identifier) {
   const auth = getAuth();
   if (!auth) throw new Error('FIREBASE_UNAVAILABLE');
@@ -438,9 +513,13 @@ export async function sendResetPasswordEmail(identifier) {
 }
 
 export async function logoutAccount() {
+  state.apkAdminUnlocked = false;
+  writeApkAdminFlag(false);
   const auth = getAuth();
   if (auth) {
-    await auth.signOut();
+    try {
+      await auth.signOut();
+    } catch (_) {}
   }
   state.user = null;
   state.account = null;
@@ -452,13 +531,21 @@ export function subscribeAuthChanges(onChange) {
   const auth = getAuth();
   if (!auth) {
     state.authChecked = true;
-    onChange({ role: 'guest', verified: false });
+    const unlocked = state.apkAdminUnlocked;
+    onChange({ role: unlocked ? 'admin' : 'guest', verified: unlocked });
     return () => {};
   }
   return auth.onAuthStateChanged(async user => {
     if (!user) {
       state.user = null;
       state.account = null;
+      if (state.apkAdminUnlocked) {
+        state.role = 'admin';
+        state.playerId = null;
+        state.authChecked = true;
+        onChange({ role: 'admin', verified: true });
+        return;
+      }
       state.role = 'guest';
       state.playerId = null;
       state.authChecked = true;
@@ -467,6 +554,11 @@ export function subscribeAuthChanges(onChange) {
     }
     const res = await verifyAccountRole(user);
     state.authChecked = true;
+    if (!res.ok && state.apkAdminUnlocked) {
+      state.role = 'admin';
+      onChange({ role: 'admin', verified: true });
+      return;
+    }
     onChange({
       role: res.ok ? res.role : 'guest',
       verified: res.ok,

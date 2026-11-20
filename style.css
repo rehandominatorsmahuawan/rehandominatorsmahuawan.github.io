@@ -10,18 +10,18 @@ html[data-rdm-theme="light"] {
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
   /* 60% Neutral Canvas */
-  --bg: #F4F6F8;
+  --bg: #F6F8FA;
   /* 30% Structural Surfaces */
   --surface: #FFFFFF;
-  --surface-subtle: #EBF0F4;
-  --surface-hover: #E2E9F0;
-  --border: #D8E1E8;
-  --border-strong: #BFCBD6;
+  --surface-subtle: #EDF1F5;
+  --surface-hover: #E3E9F0;
+  --border: #D9E2EA;
+  --border-strong: #BDC9D5;
 
   /* Typography */
-  --text: #0D1B26;
-  --text-secondary: #435667;
-  --text-muted: #5F7385;
+  --text: #0B1520;
+  --text-secondary: #3E5263;
+  --text-muted: #5C7082;
   --letter-comp: 0em;
 
   /* 10% Crimson Red & Metallic Gold Accent Budget (matched to RDM emblem) */
@@ -41,10 +41,10 @@ html[data-rdm-theme="light"] {
   --success-soft: rgba(15, 118, 110, 0.10);
 
   --header-bg: rgba(255, 255, 255, 0.92);
-  --nav-bg: rgba(244, 246, 248, 0.94);
+  --nav-bg: rgba(246, 248, 250, 0.94);
 
-  --shadow-card: 0 1px 2px rgba(13, 17, 23, 0.04), 0 8px 24px rgba(13, 17, 23, 0.06);
-  --shadow-modal: 0 24px 64px rgba(13, 17, 23, 0.22);
+  --shadow-card: 0 1px 2px rgba(11, 21, 32, 0.04), 0 8px 24px rgba(11, 21, 32, 0.05);
+  --shadow-modal: 0 24px 64px rgba(11, 21, 32, 0.22);
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 22px;
@@ -52,16 +52,16 @@ html[data-rdm-theme="light"] {
 }
 
 html[data-rdm-theme="dark"] {
-  --bg: #08090C;
-  --surface: #111318;
-  --surface-subtle: #181B22;
-  --surface-hover: #212530;
-  --border: rgba(236, 240, 246, 0.10);
-  --border-strong: rgba(236, 240, 246, 0.20);
+  --bg: #07090D;
+  --surface: #10131A;
+  --surface-subtle: #171B24;
+  --surface-hover: #202532;
+  --border: rgba(236, 240, 246, 0.11);
+  --border-strong: rgba(236, 240, 246, 0.22);
 
-  --text: #F3F4F6;
-  --text-secondary: #C2C8D4;
-  --text-muted: #8E98A8;
+  --text: #F4F6F9;
+  --text-secondary: #C4CBD6;
+  --text-muted: #8E99AA;
   --letter-comp: 0.01em;
 
   --accent: #EF4444;
@@ -79,8 +79,8 @@ html[data-rdm-theme="dark"] {
   --success: #34D399;
   --success-soft: rgba(52, 211, 153, 0.14);
 
-  --header-bg: rgba(8, 9, 12, 0.92);
-  --nav-bg: rgba(13, 15, 20, 0.94);
+  --header-bg: rgba(7, 9, 13, 0.92);
+  --nav-bg: rgba(12, 15, 22, 0.94);
 
   --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.28), 0 12px 32px rgba(0, 0, 0, 0.30);
   --shadow-modal: 0 28px 80px rgba(0, 0, 0, 0.68);
@@ -583,17 +583,15 @@ body.admin .adminOnly {
 
 .hero {
   position: relative;
-  min-height: clamp(540px, 78vh, 840px);
-  border-radius: clamp(18px, 2vw, 28px);
+  min-height: clamp(460px, 66vh, 680px);
+  border-radius: clamp(18px, 2vw, 26px);
   overflow: hidden;
-  border: 1px solid rgba(239, 68, 68, 0.34);
-  background: #090A0E;
+  border: 1px solid rgba(239, 68, 68, 0.28);
+  background: #08090D;
   display: flex;
   align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: clamp(42px, 7vw, 88px) clamp(20px, 5vw, 56px);
-  box-shadow: 0 24px 72px rgba(6, 7, 10, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  padding: clamp(36px, 5.5vw, 68px) clamp(22px, 4.5vw, 56px);
+  box-shadow: 0 24px 64px rgba(6, 8, 12, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .heroBackdrop {
@@ -614,11 +612,11 @@ body.admin .adminOnly {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(26, 14, 17, 0.64) 0%,
-    rgba(10, 11, 16, 0.86) 58%,
-    rgba(7, 8, 11, 0.96) 100%
+  background: linear-gradient(
+    102deg,
+    rgba(7, 8, 12, 0.95) 0%,
+    rgba(16, 10, 14, 0.84) 54%,
+    rgba(9, 10, 15, 0.72) 100%
   );
 }
 
@@ -626,31 +624,50 @@ body.admin .adminOnly {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 860px;
   margin: 0 auto;
+}
+
+.heroInner.heroEditorial {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(240px, 0.75fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 56px);
+  text-align: left;
+}
+
+.heroCopy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.heroCrestShowcase {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-}
-
-.heroInner > * {
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
+  padding: clamp(22px, 3vw, 32px) clamp(18px, 2.5vw, 28px);
+  border-radius: 22px;
+  background: rgba(12, 14, 20, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.44);
 }
 
 .heroLogo {
-  width: clamp(128px, 13vw, 156px);
-  height: clamp(128px, 13vw, 156px);
+  width: clamp(128px, 13vw, 168px);
+  height: clamp(128px, 13vw, 168px);
   border-radius: 50%;
   overflow: hidden;
   padding: 0;
   border: 3px solid rgba(239, 68, 68, 0.92);
   background: #9E9E9E;
-  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.60), 0 0 0 6px rgba(255, 255, 255, 0.08);
-  margin: 0 auto 24px;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.56), 0 0 0 6px rgba(255, 255, 255, 0.08);
+  margin: 0 auto 16px;
 }
 
 .heroLogo img {
@@ -663,39 +680,53 @@ body.admin .adminOnly {
   background: #9E9E9E;
 }
 
-.hero .eyebrow {
-  width: 100%;
-  margin: 0 0 10px;
+.heroShieldMeta {
+  display: grid;
+  gap: 4px;
+}
+
+.heroShieldMeta strong {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #FFFFFF;
+  line-height: 1.05;
+}
+
+.heroShieldMeta span {
   font-size: 12.5px;
+  font-weight: 500;
+  color: #D1D5DB;
+}
+
+.hero .eyebrow {
+  margin: 0 0 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.09em;
   text-transform: uppercase;
   color: #FCA5A5;
-  text-align: center;
 }
 
 .heroTeam {
-  width: 100%;
   font-family: var(--font-display);
-  font-size: clamp(1.3rem, 2.2vw, 1.65rem);
+  font-size: clamp(1.25rem, 2vw, 1.55rem);
   font-weight: 700;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #E5E7EB;
-  margin-bottom: 10px;
-  text-align: center;
+  margin-bottom: 8px;
 }
 
 .hero h1 {
-  width: 100%;
-  margin: 0 0 16px;
+  margin: 0 0 14px;
   font-family: var(--font-display);
-  font-size: clamp(2.65rem, 6vw, 4.75rem);
+  font-size: clamp(2.5rem, 5.4vw, 4.4rem);
   font-weight: 800;
-  line-height: 1.02;
-  letter-spacing: 0.015em;
+  line-height: 0.98;
+  letter-spacing: 0.012em;
   color: #FFFFFF;
-  text-align: center;
   text-wrap: balance;
 }
 
@@ -703,7 +734,6 @@ body.admin .adminOnly {
 .hero h1 em {
   display: block;
   font-style: normal;
-  text-align: center;
 }
 
 .hero h1 em {
@@ -712,29 +742,27 @@ body.admin .adminOnly {
 }
 
 .heroMotto {
-  width: 100%;
   margin: 0;
+  max-width: 56ch;
   font-size: 15px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
+  line-height: 1.6;
+  font-weight: 400;
   color: #D1D5DB;
-  text-align: center;
 }
 
 .actions.homeActions {
-  width: 100%;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 12px;
-  margin-top: 26px;
+  margin-top: 24px;
 }
 
 .homeActions .secondary {
   background: rgba(255, 255, 255, 0.10);
   color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.30);
+  border: 1px solid rgba(255, 255, 255, 0.28);
   backdrop-filter: blur(8px);
 }
 
@@ -743,12 +771,12 @@ body.admin .adminOnly {
   border-color: rgba(255, 255, 255, 0.45);
 }
 
-/* 4-Column Club Metrics Strip (Clean hairline surfaces, no thick left bars) */
+/* 4-Column Club Metrics Strip */
 .metrics {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: 20px;
+  gap: 14px;
+  margin-top: 18px;
 }
 
 .metrics > div {
@@ -761,11 +789,17 @@ body.admin .adminOnly {
   justify-items: center;
   text-align: center;
   gap: 4px;
+  transition: transform 180ms var(--ease), border-color 180ms var(--ease);
+}
+
+.metrics > div:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
 }
 
 .metrics strong {
   font-family: var(--font-display);
-  font-size: 2.25rem;
+  font-size: clamp(2rem, 3vw, 2.5rem);
   font-weight: 800;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -780,12 +814,12 @@ body.admin .adminOnly {
 
 /* Leadership Section */
 .homeLeadership {
-  margin-top: 36px;
+  margin-top: 34px;
 }
 
 .leadTitle {
-  margin-bottom: 18px;
-  text-align: center;
+  margin-bottom: 16px;
+  text-align: left;
 }
 
 .leadGrid {
@@ -803,6 +837,12 @@ body.admin .adminOnly {
   align-items: center;
   gap: 18px;
   box-shadow: var(--shadow-card);
+  transition: transform 180ms var(--ease), border-color 180ms var(--ease);
+}
+
+.leadCard:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
 }
 
 .leadCard img,
@@ -1056,7 +1096,7 @@ body.admin .adminOnly {
 .rdmHeritageGrid {
   margin-top: 28px;
   display: grid;
-  grid-template-columns: 1fr 1.25fr;
+  grid-template-columns: 0.95fr 1.35fr;
   gap: 20px;
   align-items: stretch;
 }
@@ -1066,7 +1106,7 @@ body.admin .adminOnly {
   overflow: hidden;
   border: 1px solid var(--border);
   background: var(--surface-subtle);
-  min-height: 240px;
+  min-height: 280px;
 }
 
 .heritageMedia img {
@@ -1080,29 +1120,29 @@ body.admin .adminOnly {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 28px;
+  padding: clamp(22px, 3vw, 32px);
   box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
+  text-align: left;
 }
 
 .rdmSeoIntro h2 {
   margin: 0 0 10px;
   font-family: var(--font-display);
-  font-size: 1.75rem;
+  font-size: clamp(1.65rem, 2.4vw, 2rem);
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1.08;
   color: var(--text);
   text-wrap: balance;
 }
 
 .rdmSeoIntro p {
-  margin: 0 0 12px;
-  max-width: 62ch;
-  font-size: 14px;
+  margin: 0 0 14px;
+  max-width: 66ch;
+  font-size: 14.5px;
   line-height: 1.65;
   color: var(--text-secondary);
 }
@@ -1116,12 +1156,12 @@ body.admin .adminOnly {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
-  margin: 6px 0 14px;
+  margin: 4px 0 16px;
   text-align: left;
 }
 
 .clubFactItem {
-  padding: 10px 14px;
+  padding: 12px 14px;
   border-radius: var(--radius-sm);
   background: var(--surface-subtle);
   border: 1px solid var(--border);
@@ -1146,9 +1186,9 @@ body.admin .adminOnly {
 .clubQuickLinks {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 8px;
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .rdmSeoNames {
@@ -4201,6 +4241,34 @@ html[data-rdm-portal="player"] .footerLinks {
 }
 
 @media (max-width: 900px) {
+  .heroInner.heroEditorial {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 22px;
+  }
+
+  .heroCrestShowcase {
+    order: -1;
+    width: min(320px, 100%);
+    margin: 0 auto;
+    padding: 20px 18px;
+  }
+
+  .heroLogo {
+    width: 112px;
+    height: 112px;
+    margin-bottom: 12px;
+  }
+
+  .heroCopy {
+    align-items: center;
+    text-align: center;
+  }
+
+  .actions.homeActions {
+    justify-content: center;
+  }
+
   .honours,
   .socialGrid,
   .gallery,

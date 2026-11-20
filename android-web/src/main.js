@@ -32,13 +32,14 @@ import {
   checkRemoteAppVersion,
   compressImageFile,
   evaluateAvailableUpdate,
+  isFirebaseCloudAdmin,
   isVerifiedAdmin,
   loadClubData,
+  loginAdminWithPassword,
   loginWithEmailPassword,
   logoutAccount,
   savePlayerAvailability,
   savePlayerPortalProfile,
-  sendResetPasswordEmail,
   state,
   subscribeAuthChanges,
   subscribeClubDataRealtime
@@ -1104,25 +1105,20 @@ function renderAdminPortalAuthScreen() {
         <div class="loginLogoBox">
           <img src="${escHtml(currentLogo())}" alt="RDM Crest" referrerPolicy="no-referrer">
         </div>
-        <h2 class="sectionTitle" style="text-align:center;">Admin Panel Sign In</h2>
-        <p class="sectionSub" style="text-align:center;margin-bottom:16px;">Sign in with your RDM Admin Username (<code>rdm.admin</code>) or registered Admin Email. All updates publish live across Website, PWA &amp; Android APK.</p>
+        <h2 class="sectionTitle" style="text-align:center;">Admin Panel Unlock</h2>
+        <p class="sectionSub" style="text-align:center;margin-bottom:16px;">Enter your APK Admin Password to open the Admin Console. No username required. (Website Admin uses its separate private link.)</p>
         ${ui.loginError ? `<div class="errorBanner" style="margin-bottom:12px;">${escHtml(ui.loginError)}</div>` : ''}
         <form id="rdmPortalAuthForm" class="formStack">
           <label class="fieldBlock">
-            <span>Admin Username or Email</span>
-            <input id="loginEmail" name="email" type="text" autocomplete="username" placeholder="rdm.admin or admin@..." required>
-          </label>
-          <label class="fieldBlock">
-            <span>Password</span>
+            <span>Admin Password</span>
             <div class="passwordWrap">
               <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Enter admin password" required>
               <button type="button" class="togglePwBtn" id="btnTogglePw">Show</button>
             </div>
           </label>
           <button type="submit" class="btnPrimary btnFull" id="btnLoginSubmit" ${ui.loginBusy ? 'disabled' : ''}>
-            ${ui.loginBusy ? 'Verifying Admin Session…' : 'Open Admin Panel'}
+            ${ui.loginBusy ? 'Unlocking Admin Panel…' : 'Open Admin Panel'}
           </button>
-          <button type="button" class="btnGhost btnFull" id="btnForgotPw">Forgot Password?</button>
         </form>
       </div>
     </div>
@@ -1305,9 +1301,11 @@ function renderAdminDashboard() {
       <div class="surfaceCard">
         <div class="sectionHeader" style="margin-bottom:8px;">
           <div>
-            <span class="sectionKicker">Live Cross-Platform Sync · v${escHtml(currentAppVersion())}</span>
+            <span class="sectionKicker">APK Admin v${escHtml(currentAppVersion())} · ${isFirebaseCloudAdmin() ? 'Firebase Cloud Sync Live' : 'Local Admin Unlocked'}</span>
             <h3 class="sectionTitle" style="font-size:1.22rem;">Website, PWA &amp; Android APK Connected</h3>
-            <p class="sectionSub">Every change published here saves to Firebase and updates Website, PWA, and all installed Android APKs in real time. Bump App Version here to push an Update Popup to older APKs.</p>
+            <p class="sectionSub">${isFirebaseCloudAdmin()
+              ? 'Every change published here saves to Firebase and updates Website, PWA, and all installed Android APKs in real time.'
+              : 'APK Admin unlocked with password. Ensure your Firebase Admin account password matches in Firebase Console so cloud writes sync across Website and APKs.'}</p>
           </div>
           <button type="button" class="btnSecondary btnSm" data-admin-action="editAppConfig">Configure APK</button>
         </div>
@@ -1682,50 +1680,25 @@ function bindScreenEvents() {
     btn.textContent = hidden ? 'Hide' : 'Show';
   });
 
-  q('btnForgotPw')?.addEventListener('click', () => {
-    const emailPrefill = q('loginEmail')?.value?.trim() || '';
-    openFormSheet({
-      title: 'Reset Admin Password',
-      subtitle: 'Receive a Firebase password reset link on your registered Admin email',
-      fields: [{ name: 'email', label: 'Admin Username or Email', type: 'text', value: emailPrefill, placeholder: 'rdm.admin or admin@...', required: true }],
-      submitLabel: 'Send Reset Link',
-      onSubmit: async d => {
-        await sendResetPasswordEmail(d.email);
-        showToast('Password reset email sent');
-      }
-    });
-  });
-
   q('rdmPortalAuthForm')?.addEventListener('submit', async e => {
     e.preventDefault();
-    const email = q('loginEmail')?.value || '';
     const password = q('loginPassword')?.value || '';
     ui.loginBusy = true;
     ui.loginError = '';
     renderApp();
 
     try {
-      const res = await loginWithEmailPassword(email, password);
+      const res = await loginAdminWithPassword(password);
       ui.loginBusy = false;
-      if (res.role !== 'admin') {
-        await logoutAccount();
-        ui.loginError = 'Admin authorization required to access the Admin Panel.';
-        renderApp();
-        return;
-      }
-      showToast('Admin Panel unlocked');
+      showToast(res.cloudSynced ? 'Admin Panel unlocked (Cloud Sync Live)' : 'Admin Panel unlocked');
       navigateTo({ screen: 'admin', adminTab: 'overview' }, { replace: true });
     } catch (err) {
       ui.loginBusy = false;
       const code = String(err?.code || err?.message || '');
-      if (code.includes('wrong-password') || code.includes('invalid-credential') || code.includes('user-not-found') || code.includes('INVALID_LOGIN_CREDENTIALS') || code.includes('invalid-email')) {
-        ui.loginError = 'Invalid Admin username/email or password.';
-      } else if (code === 'ACCOUNT_INACTIVE' || code === 'NO_ACCOUNT_RECORD' || code === 'INVALID_ROLE_MAPPING') {
-        ui.loginError = 'Your account is inactive or lacks Admin authorization.';
-      } else if (code.includes('too-many-requests')) {
-        ui.loginError = 'Too many attempts. Please wait before trying again.';
+      if (code === 'INVALID_ADMIN_PASSWORD' || code === 'PASSWORD_REQUIRED') {
+        ui.loginError = 'Incorrect Admin password. Please enter the correct password.';
       } else {
-        ui.loginError = 'Verification failed. Check your network and credentials.';
+        ui.loginError = 'Unable to unlock Admin Panel. Please try again.';
       }
       renderApp();
     }

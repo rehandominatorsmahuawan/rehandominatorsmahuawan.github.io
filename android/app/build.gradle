@@ -7,8 +7,8 @@ android {
         applicationId "com.rdm.official"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "1.1.0"
+        versionCode 3
+        versionName "1.2.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,8 +16,24 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        rdmShared {
+            storeFile file(System.getenv("RDM_KEYSTORE_PATH") ?: "rdm-signing.p12")
+            storePassword System.getenv("RDM_KEYSTORE_PASSWORD") ?: "rdmofficial2026"
+            keyAlias System.getenv("RDM_KEY_ALIAS") ?: "rdmkey"
+            keyPassword System.getenv("RDM_KEY_PASSWORD") ?: "rdmofficial2026"
+            storeType System.getenv("RDM_KEYSTORE_TYPE") ?: "PKCS12"
+            enableV1Signing true
+            enableV2Signing true
+            enableV3Signing true
+        }
+    }
     buildTypes {
+        debug {
+            signingConfig signingConfigs.rdmShared
+        }
         release {
+            signingConfig signingConfigs.rdmShared
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
