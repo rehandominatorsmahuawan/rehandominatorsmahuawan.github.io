@@ -32,13 +32,13 @@ if (!entryJs || !entryCss) {
 }
 
 const rootHtml = `<!doctype html>
-<html lang="en" data-theme="azure">
+<html lang="en" data-web-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#F2F7FD" id="rdmThemeMeta">
+  <meta name="theme-color" content="#FFFFFF" id="rdmThemeMeta">
   <title>RDM Official | Rehan Dominators Mahuawan (RDM) — Cricket Team, Gopalganj Bihar</title>
-  <meta name="description" content="Official cricket team website &amp; app for Rehan Dominators Mahuawan (RDM), Gopalganj, Bihar — featuring the squad, match centre, team records, tournaments, playing XI, honours, gallery, and updates.">
+  <meta name="description" content="Official cricket club website for Rehan Dominators Mahuawan (RDM), Gopalganj, Bihar — featuring the squad, match centre, team records, tournaments, playing XI, honours, gallery, and updates.">
   <meta name="keywords" content="Rehan Dominators Mahuawan, RDM Mahuawan, RDM Cricket Team, Rehan Dominators, Mahuawan Cricket Team, Gopalganj Cricket Team, Bihar Cricket Team, Rehan Akhtar, RDM Official">
   <meta name="author" content="Rehan Dominators Mahuawan">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -55,14 +55,14 @@ const rootHtml = `<!doctype html>
 
   <meta property="og:type" content="website">
   <meta property="og:title" content="RDM Official | Rehan Dominators Mahuawan (RDM)">
-  <meta property="og:description" content="Official cricket team website &amp; app for Rehan Dominators Mahuawan (RDM) · Mahuawan · Gopalganj · Bihar">
+  <meta property="og:description" content="Official cricket club website for Rehan Dominators Mahuawan (RDM) · Mahuawan · Gopalganj · Bihar">
   <meta property="og:url" content="https://rehandominatorsmahuawan.github.io/">
   <meta property="og:image" content="assets/rdm-logo.png">
   <meta property="og:site_name" content="Rehan Dominators Mahuawan">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="RDM Official | Rehan Dominators Mahuawan (RDM)">
-  <meta name="twitter:description" content="Official Cricket Team · Mahuawan · Gopalganj · Bihar">
+  <meta name="twitter:description" content="Official Cricket Club · Mahuawan · Gopalganj · Bihar">
   <meta name="twitter:image" content="assets/rdm-logo.png">
 
   <script type="application/ld+json">
@@ -80,7 +80,7 @@ const rootHtml = `<!doctype html>
     "@type": "SportsTeam",
     "name": "Rehan Dominators Mahuawan",
     "sport": "Cricket",
-    "description": "Official cricket team from Mahuawan, Gopalganj, Bihar.",
+    "description": "Official cricket club from Mahuawan, Gopalganj, Bihar.",
     "location": { "@type": "Place", "name": "Mahuawan, Gopalganj, Bihar, India" },
     "url": "https://rehandominatorsmahuawan.github.io/",
     "logo": "assets/rdm-logo.png"
@@ -89,17 +89,11 @@ const rootHtml = `<!doctype html>
   <script>
     (function(){
       try {
-        var t = localStorage.getItem('rdm-app-theme') || 'azure';
-        if (t === 'turf') {
-          t = 'azure';
-          localStorage.setItem('rdm-app-theme', 'azure');
-        }
-        if (!/^(azure|crimson|daylight|night)$/.test(t)) t = 'azure';
-        document.documentElement.setAttribute('data-theme', t);
+        var t = localStorage.getItem('rdm-web-theme') || 'light';
+        if (!/^(light|dark)$/.test(t)) t = 'light';
+        document.documentElement.setAttribute('data-web-theme', t);
         var meta = document.getElementById('rdmThemeMeta');
-        if (meta) {
-          meta.content = t === 'night' ? '#071224' : (t === 'daylight' ? '#F8FAFC' : (t === 'crimson' ? '#FCF7F7' : '#F3F7FD'));
-        }
+        if (meta) meta.content = t === 'dark' ? '#0B0E14' : '#FFFFFF';
       } catch (e) {}
     })();
   </script>
@@ -109,8 +103,8 @@ const rootHtml = `<!doctype html>
   <link rel="stylesheet" crossorigin href="./web-app/${entryCss}">
 </head>
 <body>
-  <div id="rdmAppRoot" class="appShell">
-    <main id="appViewport" class="appViewport" aria-live="polite"></main>
+  <div id="rdmSiteRoot" class="siteShell">
+    <main id="siteViewport" class="siteViewport" aria-live="polite"></main>
   </div>
 
   <div id="rdmToast" class="rdmToast" role="status" aria-live="polite"></div>

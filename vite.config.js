@@ -82,7 +82,7 @@ function copyWebAssetsPlugin() {
       for (const dir of safeStaticDirs) {
         copyDir(path.resolve(process.cwd(), dir), path.join(outDir, dir));
       }
-      const appManifest = path.resolve(process.cwd(), 'android-web/site.webmanifest');
+      const appManifest = path.resolve(process.cwd(), 'web/site.webmanifest');
       if (fs.existsSync(appManifest)) {
         fs.copyFileSync(appManifest, path.join(outDir, 'site.webmanifest'));
       }
@@ -128,7 +128,7 @@ function rdmPortalPlugin() {
 }
 
 export default defineConfig({
-  root: path.resolve(process.cwd(), 'android-web'),
+  root: path.resolve(process.cwd(), 'web'),
   publicDir: false,
   base: './',
   server: {
