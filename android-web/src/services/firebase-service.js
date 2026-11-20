@@ -31,6 +31,9 @@ export const state = {
   role: 'guest', // 'guest' | 'player' | 'admin'
   playerId: null,
   brandLogo: CLUB_INFO.logoPath,
+  apkDownloadUrl: CLUB_INFO.apkDownloadUrl,
+  apkReleasesUrl: CLUB_INFO.apkReleasesUrl,
+  appVersion: CLUB_INFO.appVersion,
   players: SEED_PLAYERS.map(p => ({ ...p })),
   matches: [],
   news: [],
@@ -99,8 +102,16 @@ function mergeSeedPlayers(remoteDocs, profileDocs, uid) {
 
   list.sort((a, b) => (a.order || 999) - (b.order || 999));
 
-  // Apply PlayerProfiles (preferring current auth UID profile doc last when matching)
+  // Apply PlayerProfiles in chronological order so the most recent update (Player or Admin) wins
+  const profileTime = pr => {
+    if (typeof pr?.updatedMs === 'number') return pr.updatedMs;
+    if (typeof pr?.updatedAt?.toMillis === 'function') return pr.updatedAt.toMillis();
+    if (typeof pr?.updatedAt?.seconds === 'number') return pr.updatedAt.seconds * 1000;
+    return 0;
+  };
   const sortedProfiles = [...profileDocs].sort((a, b) => {
+    const dt = profileTime(a) - profileTime(b);
+    if (dt !== 0) return dt;
     const aMine = uid && a._docId === uid ? 1 : 0;
     const bMine = uid && b._docId === uid ? 1 : 0;
     return aMine - bMine;
@@ -224,8 +235,17 @@ export function subscribeClubDataRealtime(onUpdate) {
           const bData = snap.data() || {};
           if (bData.logo && !isLegacyBrokenImage(bData.logo)) {
             state.brandLogo = bData.logo;
-            trigger();
           }
+          if (bData.apkDownloadUrl && /^https?:\/\//i.test(String(bData.apkDownloadUrl).trim())) {
+            state.apkDownloadUrl = String(bData.apkDownloadUrl).trim();
+          }
+          if (bData.apkReleasesUrl && /^https?:\/\//i.test(String(bData.apkReleasesUrl).trim())) {
+            state.apkReleasesUrl = String(bData.apkReleasesUrl).trim();
+          }
+          if (bData.appVersion) {
+            state.appVersion = String(bData.appVersion).trim();
+          }
+          trigger();
         }
       },
       () => {}
@@ -305,6 +325,15 @@ export async function loadClubData() {
         const bData = bSnap.data() || {};
         if (bData.logo && !isLegacyBrokenImage(bData.logo)) {
           state.brandLogo = bData.logo;
+        }
+        if (bData.apkDownloadUrl && /^https?:\/\//i.test(String(bData.apkDownloadUrl).trim())) {
+          state.apkDownloadUrl = String(bData.apkDownloadUrl).trim();
+        }
+        if (bData.apkReleasesUrl && /^https?:\/\//i.test(String(bData.apkReleasesUrl).trim())) {
+          state.apkReleasesUrl = String(bData.apkReleasesUrl).trim();
+        }
+        if (bData.appVersion) {
+          state.appVersion = String(bData.appVersion).trim();
         }
       }
     } catch (_) {
@@ -495,6 +524,7 @@ export async function savePlayerPortalProfile(targetPlayerId, updates) {
     nick: String(updates.nick ?? player.nick ?? '').trim(),
     bio: String(updates.bio ?? player.bio ?? '').trim(),
     socials: cleanSocials,
+    updatedMs: Date.now(),
     updatedAt: serverStamp()
   };
 
@@ -572,12 +602,30 @@ export async function adminUpdatePlayer(playerId, fields) {
     jersey: playerPayload.jersey,
     nick: String(fields.nick ?? target?.nick ?? '').trim(),
     bio: String(fields.bio ?? target?.bio ?? '').trim(),
+    updatedMs: Date.now(),
     updatedAt: serverStamp()
   };
   if ('image' in fields && fields.image !== undefined) {
     profPayload.image = fields.image;
   }
   await db.collection('PlayerProfiles').doc(profileDocId).set(profPayload, { merge: true });
+  await loadClubData();
+}
+
+export async function adminSaveBrandSettings(fields) {
+  const db = getDB();
+  if (!db || !isVerifiedAdmin()) throw new Error('ADMIN_REQUIRED');
+  const payload = {
+    appVersion: String(fields.appVersion || CLUB_INFO.appVersion).trim(),
+    apkDownloadUrl: String(fields.apkDownloadUrl || CLUB_INFO.apkDownloadUrl).trim(),
+    apkReleasesUrl: String(fields.apkReleasesUrl || CLUB_INFO.apkReleasesUrl).trim(),
+    updatedMs: Date.now(),
+    updatedAt: serverStamp()
+  };
+  if (fields.logo) {
+    payload.logo = String(fields.logo);
+  }
+  await db.collection('BrandSettings').doc('main').set(payload, { merge: true });
   await loadClubData();
 }
 

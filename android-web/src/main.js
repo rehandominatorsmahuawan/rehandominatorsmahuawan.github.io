@@ -10,6 +10,7 @@ import { PORTAL_ENABLED, resolvePortalKey } from 'virtual:rdm-portal';
 import {
   adminDeleteDoc,
   adminRemovePlayer,
+  adminSaveBrandSettings,
   adminSetPinned,
   adminUpdatePlayer,
   adminUpsertDoc,
@@ -214,6 +215,18 @@ function currentLogo() {
   return state.brandLogo || CLUB_INFO.logoPath;
 }
 
+function currentApkUrl() {
+  return safeExternalUrl(state.apkDownloadUrl) || CLUB_INFO.apkDownloadUrl;
+}
+
+function currentReleasesUrl() {
+  return safeExternalUrl(state.apkReleasesUrl) || CLUB_INFO.apkReleasesUrl;
+}
+
+function currentAppVersion() {
+  return state.appVersion || CLUB_INFO.appVersion || 'v1.0';
+}
+
 function avatarAttrs(imgUrl) {
   const resolved = resolvePlayerImage(imgUrl, currentLogo());
   const isCrest = resolved === currentLogo() || resolved === CLUB_INFO.logoPath;
@@ -369,6 +382,8 @@ function renderWebFooter() {
           <button type="button" class="webFooterLink" data-public-tab="gallery">Gallery</button>
           <button type="button" class="webFooterLink" data-open-subpage="records">Records</button>
           <button type="button" class="webFooterLink" data-open-subpage="honours">Honours</button>
+          <button type="button" class="webFooterLink" data-open-subpage="download">Android App</button>
+          <button type="button" class="webFooterLink" data-ext-url="${escHtml(currentApkUrl())}">Download APK ↗</button>
           <button type="button" class="webFooterLink" data-ext-url="${escHtml(CLUB_INFO.captainContactUrl)}">WhatsApp Captain ↗</button>
         </div>
       </div>
@@ -816,13 +831,14 @@ function renderMoreTab() {
     <section class="surfaceCard">
       <div class="sectionHeader">
         <div>
-          <span class="sectionKicker">Device &amp; Sync</span>
-          <h3 class="sectionTitle" style="font-size:1.22rem;">App Preferences</h3>
-          <p class="sectionSub">${isNativePlatform() ? 'RDM Official Android App' : 'RDM Official Web &amp; Installable App'}</p>
+          <span class="sectionKicker">Android App · ${escHtml(currentAppVersion())}</span>
+          <h3 class="sectionTitle" style="font-size:1.22rem;">App &amp; Sync</h3>
+          <p class="sectionSub">${isNativePlatform() ? 'RDM Official Android App · Live Cloud Sync Active' : 'Download the Android APK directly from GitHub or sync live team data'}</p>
         </div>
         <div class="rowActions">
+          <button type="button" class="btnPrimary btnSm" data-ext-url="${escHtml(currentApkUrl())}">Download APK ↗</button>
           <button type="button" class="btnSecondary btnSm" id="btnRefreshClub">Sync Team Data</button>
-          ${showWebInstall ? `<button type="button" class="btnPrimary btnSm" id="btnInstallWebApp">Install App</button>` : ''}
+          ${showWebInstall ? `<button type="button" class="btnSecondary btnSm" id="btnInstallWebApp">Install Web App</button>` : ''}
         </div>
       </div>
     </section>
@@ -1004,15 +1020,17 @@ function renderTeamSubpage() {
     const showWebInstall = canInstallWebPwa();
     body = `
       <div class="surfaceCard">
-        <span class="sectionKicker">Android App</span>
-        <h3 class="sectionTitle" style="font-size:1.35rem;margin-bottom:8px;">RDM Official Mobile Experience</h3>
+        <span class="sectionKicker">Android APK · ${escHtml(currentAppVersion())}</span>
+        <h3 class="sectionTitle" style="font-size:1.35rem;margin-bottom:8px;">RDM Official Android App</h3>
         <p style="margin:0 0 14px;color:var(--ink-secondary);font-size:0.9rem;">
           ${isNativePlatform()
-            ? 'You are running the native RDM Official Android app.'
-            : 'Install RDM Official on your Android phone via browser Install App, or compile the native Android APK using the Capacitor Android project.'}
+            ? 'You are running the native RDM Official Android App. All squad profiles, fixtures, news, and updates sync live with the website.'
+            : 'Download the latest RDM Official Android APK directly from GitHub Releases. Every update posted on the website syncs live inside the Android App.'}
         </p>
         <div style="display:flex;flex-wrap:wrap;gap:10px;">
-          ${showWebInstall ? `<button type="button" class="btnPrimary btnSm" id="btnInstallWebApp">Install Web App</button>` : ''}
+          <button type="button" class="btnPrimary btnSm" data-ext-url="${escHtml(currentApkUrl())}">${isNativePlatform() ? 'Download Latest APK ↗' : 'Download Android APK ↗'}</button>
+          <button type="button" class="btnSecondary btnSm" data-ext-url="${escHtml(currentReleasesUrl())}">GitHub Releases ↗</button>
+          ${showWebInstall ? `<button type="button" class="btnSecondary btnSm" id="btnInstallWebApp">Install Web App</button>` : ''}
           <button type="button" class="btnSecondary btnSm" data-public-tab="home">Back to Home</button>
         </div>
       </div>
@@ -1241,8 +1259,21 @@ function renderAdminDashboard() {
           <button type="button" class="btnSecondary btnSm" data-admin-action="addGallery">+ Gallery Photo</button>
           <button type="button" class="btnSecondary btnSm" data-admin-action="addLineup">+ Playing XI</button>
           <button type="button" class="btnSecondary btnSm" data-admin-action="addHonour">+ Team Honour</button>
+          <button type="button" class="btnSecondary btnSm" data-admin-action="addRecord">+ Team Record</button>
           <button type="button" class="btnSecondary btnSm" data-admin-action="addTournament">+ Tournament</button>
           <button type="button" class="btnSecondary btnSm" data-admin-action="addSocial">+ Social Link</button>
+          <button type="button" class="btnSecondary btnSm" data-admin-action="editAppConfig">App &amp; APK Settings</button>
+        </div>
+      </div>
+
+      <div class="surfaceCard">
+        <div class="sectionHeader" style="margin-bottom:8px;">
+          <div>
+            <span class="sectionKicker">Live Cross-Platform Sync</span>
+            <h3 class="sectionTitle" style="font-size:1.22rem;">Website &amp; Android App Connected</h3>
+            <p class="sectionSub">Every change published here saves to Firebase and updates both the Website and Android APK (${escHtml(currentAppVersion())}) in real time.</p>
+          </div>
+          <button type="button" class="btnSecondary btnSm" data-admin-action="editAppConfig">Configure APK</button>
         </div>
       </div>
     `;
@@ -1310,6 +1341,28 @@ function renderAdminDashboard() {
           </div>
         `).join('') : '<p class="sectionSub">No lineups yet.</p>'}
       </div>
+
+      <div class="surfaceCard">
+        <div class="sectionHeader" style="margin-bottom:10px;">
+          <h3 class="sectionTitle" style="font-size:1.25rem;">Tournaments &amp; Records (${state.tournaments.length + state.records.length})</h3>
+          <div style="display:flex;gap:6px;">
+            <button type="button" class="btnPrimary btnSm" data-admin-action="addTournament">+ Tournament</button>
+            <button type="button" class="btnSecondary btnSm" data-admin-action="addRecord">+ Record</button>
+          </div>
+        </div>
+        ${[
+          ...state.tournaments.map(t => ({ _col: 'Tournaments', _docId: t._docId, title: t.name || 'Tournament', sub: [t.season, t.status, t.position].filter(Boolean).join(' · ') })),
+          ...state.records.map(r => ({ _col: 'TeamRecords', _docId: r._docId, title: r.title || 'Record', sub: [r.value, r.player, r.season].filter(Boolean).join(' · ') }))
+        ].map(item => `
+          <div class="listRowItem">
+            <div style="min-width:0;">
+              <strong style="display:block;font-size:0.9rem;">${escHtml(formatTextCase(item.title))}</strong>
+              <span style="font-size:0.75rem;color:var(--ink-muted);">${escHtml(item._col)}${item.sub ? ' · ' + escHtml(formatTextCase(item.sub)) : ''}</span>
+            </div>
+            <button type="button" class="btnDanger btnSm" data-admin-del="${escHtml(item._col)}:${escHtml(item._docId)}">Delete</button>
+          </div>
+        `).join('') || '<p class="sectionSub">No tournaments or records added yet.</p>'}
+      </div>
     `;
   } else {
     tabBody = `
@@ -1333,6 +1386,22 @@ function renderAdminDashboard() {
             </div>
           </div>
         `).join('') || '<p class="sectionSub">No news or updates yet.</p>'}
+      </div>
+
+      <div class="surfaceCard">
+        <div class="sectionHeader" style="margin-bottom:10px;">
+          <h3 class="sectionTitle" style="font-size:1.25rem;">Team Honours (${state.honours.length})</h3>
+          <button type="button" class="btnPrimary btnSm" data-admin-action="addHonour">+ Honour</button>
+        </div>
+        ${state.honours.length ? state.honours.map(h => `
+          <div class="listRowItem">
+            <div style="min-width:0;">
+              <strong style="display:block;font-size:0.9rem;">${escHtml(h.year || '')} · ${escHtml(formatTextCase(h.title || 'Honour'))}</strong>
+              <span style="font-size:0.75rem;color:var(--ink-muted);">${escHtml(formatTextCase(h.sub || ''))}</span>
+            </div>
+            <button type="button" class="btnDanger btnSm" data-admin-del="Honours:${escHtml(h._docId)}">Delete</button>
+          </div>
+        `).join('') : '<p class="sectionSub">No honours yet.</p>'}
       </div>
 
       <div class="surfaceCard">
@@ -1371,6 +1440,17 @@ function renderAdminDashboard() {
             </div>
           </div>
         `).join('')}
+      </div>
+
+      <div class="surfaceCard">
+        <div class="sectionHeader" style="margin-bottom:8px;">
+          <div>
+            <h3 class="sectionTitle" style="font-size:1.25rem;">App &amp; GitHub APK Settings</h3>
+            <p class="sectionSub">Version: ${escHtml(currentAppVersion())}</p>
+          </div>
+          <button type="button" class="btnPrimary btnSm" data-admin-action="editAppConfig">Edit APK Links</button>
+        </div>
+        <p style="margin:0;font-size:0.78rem;color:var(--ink-muted);word-break:break-all;">APK: ${escHtml(currentApkUrl())}</p>
       </div>
     `;
   }
@@ -2173,6 +2253,47 @@ function handleAdminCreateAction(action) {
         await adminUpsertDoc('Tournaments', null, { ...d, venue: d.venueName, createdMs: Date.now() });
         renderApp();
         showToast('Tournament added');
+      }
+    });
+  }
+
+  if (action === 'addRecord') {
+    return openFormSheet({
+      title: 'Add Team Record',
+      fields: [
+        { name: 'title', label: 'Record Title', placeholder: 'e.g. Highest Team Score', required: true },
+        { name: 'value', label: 'Record Value', placeholder: 'e.g. 214/3 (20 Ov)', required: true },
+        { name: 'player', label: 'Player Name (Optional)' },
+        { name: 'season', label: 'Season / Year', value: String(new Date().getFullYear()) }
+      ],
+      onSubmit: async d => {
+        await adminUpsertDoc('TeamRecords', null, { ...d, createdMs: Date.now() });
+        renderApp();
+        showToast('Record saved');
+      }
+    });
+  }
+
+  if (action === 'editAppConfig') {
+    return openFormSheet({
+      title: 'App & GitHub APK Settings',
+      subtitle: 'Changes sync live to both the Website and Android App',
+      fields: [
+        { name: 'appVersion', label: 'App Version', value: currentAppVersion(), required: true },
+        { name: 'apkDownloadUrl', label: 'Direct APK Download URL', value: currentApkUrl(), required: true },
+        { name: 'apkReleasesUrl', label: 'GitHub Releases Page URL', value: currentReleasesUrl(), required: true },
+        { name: 'logoPhoto', label: 'Update Team Logo (Optional)', type: 'file' }
+      ],
+      onSubmit: async d => {
+        const logo = d.logoPhoto ? await compressImageFile(d.logoPhoto, 600, 0.8) : '';
+        await adminSaveBrandSettings({
+          appVersion: d.appVersion,
+          apkDownloadUrl: d.apkDownloadUrl,
+          apkReleasesUrl: d.apkReleasesUrl,
+          logo
+        });
+        renderApp();
+        showToast('App & APK settings synced');
       }
     });
   }

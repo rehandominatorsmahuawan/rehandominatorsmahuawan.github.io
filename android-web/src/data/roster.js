@@ -10,6 +10,10 @@ export const CLUB_INFO = {
   subtitle: 'THE HOME OF REHAN DOMINATORS MAHUAWAN',
   captainContactUrl: 'https://wa.me/918521254605',
   captainPhoneDisplay: '+91 85212 54605',
+  appVersion: 'v1.0',
+  apkDownloadUrl: 'https://github.com/RehanDominatorsMahuawan/RehanDominatorsMahuawan.github.io/releases/latest/download/RDM-Official.apk',
+  apkReleasesUrl: 'https://github.com/RehanDominatorsMahuawan/RehanDominatorsMahuawan.github.io/releases/latest',
+  websiteUrl: 'https://rehandominatorsmahuawan.github.io/',
   logoPath: 'assets/rdm-logo.png',
   heroImagePath: 'src/assets/images/hero_cricket_stadium_1794890926411.jpg',
   heritageImagePath: 'src/assets/images/club_heritage_banner_1794890926814.jpg'
