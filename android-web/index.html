@@ -17,11 +17,15 @@
     (function(){
       try {
         var t = localStorage.getItem('rdm-app-theme') || 'azure';
-        if (!/^(azure|daylight|turf|night)$/.test(t)) t = 'azure';
+        if (t === 'turf') {
+          t = 'azure';
+          localStorage.setItem('rdm-app-theme', 'azure');
+        }
+        if (!/^(azure|crimson|daylight|night)$/.test(t)) t = 'azure';
         document.documentElement.setAttribute('data-theme', t);
         var meta = document.getElementById('rdmThemeMeta');
         if (meta) {
-          meta.content = t === 'night' ? '#071224' : (t === 'daylight' ? '#FFFFFF' : (t === 'turf' ? '#F4F9F6' : '#F2F7FD'));
+          meta.content = t === 'night' ? '#071224' : (t === 'daylight' ? '#F8FAFC' : (t === 'crimson' ? '#FCF7F7' : '#F3F7FD'));
         }
       } catch (e) {}
       try {
@@ -52,7 +56,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=JetBrains+Mono:wght@500;600;700&family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./src/styles/app.css">
 </head>
 <body>

@@ -177,20 +177,20 @@ export function openThemeSheet({ currentTheme, onSelectTheme }) {
     {
       id: 'azure',
       name: 'Sky Azure',
-      desc: 'Official Light Blue & White team palette',
-      swatches: ['#F2F7FD', '#FFFFFF', '#0958D9']
+      desc: 'Official Royal Blue & crisp white palette',
+      swatches: ['#F3F7FD', '#FFFFFF', '#0958D9']
+    },
+    {
+      id: 'crimson',
+      name: 'Dominator Crimson',
+      desc: 'Club crest crimson red & clean white',
+      swatches: ['#FCF7F7', '#FFFFFF', '#C61D2E']
     },
     {
       id: 'daylight',
       name: 'Stadium Daylight',
-      desc: 'Crisp high-clarity bright white canvas',
-      swatches: ['#FFFFFF', '#F6F9FC', '#1D4ED8']
-    },
-    {
-      id: 'turf',
-      name: 'Emerald Turf',
-      desc: 'Championship cricket pitch green & white',
-      swatches: ['#F4F9F6', '#FFFFFF', '#0D7A4E']
+      desc: 'Minimal high-clarity bright white canvas',
+      swatches: ['#F8FAFC', '#FFFFFF', '#1D4ED8']
     },
     {
       id: 'night',

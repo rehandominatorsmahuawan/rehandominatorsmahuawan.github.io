@@ -1,3 +1,16 @@
+import '@fontsource/plus-jakarta-sans/400.css';
+import '@fontsource/plus-jakarta-sans/500.css';
+import '@fontsource/plus-jakarta-sans/600.css';
+import '@fontsource/plus-jakarta-sans/700.css';
+import '@fontsource/plus-jakarta-sans/800.css';
+import '@fontsource/outfit/600.css';
+import '@fontsource/outfit/700.css';
+import '@fontsource/outfit/800.css';
+import '@fontsource/barlow-condensed/700.css';
+import '@fontsource/barlow-condensed/800.css';
+import '@fontsource/jetbrains-mono/500.css';
+import '@fontsource/jetbrains-mono/600.css';
+import '@fontsource/jetbrains-mono/700.css';
 import {
   APP_BUILD_INFO,
   CLUB_INFO,
@@ -55,9 +68,9 @@ import {
 } from './ui/components.js';
 
 const THEMES = [
-  { id: 'azure', label: 'Sky Azure', desc: 'Light Blue & White', swatches: ['#F2F7FD', '#FFFFFF', '#0958D9'] },
-  { id: 'daylight', label: 'Stadium Daylight', desc: 'Crisp High-Key White', swatches: ['#FFFFFF', '#F6F9FC', '#1D4ED8'] },
-  { id: 'turf', label: 'Emerald Turf', desc: 'Cricket Pitch Green', swatches: ['#F4F9F6', '#FFFFFF', '#0D7A4E'] },
+  { id: 'azure', label: 'Sky Azure', desc: 'Official Royal Blue & White', swatches: ['#F3F7FD', '#FFFFFF', '#0958D9'] },
+  { id: 'crimson', label: 'Dominator Crimson', desc: 'Club Crest Red & White', swatches: ['#FCF7F7', '#FFFFFF', '#C61D2E'] },
+  { id: 'daylight', label: 'Stadium Daylight', desc: 'Crisp High-Key White', swatches: ['#F8FAFC', '#FFFFFF', '#1D4ED8'] },
   { id: 'night', label: 'Floodlight Night', desc: 'Deep Stadium Navy', swatches: ['#071224', '#0E1F3A', '#38BDF8'] }
 ];
 
@@ -198,6 +211,10 @@ function stepBackOne() {
 function loadInitialTheme() {
   try {
     const saved = localStorage.getItem('rdm-app-theme') || 'azure';
+    if (saved === 'turf') {
+      localStorage.setItem('rdm-app-theme', 'azure');
+      return 'azure';
+    }
     return THEMES.some(t => t.id === saved) ? saved : 'azure';
   } catch {
     return 'azure';
@@ -436,7 +453,7 @@ function renderHomeTab() {
 
     <section class="heroBannerCard">
       <div class="heroPhotoLayer" aria-hidden="true">
-        <img src="${escHtml(CLUB_INFO.heritageImagePath)}" alt="" referrerPolicy="no-referrer">
+        <img src="${escHtml(CLUB_INFO.heroImagePath)}" alt="" referrerPolicy="no-referrer">
       </div>
       <div class="heroBannerInner">
         <div class="heroBannerTop">
@@ -1013,7 +1030,7 @@ function renderTeamSubpage() {
     body = `
       <div class="surfaceCard">
         <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
-          <img src="${escHtml(currentLogo())}" alt="RDM Logo" referrerPolicy="no-referrer" style="width:68px;height:68px;border-radius:50%;background:#FFFFFF;border:1px solid var(--border-strong);padding:4px;object-fit:contain;">
+          <img src="${escHtml(currentLogo())}" alt="RDM Logo" referrerPolicy="no-referrer" style="width:68px;height:68px;border-radius:50%;background:#FFFFFF;border:1.5px solid var(--border-strong);object-fit:cover;flex-shrink:0;">
           <div>
             <span class="sectionKicker">Est. ${escHtml(CLUB_INFO.founded)} · ${escHtml(CLUB_INFO.locationLabel)}</span>
             <h3 class="sectionTitle">${escHtml(formatTextCase(CLUB_INFO.orgName))}</h3>

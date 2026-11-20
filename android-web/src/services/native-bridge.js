@@ -43,9 +43,9 @@ export async function triggerWebPwaInstall() {
 
 export async function syncStatusBarTheme(themeKey = 'azure') {
   const colorMap = {
-    azure: '#F2F7FD',
-    daylight: '#FFFFFF',
-    turf: '#F4F9F6',
+    azure: '#F3F7FD',
+    crimson: '#FCF7F7',
+    daylight: '#F8FAFC',
     night: '#071224'
   };
   const color = colorMap[themeKey] || colorMap.azure;
