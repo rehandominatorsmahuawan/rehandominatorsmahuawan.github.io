@@ -6,6 +6,7 @@ function copyWebAssetsPlugin() {
   const safeStaticFiles = [
     'firebase-config.js',
     'sw.js',
+    'version.json',
     'apple-touch-icon.png',
     'pwa-192x192.png',
     'pwa-512x512.png',
@@ -64,7 +65,7 @@ function copyWebAssetsPlugin() {
         const ext = path.extname(assetPath).toLowerCase();
         res.statusCode = 200;
         res.setHeader('Content-Type', mimeTypes[ext] || 'application/octet-stream');
-        if (path.basename(assetPath) === 'sw.js') {
+        if (path.basename(assetPath) === 'sw.js' || path.basename(assetPath) === 'version.json') {
           res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
         }
         fs.createReadStream(assetPath).pipe(res);
@@ -104,6 +105,7 @@ function rdmPortalPlugin() {
       return `
         const ADMIN_HASH = ${JSON.stringify(ADMIN_HASH)};
         const PLAYER_HASHES = ${JSON.stringify(PLAYER_HASHES)};
+        export const ADMIN_CONSOLE_ENABLED = true;
         export const PORTAL_ENABLED = true;
         async function sha256Hex(text) {
           const buf = new TextEncoder().encode(String(text || '').trim());

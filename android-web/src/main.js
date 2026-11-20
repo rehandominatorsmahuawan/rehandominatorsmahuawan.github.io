@@ -1,4 +1,5 @@
 import {
+  APP_BUILD_INFO,
   CLUB_INFO,
   PLAYER_CODES,
   escHtml,
@@ -6,7 +7,7 @@ import {
   resolvePlayerImage,
   safeExternalUrl
 } from './data/roster.js';
-import { PORTAL_ENABLED, resolvePortalKey } from 'virtual:rdm-portal';
+import { ADMIN_CONSOLE_ENABLED, PORTAL_ENABLED, resolvePortalKey } from 'virtual:rdm-portal';
 import {
   adminDeleteDoc,
   adminRemovePlayer,
@@ -15,7 +16,9 @@ import {
   adminUpdatePlayer,
   adminUpsertDoc,
   canEditPlayerPortal,
+  checkRemoteAppVersion,
   compressImageFile,
+  evaluateAvailableUpdate,
   isVerifiedAdmin,
   loadClubData,
   loginWithEmailPassword,
@@ -29,6 +32,7 @@ import {
 } from './services/firebase-service.js';
 import {
   canInstallWebPwa,
+  downloadApkFile,
   exitNativeApp,
   hideNativeSplash,
   initNativeShell,
@@ -41,6 +45,7 @@ import {
   closeTopOverlay,
   downloadPlayerProfileCard,
   hasOpenOverlay,
+  openAppUpdateSheet,
   openAvatarCropper,
   openConfirmSheet,
   openFormSheet,
@@ -122,7 +127,7 @@ function applyRouteSnapshot(r) {
 
 function navigateTo(patch, { push = true, replace = false } = {}) {
   if (patch.screen === 'admin') {
-    if (!PORTAL_ENABLED || ui.portalMode !== 'admin') {
+    if (!ADMIN_CONSOLE_ENABLED) {
       patch = { screen: 'public', publicTab: 'home' };
     } else if (!isVerifiedAdmin()) {
       patch = { ...patch, screen: 'portalAuth' };
@@ -131,7 +136,7 @@ function navigateTo(patch, { push = true, replace = false } = {}) {
   if (patch.screen === 'playerPortal' && (!PORTAL_ENABLED || ui.portalMode !== 'player' || !ui.portalPlayerId)) {
     patch = { screen: 'public', publicTab: 'home' };
   }
-  if (patch.screen === 'portalAuth' && (!PORTAL_ENABLED || ui.portalMode !== 'admin')) {
+  if (patch.screen === 'portalAuth' && !ADMIN_CONSOLE_ENABLED) {
     patch = { screen: 'public', publicTab: 'home' };
   }
 
@@ -146,6 +151,7 @@ function navigateTo(patch, { push = true, replace = false } = {}) {
       } catch (_) {}
     } else if (push || navStack.length === 0) {
       navStack.push(next);
+      if (navStack.length > 24) navStack.shift();
       try {
         window.history.pushState({ rdmIdx: navStack.length - 1 }, '', buildRouteHash(next));
       } catch (_) {}
@@ -224,7 +230,7 @@ function currentReleasesUrl() {
 }
 
 function currentAppVersion() {
-  return state.appVersion || CLUB_INFO.appVersion || 'v1.0';
+  return String(state.appVersion || APP_BUILD_INFO.versionName || CLUB_INFO.appVersion || '1.1.0').replace(/^v/i, '');
 }
 
 function avatarAttrs(imgUrl) {
@@ -323,11 +329,11 @@ function renderSideDrawer() {
     ['download', 'Get Android App']
   ];
 
-  const portalQuickBtn = (PORTAL_ENABLED && ui.portalMode === 'admin')
-    ? `<button type="button" class="btnPrimary btnSm btnFull" id="btnReturnPortal">Open Admin Portal</button>`
-    : (PORTAL_ENABLED && ui.portalMode === 'player' && ui.portalPlayerId)
-      ? `<button type="button" class="btnPrimary btnSm btnFull" id="btnReturnPortal">My Profile Control</button>`
-      : '';
+  const portalQuickBtn = (PORTAL_ENABLED && ui.portalMode === 'player' && ui.portalPlayerId)
+    ? `<button type="button" class="btnPrimary btnSm btnFull" id="btnReturnPortal">My Profile Control</button>`
+    : (ADMIN_CONSOLE_ENABLED
+      ? `<button type="button" class="btnSecondary btnSm btnFull" id="btnOpenAdminPortal">${isVerifiedAdmin() ? 'Open Admin Console' : 'Admin Panel'}</button>`
+      : '');
 
   return `
     <div class="drawerOverlay ${ui.drawerOpen ? 'open' : ''}" id="drawerOverlay" role="dialog" aria-modal="true" aria-hidden="${ui.drawerOpen ? 'false' : 'true'}" aria-label="Team navigation menu">
@@ -383,8 +389,8 @@ function renderWebFooter() {
           <button type="button" class="webFooterLink" data-open-subpage="records">Records</button>
           <button type="button" class="webFooterLink" data-open-subpage="honours">Honours</button>
           <button type="button" class="webFooterLink" data-open-subpage="download">Android App</button>
-          <button type="button" class="webFooterLink" data-ext-url="${escHtml(currentApkUrl())}">Download APK ↗</button>
           <button type="button" class="webFooterLink" data-ext-url="${escHtml(CLUB_INFO.captainContactUrl)}">WhatsApp Captain ↗</button>
+          ${ADMIN_CONSOLE_ENABLED ? `<button type="button" class="webFooterLink" id="btnFooterAdminPortal">Admin Panel</button>` : ''}
         </div>
       </div>
     </footer>
@@ -831,12 +837,12 @@ function renderMoreTab() {
     <section class="surfaceCard">
       <div class="sectionHeader">
         <div>
-          <span class="sectionKicker">Android App · ${escHtml(currentAppVersion())}</span>
+          <span class="sectionKicker">Official App · v${escHtml(currentAppVersion())}</span>
           <h3 class="sectionTitle" style="font-size:1.22rem;">App &amp; Sync</h3>
-          <p class="sectionSub">${isNativePlatform() ? 'RDM Official Android App · Live Cloud Sync Active' : 'Download the Android APK directly from GitHub or sync live team data'}</p>
+          <p class="sectionSub">${isNativePlatform() ? `Installed Build v${escHtml(APP_BUILD_INFO.versionName)} · Live Cloud Sync Active` : 'Sync live team data or open the Android App & Updates centre'}</p>
         </div>
         <div class="rowActions">
-          <button type="button" class="btnPrimary btnSm" data-ext-url="${escHtml(currentApkUrl())}">Download APK ↗</button>
+          <button type="button" class="btnPrimary btnSm" data-open-subpage="download">App &amp; Updates ›</button>
           <button type="button" class="btnSecondary btnSm" id="btnRefreshClub">Sync Team Data</button>
           ${showWebInstall ? `<button type="button" class="btnSecondary btnSm" id="btnInstallWebApp">Install Web App</button>` : ''}
         </div>
@@ -1006,30 +1012,43 @@ function renderTeamSubpage() {
   } else if (ui.morePage === 'about') {
     body = `
       <div class="surfaceCard">
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
-          <img src="${escHtml(currentLogo())}" alt="RDM Logo" referrerPolicy="no-referrer" style="width:64px;height:64px;border-radius:50%;background:#FFFFFF;border:1px solid var(--border-strong);padding:4px;object-fit:contain;">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
+          <img src="${escHtml(currentLogo())}" alt="RDM Logo" referrerPolicy="no-referrer" style="width:68px;height:68px;border-radius:50%;background:#FFFFFF;border:1px solid var(--border-strong);padding:4px;object-fit:contain;">
           <div>
+            <span class="sectionKicker">Est. ${escHtml(CLUB_INFO.founded)} · ${escHtml(CLUB_INFO.locationLabel)}</span>
             <h3 class="sectionTitle">${escHtml(formatTextCase(CLUB_INFO.orgName))}</h3>
-            <p class="sectionSub">Founded ${escHtml(CLUB_INFO.founded)} · ${escHtml(CLUB_INFO.location)}</p>
+            <p class="sectionSub" style="font-weight:700;color:var(--brand-blue);">${escHtml(CLUB_INFO.motto)}</p>
           </div>
         </div>
-        <p class="richText" style="margin:0;color:var(--ink-secondary);">${escHtml(CLUB_INFO.motto)} — Official cricket team app uniting the squad, fixtures, honours, and supporters of Rehan Dominators Mahuawan.</p>
+        <div style="display:flex;flex-direction:column;gap:14px;color:var(--ink-secondary);font-size:0.93rem;line-height:1.72;">
+          <p class="richText" style="margin:0;">Founded in 2024 in the cricket-loving village of Mahuawan in Gopalganj district, Bihar, Rehan Dominators Mahuawan (RDM) began with a clear vision: to turn raw grassroots cricket talent into a structured, fearless, and respected competitive side. What started on local grounds with lifelong friends quickly grew into one of the most organized and passionate village-to-district cricket units in the region.</p>
+          <p class="richText" style="margin:0;">At the heart of RDM is our founding philosophy — One Team, One Dream, One Domination. Every match day is built on brotherhood, respect for the game, disciplined training, and total commitment in all three departments. Whether defending a modest total under pressure or chasing targets in front of local supporters, every player wears the RDM crest with pride and accountability.</p>
+          <p class="richText" style="margin:0;">Guided on the field by Captain Rehan Alam (#45), Vice-Captain Saif Ali, and Wicketkeeper-Batsman Soaib Akhtar, our 17-member active roster blends explosive top-order stroke makers, dependable middle-order finishers, sharp all-rounders, and strike bowlers capable of turning any contest around. Together, the core squad has built an identity defined by teamwork and composure in crunch overs.</p>
+          <p class="richText" style="margin:0;">RDM’s competitive pedigree is marked by landmark achievements in regional tournaments — highlighted by lifting the Mahuawan Premier League (MPL) Championship Trophy in 2024 and finishing as MPL Runner-Up in 2025. Each season adds new milestones, head-to-head rivalries, individual records, and unforgettable team memories celebrated across our community.</p>
+          <p class="richText" style="margin:0;">Our official Website, installable Web App (PWA), and Android APK keep players, management, and fans connected through one live digital platform. From instant match fixtures, verified career statistics, Playing XI announcements, and downloadable player identity cards to real-time news and direct team channels, RDM Official brings every update directly to your pocket.</p>
+        </div>
       </div>
     `;
   } else {
     const showWebInstall = canInstallWebPwa();
+    const upd = evaluateAvailableUpdate();
     body = `
       <div class="surfaceCard">
-        <span class="sectionKicker">Android APK · ${escHtml(currentAppVersion())}</span>
+        <span class="sectionKicker">Official Android APK · v${escHtml(upd.latestVersion)}</span>
         <h3 class="sectionTitle" style="font-size:1.35rem;margin-bottom:8px;">RDM Official Android App</h3>
-        <p style="margin:0 0 14px;color:var(--ink-secondary);font-size:0.9rem;">
+        <p style="margin:0 0 12px;color:var(--ink-secondary);font-size:0.9rem;">
           ${isNativePlatform()
-            ? 'You are running the native RDM Official Android App. All squad profiles, fixtures, news, and updates sync live with the website.'
-            : 'Download the latest RDM Official Android APK directly from GitHub Releases. Every update posted on the website syncs live inside the Android App.'}
+            ? `You are running the native RDM Official Android App (v${escHtml(APP_BUILD_INFO.versionName)}). Check for the newest build and download updates directly right here — all data stays synced live with the Website.`
+            : 'Download the latest RDM Official Android APK directly to your phone. The Website, PWA, and Android App share the exact same live squad profiles, fixtures, and Admin Panel.'}
         </p>
+        ${upd.hasUpdate ? `<div class="infoBanner" style="margin-bottom:12px;"><span>Update v${escHtml(upd.latestVersion)} available — ${escHtml(upd.notes)}</span></div>` : ''}
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
+          <span class="metaCode">${isNativePlatform() ? `Installed: v${escHtml(APP_BUILD_INFO.versionName)}` : `Web Version: v${escHtml(APP_BUILD_INFO.versionName)}`}</span>
+          <span class="metaCode">Latest APK: v${escHtml(upd.latestVersion)}</span>
+        </div>
         <div style="display:flex;flex-wrap:wrap;gap:10px;">
-          <button type="button" class="btnPrimary btnSm" data-ext-url="${escHtml(currentApkUrl())}">${isNativePlatform() ? 'Download Latest APK ↗' : 'Download Android APK ↗'}</button>
-          <button type="button" class="btnSecondary btnSm" data-ext-url="${escHtml(currentReleasesUrl())}">GitHub Releases ↗</button>
+          <button type="button" class="btnPrimary btnSm" id="btnDownloadLatestApk">Download Latest APK (v${escHtml(upd.latestVersion)})</button>
+          <button type="button" class="btnSecondary btnSm" id="btnCheckAppUpdate">Check for Update</button>
           ${showWebInstall ? `<button type="button" class="btnSecondary btnSm" id="btnInstallWebApp">Install Web App</button>` : ''}
           <button type="button" class="btnSecondary btnSm" data-public-tab="home">Back to Home</button>
         </div>
@@ -1052,14 +1071,14 @@ function renderTeamSubpage() {
   `;
 }
 
-/* ==================== PRIVATE PORTALS (WEBSITE ?key= LINK ONLY) ==================== */
+/* ==================== ADMIN CONSOLE AUTH (WEBSITE, PWA & ANDROID APK) ==================== */
 
 function renderAdminPortalAuthScreen() {
-  if (!PORTAL_ENABLED || ui.portalMode !== 'admin') return renderPublicScreen();
+  if (!ADMIN_CONSOLE_ENABLED) return renderPublicScreen();
   return `
     ${renderTopBar({
-      title: 'Admin Private Portal',
-      showBack: false,
+      title: 'RDM Admin Panel',
+      showBack: true,
       showPublicNav: false,
       rightActionHtml: `<button type="button" class="topActionBtn" id="btnPortalPublicView">Public View</button>`
     })}
@@ -1068,23 +1087,23 @@ function renderAdminPortalAuthScreen() {
         <div class="loginLogoBox">
           <img src="${escHtml(currentLogo())}" alt="RDM Crest" referrerPolicy="no-referrer">
         </div>
-        <h2 class="sectionTitle" style="text-align:center;">Verify Admin Cloud Sync</h2>
-        <p class="sectionSub" style="text-align:center;margin-bottom:16px;">Your private Admin link is active. Verify your Firebase Admin session once on this browser so changes sync live to both the Website and Android App.</p>
+        <h2 class="sectionTitle" style="text-align:center;">Admin Panel Sign In</h2>
+        <p class="sectionSub" style="text-align:center;margin-bottom:16px;">Sign in with your RDM Admin Username (<code>rdm.admin</code>) or registered Admin Email. All updates publish live across Website, PWA &amp; Android APK.</p>
         ${ui.loginError ? `<div class="errorBanner" style="margin-bottom:12px;">${escHtml(ui.loginError)}</div>` : ''}
         <form id="rdmPortalAuthForm" class="formStack">
           <label class="fieldBlock">
-            <span>Admin Email</span>
-            <input id="loginEmail" name="email" type="email" autocomplete="email" placeholder="admin@example.com" required>
+            <span>Admin Username or Email</span>
+            <input id="loginEmail" name="email" type="text" autocomplete="username" placeholder="rdm.admin or admin@..." required>
           </label>
           <label class="fieldBlock">
             <span>Password</span>
             <div class="passwordWrap">
-              <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required>
+              <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Enter admin password" required>
               <button type="button" class="togglePwBtn" id="btnTogglePw">Show</button>
             </div>
           </label>
           <button type="submit" class="btnPrimary btnFull" id="btnLoginSubmit" ${ui.loginBusy ? 'disabled' : ''}>
-            ${ui.loginBusy ? 'Verifying Cloud Session…' : 'Unlock Admin Portal'}
+            ${ui.loginBusy ? 'Verifying Admin Session…' : 'Open Admin Panel'}
           </button>
           <button type="button" class="btnGhost btnFull" id="btnForgotPw">Forgot Password?</button>
         </form>
@@ -1236,7 +1255,7 @@ function renderPlayerPortalScreen() {
 }
 
 function renderAdminDashboard() {
-  if (!PORTAL_ENABLED || ui.portalMode !== 'admin') return renderPublicScreen();
+  if (!ADMIN_CONSOLE_ENABLED) return renderPublicScreen();
   if (!isVerifiedAdmin()) return renderAdminPortalAuthScreen();
 
   let tabBody = '';
@@ -1262,16 +1281,16 @@ function renderAdminDashboard() {
           <button type="button" class="btnSecondary btnSm" data-admin-action="addRecord">+ Team Record</button>
           <button type="button" class="btnSecondary btnSm" data-admin-action="addTournament">+ Tournament</button>
           <button type="button" class="btnSecondary btnSm" data-admin-action="addSocial">+ Social Link</button>
-          <button type="button" class="btnSecondary btnSm" data-admin-action="editAppConfig">App &amp; APK Settings</button>
+          <button type="button" class="btnSecondary btnSm" data-admin-action="editAppConfig">App &amp; APK Update</button>
         </div>
       </div>
 
       <div class="surfaceCard">
         <div class="sectionHeader" style="margin-bottom:8px;">
           <div>
-            <span class="sectionKicker">Live Cross-Platform Sync</span>
-            <h3 class="sectionTitle" style="font-size:1.22rem;">Website &amp; Android App Connected</h3>
-            <p class="sectionSub">Every change published here saves to Firebase and updates both the Website and Android APK (${escHtml(currentAppVersion())}) in real time.</p>
+            <span class="sectionKicker">Live Cross-Platform Sync · v${escHtml(currentAppVersion())}</span>
+            <h3 class="sectionTitle" style="font-size:1.22rem;">Website, PWA &amp; Android APK Connected</h3>
+            <p class="sectionSub">Every change published here saves to Firebase and updates Website, PWA, and all installed Android APKs in real time. Bump App Version here to push an Update Popup to older APKs.</p>
           </div>
           <button type="button" class="btnSecondary btnSm" data-admin-action="editAppConfig">Configure APK</button>
         </div>
@@ -1445,12 +1464,12 @@ function renderAdminDashboard() {
       <div class="surfaceCard">
         <div class="sectionHeader" style="margin-bottom:8px;">
           <div>
-            <h3 class="sectionTitle" style="font-size:1.25rem;">App &amp; GitHub APK Settings</h3>
-            <p class="sectionSub">Version: ${escHtml(currentAppVersion())}</p>
+            <h3 class="sectionTitle" style="font-size:1.25rem;">App &amp; APK Update Settings</h3>
+            <p class="sectionSub">Latest APK: v${escHtml(currentAppVersion())} (Code ${escHtml(String(state.appVersionCode || APP_BUILD_INFO.versionCode))})</p>
           </div>
-          <button type="button" class="btnPrimary btnSm" data-admin-action="editAppConfig">Edit APK Links</button>
+          <button type="button" class="btnPrimary btnSm" data-admin-action="editAppConfig">Edit APK Update</button>
         </div>
-        <p style="margin:0;font-size:0.78rem;color:var(--ink-muted);word-break:break-all;">APK: ${escHtml(currentApkUrl())}</p>
+        <p style="margin:0;font-size:0.78rem;color:var(--ink-muted);word-break:break-all;">APK URL Configured</p>
       </div>
     `;
   }
@@ -1577,8 +1596,29 @@ function bindScreenEvents() {
   });
 
   q('btnReturnPortal')?.addEventListener('click', () => {
+    setDrawerOpen(false);
     if (ui.portalMode === 'admin') navigateTo({ screen: 'admin', adminTab: 'overview' });
     else if (ui.portalMode === 'player' && ui.portalPlayerId) navigateTo({ screen: 'playerPortal' });
+  });
+
+  const openAdminConsoleFromApp = () => {
+    setDrawerOpen(false);
+    navigateTo({ screen: isVerifiedAdmin() ? 'admin' : 'portalAuth', adminTab: 'overview' });
+  };
+  q('btnOpenAdminPortal')?.addEventListener('click', openAdminConsoleFromApp);
+  q('btnFooterAdminPortal')?.addEventListener('click', openAdminConsoleFromApp);
+
+  q('btnDownloadLatestApk')?.addEventListener('click', () => {
+    const upd = evaluateAvailableUpdate();
+    downloadApkFile(upd.apkUrl || currentApkUrl());
+    showToast(`Downloading RDM Official APK v${upd.latestVersion}...`);
+  });
+
+  q('btnCheckAppUpdate')?.addEventListener('click', async () => {
+    showToast('Checking for latest APK update...');
+    await checkRemoteAppVersion();
+    renderApp();
+    maybeShowAppUpdatePopup(true);
   });
 
   q('btnRefreshClub')?.addEventListener('click', async () => {
@@ -1602,13 +1642,14 @@ function bindScreenEvents() {
   q('btnLogout')?.addEventListener('click', () => {
     openConfirmSheet({
       title: 'Confirm Sign Out',
-      message: 'Sign out of Cloud Sync on this browser?',
+      message: 'Sign out of Admin Cloud Sync on this device?',
       confirmLabel: 'Sign Out',
       danger: true,
       onConfirm: async () => {
         await logoutAccount();
         ui.drawerOpen = false;
         if (ui.portalMode === 'admin') navigateTo({ screen: 'portalAuth' }, { replace: true });
+        else if (ui.screen === 'admin') navigateTo({ screen: 'public', publicTab: 'home' }, { replace: true });
         else renderApp();
         showToast('Signed out');
       }
@@ -1627,9 +1668,9 @@ function bindScreenEvents() {
   q('btnForgotPw')?.addEventListener('click', () => {
     const emailPrefill = q('loginEmail')?.value?.trim() || '';
     openFormSheet({
-      title: 'Reset Password',
-      subtitle: 'Receive a Firebase password reset link on your registered email',
-      fields: [{ name: 'email', label: 'Registered Email', type: 'email', value: emailPrefill, required: true }],
+      title: 'Reset Admin Password',
+      subtitle: 'Receive a Firebase password reset link on your registered Admin email',
+      fields: [{ name: 'email', label: 'Admin Username or Email', type: 'text', value: emailPrefill, placeholder: 'rdm.admin or admin@...', required: true }],
       submitLabel: 'Send Reset Link',
       onSubmit: async d => {
         await sendResetPasswordEmail(d.email);
@@ -1651,17 +1692,17 @@ function bindScreenEvents() {
       ui.loginBusy = false;
       if (res.role !== 'admin') {
         await logoutAccount();
-        ui.loginError = 'Admin authorization required for this private link.';
+        ui.loginError = 'Admin authorization required to access the Admin Panel.';
         renderApp();
         return;
       }
-      showToast('Admin Cloud Sync verified');
+      showToast('Admin Panel unlocked');
       navigateTo({ screen: 'admin', adminTab: 'overview' }, { replace: true });
     } catch (err) {
       ui.loginBusy = false;
       const code = String(err?.code || err?.message || '');
-      if (code.includes('wrong-password') || code.includes('invalid-credential') || code.includes('user-not-found') || code.includes('INVALID_LOGIN_CREDENTIALS')) {
-        ui.loginError = 'Invalid email or password.';
+      if (code.includes('wrong-password') || code.includes('invalid-credential') || code.includes('user-not-found') || code.includes('INVALID_LOGIN_CREDENTIALS') || code.includes('invalid-email')) {
+        ui.loginError = 'Invalid Admin username/email or password.';
       } else if (code === 'ACCOUNT_INACTIVE' || code === 'NO_ACCOUNT_RECORD' || code === 'INVALID_ROLE_MAPPING') {
         ui.loginError = 'Your account is inactive or lacks Admin authorization.';
       } else if (code.includes('too-many-requests')) {
@@ -2276,24 +2317,30 @@ function handleAdminCreateAction(action) {
 
   if (action === 'editAppConfig') {
     return openFormSheet({
-      title: 'App & GitHub APK Settings',
-      subtitle: 'Changes sync live to both the Website and Android App',
+      title: 'App & APK Update',
+      subtitle: 'Bump Version & Version Code to trigger automatic Update Popup in all older Android APKs',
       fields: [
-        { name: 'appVersion', label: 'App Version', value: currentAppVersion(), required: true },
+        { name: 'appVersion', label: 'Latest APK Version (e.g. 1.2.0)', value: currentAppVersion(), required: true },
+        { name: 'appVersionCode', label: 'Version Code (Integer, e.g. 3)', type: 'number', value: String(state.appVersionCode || APP_BUILD_INFO.versionCode), required: true },
+        { name: 'updateNotes', label: 'What is New (Update Popup Notes)', type: 'textarea', value: state.updateNotes || '', placeholder: 'Describe new features or bug fixes for users', rows: 3 },
         { name: 'apkDownloadUrl', label: 'Direct APK Download URL', value: currentApkUrl(), required: true },
-        { name: 'apkReleasesUrl', label: 'GitHub Releases Page URL', value: currentReleasesUrl(), required: true },
+        { name: 'apkReleasesUrl', label: 'Update Page URL (Optional)', value: currentReleasesUrl() },
+        { name: 'forceUpdate', label: 'Force Update (Hide Later button)', type: 'checkbox', checked: Boolean(state.forceUpdate) },
         { name: 'logoPhoto', label: 'Update Team Logo (Optional)', type: 'file' }
       ],
       onSubmit: async d => {
         const logo = d.logoPhoto ? await compressImageFile(d.logoPhoto, 600, 0.8) : '';
         await adminSaveBrandSettings({
           appVersion: d.appVersion,
+          appVersionCode: d.appVersionCode,
+          updateNotes: d.updateNotes,
+          forceUpdate: !!d.forceUpdate,
           apkDownloadUrl: d.apkDownloadUrl,
           apkReleasesUrl: d.apkReleasesUrl,
           logo
         });
         renderApp();
-        showToast('App & APK settings synced');
+        showToast('APK update settings synced to all devices');
       }
     });
   }
@@ -2313,6 +2360,32 @@ function handleAdminCreateAction(action) {
       }
     });
   }
+}
+
+function maybeShowAppUpdatePopup(manual = false) {
+  const upd = evaluateAvailableUpdate();
+  if (!upd.hasUpdate) {
+    if (manual) showToast(`You are on the latest version (v${upd.currentVersion})`);
+    return false;
+  }
+  if (!manual && !upd.forceUpdate) {
+    try {
+      if (sessionStorage.getItem(`rdm-dismiss-update-${upd.latestVersion}`) === '1') {
+        return false;
+      }
+    } catch (_) {}
+  }
+  openAppUpdateSheet({
+    currentVersion: upd.currentVersion,
+    latestVersion: upd.latestVersion,
+    notes: upd.notes,
+    forceUpdate: upd.forceUpdate,
+    onDownload: () => {
+      downloadApkFile(upd.apkUrl || currentApkUrl());
+      showToast(`Downloading RDM Official APK v${upd.latestVersion}...`);
+    }
+  });
+  return true;
 }
 
 /* ==================== BOOTSTRAP & 1-STEP PHONE NAVIGATION ==================== */
@@ -2388,11 +2461,16 @@ async function bootstrap() {
 
   await loadClubData();
 
+  checkRemoteAppVersion().then(() => {
+    maybeShowAppUpdatePopup(false);
+  }).catch(() => {});
+
   subscribeClubDataRealtime(() => {
     const activeEl = document.activeElement;
     const isTyping = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT');
     if (!hasOpenOverlay() && !isTyping) {
       renderApp();
+      maybeShowAppUpdatePopup(false);
     }
   });
 
@@ -2405,7 +2483,11 @@ async function bootstrap() {
       }
     } else if (ui.portalMode === 'player' && ui.portalPlayerId) {
       renderApp();
-    } else if (ui.screen === 'admin' || ui.screen === 'portalAuth' || ui.screen === 'playerPortal') {
+    } else if (ui.screen === 'portalAuth' && verified && role === 'admin') {
+      navigateTo({ screen: 'admin', adminTab: 'overview' }, { replace: true });
+    } else if (ui.screen === 'admin' && !(verified && role === 'admin')) {
+      navigateTo({ screen: 'portalAuth' }, { replace: true });
+    } else if (ui.screen === 'playerPortal') {
       navigateTo({ screen: 'public', publicTab: 'home' }, { replace: true });
     } else {
       renderApp();

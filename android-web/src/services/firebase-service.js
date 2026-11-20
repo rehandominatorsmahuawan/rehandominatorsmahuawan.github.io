@@ -1,10 +1,14 @@
 import {
+  APP_BUILD_INFO,
   CLUB_INFO,
   DEFAULT_SOCIALS,
   PLAYER_DEFAULTS,
+  REMOTE_VERSION_JSON_URL,
   SEED_HONOURS,
   SEED_PLAYERS,
-  isLegacyBrokenImage
+  compareVersions,
+  isLegacyBrokenImage,
+  resolveLoginIdentifier
 } from '../data/roster.js';
 
 function getAuth() {
@@ -33,7 +37,11 @@ export const state = {
   brandLogo: CLUB_INFO.logoPath,
   apkDownloadUrl: CLUB_INFO.apkDownloadUrl,
   apkReleasesUrl: CLUB_INFO.apkReleasesUrl,
-  appVersion: CLUB_INFO.appVersion,
+  appVersion: APP_BUILD_INFO.versionName,
+  appVersionCode: APP_BUILD_INFO.versionCode,
+  updateNotes: '',
+  forceUpdate: false,
+  remoteVersionInfo: null,
   players: SEED_PLAYERS.map(p => ({ ...p })),
   matches: [],
   news: [],
@@ -232,19 +240,7 @@ export function subscribeClubDataRealtime(onUpdate) {
     const unsubBrand = db.collection('BrandSettings').doc('main').onSnapshot(
       snap => {
         if (snap.exists) {
-          const bData = snap.data() || {};
-          if (bData.logo && !isLegacyBrokenImage(bData.logo)) {
-            state.brandLogo = bData.logo;
-          }
-          if (bData.apkDownloadUrl && /^https?:\/\//i.test(String(bData.apkDownloadUrl).trim())) {
-            state.apkDownloadUrl = String(bData.apkDownloadUrl).trim();
-          }
-          if (bData.apkReleasesUrl && /^https?:\/\//i.test(String(bData.apkReleasesUrl).trim())) {
-            state.apkReleasesUrl = String(bData.apkReleasesUrl).trim();
-          }
-          if (bData.appVersion) {
-            state.appVersion = String(bData.appVersion).trim();
-          }
+          applyBrandSettingsData(snap.data() || {});
           trigger();
         }
       },
@@ -322,19 +318,7 @@ export async function loadClubData() {
     try {
       const bSnap = await db.collection('BrandSettings').doc('main').get();
       if (bSnap.exists) {
-        const bData = bSnap.data() || {};
-        if (bData.logo && !isLegacyBrokenImage(bData.logo)) {
-          state.brandLogo = bData.logo;
-        }
-        if (bData.apkDownloadUrl && /^https?:\/\//i.test(String(bData.apkDownloadUrl).trim())) {
-          state.apkDownloadUrl = String(bData.apkDownloadUrl).trim();
-        }
-        if (bData.apkReleasesUrl && /^https?:\/\//i.test(String(bData.apkReleasesUrl).trim())) {
-          state.apkReleasesUrl = String(bData.apkReleasesUrl).trim();
-        }
-        if (bData.appVersion) {
-          state.appVersion = String(bData.appVersion).trim();
-        }
+        applyBrandSettingsData(bSnap.data() || {});
       }
     } catch (_) {
       state.brandLogo = CLUB_INFO.logoPath;
@@ -426,11 +410,11 @@ export async function verifyAccountRole(user) {
   }
 }
 
-export async function loginWithEmailPassword(email, password) {
+export async function loginWithEmailPassword(identifier, password) {
   const auth = getAuth();
   if (!auth) throw new Error('FIREBASE_UNAVAILABLE');
 
-  const cleanEmail = String(email || '').trim();
+  const cleanEmail = resolveLoginIdentifier(identifier);
   const cleanPass = String(password || '');
   if (!cleanEmail || !cleanPass) throw new Error('EMAIL_PASSWORD_REQUIRED');
 
@@ -445,10 +429,10 @@ export async function loginWithEmailPassword(email, password) {
   return check;
 }
 
-export async function sendResetPasswordEmail(email) {
+export async function sendResetPasswordEmail(identifier) {
   const auth = getAuth();
   if (!auth) throw new Error('FIREBASE_UNAVAILABLE');
-  const cleanEmail = String(email || '').trim();
+  const cleanEmail = resolveLoginIdentifier(identifier);
   if (!cleanEmail) throw new Error('EMAIL_REQUIRED');
   await auth.sendPasswordResetEmail(cleanEmail);
 }
@@ -615,8 +599,12 @@ export async function adminUpdatePlayer(playerId, fields) {
 export async function adminSaveBrandSettings(fields) {
   const db = getDB();
   if (!db || !isVerifiedAdmin()) throw new Error('ADMIN_REQUIRED');
+  const parsedCode = Number(fields.appVersionCode);
   const payload = {
     appVersion: String(fields.appVersion || CLUB_INFO.appVersion).trim(),
+    appVersionCode: Number.isFinite(parsedCode) && parsedCode > 0 ? parsedCode : state.appVersionCode || APP_BUILD_INFO.versionCode,
+    updateNotes: String(fields.updateNotes ?? '').trim(),
+    forceUpdate: Boolean(fields.forceUpdate),
     apkDownloadUrl: String(fields.apkDownloadUrl || CLUB_INFO.apkDownloadUrl).trim(),
     apkReleasesUrl: String(fields.apkReleasesUrl || CLUB_INFO.apkReleasesUrl).trim(),
     updatedMs: Date.now(),
@@ -627,6 +615,126 @@ export async function adminSaveBrandSettings(fields) {
   }
   await db.collection('BrandSettings').doc('main').set(payload, { merge: true });
   await loadClubData();
+}
+
+function applyBrandSettingsData(bData) {
+  if (!bData) return;
+  if (bData.logo && !isLegacyBrokenImage(bData.logo)) {
+    state.brandLogo = bData.logo;
+  }
+  if (bData.apkDownloadUrl && /^https?:\/\//i.test(String(bData.apkDownloadUrl).trim())) {
+    state.apkDownloadUrl = String(bData.apkDownloadUrl).trim();
+  }
+  if (bData.apkReleasesUrl && /^https?:\/\//i.test(String(bData.apkReleasesUrl).trim())) {
+    state.apkReleasesUrl = String(bData.apkReleasesUrl).trim();
+  }
+  if (bData.appVersion) {
+    state.appVersion = String(bData.appVersion).trim();
+  }
+  if (Number.isFinite(Number(bData.appVersionCode))) {
+    state.appVersionCode = Number(bData.appVersionCode);
+  }
+  if ('updateNotes' in bData) {
+    state.updateNotes = String(bData.updateNotes || '');
+  }
+  if ('forceUpdate' in bData) {
+    state.forceUpdate = Boolean(bData.forceUpdate);
+  }
+}
+
+export function evaluateAvailableUpdate() {
+  const candidates = [];
+
+  if (state.appVersion || state.appVersionCode) {
+    candidates.push({
+      versionName: state.appVersion || APP_BUILD_INFO.versionName,
+      versionCode: Number(state.appVersionCode) || APP_BUILD_INFO.versionCode,
+      apkDownloadUrl: state.apkDownloadUrl || CLUB_INFO.apkDownloadUrl,
+      apkReleasesUrl: state.apkReleasesUrl || CLUB_INFO.apkReleasesUrl,
+      notes: state.updateNotes || '',
+      forceUpdate: Boolean(state.forceUpdate)
+    });
+  }
+
+  if (state.remoteVersionInfo) {
+    candidates.push(state.remoteVersionInfo);
+  }
+
+  let best = {
+    versionName: APP_BUILD_INFO.versionName,
+    versionCode: APP_BUILD_INFO.versionCode,
+    apkDownloadUrl: state.apkDownloadUrl || CLUB_INFO.apkDownloadUrl,
+    apkReleasesUrl: state.apkReleasesUrl || CLUB_INFO.apkReleasesUrl,
+    notes: '',
+    forceUpdate: false
+  };
+
+  candidates.forEach(c => {
+    const cVer = String(c.versionName || '0.0.0').trim();
+    const cCode = Number(c.versionCode) || 0;
+    const isNewerVer = compareVersions(best.versionName, cVer) < 0;
+    const isSameOrNewerWithHigherCode = compareVersions(best.versionName, cVer) === 0 && cCode > best.versionCode;
+    if (isNewerVer || isSameOrNewerWithHigherCode || cCode > best.versionCode) {
+      best = {
+        versionName: cVer || best.versionName,
+        versionCode: Math.max(cCode, best.versionCode),
+        apkDownloadUrl: /^https?:\/\//i.test(String(c.apkDownloadUrl || '')) ? String(c.apkDownloadUrl).trim() : best.apkDownloadUrl,
+        apkReleasesUrl: /^https?:\/\//i.test(String(c.apkReleasesUrl || '')) ? String(c.apkReleasesUrl).trim() : best.apkReleasesUrl,
+        notes: c.notes || best.notes,
+        forceUpdate: Boolean(c.forceUpdate || best.forceUpdate)
+      };
+    }
+  });
+
+  const hasNewerVersion =
+    compareVersions(APP_BUILD_INFO.versionName, best.versionName) < 0 ||
+    Number(best.versionCode) > Number(APP_BUILD_INFO.versionCode);
+
+  return {
+    hasUpdate: hasNewerVersion,
+    currentVersion: APP_BUILD_INFO.versionName,
+    currentCode: APP_BUILD_INFO.versionCode,
+    latestVersion: best.versionName,
+    latestCode: best.versionCode,
+    apkUrl: best.apkDownloadUrl,
+    releasesUrl: best.apkReleasesUrl,
+    notes: best.notes || 'A newer version of RDM Official Android APK is ready with the latest updates and improvements.',
+    forceUpdate: best.forceUpdate
+  };
+}
+
+export async function checkRemoteAppVersion() {
+  const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  const timer = controller ? setTimeout(() => controller.abort(), 5000) : null;
+  const urls = [];
+  if (typeof window !== 'undefined' && /^https?:$/i.test(window.location.protocol)) {
+    urls.push(`./version.json?t=${Date.now()}`);
+  }
+  urls.push(`${REMOTE_VERSION_JSON_URL}?t=${Date.now()}`);
+
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, {
+        cache: 'no-store',
+        signal: controller?.signal
+      });
+      if (!res.ok) continue;
+      const data = await res.json();
+      if (data && (data.versionName || data.versionCode)) {
+        state.remoteVersionInfo = {
+          versionName: String(data.versionName || APP_BUILD_INFO.versionName).trim(),
+          versionCode: Number(data.versionCode) || APP_BUILD_INFO.versionCode,
+          apkDownloadUrl: String(data.apkDownloadUrl || CLUB_INFO.apkDownloadUrl).trim(),
+          apkReleasesUrl: String(data.apkReleasesUrl || CLUB_INFO.apkReleasesUrl).trim(),
+          notes: String(data.notes || ''),
+          forceUpdate: Boolean(data.forceUpdate)
+        };
+        break;
+      }
+    } catch (_) {}
+  }
+  if (timer) clearTimeout(timer);
+  return evaluateAvailableUpdate();
 }
 
 export async function adminDeleteDoc(collection, docId) {

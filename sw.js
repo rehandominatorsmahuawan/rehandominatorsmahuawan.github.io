@@ -1,4 +1,4 @@
-const CACHE = 'rdm-official-v7800';
+const CACHE = 'rdm-official-v7900';
 const CORE = [
   './',
   'index.html',
@@ -37,6 +37,11 @@ self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
   if (url.origin !== self.location.origin) return;
 
+  if (/\/version\.json$/i.test(url.pathname)) {
+    e.respondWith(fetch(e.request, { cache: 'no-store' }));
+    return;
+  }
+
   if (e.request.mode === 'navigate') {
     e.respondWith(
       fetch(e.request)
@@ -53,7 +58,7 @@ self.addEventListener('fetch', e => {
   }
 
   // Always network-first for code, styles, manifests, and service worker so updates show immediately
-  if (/\.(js|mjs|css|html|webmanifest)$/i.test(url.pathname)) {
+  if (/\.(js|mjs|css|html|webmanifest|json)$/i.test(url.pathname)) {
     e.respondWith(
       fetch(e.request, { cache: 'no-cache' })
         .then(res => {

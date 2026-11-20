@@ -82,6 +82,7 @@ function rdmAndroidPortalStubPlugin() {
     load(id) {
       if (id !== resolvedId) return null;
       return `
+        export const ADMIN_CONSOLE_ENABLED = true;
         export const PORTAL_ENABLED = false;
         export async function resolvePortalKey() { return null; }
       `;

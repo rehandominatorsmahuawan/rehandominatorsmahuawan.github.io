@@ -1,3 +1,40 @@
+export const APP_BUILD_INFO = {
+  versionName: '1.1.0',
+  versionCode: 2
+};
+
+export const REMOTE_VERSION_JSON_URL = 'https://rehandominatorsmahuawan.github.io/version.json';
+
+export const ADMIN_USERNAME_ALIASES = {
+  'rdm.admin': 'admin@rdm-official.in',
+  'rdm-admin': 'admin@rdm-official.in',
+  admin: 'admin@rdm-official.in'
+};
+
+export function resolveLoginIdentifier(input = '') {
+  const clean = String(input || '').trim();
+  if (!clean) return '';
+  const lower = clean.toLowerCase();
+  if (Object.prototype.hasOwnProperty.call(ADMIN_USERNAME_ALIASES, lower)) {
+    return ADMIN_USERNAME_ALIASES[lower];
+  }
+  return clean;
+}
+
+export function compareVersions(a = '0.0.0', b = '0.0.0') {
+  const parse = v => String(v || '').replace(/^v/i, '').split(/[^0-9]+/).filter(Boolean).map(Number);
+  const pa = parse(a);
+  const pb = parse(b);
+  const len = Math.max(pa.length, pb.length, 3);
+  for (let i = 0; i < len; i++) {
+    const na = pa[i] || 0;
+    const nb = pb[i] || 0;
+    if (na < nb) return -1;
+    if (na > nb) return 1;
+  }
+  return 0;
+}
+
 export const CLUB_INFO = {
   appName: 'RDM Official',
   orgName: 'REHAN DOMINATORS MAHUAWAN',
@@ -10,7 +47,7 @@ export const CLUB_INFO = {
   subtitle: 'THE HOME OF REHAN DOMINATORS MAHUAWAN',
   captainContactUrl: 'https://wa.me/918521254605',
   captainPhoneDisplay: '+91 85212 54605',
-  appVersion: 'v1.0',
+  appVersion: APP_BUILD_INFO.versionName,
   apkDownloadUrl: 'https://github.com/RehanDominatorsMahuawan/RehanDominatorsMahuawan.github.io/releases/latest/download/RDM-Official.apk',
   apkReleasesUrl: 'https://github.com/RehanDominatorsMahuawan/RehanDominatorsMahuawan.github.io/releases/latest',
   websiteUrl: 'https://rehandominatorsmahuawan.github.io/',

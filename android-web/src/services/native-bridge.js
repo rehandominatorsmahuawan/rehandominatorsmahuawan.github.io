@@ -125,3 +125,24 @@ export async function openExternalUrl(url) {
   a.remove();
   return true;
 }
+
+export async function downloadApkFile(url) {
+  const safe = String(url || '').trim();
+  if (!/^https?:\/\//i.test(safe)) return false;
+
+  if (Capacitor.isNativePlatform()) {
+    try {
+      await Browser.open({ url: safe, presentationStyle: 'popover' });
+      return true;
+    } catch (_) {}
+  }
+
+  const a = document.createElement('a');
+  a.href = safe;
+  a.download = 'RDM-Official.apk';
+  a.rel = 'noopener noreferrer';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  return true;
+}

@@ -468,12 +468,88 @@ export async function downloadPlayerProfileCard({ player, brandLogo }) {
   ctx.font = '600 15px "Plus Jakarta Sans", sans-serif';
   ctx.fillText('RDM OFFICIAL • PLAYER IDENTITY CARD', W / 2, 1266);
 
-  const url = c.toDataURL('image/png');
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${player.id}-${String(player.name || 'PLAYER').replace(/\s+/g, '-')}-RDM-CARD.png`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  showToast('Player card downloaded');
+  const fileName = `${player.id}-${String(player.name || 'PLAYER').replace(/\s+/g, '-')}-RDM-CARD.png`;
+  const blob = await new Promise(resolve => c.toBlob(resolve, 'image/png'));
+
+  if (blob && typeof navigator !== 'undefined' && typeof navigator.share === 'function' && typeof File === 'function') {
+    try {
+      const file = new File([blob], fileName, { type: 'image/png' });
+      const canShareFiles = typeof navigator.canShare === 'function' ? navigator.canShare({ files: [file] }) : true;
+      if (canShareFiles) {
+        await navigator.share({
+          files: [file],
+          title: `${formatTextCase(player.name)} · RDM Player Card`,
+          text: `${formatTextCase(player.name)} (${PLAYER_CODES[player.id] || player.id}) — Rehan Dominators Mahuawan`
+        });
+        showToast('Player card ready to save or share');
+        return;
+      }
+    } catch (err) {
+      if (err && err.name === 'AbortError') return;
+    }
+  }
+
+  const dataUrl = c.toDataURL('image/png');
+  const isCapacitorNative = Boolean(window.Capacitor?.isNativePlatform?.());
+  if (!isCapacitorNative) {
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    showToast('Player card downloaded');
+    return;
+  }
+
+  openLightbox(dataUrl, `${formatTextCase(player.name)} · RDM Player Card`);
+  showToast('Player card generated');
+}
+
+export function openAppUpdateSheet({ currentVersion, latestVersion, notes, forceUpdate = false, onDownload }) {
+  if (document.getElementById('rdmUpdateSheetOverlay')) return;
+  const overlay = document.createElement('div');
+  overlay.id = 'rdmUpdateSheetOverlay';
+  overlay.className = 'sheetOverlay show';
+  overlay.innerHTML = `
+    <div class="sheetCard confirmCard" role="dialog" aria-modal="true" aria-label="App Update Available">
+      <div class="sheetHandle"></div>
+      <div class="sheetHeader">
+        <div>
+          <span class="sectionKicker">New Version Available</span>
+          <h3>Update RDM Official APK</h3>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+        <span class="metaCode">Installed: v${escHtml(currentVersion)}</span>
+        <span class="metaCode" style="background:var(--brand-blue);color:#fff;">Latest: v${escHtml(latestVersion)}</span>
+      </div>
+      <p class="confirmMessage richText" style="margin-bottom:16px;">${escHtml(notes || 'A newer version of RDM Official Android App is ready to download and install.')}</p>
+      <div class="sheetActions"${forceUpdate ? ' style="grid-template-columns:1fr;"' : ''}>
+        ${forceUpdate ? '' : '<button type="button" class="btnSecondary" data-later>Later</button>'}
+        <button type="button" class="btnPrimary" data-download>Download Update v${escHtml(latestVersion)}</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  const close = registerModal(overlay);
+  const laterBtn = overlay.querySelector('[data-later]');
+  if (laterBtn) {
+    laterBtn.onclick = () => {
+      try { sessionStorage.setItem(`rdm-dismiss-update-${latestVersion}`, '1'); } catch (_) {}
+      close();
+    };
+  }
+  if (!forceUpdate) {
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) {
+        try { sessionStorage.setItem(`rdm-dismiss-update-${latestVersion}`, '1'); } catch (_) {}
+        close();
+      }
+    });
+  }
+  overlay.querySelector('[data-download]').onclick = () => {
+    if (typeof onDownload === 'function') onDownload();
+    if (!forceUpdate) close();
+  };
 }
