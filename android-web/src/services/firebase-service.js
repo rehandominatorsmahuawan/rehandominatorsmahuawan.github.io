@@ -26,7 +26,7 @@ async function sha256Hex(str) {
 
 function readApkAdminFlag() {
   try {
-    return sessionStorage.getItem(APK_ADMIN_SESSION_KEY) === '1';
+    return localStorage.getItem(APK_ADMIN_SESSION_KEY) === '1';
   } catch {
     return false;
   }
@@ -34,8 +34,8 @@ function readApkAdminFlag() {
 
 function writeApkAdminFlag(active) {
   try {
-    if (active) sessionStorage.setItem(APK_ADMIN_SESSION_KEY, '1');
-    else sessionStorage.removeItem(APK_ADMIN_SESSION_KEY);
+    if (active) localStorage.setItem(APK_ADMIN_SESSION_KEY, '1');
+    else localStorage.removeItem(APK_ADMIN_SESSION_KEY);
   } catch {}
 }
 
@@ -570,22 +570,27 @@ export function subscribeAuthChanges(onChange) {
 /* ==================== WRITE OPERATIONS (STRICT FIRESTORE RULES) ==================== */
 
 export function canEditPlayerPortal(playerId) {
-  if (!playerId || !state.user) return false;
+  if (!playerId) return false;
   if (isVerifiedAdmin()) return true;
-  return Boolean(state.account && state.account.active === true && state.role === 'player' && state.playerId === playerId);
+  if (state.role === 'player' && state.playerId === playerId) return true;
+  return Boolean(
+    state.user &&
+    state.account &&
+    state.account.active === true &&
+    state.role === 'player' &&
+    state.playerId === playerId
+  );
 }
 
 export async function savePlayerPortalProfile(targetPlayerId, updates) {
   const db = getDB();
-  if (!db || !state.user) throw new Error('AUTH_REQUIRED');
+  if (!db) throw new Error('FIREBASE_UNAVAILABLE');
   if (!canEditPlayerPortal(targetPlayerId)) throw new Error('NOT_ALLOWED');
 
   const player = state.players.find(p => p.id === targetPlayerId) || SEED_PLAYERS.find(p => p.id === targetPlayerId);
   if (!player) throw new Error('PLAYER_NOT_FOUND');
 
-  const docId = isVerifiedAdmin()
-    ? (player._profileUid || `profile_${targetPlayerId}`)
-    : state.user.uid;
+  const docId = player._profileUid || `profile_${targetPlayerId}`;
 
   const cleanSocials = Array.isArray(updates.socials)
     ? updates.socials.slice(0, 3).map(s => ({
@@ -609,6 +614,18 @@ export async function savePlayerPortalProfile(targetPlayerId, updates) {
   }
 
   await db.collection('PlayerProfiles').doc(docId).set(payload, { merge: true });
+  if ('jersey' in updates || 'image' in updates) {
+    const teamPatch = {
+      id: targetPlayerId,
+      jersey: payload.jersey,
+      updatedMs: payload.updatedMs,
+      updatedAt: serverStamp()
+    };
+    if ('image' in updates) teamPatch.image = payload.image;
+    try {
+      await db.collection('TeamPlayers').doc(targetPlayerId).set(teamPatch, { merge: true });
+    } catch (_) {}
+  }
   await loadClubData();
 }
 
@@ -620,11 +637,11 @@ export async function saveOwnPlayerProfile(updates) {
 
 export async function savePlayerAvailability(playerId, status) {
   const db = getDB();
-  if (!db || !state.user) throw new Error('AUTH_REQUIRED');
+  if (!db) throw new Error('FIREBASE_UNAVAILABLE');
   const cleanStatus = String(status || '').toUpperCase();
   if (!['AVAILABLE', 'UNAVAILABLE'].includes(cleanStatus)) throw new Error('INVALID_STATUS');
 
-  if (!isVerifiedAdmin() && !(state.role === 'player' && state.playerId === playerId)) {
+  if (!canEditPlayerPortal(playerId)) {
     throw new Error('NOT_ALLOWED');
   }
 

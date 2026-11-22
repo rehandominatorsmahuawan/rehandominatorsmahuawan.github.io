@@ -65,7 +65,7 @@
     const currentAdmin = typeof rdmAuth !== 'undefined' ? rdmAuth?.currentUser : null;
 
     card.innerHTML = `
-      <div class="sectionHead">
+      <div class="sectionHead subHead">
         <div>
           <span>Server-Side Firebase Admin SDK</span>
           <h2>Update Target Auth User Email</h2>
@@ -73,49 +73,49 @@
         </div>
       </div>
 
-      <div style="display:grid;gap:12px;margin-top:12px;">
-        <div style="padding:12px;border:1px solid var(--line,rgba(148,163,184,.25));border-radius:10px;background:var(--card2,rgba(15,23,42,.04));">
-          <div style="font-size:13px;font-weight:600;margin-bottom:6px;">
-            1. Firebase Admin Session:
+      <div class="adminEmailGrid">
+        <div class="adminEmailSessionCard">
+          <div class="adminEmailSessionStatus">
+            <span>1. Firebase Admin Session</span>
             ${currentAdmin
-              ? `<span style="color:var(--ok,#15803d);">Signed in as ${escHtml(currentAdmin.email || currentAdmin.uid)}</span>`
-              : '<span style="color:var(--warn,#b45309);">Not signed in to Firebase Auth</span>'}
+              ? `<strong class="is-signed-in">Signed in as ${escHtml(currentAdmin.email || currentAdmin.uid)}</strong>`
+              : '<strong class="is-signed-out">Not signed in to Firebase Auth</strong>'}
           </div>
           ${currentAdmin
             ? `<button type="button" class="tinyBtn" id="rdmFbAdminSignOutBtn">Sign Out Firebase Auth</button>`
-            : `<form id="rdmFbAdminSignInForm" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-                 <input type="email" id="rdmFbAdminEmail" required placeholder="Firebase Admin Email" autocomplete="username" style="flex:1;min-width:180px;padding:8px 10px;border-radius:8px;border:1px solid var(--line,#cbd5e1);">
-                 <input type="password" id="rdmFbAdminPass" required placeholder="Password" autocomplete="current-password" style="flex:1;min-width:150px;padding:8px 10px;border-radius:8px;border:1px solid var(--line,#cbd5e1);">
+            : `<form id="rdmFbAdminSignInForm" class="adminEmailInlineForm">
+                 <input type="email" id="rdmFbAdminEmail" required placeholder="Firebase Admin Email" autocomplete="username">
+                 <input type="password" id="rdmFbAdminPass" required placeholder="Password" autocomplete="current-password">
                  <button type="submit" class="primary">Sign In as Firebase Admin</button>
                </form>`}
         </div>
 
-        <div id="rdmTargetUidStatus" style="font-size:13px;padding:10px 12px;border-radius:8px;border:1px dashed var(--line,rgba(148,163,184,.35));">
+        <div id="rdmTargetUidStatus" class="adminEmailStatusBox">
           Checking authentication state...
         </div>
 
-        <form id="rdmUpdateTargetEmailForm" style="display:grid;gap:10px;">
-          <label style="display:grid;gap:4px;font-size:13px;font-weight:600;">
-            Locked Target UID
-            <input type="text" readonly value="${TARGET_UID}" style="padding:8px 10px;border-radius:8px;border:1px solid var(--line,#cbd5e1);font-family:var(--mono,monospace);opacity:.85;">
+        <form id="rdmUpdateTargetEmailForm" class="adminEmailForm">
+          <label class="adminEmailField">
+            <span>Locked Target UID</span>
+            <input type="text" readonly value="${TARGET_UID}" class="is-mono">
           </label>
-          <label style="display:grid;gap:4px;font-size:13px;font-weight:600;">
-            New Email Address
-            <input type="email" id="rdmNewTargetEmail" required placeholder="Enter exact new email address" autocomplete="off" style="padding:8px 10px;border-radius:8px;border:1px solid var(--line,#cbd5e1);">
+          <label class="adminEmailField">
+            <span>New Email Address</span>
+            <input type="email" id="rdmNewTargetEmail" required placeholder="Enter exact new email address" autocomplete="off">
           </label>
-          <label style="display:grid;gap:4px;font-size:13px;font-weight:600;">
-            Confirm New Email Address
-            <input type="email" id="rdmConfirmTargetEmail" required placeholder="Re-type exact new email address" autocomplete="off" style="padding:8px 10px;border-radius:8px;border:1px solid var(--line,#cbd5e1);">
+          <label class="adminEmailField">
+            <span>Confirm New Email Address</span>
+            <input type="email" id="rdmConfirmTargetEmail" required placeholder="Re-type exact new email address" autocomplete="off">
           </label>
-          <label style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;line-height:1.4;">
-            <input type="checkbox" id="rdmConfirmUidLock" required style="margin-top:3px;">
+          <label class="adminEmailCheckboxRow">
+            <input type="checkbox" id="rdmConfirmUidLock" required>
             <span>I confirm I want to update <strong>only</strong> UID <code>${TARGET_UID}</code> in place without deleting or modifying any other Firebase user.</span>
           </label>
-          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+          <div class="adminEmailActions">
             <button type="submit" class="primary" id="rdmSubmitTargetEmailBtn" ${currentAdmin ? '' : 'disabled'}>Update Target User Email</button>
             <button type="button" class="tinyBtn" id="rdmRefreshTargetStatusBtn">Refresh Status</button>
           </div>
-          <div id="rdmUpdateTargetEmailResult" style="font-size:13px;min-height:18px;"></div>
+          <div id="rdmUpdateTargetEmailResult" class="adminEmailResult"></div>
         </form>
       </div>
     `;

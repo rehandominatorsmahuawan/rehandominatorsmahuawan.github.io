@@ -1,0 +1,268 @@
+{
+  "entities": {
+    "Account": {
+      "title": "Account",
+      "description": "Firebase Auth mapped admin or player role record.",
+      "type": "object",
+      "properties": {
+        "role": { "type": "string", "enum": ["admin", "player"] },
+        "active": { "type": "boolean" },
+        "playerId": { "type": "string", "maxLength": 32 },
+        "email": { "type": "string", "maxLength": 254 }
+      },
+      "required": ["role", "active"]
+    },
+    "TeamPlayer": {
+      "title": "TeamPlayer",
+      "description": "Squad roster member entry.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 32 },
+        "name": { "type": "string", "maxLength": 120 },
+        "role": { "type": "string", "maxLength": 120 },
+        "detail": { "type": "string", "maxLength": 400 },
+        "jersey": { "type": "string", "maxLength": 16 },
+        "image": { "type": "string", "maxLength": 950000 },
+        "order": { "type": "number" },
+        "active": { "type": "boolean" }
+      }
+    },
+    "PlayerProfile": {
+      "title": "PlayerProfile",
+      "description": "Editable player profile card metadata synced between Web and APK.",
+      "type": "object",
+      "properties": {
+        "playerId": { "type": "string", "maxLength": 32 },
+        "name": { "type": "string", "maxLength": 120 },
+        "role": { "type": "string", "maxLength": 120 },
+        "detail": { "type": "string", "maxLength": 400 },
+        "jersey": { "type": "string", "maxLength": 16 },
+        "nick": { "type": "string", "maxLength": 120 },
+        "bio": { "type": "string", "maxLength": 1200 },
+        "image": { "type": "string", "maxLength": 950000 },
+        "socials": { "type": "array" },
+        "updatedMs": { "type": "number" }
+      }
+    },
+    "Match": {
+      "title": "Match",
+      "description": "Upcoming, live, or completed club match fixture and scorecard.",
+      "type": "object",
+      "properties": {
+        "opponent": { "type": "string", "maxLength": 160 },
+        "date": { "type": "string", "maxLength": 64 },
+        "time": { "type": "string", "maxLength": 64 },
+        "venue": { "type": "string", "maxLength": 240 },
+        "venueName": { "type": "string", "maxLength": 240 },
+        "status": { "type": "string", "maxLength": 64 },
+        "matchStatus": { "type": "string", "maxLength": 64 },
+        "ourScore": { "type": "string", "maxLength": 64 },
+        "oppScore": { "type": "string", "maxLength": 64 },
+        "result": { "type": "string", "maxLength": 160 },
+        "potm": { "type": "string", "maxLength": 120 },
+        "note": { "type": "string", "maxLength": 4000 },
+        "createdMs": { "type": "number" }
+      }
+    },
+    "News": {
+      "title": "News",
+      "description": "Official team news announcement.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 200 },
+        "text": { "type": "string", "maxLength": 8000 },
+        "pinned": { "type": "boolean" },
+        "createdMs": { "type": "number" }
+      }
+    },
+    "Update": {
+      "title": "Update",
+      "description": "Official club, website, and platform dispatch update.",
+      "type": "object",
+      "properties": {
+        "category": { "type": "string", "maxLength": 64 },
+        "title": { "type": "string", "maxLength": 200 },
+        "text": { "type": "string", "maxLength": 8000 },
+        "date": { "type": "string", "maxLength": 64 },
+        "url": { "type": "string", "maxLength": 500 },
+        "pinned": { "type": "boolean" },
+        "createdMs": { "type": "number" }
+      }
+    },
+    "Honour": {
+      "title": "Honour",
+      "description": "Club trophy and championship honour.",
+      "type": "object",
+      "properties": {
+        "year": { "type": "string", "maxLength": 24 },
+        "title": { "type": "string", "maxLength": 160 },
+        "sub": { "type": "string", "maxLength": 240 },
+        "image": { "type": "string", "maxLength": 950000 },
+        "order": { "type": "number" }
+      }
+    },
+    "GalleryItem": {
+      "title": "GalleryItem",
+      "description": "Club gallery photo entry.",
+      "type": "object",
+      "properties": {
+        "image": { "type": "string", "maxLength": 950000 },
+        "caption": { "type": "string", "maxLength": 300 },
+        "album": { "type": "string", "maxLength": 64 },
+        "createdMs": { "type": "number" }
+      }
+    },
+    "SocialChannel": {
+      "title": "SocialChannel",
+      "description": "Official club social link.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 64 },
+        "displayName": { "type": "string", "maxLength": 120 },
+        "url": { "type": "string", "maxLength": 500 },
+        "icon": { "type": "string", "maxLength": 32 },
+        "image": { "type": "string", "maxLength": 950000 },
+        "order": { "type": "number" }
+      }
+    },
+    "PlayerStat": {
+      "title": "PlayerStat",
+      "description": "Player career statistics document.",
+      "type": "object",
+      "properties": {
+        "playerId": { "type": "string", "maxLength": 32 },
+        "matches": { "type": "number" },
+        "runs": { "type": "number" },
+        "wickets": { "type": "number" },
+        "highScore": { "type": "number" },
+        "fours": { "type": "number" },
+        "sixes": { "type": "number" },
+        "fifties": { "type": "number" },
+        "hundreds": { "type": "number" },
+        "runOuts": { "type": "number" },
+        "strikeRate": { "type": "number" },
+        "economy": { "type": "number" },
+        "ballsFaced": { "type": "number" },
+        "bestBowling": { "type": "string", "maxLength": 64 },
+        "last5": { "type": "string", "maxLength": 200 },
+        "season": { "type": "string", "maxLength": 32 }
+      }
+    },
+    "Achievement": {
+      "title": "Achievement",
+      "description": "Club or player milestone award.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 200 },
+        "playerName": { "type": "string", "maxLength": 120 },
+        "detail": { "type": "string", "maxLength": 1000 },
+        "season": { "type": "string", "maxLength": 32 },
+        "createdMs": { "type": "number" }
+      }
+    },
+    "Availability": {
+      "title": "Availability",
+      "description": "Player matchday availability.",
+      "type": "object",
+      "properties": {
+        "playerId": { "type": "string", "maxLength": 32 },
+        "status": { "type": "string", "enum": ["AVAILABLE", "UNAVAILABLE", "NOT SET"] }
+      }
+    },
+    "PlayingXI": {
+      "title": "PlayingXI",
+      "description": "Published matchday Playing XI and substitutes.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 160 },
+        "match": { "type": "string", "maxLength": 200 },
+        "players": { "type": "array" },
+        "subs": { "type": "array" },
+        "createdMs": { "type": "number" }
+      }
+    },
+    "TeamRecord": {
+      "title": "TeamRecord",
+      "description": "Team, batting, bowling, or partnership record.",
+      "type": "object",
+      "properties": {
+        "recordType": { "type": "string", "maxLength": 32 },
+        "category": { "type": "string", "maxLength": 64 },
+        "season": { "type": "string", "maxLength": 32 },
+        "title": { "type": "string", "maxLength": 200 },
+        "value": { "type": "string", "maxLength": 120 },
+        "player": { "type": "string", "maxLength": 120 },
+        "player2": { "type": "string", "maxLength": 120 },
+        "wicket": { "type": "string", "maxLength": 64 },
+        "opponent": { "type": "string", "maxLength": 120 },
+        "date": { "type": "string", "maxLength": 64 },
+        "note": { "type": "string", "maxLength": 1000 },
+        "createdMs": { "type": "number" }
+      }
+    },
+    "Tournament": {
+      "title": "Tournament",
+      "description": "Tournament campaign and standings.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 200 },
+        "season": { "type": "string", "maxLength": 32 },
+        "status": { "type": "string", "maxLength": 32 },
+        "position": { "type": "string", "maxLength": 120 },
+        "venue": { "type": "string", "maxLength": 240 },
+        "fixtures": { "type": "string", "maxLength": 4000 },
+        "createdMs": { "type": "number" }
+      }
+    },
+    "Opponent": {
+      "title": "Opponent",
+      "description": "Head-to-head rival record.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 160 },
+        "played": { "type": "number" },
+        "won": { "type": "number" },
+        "lost": { "type": "number" },
+        "createdMs": { "type": "number" }
+      }
+    },
+    "BrandSettings": {
+      "title": "BrandSettings",
+      "description": "Global logo, icons, and APK release configuration.",
+      "type": "object",
+      "properties": {
+        "logo": { "type": "string", "maxLength": 950000 },
+        "favicon": { "type": "string", "maxLength": 950000 },
+        "appIcon": { "type": "string", "maxLength": 950000 },
+        "socialPreview": { "type": "string", "maxLength": 950000 },
+        "brandVersion": { "type": "string", "maxLength": 32 },
+        "appVersion": { "type": "string", "maxLength": 32 },
+        "appVersionCode": { "type": "number" },
+        "updateNotes": { "type": "string", "maxLength": 2000 },
+        "forceUpdate": { "type": "boolean" },
+        "apkDownloadUrl": { "type": "string", "maxLength": 500 },
+        "apkReleasesUrl": { "type": "string", "maxLength": 500 },
+        "updatedMs": { "type": "number" }
+      }
+    }
+  },
+  "firestore": {
+    "/Accounts/{uid}": { "schema": { "$ref": "#/entities/Account" }, "description": "Admin and mapped user account records" },
+    "/TeamPlayers/{id}": { "schema": { "$ref": "#/entities/TeamPlayer" }, "description": "Club squad players" },
+    "/PlayerProfiles/{uid}": { "schema": { "$ref": "#/entities/PlayerProfile" }, "description": "Player personal profiles" },
+    "/Matches/{id}": { "schema": { "$ref": "#/entities/Match" }, "description": "Matches and scorecards" },
+    "/News/{id}": { "schema": { "$ref": "#/entities/News" }, "description": "Official team news" },
+    "/Updates/{id}": { "schema": { "$ref": "#/entities/Update" }, "description": "Official website and platform updates" },
+    "/Honours/{id}": { "schema": { "$ref": "#/entities/Honour" }, "description": "Team honours and trophies" },
+    "/Gallery/{id}": { "schema": { "$ref": "#/entities/GalleryItem" }, "description": "Club photo gallery" },
+    "/Socials/{id}": { "schema": { "$ref": "#/entities/SocialChannel" }, "description": "Official club social channels" },
+    "/PlayerStats/{id}": { "schema": { "$ref": "#/entities/PlayerStat" }, "description": "Per-player career stats" },
+    "/Achievements/{id}": { "schema": { "$ref": "#/entities/Achievement" }, "description": "Awards and achievements" },
+    "/Availability/{id}": { "schema": { "$ref": "#/entities/Availability" }, "description": "Player matchday availability" },
+    "/PlayingXI/{id}": { "schema": { "$ref": "#/entities/PlayingXI" }, "description": "Published Playing XI lineups" },
+    "/TeamRecords/{id}": { "schema": { "$ref": "#/entities/TeamRecord" }, "description": "Team and partnership records" },
+    "/Tournaments/{id}": { "schema": { "$ref": "#/entities/Tournament" }, "description": "Tournaments and standings" },
+    "/Opponents/{id}": { "schema": { "$ref": "#/entities/Opponent" }, "description": "Opponent head-to-head stats" },
+    "/BrandSettings/{id}": { "schema": { "$ref": "#/entities/BrandSettings" }, "description": "Brand assets and APK version settings" }
+  }
+}

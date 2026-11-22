@@ -88,11 +88,11 @@
 (function(){
   const classify = b => {
     if (!b || b.nodeType !== 1) return;
-    const t = (b.textContent || '').toLowerCase().replace(/\s+/g, ' ');
+    const t = toReadableCase(b.textContent || '').toLowerCase().replace(/\s+/g, ' ');
     b.classList.remove('rdmDeleteAction', 'rdmEditAction', 'rdmPinAction');
-    if (t.includes('ᴅᴇʟᴇᴛᴇ') || t.includes('delete')) b.classList.add('rdmDeleteAction');
-    else if (t.includes('ᴜɴᴘɪɴ') || t.includes('unpin') || t.includes('ᴘɪɴ') || /(^|\s)pin(\s|$)/.test(t)) b.classList.add('rdmPinAction');
-    else if (t.includes('ᴇᴅɪᴛ') || t.includes('edit')) b.classList.add('rdmEditAction');
+    if (t.includes('delete') || t.includes('remove')) b.classList.add('rdmDeleteAction');
+    else if (t.includes('unpin') || /(^|\s)pin(\s|$)/.test(t)) b.classList.add('rdmPinAction');
+    else if (t.includes('edit')) b.classList.add('rdmEditAction');
   };
   const scan = r => { if (r.matches?.('button')) classify(r); r.querySelectorAll?.('button').forEach(classify); };
   const go = () => {

@@ -172,18 +172,34 @@ img {
   border-radius: 50%;
   object-fit: cover;
   object-position: center;
-  border: 1.5px solid var(--accent);
+  border: 2px solid var(--accent);
   background: #9E9E9E;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 2px 12px rgba(200, 30, 43, 0.25);
   flex-shrink: 0;
+}
+
+.brandTextGroup {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
 }
 
 .brandTitle {
   font-family: var(--font-display);
   font-size: 1.35rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-weight: 800;
+  letter-spacing: 0.025em;
   line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.brandSub {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -698,6 +714,38 @@ body.admin .adminOnly {
   font-size: 12.5px;
   font-weight: 500;
   color: #D1D5DB;
+}
+
+.heroCrestStats {
+  width: 100%;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.heroCrestStats > div {
+  display: grid;
+  gap: 2px;
+  text-align: center;
+}
+
+.heroCrestStats b {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1;
+}
+
+.heroCrestStats span {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #9CA3AF;
 }
 
 .hero .eyebrow {
@@ -2466,6 +2514,19 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
    Lineup & Availability
    ========================================================================== */
 
+.lineupCardHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-bottom: 10px;
+}
+
+.lineupCardHead h3 {
+  margin: 0;
+}
+
 .xiGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2475,20 +2536,62 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 
 .xiGrid span {
   background: var(--surface-subtle);
+  border: 1px solid var(--border);
   padding: 10px 12px;
   border-radius: var(--radius-sm);
   font-size: 13px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  gap: 10px;
+}
+
+.xiOrder {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.xiGrid span > div {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+
+.xiGrid span b {
+  font-size: 13px;
+  color: var(--text);
 }
 
 .xiGrid span small {
   font-size: 11px;
   font-weight: 500;
   color: var(--text-muted);
+}
+
+.xiSubsRow {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.xiSubsRow strong {
+  color: var(--gold);
+  margin-right: 6px;
 }
 
 .availSummaryBar {
@@ -2544,17 +2647,30 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  flex-wrap: wrap;
+  gap: 10px 14px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 14px 18px;
 }
 
-.availabilityRow span {
+.availabilityPlayerInfo {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 200px;
+}
+
+.availabilityPlayerInfo span {
   font-weight: 600;
   font-size: 14px;
-  flex: 1;
+  color: var(--text);
+}
+
+.availabilityPlayerInfo small {
+  font-size: 12px;
+  color: var(--text-muted);
 }
 
 .availabilityRow b {
@@ -4200,19 +4316,22 @@ footer b {
   margin-top: 8px;
 }
 
-.footerLinks button {
+.footerLinks button,
+.footerLinks a {
   border: 0;
   background: transparent;
   padding: 4px 6px;
   font-size: 12.5px;
   font-weight: 600;
   color: var(--text-secondary);
+  text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
   transition: color 150ms var(--ease);
 }
 
-.footerLinks button:hover {
+.footerLinks button:hover,
+.footerLinks a:hover {
   color: var(--accent);
 }
 
@@ -4500,6 +4619,616 @@ html[data-rdm-portal="player"] .footerLinks {
 
   .footerLinks {
     gap: 4px 10px;
+  }
+}
+
+/* ==========================================================================
+   V8.0.0 Admin Command Workspace, Player Lock Gate & Portals Directory
+   ========================================================================== */
+
+.adminKpiGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.adminKpiCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-card);
+  display: grid;
+  gap: 4px;
+}
+
+.adminKpiCard span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.adminKpiCard strong {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.adminKpiCard small {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.adminCategoryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.adminModuleCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.adminModuleHead span {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 3px;
+}
+
+.adminModuleHead h3 {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.adminModuleHead p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.adminModuleActions {
+  display: grid;
+  gap: 8px;
+}
+
+.adminModuleActions .primary,
+.adminModuleActions .secondary {
+  width: 100%;
+  justify-content: flex-start;
+  min-height: 44px;
+  padding: 10px 14px;
+}
+
+.pwProtectedTag {
+  display: inline-block;
+  margin-left: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+/* Admin Firebase Auth User Email Updater */
+.adminEmailGrid {
+  display: grid;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.adminEmailSessionCard {
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-subtle);
+  display: grid;
+  gap: 10px;
+}
+
+.adminEmailSessionStatus {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.adminEmailSessionStatus span {
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.adminEmailSessionStatus strong.is-signed-in {
+  color: var(--success);
+}
+
+.adminEmailSessionStatus strong.is-signed-out {
+  color: var(--gold);
+}
+
+.adminEmailInlineForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.adminEmailInlineForm input {
+  flex: 1 1 180px;
+  min-height: 42px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.adminEmailStatusBox {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--border-strong);
+  background: var(--surface-subtle);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.adminEmailForm {
+  display: grid;
+  gap: 12px;
+}
+
+.adminEmailField {
+  display: grid;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.adminEmailField input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.adminEmailField input.is-mono {
+  font-family: var(--font-mono);
+  opacity: 0.88;
+}
+
+.adminEmailCheckboxRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.adminEmailCheckboxRow input {
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.adminEmailActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.adminEmailResult {
+  font-size: 13px;
+  min-height: 18px;
+  color: var(--text-secondary);
+}
+
+/* Player Portal Password Gate & Live Cloud Sync Banner */
+.playerLockGateWrap {
+  max-width: 540px;
+  margin: 24px auto;
+}
+
+.playerLockCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: var(--radius-lg);
+  padding: clamp(22px, 4vw, 32px);
+  box-shadow: var(--shadow-card);
+  display: grid;
+  gap: 18px;
+}
+
+.playerLockHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.playerLockAvatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent);
+  background: #9E9E9E;
+  flex-shrink: 0;
+}
+
+.playerLockHeader h2 {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.05;
+  color: var(--text);
+}
+
+.playerLockHeader p {
+  margin: 0;
+  font-size: 12.5px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.playerLockDesc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.playerLockForm {
+  display: grid;
+  gap: 14px;
+}
+
+.playerLockField {
+  display: grid;
+  gap: 6px;
+}
+
+.playerLockField span {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.playerPwInputRow {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.playerPwInputRow input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 46px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-subtle);
+  color: var(--text);
+  font-size: 15px;
+}
+
+.playerPwInputRow input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.playerLockError {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--danger-soft);
+  border: 1px solid var(--danger-border);
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.playerLockError[hidden] {
+  display: none !important;
+}
+
+.playerLockActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.playerLockActions .primary {
+  flex: 1 1 180px;
+}
+
+.playerSyncStatusBanner {
+  max-width: 720px;
+  margin: 0 auto 18px;
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--success);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.playerSyncStatusBanner span {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--success);
+}
+
+.publicProfileFooterActions {
+  display: flex;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+/* Portals Hub Directory Page (/portals.html) */
+.portalsMain {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: clamp(20px, 3vw, 36px) clamp(14px, 3vw, 32px) 64px;
+  display: grid;
+  gap: 32px;
+}
+
+.portalsHero {
+  background: linear-gradient(125deg, #0D1119 0%, #190D12 58%, #0E131E 100%);
+  border: 1px solid rgba(239, 68, 68, 0.30);
+  border-radius: var(--radius-lg);
+  padding: clamp(24px, 4vw, 42px);
+  color: #FFFFFF;
+  box-shadow: 0 20px 54px rgba(6, 8, 12, 0.34);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.portalsHeroCopy {
+  max-width: 66ch;
+}
+
+.portalsHeroCopy h1 {
+  margin: 4px 0 10px;
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 4.2vw, 3.2rem);
+  font-weight: 800;
+  line-height: 1;
+  color: #FFFFFF;
+}
+
+.portalsHeroCopy p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: #D1D5DB;
+}
+
+.portalsHeroMeta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.portalsStatBox {
+  min-width: 120px;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  text-align: center;
+  display: grid;
+  gap: 2px;
+}
+
+.portalsStatBox strong {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #FFFFFF;
+}
+
+.portalsStatBox span {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #FCA5A5;
+}
+
+.portalsFeaturedGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.portalsToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.portalsPlayerGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.portalCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.portalCardFeatured.is-admin {
+  border-top: 3px solid var(--accent);
+}
+
+.portalCardFeatured.is-public {
+  border-top: 3px solid var(--gold);
+}
+
+.portalCardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.portalBadge {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.portalBadge.is-admin {
+  color: var(--accent);
+}
+
+.portalCode {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.portalCard h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.portalCard p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.portalPlayerTop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.portalPlayerTop img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent);
+  background: #9E9E9E;
+  flex-shrink: 0;
+}
+
+.portalPlayerInfo {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.portalPlayerInfo b {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.portalLockPill {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.portalUrlRow input {
+  width: 100%;
+  min-height: 38px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-subtle);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+}
+
+.portalActions {
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+@media (max-width: 1080px) {
+  .adminKpiGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .adminCategoryGrid,
+  .portalsPlayerGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .brandSub {
+    display: none;
+  }
+  .adminKpiGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .adminCategoryGrid,
+  .portalsFeaturedGrid,
+  .portalsPlayerGrid {
+    grid-template-columns: 1fr;
   }
 }
 

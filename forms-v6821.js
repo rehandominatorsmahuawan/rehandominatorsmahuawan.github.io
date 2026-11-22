@@ -1,152 +1,689 @@
-/* RDM V6.8.21 — unified Edit-Player style modal forms */
-(()=>{
-/* V6.8.24 — real Unicode mini-font UI for every Add/Edit form */
-function rdmMiniText(v){
-  const str=String(v??'');
-  const map={'ᴀ':'A','ʙ':'B','ᴄ':'C','ᴅ':'D','ᴇ':'E','ꜰ':'F','ɢ':'G','ʜ':'H','ɪ':'I','ᴊ':'J','ᴋ':'K','ʟ':'L','ᴍ':'M','ɴ':'N','ᴏ':'O','ᴘ':'P','ǫ':'Q','ʀ':'R','ꜱ':'S','ᴛ':'T','ᴜ':'U','ᴠ':'V','ᴡ':'W','ʏ':'Y','ᴢ':'Z'};
-  const ascii=str.replace(/[ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀꜱᴛᴜᴠᴡʏᴢ]/g,ch=>map[ch]||ch);
-  if(ascii===ascii.toUpperCase()&&/[A-Z]{2,}/.test(ascii)){
-    return ascii.toLowerCase().replace(/\b([a-z])/g,(m,c,idx,full)=>{
-      const w=full.slice(idx).match(/^[a-z]+/i)?.[0]||'';
-      if(idx>0&&['and','or','of','the','in','on','to','for','at','by','vs'].includes(w.toLowerCase()))return w.toLowerCase().charAt(0);
-      return c.toUpperCase();
-    }).replace(/\b(Rdm|Xi|Id|Potm)\b/gi,m=>m.toUpperCase());
+/* RDM V8.0.0 — Unified Modal Forms, Password-Gated Player Actions & Stripped Firestore Payloads */
+(() => {
+  const E = s => String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+  const N = v => Number(v || 0) || 0;
+  const strip = obj => typeof window.rdmStripDocMeta === 'function' ? window.rdmStripDocMeta(obj) : (() => { const c = { ...(obj || {}) }; delete c._docId; delete c._profileUid; return c; })();
+  const reportErr = (err, label) => typeof window.rdmReportWriteError === 'function' ? window.rdmReportWriteError(err, label) : console.warn(label, err);
+
+  function rdmMiniText(v) {
+    const str = String(v ?? '');
+    const map = {
+      'ᴀ': 'A', 'ʙ': 'B', 'ᴄ': 'C', 'ᴅ': 'D', 'ᴇ': 'E', 'ꜰ': 'F', 'ɢ': 'G', 'ʜ': 'H',
+      'ɪ': 'I', 'ᴊ': 'J', 'ᴋ': 'K', 'ʟ': 'L', 'ᴍ': 'M', 'ɴ': 'N', 'ᴏ': 'O', 'ᴘ': 'P',
+      'ǫ': 'Q', 'ʀ': 'R', 'ꜱ': 'S', 'ᴛ': 'T', 'ᴜ': 'U', 'ᴠ': 'V', 'ᴡ': 'W', 'ʏ': 'Y', 'ᴢ': 'Z'
+    };
+    return str.replace(/[ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀꜱᴛᴜᴠᴡʏᴢ]/g, ch => map[ch] || ch);
   }
-  return ascii;
-}
-function rdmMiniFormUI(root=document){
-  const scopes=[];
-  if(root.nodeType===1 && (root.matches?.('.dialog,.rdmUnifiedDialog,.rdmInlineForm') || root.querySelector?.('form'))) scopes.push(root);
-  root.querySelectorAll?.('.dialog,.rdmUnifiedDialog,.rdmInlineForm').forEach(x=>scopes.push(x));
-  scopes.forEach(scope=>{
-    scope.querySelectorAll('h1,h2,h3,h4,legend,.rdmFormHead span').forEach(el=>{
-      if(!el.dataset.rdmMiniDone){el.textContent=rdmMiniText(el.textContent);el.dataset.rdmMiniDone='1'}
-    });
-    scope.querySelectorAll('label').forEach(label=>{
-      [...label.childNodes].forEach(n=>{
-        if(n.nodeType===3 && n.nodeValue.trim()) n.nodeValue=rdmMiniText(n.nodeValue);
+  function rdmMiniFormUI(root = document) {
+    const scopes = [];
+    if (root.nodeType === 1 && (root.matches?.('.dialog,.rdmUnifiedDialog,.rdmInlineForm') || root.querySelector?.('form'))) scopes.push(root);
+    root.querySelectorAll?.('.dialog,.rdmUnifiedDialog,.rdmInlineForm').forEach(x => scopes.push(x));
+    scopes.forEach(scope => {
+      scope.querySelectorAll('h1,h2,h3,h4,legend,.rdmFormHead span').forEach(el => {
+        if (!el.dataset.rdmMiniDone) { el.textContent = rdmMiniText(el.textContent); el.dataset.rdmMiniDone = '1'; }
       });
     });
-    scope.querySelectorAll('button').forEach(btn=>{
-      if(btn.classList.contains('close') || btn.dataset.rdmMiniDone) return;
-      [...btn.childNodes].forEach(n=>{if(n.nodeType===3 && n.nodeValue.trim()) n.nodeValue=rdmMiniText(n.nodeValue)});
-      btn.dataset.rdmMiniDone='1';
-    });
-    scope.querySelectorAll('input[placeholder],textarea[placeholder]').forEach(el=>{el.placeholder=rdmMiniText(el.placeholder)});
-    scope.querySelectorAll('select option').forEach(opt=>{
-      if(opt.dataset.rdmMiniDone) return;
-      const raw=opt.hasAttribute('value')?opt.getAttribute('value'):opt.textContent;
-      if(!opt.hasAttribute('value')) opt.setAttribute('value',raw);
-      opt.textContent=rdmMiniText(opt.textContent);
-      opt.dataset.rdmMiniDone='1';
-    });
-  });
-}
-window.rdmMiniText=rdmMiniText;
-window.rdmMiniFormUI=rdmMiniFormUI;
-const E=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const N=v=>Number(v||0)||0;
-function field(f){const v=E(f.value??'');if(f.type==='textarea')return `<label>${f.label}<textarea name="${f.name}" rows="${f.rows||4}" ${f.required?'required':''}>${v}</textarea></label>`;if(f.type==='select')return `<label>${f.label}<select name="${f.name}">${(f.options||[]).map(o=>`<option ${String(o)===String(f.value)?'selected':''}>${E(o)}</option>`).join('')}</select></label>`;return `<label>${f.label}<input name="${f.name}" type="${f.type||'text'}" value="${v}" ${f.required?'required':''} ${f.placeholder?`placeholder="${E(f.placeholder)}"`:''}></label>`}
-function modal(title,fields,onSave){document.getElementById('rdmUnifiedForm')?.remove();const m=document.createElement('div');m.id='rdmUnifiedForm';m.className='modal show rdmUnifiedModal';m.innerHTML=`<form class="dialog rdmUnifiedDialog"><button class="close" type="button">×</button><h2>${E(title)}</h2><div class="rdmUnifiedFields">${fields.map(field).join('')}</div><button class="primary wide" type="submit">SAVE</button></form>`;document.body.appendChild(m);rdmMiniFormUI(m);const dlg=m.querySelector('.dialog');m.querySelector('.close').onclick=()=>m.remove();m.addEventListener('click',e=>{if(e.target===m)m.remove()});m.querySelector('form').onsubmit=async e=>{e.preventDefault();const b=e.submitter;b.disabled=true;const d=Object.fromEntries(new FormData(e.currentTarget).entries());try{await onSave(d);m.remove()}catch(err){console.error(err);toast?.('SAVE FAILED');b.disabled=false}};requestAnimationFrame(()=>{dlg.scrollTop=0})}
-window.rdmUnifiedModal=modal;
-window.editStats=id=>{if(!rdmAdmin?.())return toast?.('Admin only');const s=(typeof XD!=='undefined'?XD.stats:[]).find(z=>z.playerId===id)||{};modal('EDIT PLAYER STATS',[['matches','MATCHES'],['runs','RUNS'],['wickets','WICKETS'],['highScore','HIGHEST SCORE'],['fours','FOURS'],['sixes','SIXES'],['fifties','50s'],['hundreds','100s'],['runOuts','RUN OUTS'],['strikeRate','STRIKE RATE'],['economy','ECONOMY'],['ballsFaced','BALLS FACED']].map(([name,label])=>({name,label,type:'number',value:s[name]||0})).concat([{name:'bestBowling',label:'BEST BOWLING',value:s.bestBowling||''},{name:'last5',label:'LAST 5 MATCH FORM',value:s.last5||''},{name:'season',label:'SEASON / YEAR',value:s.season||'2027'}]),async d=>{const rec={...d,playerId:id,matches:N(d.matches),runs:N(d.runs),wickets:N(d.wickets),highScore:N(d.highScore),fours:N(d.fours),sixes:N(d.sixes),fifties:N(d.fifties),hundreds:N(d.hundreds),runOuts:N(d.runOuts),strikeRate:N(d.strikeRate),economy:N(d.economy),ballsFaced:N(d.ballsFaced),_docId:id};const idx=XD.stats.findIndex(z=>z.playerId===id);if(idx>=0)XD.stats[idx]=rec;else XD.stats.push(rec);window.xSaveOverride?.('stats',XD.stats);try{await rdmDB.collection('PlayerStats').doc(id).set({...rec,updatedAt:rdmStamp()},{merge:true})}catch{}xrender?.();v6render?.();window.refreshAdminSectionManager?.();toast?.('Stats saved')})};
-window.addAchievement=()=>{if(!rdmAdmin?.())return toast?.('Admin only');return modal('ADD ACHIEVEMENT',[{name:'title',label:'ACHIEVEMENT / AWARD',required:true},{name:'playerName',label:'PLAYER NAME',value:'TEAM'},{name:'detail',label:'DETAILS',type:'textarea'}],async d=>{const rec={...d,createdMs:Date.now(),_docId:'loc_'+Date.now()};try{const ref=await rdmDB.collection('Achievements').add({...rec,updatedAt:rdmStamp()});rec._docId=ref.id}catch{}XD.achievements.unshift(rec);window.xSaveOverride?.('achievements',XD.achievements);xrender?.();v6render?.();window.refreshAdminSectionManager?.();toast?.('Achievement saved')})};
-window.v6EditAchievement=id=>{if(!rdmAdmin?.())return toast?.('Admin only');const a=XD.achievements.find(x=>x._docId===id)||{};modal('EDIT ACHIEVEMENT',[{name:'title',label:'ACHIEVEMENT / AWARD',value:a.title,required:true},{name:'playerName',label:'PLAYER NAME',value:a.playerName||'TEAM'},{name:'detail',label:'DETAILS',type:'textarea',value:a.detail||''}],async d=>{Object.assign(a,d);window.xSaveOverride?.('achievements',XD.achievements);try{await rdmDB.collection('Achievements').doc(id).set({...d,updatedAt:rdmStamp()},{merge:true})}catch{}xrender?.();v6render?.();window.refreshAdminSectionManager?.();toast?.('Achievement updated')})};
-window.setAvailability=id=>{if(!rdmAdmin?.()&&!(window.__rdmUrlKeyRole==='player'&&session?.mode==='player'&&session.playerId===id))return toast?.('Not allowed');const a=XD.availability.find(z=>z.playerId===id)||{};modal('PLAYER AVAILABILITY',[{name:'status',label:'STATUS',type:'select',value:a.status||'AVAILABLE',options:['AVAILABLE','UNAVAILABLE']}],async d=>{const rec={playerId:id,status:d.status,_docId:id};const idx=XD.availability.findIndex(z=>z.playerId===id);if(idx>=0)XD.availability[idx]=rec;else XD.availability.push(rec);window.xSaveOverride?.('availability',XD.availability);try{await rdmDB.collection('Availability').doc(id).set({...rec,updatedAt:rdmStamp()},{merge:true})}catch{}xrender?.();if(session?.mode==='player')window.renderProfile?.();window.refreshAdminSectionManager?.();toast?.('Availability updated')})};
-function rdmLineupIds(v){return [...new Set((Array.isArray(v)?v:String(v||'').split(',')).map(x=>String(x).trim().toUpperCase()).filter(id=>/^RDM\d{3}$/.test(id)))]}
-window.addLineup=()=>{if(!rdmAdmin?.())return toast?.('Admin only');return modal('PUBLISH PLAYING XI',[{name:'title',label:'TITLE',value:'PLAYING XI'},{name:'match',label:'MATCH / OPPONENT'},{name:'players',label:'11 PLAYER IDs',type:'textarea',value:'RDM001,RDM002,RDM003,RDM004,RDM005,RDM006,RDM007,RDM008,RDM009,RDM010,RDM011'},{name:'subs',label:'SUBSTITUTE PLAYER IDs',value:'RDM012,RDM013,RDM014,RDM015'}],async d=>{const players=rdmLineupIds(d.players).slice(0,11),subs=rdmLineupIds(d.subs).filter(id=>!players.includes(id));if(players.length!==11)throw Error('PLAYING_XI_MUST_HAVE_11');const rec={title:d.title,match:d.match,players,subs,createdMs:Date.now(),_docId:'loc_'+Date.now()};try{const ref=await rdmDB.collection('PlayingXI').add({...rec,updatedAt:rdmStamp()});rec._docId=ref.id}catch{}XD.lineups.unshift(rec);window.xSaveOverride?.('lineups',XD.lineups);xrender?.();window.refreshAdminSectionManager?.();toast?.('Playing XI published')})};
-window.rdmSwapLineupPlayer=(docId)=>{if(!rdmAdmin?.())return toast?.('Admin only');const l=(typeof XD!=='undefined'?XD.lineups:[]).find(x=>x._docId===docId);if(!l)return;const players=rdmLineupIds(l.players),subs=rdmLineupIds(l.subs);if(!players.length||!subs.length)return toast?.('No substitute available');const label=id=>{const p=(typeof D!=='undefined'?D.players:[]).find(x=>x.id===id);return id+' — '+(p?.name||id)};modal('SWAP PLAYING XI / SUBSTITUTE',[{name:'xi',label:'MOVE FROM PLAYING XI TO SUBSTITUTE',type:'select',options:players.map(label)},{name:'sub',label:'MOVE FROM SUBSTITUTE TO PLAYING XI',type:'select',options:subs.map(label)}],async d=>{const xi=String(d.xi||'').split(' — ')[0].trim(),sub=String(d.sub||'').split(' — ')[0].trim();if(!players.includes(xi)||!subs.includes(sub))throw Error('INVALID_SWAP');const nextPlayers=players.map(id=>id===xi?sub:id),nextSubs=subs.map(id=>id===sub?xi:id);l.players=nextPlayers;l.subs=nextSubs;window.xSaveOverride?.('lineups',XD.lineups);try{await rdmDB.collection('PlayingXI').doc(docId).set({players:nextPlayers,subs:nextSubs,updatedAt:rdmStamp()},{merge:true})}catch{}xrender?.();window.refreshAdminSectionManager?.();toast?.('Playing XI updated')})};
-window.addScorecard=()=>{if(!rdmAdmin?.())return toast?.('Admin only');return modal('ADD SCORECARD',[{name:'opponent',label:'OPPONENT',required:true},{name:'date',label:'DATE'},{name:'venue',label:'VENUE'},{name:'ourScore',label:'RDM SCORE'},{name:'oppScore',label:'OPPONENT SCORE'},{name:'result',label:'RESULT'},{name:'potm',label:'PLAYER OF THE MATCH'}],async d=>{const rec={...d,note:d.result,status:'RESULT',createdMs:Date.now(),_docId:'loc_'+Date.now()};try{const ref=await rdmDB.collection('Matches').add({...rec,updatedAt:rdmStamp()});rec._docId=ref.id}catch{}D.matches.unshift(rec);window.rdmSaveCollectionOverride?.('matches',D.matches);rdmRefresh?.();window.refreshAdminSectionManager?.();toast?.('Scorecard saved')})};
-window.v6AddTournament=id=>{if(!rdmAdmin?.())return toast?.('Admin only');const x=(V6.tournaments||[]).find(z=>z._docId===id)||{};modal(id?'EDIT TOURNAMENT':'ADD TOURNAMENT',[{name:'name',label:'TOURNAMENT NAME',value:x.name||'',required:true},{name:'season',label:'SEASON / YEAR',value:x.season||''},{name:'status',label:'STATUS',type:'select',value:x.status||'UPCOMING',options:['UPCOMING','ONGOING','COMPLETED']},{name:'position',label:'FINAL POSITION / STATUS',value:x.position||''},{name:'venue',label:'VENUE',value:x.venue||''},{name:'dates',label:'DATES',value:x.dates||''},{name:'organizer',label:'ORGANIZER',value:x.organizer||''},{name:'teams',label:'TOTAL TEAMS',type:'number',value:x.teams||0},{name:'matches',label:'RDM MATCHES',type:'number',value:x.matches||0},{name:'wins',label:'RDM WINS',type:'number',value:x.wins||0},{name:'losses',label:'RDM LOSSES',type:'number',value:x.losses||0},{name:'fixtures',label:'FIXTURES / POINTS / NOTES',type:'textarea',value:x.fixtures||'',rows:6}],async d=>{const rec={...d,createdMs:x.createdMs||Date.now(),_docId:id||'loc_'+Date.now()};if(id)Object.assign(x,rec);else V6.tournaments.unshift(rec);window.v6SaveOverride?.('tournaments',V6.tournaments);try{id?await rdmDB.collection('Tournaments').doc(id).set({...d,createdMs:rec.createdMs,updatedAt:rdmStamp()},{merge:true}):await rdmDB.collection('Tournaments').add({...d,createdMs:rec.createdMs,updatedAt:rdmStamp()})}catch{}v6render?.();window.refreshAdminSectionManager?.();toast?.('Tournament saved')})};
-window.v6AddOpponent=id=>{if(!rdmAdmin?.())return toast?.('Admin only');const x=(V6.opponents||[]).find(z=>z._docId===id)||{};modal(id?'EDIT OPPONENT':'ADD OPPONENT',[{name:'name',label:'OPPONENT TEAM NAME',value:x.name||'',required:true},{name:'played',label:'MATCHES PLAYED',type:'number',value:x.played||0},{name:'won',label:'RDM WINS',type:'number',value:x.won||0},{name:'lost',label:'RDM LOSSES',type:'number',value:x.lost||0}],async d=>{d.played=N(d.played);d.won=N(d.won);d.lost=N(d.lost);const rec={...d,createdMs:x.createdMs||Date.now(),_docId:id||'loc_'+Date.now()};if(id)Object.assign(x,rec);else V6.opponents.unshift(rec);window.v6SaveOverride?.('opponents',V6.opponents);try{id?await rdmDB.collection('Opponents').doc(id).set({...d,createdMs:rec.createdMs,updatedAt:rdmStamp()},{merge:true}):await rdmDB.collection('Opponents').add({...d,createdMs:rec.createdMs,updatedAt:rdmStamp()})}catch{}v6render?.();window.refreshAdminSectionManager?.();toast?.('Opponent saved')})};
-window.v6EditMatch=id=>{if(!rdmAdmin?.())return toast?.('Admin only');const m=D.matches.find(x=>x._docId===id)||{};modal('EDIT MATCH SCORECARD',[{name:'tossWinner',label:'TOSS WINNER',value:m.tossWinner||''},{name:'tossDecision',label:'TOSS DECISION',value:m.tossDecision||''},{name:'batting',label:'BATTING SCORECARD',type:'textarea',value:m.batting||'',rows:6},{name:'bowling',label:'BOWLING SCORECARD',type:'textarea',value:m.bowling||'',rows:6},{name:'partnerships',label:'PARTNERSHIPS',type:'textarea',value:m.partnerships||''},{name:'fow',label:'FALL OF WICKETS',type:'textarea',value:m.fow||''},{name:'potm',label:'PLAYER OF THE MATCH',value:m.potm||''}],async d=>{Object.assign(m,d);window.rdmSaveCollectionOverride?.('matches',D.matches);try{await rdmDB.collection('Matches').doc(id).set({...d,updatedAt:rdmStamp()},{merge:true})}catch{}rdmRefresh?.();setTimeout(v6render,100);window.refreshAdminSectionManager?.();toast?.('Match updated')})};
+  }
+  window.rdmMiniText = rdmMiniText;
+  window.rdmMiniFormUI = rdmMiniFormUI;
 
-/* Keep legacy editor/profile/admin Add/Edit forms in the same mini-font UI. */
-const rdmMiniObserver=new MutationObserver(muts=>{for(const m of muts){for(const n of m.addedNodes){if(n.nodeType===1) rdmMiniFormUI(n)}}});
-rdmMiniObserver.observe(document.documentElement,{childList:true,subtree:true});
-setTimeout(()=>rdmMiniFormUI(document),250);
+  function field(f) {
+    const v = E(f.value ?? '');
+    if (f.type === 'textarea') return `<label>${E(f.label)}<textarea name="${f.name}" rows="${f.rows || 4}" ${f.required ? 'required' : ''}>${v}</textarea></label>`;
+    if (f.type === 'select') return `<label>${E(f.label)}<select name="${f.name}">${(f.options || []).map(o => `<option value="${E(o)}" ${String(o) === String(f.value) ? 'selected' : ''}>${E(o)}</option>`).join('')}</select></label>`;
+    return `<label>${E(f.label)}<input name="${f.name}" type="${f.type || 'text'}" value="${v}" ${f.required ? 'required' : ''} ${f.placeholder ? `placeholder="${E(f.placeholder)}"` : ''}></label>`;
+  }
 
-setTimeout(()=>{[['addAchievement',addAchievement],['addLineup',addLineup],['addTournament',()=>v6AddTournament()],['addOpponent',()=>v6AddOpponent()],['addScorecard',addScorecard]].forEach(([id,fn])=>{const b=document.getElementById(id);if(b)b.onclick=e=>{e.stopPropagation();fn()}})},700);
+  function modal(title, fields, onSave) {
+    document.getElementById('rdmUnifiedForm')?.remove();
+    const m = document.createElement('div');
+    m.id = 'rdmUnifiedForm';
+    m.className = 'modal show rdmUnifiedModal';
+    m.innerHTML = `<form class="dialog rdmUnifiedDialog">
+      <button class="close" type="button" aria-label="Close">×</button>
+      <h2>${E(rdmMiniText(title))}</h2>
+      <div class="rdmUnifiedFields">${fields.map(field).join('')}</div>
+      <button class="primary wide" type="submit">Save &amp; Sync</button>
+    </form>`;
+    document.body.appendChild(m);
+    const dlg = m.querySelector('.dialog');
+    m.querySelector('.close').onclick = () => m.remove();
+    m.addEventListener('click', e => { if (e.target === m) m.remove(); });
+    m.querySelector('form').onsubmit = async e => {
+      e.preventDefault();
+      const b = e.submitter;
+      b.disabled = true;
+      const d = Object.fromEntries(new FormData(e.currentTarget).entries());
+      try { await onSave(d); m.remove(); }
+      catch (err) { console.error(err); toast?.('Save failed'); b.disabled = false; }
+    };
+    requestAnimationFrame(() => { dlg.scrollTop = 0; });
+  }
+  window.rdmUnifiedModal = modal;
+
+  window.editStats = id => {
+    if (!rdmAdmin?.()) return toast?.('Admin only');
+    const s = (typeof XD !== 'undefined' ? XD.stats : []).find(z => z.playerId === id) || {};
+    modal('Edit Player Stats', [
+      ['matches', 'Matches'], ['runs', 'Runs'], ['wickets', 'Wickets'], ['highScore', 'Highest Score'],
+      ['fours', 'Fours'], ['sixes', 'Sixes'], ['fifties', '50s'], ['hundreds', '100s'],
+      ['runOuts', 'Run Outs'], ['strikeRate', 'Strike Rate'], ['economy', 'Economy'], ['ballsFaced', 'Balls Faced']
+    ].map(([name, label]) => ({ name, label, type: 'number', value: s[name] || 0 })).concat([
+      { name: 'bestBowling', label: 'Best Bowling', value: s.bestBowling || '' },
+      { name: 'last5', label: 'Last 5 Match Form', value: s.last5 || '' },
+      { name: 'season', label: 'Season / Year', value: s.season || '2027' }
+    ]), async d => {
+      const payload = {
+        playerId: id,
+        matches: N(d.matches),
+        runs: N(d.runs),
+        wickets: N(d.wickets),
+        highScore: N(d.highScore),
+        fours: N(d.fours),
+        sixes: N(d.sixes),
+        fifties: N(d.fifties),
+        hundreds: N(d.hundreds),
+        runOuts: N(d.runOuts),
+        strikeRate: N(d.strikeRate),
+        economy: N(d.economy),
+        ballsFaced: N(d.ballsFaced),
+        bestBowling: String(d.bestBowling || '').trim(),
+        last5: String(d.last5 || '').trim(),
+        season: String(d.season || '2027').trim()
+      };
+      const rec = { ...payload, _docId: id };
+      const idx = XD.stats.findIndex(z => z.playerId === id);
+      if (idx >= 0) XD.stats[idx] = rec;
+      else XD.stats.push(rec);
+      try {
+        await rdmDB.collection('PlayerStats').doc(id).set({ ...strip(payload), updatedAt: rdmStamp() }, { merge: true });
+      } catch (err) {
+        window.xSaveOverride?.('stats', XD.stats);
+        reportErr(err, 'Player stats sync');
+      }
+      xrender?.();
+      v6render?.();
+      window.refreshAdminSectionManager?.();
+      toast?.('Stats saved & synced');
+    });
+  };
+
+  window.addAchievement = () => {
+    if (!rdmAdmin?.()) return toast?.('Admin only');
+    return modal('Add Achievement', [
+      { name: 'title', label: 'Achievement / Award', required: true },
+      { name: 'playerName', label: 'Player Name', value: 'TEAM' },
+      { name: 'detail', label: 'Details', type: 'textarea' }
+    ], async d => {
+      const payload = { title: String(d.title || '').trim(), playerName: String(d.playerName || 'TEAM').trim(), detail: String(d.detail || '').trim(), createdMs: Date.now() };
+      const rec = { ...payload, _docId: 'loc_' + Date.now() };
+      try {
+        const ref = await rdmDB.collection('Achievements').add({ ...strip(payload), updatedAt: rdmStamp() });
+        rec._docId = ref.id;
+      } catch (err) {
+        reportErr(err, 'Add achievement sync');
+      }
+      XD.achievements.unshift(rec);
+      xrender?.();
+      v6render?.();
+      window.refreshAdminSectionManager?.();
+      toast?.('Achievement saved & synced');
+    });
+  };
+
+  window.v6EditAchievement = id => {
+    if (!rdmAdmin?.()) return toast?.('Admin only');
+    const a = XD.achievements.find(x => x._docId === id) || {};
+    modal('Edit Achievement', [
+      { name: 'title', label: 'Achievement / Award', value: a.title, required: true },
+      { name: 'playerName', label: 'Player Name', value: a.playerName || 'TEAM' },
+      { name: 'detail', label: 'Details', type: 'textarea', value: a.detail || '' }
+    ], async d => {
+      const clean = { title: String(d.title || '').trim(), playerName: String(d.playerName || 'TEAM').trim(), detail: String(d.detail || '').trim() };
+      Object.assign(a, clean);
+      try {
+        await rdmDB.collection('Achievements').doc(id).set({ ...strip(clean), updatedAt: rdmStamp() }, { merge: true });
+      } catch (err) {
+        window.xSaveOverride?.('achievements', XD.achievements);
+        reportErr(err, 'Edit achievement sync');
+      }
+      xrender?.();
+      v6render?.();
+      window.refreshAdminSectionManager?.();
+      toast?.('Achievement updated & synced');
+    });
+  };
+
+  window.setAvailability = id => {
+    const canSelf = window.__rdmUrlKeyRole === 'player' && session?.mode === 'player' && session.playerId === id && (typeof window.rdmIsPlayerUnlocked !== 'function' || window.rdmIsPlayerUnlocked(id));
+    if (!rdmAdmin?.() && !canSelf) return toast?.('Unlock profile first');
+    const a = XD.availability.find(z => z.playerId === id) || {};
+    modal('Player Availability', [
+      { name: 'status', label: 'Matchday Status', type: 'select', value: a.status || 'AVAILABLE', options: ['AVAILABLE', 'UNAVAILABLE'] }
+    ], async d => {
+      const payload = { playerId: id, status: String(d.status || 'AVAILABLE').toUpperCase() };
+      const rec = { ...payload, _docId: id };
+      const idx = XD.availability.findIndex(z => z.playerId === id);
+      if (idx >= 0) XD.availability[idx] = rec;
+      else XD.availability.push(rec);
+      try {
+        await rdmDB.collection('Availability').doc(id).set({ ...strip(payload), updatedAt: rdmStamp() }, { merge: true });
+      } catch (err) {
+        window.xSaveOverride?.('availability', XD.availability);
+        reportErr(err, 'Availability sync');
+      }
+      xrender?.();
+      if (session?.mode === 'player') window.renderProfile?.();
+      window.refreshAdminSectionManager?.();
+      toast?.('Availability updated & synced');
+    });
+  };
+
+  function rdmLineupIds(v) {
+    return [...new Set((Array.isArray(v) ? v : String(v || '').split(',')).map(x => String(x).trim().toUpperCase()).filter(id => /^RDM\d{3}$/.test(id)))];
+  }
+
+  window.addLineup = () => {
+    if (!rdmAdmin?.()) return toast?.('Admin only');
+    return modal('Publish Playing XI', [
+      { name: 'title', label: 'Title', value: 'PLAYING XI' },
+      { name: 'match', label: 'Match / Opponent' },
+      { name: 'players', label: '11 Player IDs (comma separated)', type: 'textarea', value: 'RDM001,RDM002,RDM003,RDM004,RDM005,RDM006,RDM007,RDM008,RDM009,RDM010,RDM011' },
+      { name: 'subs', label: 'Substitute Player IDs', value: 'RDM012,RDM013,RDM014,RDM015' }
+    ], async d => {
+      const players = rdmLineupIds(d.players).slice(0, 11);
+      const subs = rdmLineupIds(d.subs).filter(id => !players.includes(id));
+      if (players.length !== 11) { toast?.('Exactly 11 unique RDM IDs required'); throw Error('PLAYING_XI_MUST_HAVE_11'); }
+      const payload = { title: String(d.title || 'PLAYING XI').trim(), match: String(d.match || '').trim(), players, subs, createdMs: Date.now() };
+      const rec = { ...payload, _docId: 'loc_' + Date.now() };
+      try {
+        const ref = await rdmDB.collection('PlayingXI').add({ ...strip(payload), updatedAt: rdmStamp() });
+        rec._docId = ref.id;
+      } catch (err) {
+        reportErr(err, 'Playing XI sync');
+      }
+      XD.lineups.unshift(rec);
+      xrender?.();
+      window.refreshAdminSectionManager?.();
+      toast?.('Playing XI published & synced');
+    });
+  };
+
+  window.rdmSwapLineupPlayer = docId => {
+    if (!rdmAdmin?.()) return toast?.('Admin only');
+    const l = (typeof XD !== 'undefined' ? XD.lineups : []).find(x => x._docId === docId);
+    if (!l) return;
+    const players = rdmLineupIds(l.players);
+    const subs = rdmLineupIds(l.subs);
+    if (!players.length || !subs.length) return toast?.('No substitute available');
+    const label = id => {
+      const p = (typeof D !== 'undefined' ? D.players : []).find(x => x.id === id);
+      return id + ' — ' + (p?.name || id);
+    };
+    modal('Swap Playing XI / Substitute', [
+      { name: 'xi', label: 'Move from Playing XI to Substitute', type: 'select', options: players.map(label) },
+      { name: 'sub', label: 'Move from Substitute to Playing XI', type: 'select', options: subs.map(label) }
+    ], async d => {
+      const xi = String(d.xi || '').split(' — ')[0].trim();
+      const sub = String(d.sub || '').split(' — ')[0].trim();
+      if (!players.includes(xi) || !subs.includes(sub)) throw Error('INVALID_SWAP');
+      const nextPlayers = players.map(id => id === xi ? sub : id);
+      const nextSubs = subs.map(id => id === sub ? xi : id);
+      l.players = nextPlayers;
+      l.subs = nextSubs;
+      try {
+        await rdmDB.collection('PlayingXI').doc(docId).set({ players: nextPlayers, subs: nextSubs, updatedAt: rdmStamp() }, { merge: true });
+      } catch (err) {
+        window.xSaveOverride?.('lineups', XD.lineups);
+        reportErr(err, 'Swap XI sync');
+      }
+      xrender?.();
+      window.refreshAdminSectionManager?.();
+      toast?.('Playing XI updated & synced');
+    });
+  };
+
+  window.addScorecard = () => {
+    if (!rdmAdmin?.()) return toast?.('Admin only');
+    return modal('Add Scorecard', [
+      { name: 'opponent', label: 'Opponent', required: true },
+      { name: 'date', label: 'Date' },
+      { name: 'venue', label: 'Venue' },
+      { name: 'ourScore', label: 'RDM Score' },
+      { name: 'oppScore', label: 'Opponent Score' },
+      { name: 'result', label: 'Result' },
+      { name: 'potm', label: 'Player of the Match' }
+    ], async d => {
+      const payload = { ...d, note: d.result, status: 'RESULT', createdMs: Date.now() };
+      const rec = { ...payload, _docId: 'loc_' + Date.now() };
+      try {
+        const ref = await rdmDB.collection('Matches').add({ ...strip(payload), updatedAt: rdmStamp() });
+        rec._docId = ref.id;
+      } catch (err) {
+        reportErr(err, 'Add scorecard sync');
+      }
+      D.matches.unshift(rec);
+      rdmRefresh?.();
+      window.refreshAdminSectionManager?.();
+      toast?.('Scorecard saved & synced');
+    });
+  };
+
+  window.v6AddOpponent = id => {
+    if (!rdmAdmin?.()) return toast?.('Admin only');
+    const x = (V6.opponents || []).find(z => z._docId === id) || {};
+    modal(id ? 'Edit Opponent' : 'Add Opponent', [
+      { name: 'name', label: 'Opponent Team Name', value: x.name || '', required: true },
+      { name: 'played', label: 'Matches Played', type: 'number', value: x.played || 0 },
+      { name: 'won', label: 'RDM Wins', type: 'number', value: x.won || 0 },
+      { name: 'lost', label: 'RDM Losses', type: 'number', value: x.lost || 0 }
+    ], async d => {
+      const payload = { name: String(d.name || '').trim(), played: N(d.played), won: N(d.won), lost: N(d.lost), createdMs: x.createdMs || Date.now() };
+      const rec = { ...payload, _docId: id || 'loc_' + Date.now() };
+      if (id) Object.assign(x, rec);
+      else V6.opponents.unshift(rec);
+      try {
+        const clean = strip({ ...payload, updatedAt: rdmStamp() });
+        if (id && !String(id).startsWith('loc_')) await rdmDB.collection('Opponents').doc(id).set(clean, { merge: true });
+        else { const ref = await rdmDB.collection('Opponents').add(clean); rec._docId = ref.id; }
+      } catch (err) {
+        window.v6SaveOverride?.('opponents', V6.opponents);
+        reportErr(err, 'Opponent sync');
+      }
+      v6render?.();
+      window.refreshAdminSectionManager?.();
+      toast?.('Opponent saved & synced');
+    });
+  };
+
+  window.v6EditMatch = id => {
+    if (!rdmAdmin?.()) return toast?.('Admin only');
+    const m = D.matches.find(x => x._docId === id) || {};
+    modal('Edit Match Scorecard', [
+      { name: 'tossWinner', label: 'Toss Winner', value: m.tossWinner || '' },
+      { name: 'tossDecision', label: 'Toss Decision', value: m.tossDecision || '' },
+      { name: 'batting', label: 'Batting Scorecard', type: 'textarea', value: m.batting || '', rows: 6 },
+      { name: 'bowling', label: 'Bowling Scorecard', type: 'textarea', value: m.bowling || '', rows: 6 },
+      { name: 'partnerships', label: 'Partnerships', type: 'textarea', value: m.partnerships || '' },
+      { name: 'fow', label: 'Fall of Wickets', type: 'textarea', value: m.fow || '' },
+      { name: 'potm', label: 'Player of the Match', value: m.potm || '' }
+    ], async d => {
+      Object.assign(m, d);
+      try {
+        await rdmDB.collection('Matches').doc(id).set({ ...strip(d), updatedAt: rdmStamp() }, { merge: true });
+      } catch (err) {
+        window.rdmSaveCollectionOverride?.('matches', D.matches);
+        reportErr(err, 'Match details sync');
+      }
+      rdmRefresh?.();
+      setTimeout(v6render, 100);
+      window.refreshAdminSectionManager?.();
+      toast?.('Match updated & synced');
+    });
+  };
+
+  setTimeout(() => {
+    [['addAchievement', addAchievement], ['addLineup', addLineup], ['addTournament', () => window.v6AddTournament()], ['addOpponent', () => window.v6AddOpponent()], ['addScorecard', window.addScorecard]].forEach(([id, fn]) => {
+      const b = document.getElementById(id);
+      if (b) b.onclick = e => { e.stopPropagation(); fn(); };
+    });
+  }, 700);
 })();
 
-/* V6.8.28 — shared premium confirmation dialog for delete actions */
-window.rdmConfirmModal=function(title,message,onConfirm){
+/* Confirmation Dialog */
+window.rdmConfirmModal = function (title, message, onConfirm) {
   document.getElementById('rdmConfirmModal')?.remove();
-  const m=document.createElement('div');
-  m.id='rdmConfirmModal';m.className='modal show rdmUnifiedModal';
-  m.innerHTML=`<div class="dialog rdmUnifiedDialog rdmConfirmDialog"><button class="close" type="button">×</button><h2>${window.rdmMiniText?.(title||'CONFIRM')||String(title||'CONFIRM')}</h2><p class="rdmConfirmText">${window.rdmMiniText?.(message||'ARE YOU SURE?')||String(message||'ARE YOU SURE?')}</p><div class="rdmConfirmActions"><button type="button" class="secondary" data-cancel>ᴄᴀɴᴄᴇʟ</button><button type="button" class="primary deleteConfirmBtn" data-confirm>ᴅᴇʟᴇᴛᴇ</button></div></div>`;
-  document.body.appendChild(m);window.rdmMiniFormUI?.(m);
-  const close=()=>m.remove();m.querySelector('.close').onclick=close;m.querySelector('[data-cancel]').onclick=close;
-  m.addEventListener('click',e=>{if(e.target===m)close()});
-  m.querySelector('[data-confirm]').onclick=async e=>{const b=e.currentTarget;b.disabled=true;try{await onConfirm();close()}catch(err){console.error(err);toast?.('ᴀᴄᴛɪᴏɴ ꜰᴀɪʟᴇᴅ');b.disabled=false}};
+  const m = document.createElement('div');
+  m.id = 'rdmConfirmModal';
+  m.className = 'modal show rdmUnifiedModal';
+  m.innerHTML = `<div class="dialog rdmUnifiedDialog rdmConfirmDialog">
+    <button class="close" type="button" aria-label="Close">×</button>
+    <h2>${window.rdmMiniText?.(title || 'Confirm') || String(title || 'Confirm')}</h2>
+    <p class="rdmConfirmText">${window.rdmMiniText?.(message || 'Are you sure?') || String(message || 'Are you sure?')}</p>
+    <div class="rdmConfirmActions">
+      <button type="button" class="secondary" data-cancel>Cancel</button>
+      <button type="button" class="primary deleteConfirmBtn" data-confirm>Delete</button>
+    </div>
+  </div>`;
+  document.body.appendChild(m);
+  const close = () => m.remove();
+  m.querySelector('.close').onclick = close;
+  m.querySelector('[data-cancel]').onclick = close;
+  m.addEventListener('click', e => { if (e.target === m) close(); });
+  m.querySelector('[data-confirm]').onclick = async e => {
+    const b = e.currentTarget;
+    b.disabled = true;
+    try { await onConfirm(); close(); }
+    catch (err) { console.error(err); toast?.('Action failed'); b.disabled = false; }
+  };
 };
 
-/* RDM V6.8.78 — Professional Match / Scorecard / Tournament manager */
-(()=>{
-const H=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const num=v=>Number(v||0)||0;
-const mapUrl=(lat,lng)=>lat&&lng?`https://www.openstreetmap.org/export/embed.html?bbox=${Number(lng)-.008}%2C${Number(lat)-.006}%2C${Number(lng)+.008}%2C${Number(lat)+.006}&layer=mapnik&marker=${lat}%2C${lng}`:'';
-const directionsUrl=(lat,lng)=>lat&&lng?`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(lat+','+lng)}&travelmode=driving`:'';
-function proMapCard(lat,lng,label='OPEN FULL MAP & DIRECTIONS'){if(!lat||!lng)return '';return `<div class="proMapCardBlock"><div class="proMiniMap"><iframe loading="lazy" src="${H(mapUrl(lat,lng))}"></iframe></div><a class="proMapBelowBtn" href="${H(directionsUrl(lat,lng))}" target="_blank" rel="noopener">📍 ${label}</a></div>`}
-function proField(label,name,value='',type='text',opts=''){return `<label class="proField"><span>${label}</span><input name="${name}" type="${type}" value="${H(value)}" ${opts}></label>`}
-function proSelect(label,name,value,arr){return `<label class="proField"><span>${label}</span><select name="${name}">${arr.map(x=>`<option value="${H(x)}" ${String(x)===String(value)?'selected':''}>${H(x)}</option>`).join('')}</select></label>`}
-function locBlock(x={}){return `<section class="proGroup proLocation"><h3>📍 VENUE & LOCATION</h3><div class="proGrid">${proField('VENUE / GROUND NAME','venueName',x.venueName||x.venue||'','','required')}${proField('AREA / VILLAGE','area',x.area||'')}${proField('CITY / DISTRICT','district',x.district||'')}${proField('STATE','state',x.state||'Bihar')}${proField('LATITUDE','latitude',x.latitude||'','number','step="any"')}${proField('LONGITUDE','longitude',x.longitude||'','number','step="any"')}</div><div class="proLocationActions"><button type="button" class="primary proLocate">📍 USE CURRENT LOCATION</button><span class="proLocStatus">${x.latitude&&x.longitude?'LOCATION SAVED':'LOCATION OPTIONAL'}</span></div><div class="proMapWrap" ${x.latitude&&x.longitude?'':'hidden'}><iframe class="proMap" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="${H(mapUrl(x.latitude,x.longitude))}"></iframe><a class="proMapOpen" target="_blank" rel="noopener">OPEN MAP</a></div></section>`}
-function proModal(title,body,onSave){document.getElementById('rdmProForm')?.remove();const m=document.createElement('div');m.id='rdmProForm';m.className='modal show rdmUnifiedModal';m.innerHTML=`<form class="dialog rdmUnifiedDialog proDialog"><button class="close" type="button">×</button><div class="proTitle"><h2>${title}</h2><p>COMPLETE INFORMATION • PROFESSIONAL RDM RECORD</p></div>${body}<div class="proBottom"><button type="button" class="secondary proCancel">CANCEL</button><button class="primary" type="submit">✓ SAVE</button></div></form>`;document.body.appendChild(m);window.rdmMiniFormUI?.(m);const close=()=>m.remove();m.querySelector('.close').onclick=close;m.querySelector('.proCancel').onclick=close;m.onclick=e=>{if(e.target===m)close()};const locate=m.querySelector('.proLocate');if(locate)locate.onclick=()=>{const st=m.querySelector('.proLocStatus');if(!navigator.geolocation){st.textContent='LOCATION NOT SUPPORTED';return}st.textContent='GETTING LOCATION…';navigator.geolocation.getCurrentPosition(p=>{const lat=p.coords.latitude.toFixed(6),lng=p.coords.longitude.toFixed(6);m.querySelector('[name=latitude]').value=lat;m.querySelector('[name=longitude]').value=lng;st.textContent='✓ CURRENT LOCATION SAVED';const w=m.querySelector('.proMapWrap');w.hidden=false;w.querySelector('iframe').src=mapUrl(lat,lng);w.querySelector('a').href=`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=17/${lat}/${lng}`},()=>st.textContent='LOCATION PERMISSION NOT AVAILABLE',{enableHighAccuracy:true,timeout:10000})};m.querySelector('form').onsubmit=async e=>{e.preventDefault();const b=e.submitter;b.disabled=true;const d=Object.fromEntries(new FormData(e.currentTarget).entries());try{await onSave(d);close()}catch(err){console.error(err);toast?.('SAVE FAILED');b.disabled=false}}}
-function matchBody(x={}){return `<section class="proGroup"><h3>🏏 MATCH INFORMATION</h3><div class="proGrid">${proField('OPPONENT TEAM','opponent',x.opponent||'','','required')}${proSelect('MATCH TYPE','matchType',x.matchType||'Friendly',['Friendly','League Match','Knockout','Semi Final','Final','Practice'])}${proField('DATE','date',x.date||'','date')}${proField('TIME','time',x.time||'','time')}${proField('OVERS','overs',x.overs||20,'number','min="1"')}${proSelect('MATCH STATUS','matchStatus',x.matchStatus||x.status||'UPCOMING',['UPCOMING','LIVE','COMPLETED','CANCELLED'])}${proSelect('TOSS WINNER','tossWinner',x.tossWinner||'NOT DECIDED',['NOT DECIDED','RDM','OPPONENT'])}${proSelect('TOSS DECISION','tossDecision',x.tossDecision||'NOT DECIDED',['NOT DECIDED','BATTING','BOWLING'])}</div></section>${locBlock(x)}<section class="proGroup"><h3>ℹ ADDITIONAL INFORMATION</h3><div class="proGrid">${proSelect('VENUE TYPE','venueType',x.venueType||'Outdoor',['Outdoor','Indoor'])}${proField('PITCH / SURFACE','pitchType',x.pitchType||'')}${proField('UMPIRE / OFFICIAL','official',x.official||'')}${proField('TOURNAMENT','tournament',x.tournament||'')}</div><label class="proField proFull"><span>NOTES / MATCH DETAILS</span><textarea name="note" rows="3">${H(x.note||'')}</textarea></label></section>`}
-window.rdmProAddMatch=function(id){if(!rdmAdmin?.())return toast?.('Admin only');const x=id?(D.matches||[]).find(z=>z._docId===id)||{}:{};proModal(id?'EDIT MATCH':'ADD MATCH',matchBody(x),async d=>{d.venue=d.venueName;d.createdMs=x.createdMs||Date.now();d.overs=num(d.overs);const rec={...x,...d,_docId:id||'loc_'+Date.now()};if(id)Object.assign(x,rec);else D.matches.unshift(rec);window.rdmSaveCollectionOverride?.('matches',D.matches);try{if(id)await rdmDB.collection('Matches').doc(id).set({...d,updatedAt:rdmStamp()},{merge:true});else await rdmDB.collection('Matches').add({...d,updatedAt:rdmStamp()})}catch{}rdmRefresh?.();window.refreshAdminSectionManager?.();toast?.('Match saved')})};
-const oldOpen=window.openEdit;window.openEdit=function(mode,obj){if(!rdmAdmin?.())return toast?.('Admin only');if(mode==='match')return window.rdmProAddMatch();return oldOpen?.(mode,obj)};
-window.addScorecard=function(id){if(!rdmAdmin?.())return toast?.('Admin only');const x=id?(D.matches||[]).find(z=>z._docId===id)||{}:{};const body=`<section class="proGroup"><h3>🏏 MATCH & RESULT</h3><div class="proGrid">${proField('OPPONENT TEAM','opponent',x.opponent||'','','required')}${proField('DATE','date',x.date||'','date')}${proField('RDM SCORE','ourScore',x.ourScore||'')}${proField('OPPONENT SCORE','oppScore',x.oppScore||'')}${proField('RDM OVERS','ourOvers',x.ourOvers||'')}${proField('OPPONENT OVERS','oppOvers',x.oppOvers||'')}${proSelect('RESULT','result',x.result||'RDM WON',['RDM WON','RDM LOST','TIE','NO RESULT'])}${proField('WIN / LOSS MARGIN','margin',x.margin||'')}${proField('PLAYER OF THE MATCH','potm',x.potm||'')}${proField('TOSS WINNER','tossWinner',x.tossWinner||'')}${proField('TOSS DECISION','tossDecision',x.tossDecision||'')}${proField('MATCH TYPE','matchType',x.matchType||'')}</div></section>${locBlock(x)}<section class="proGroup"><h3>📊 SCORE DETAILS</h3><div class="proGrid">${proField('RDM WICKETS','ourWickets',x.ourWickets||0,'number')}${proField('OPPONENT WICKETS','oppWickets',x.oppWickets||0,'number')}${proField('RDM EXTRAS','ourExtras',x.ourExtras||0,'number')}${proField('OPPONENT EXTRAS','oppExtras',x.oppExtras||0,'number')}</div><label class="proField proFull"><span>MATCH SUMMARY / NOTES</span><textarea name="note" rows="3">${H(x.note||'')}</textarea></label></section>`;proModal(id?'EDIT SCORECARD':'ADD SCORECARD',body,async d=>{d.venue=d.venueName;d.status='RESULT';d.matchStatus='COMPLETED';d.createdMs=x.createdMs||Date.now();const rec={...x,...d,_docId:id||'loc_'+Date.now()};if(id)Object.assign(x,rec);else D.matches.unshift(rec);window.rdmSaveCollectionOverride?.('matches',D.matches);try{if(id)await rdmDB.collection('Matches').doc(id).set({...d,updatedAt:rdmStamp()},{merge:true});else await rdmDB.collection('Matches').add({...d,updatedAt:rdmStamp()})}catch{}rdmRefresh?.();window.refreshAdminSectionManager?.();toast?.('Scorecard saved')})};
-window.v6AddTournament=function(id){if(!rdmAdmin?.())return toast?.('Admin only');const x=id?(V6.tournaments||[]).find(z=>z._docId===id)||{}:{};const body=`<section class="proGroup"><h3>🏆 TOURNAMENT INFORMATION</h3><div class="proGrid">${proField('TOURNAMENT NAME','name',x.name||'','','required')}${proField('SEASON / YEAR','season',x.season||new Date().getFullYear())}${proSelect('STATUS','status',x.status||'UPCOMING',['UPCOMING','ONGOING','COMPLETED'])}${proField('FINAL POSITION / STATUS','position',x.position||'')}${proField('START DATE','startDate',x.startDate||'','date')}${proField('END DATE','endDate',x.endDate||'','date')}${proField('ORGANIZER','organizer',x.organizer||'')}${proField('TOTAL TEAMS','teams',x.teams||0,'number')}${proField('RDM MATCHES','matches',x.matches||0,'number')}${proField('RDM WINS','wins',x.wins||0,'number')}${proField('RDM LOSSES','losses',x.losses||0,'number')}${proField('RDM DRAWS / NR','draws',x.draws||0,'number')}</div></section>${locBlock(x)}<section class="proGroup"><h3>📝 FIXTURES & NOTES</h3><label class="proField proFull"><span>FIXTURES / POINTS / DESCRIPTION</span><textarea name="fixtures" rows="5">${H(x.fixtures||'')}</textarea></label></section>`;proModal(id?'EDIT TOURNAMENT':'ADD TOURNAMENT',body,async d=>{d.venue=d.venueName;d.dates=[d.startDate,d.endDate].filter(Boolean).join(' - ');['teams','matches','wins','losses','draws'].forEach(k=>d[k]=num(d[k]));d.createdMs=x.createdMs||Date.now();const rec={...x,...d,_docId:id||'loc_'+Date.now()};if(id)Object.assign(x,rec);else V6.tournaments.unshift(rec);window.v6SaveOverride?.('tournaments',V6.tournaments);try{if(id)await rdmDB.collection('Tournaments').doc(id).set({...d,updatedAt:rdmStamp()},{merge:true});else await rdmDB.collection('Tournaments').add({...d,updatedAt:rdmStamp()})}catch{}window.v6render?.();window.rdmHardRenderTournaments?.();window.refreshAdminSectionManager?.();toast?.('Tournament saved')})};
-setTimeout(()=>{document.getElementById('addScorecard')?.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();window.addScorecard()},true);document.getElementById('addTournament')?.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();window.v6AddTournament()},true)},900);
+/* Professional Match / Scorecard / Tournament Manager & Renderers */
+(() => {
+  const H = s => String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+  const num = v => Number(v || 0) || 0;
+  const strip = obj => typeof window.rdmStripDocMeta === 'function' ? window.rdmStripDocMeta(obj) : (() => { const c = { ...(obj || {}) }; delete c._docId; delete c._profileUid; return c; })();
+  const reportErr = (err, label) => typeof window.rdmReportWriteError === 'function' ? window.rdmReportWriteError(err, label) : console.warn(label, err);
 
-function matchCard(m){const lat=m.latitude,lng=m.longitude;return `<article class="card proDataCard"><div class="proCardHead"><div><span class="proStatus">${H(mini(m.matchStatus||m.status||'MATCH'))}</span><h3>RDM <span>VS</span> ${H(mini(m.opponent||'OPPONENT'))}</h3></div></div><div class="proInfoGrid"><p><b>📅 DATE</b>${H(mini(m.date||'—'))}</p><p><b>🕒 TIME</b>${H(mini(m.time||'—'))}</p><p><b>🏏 TYPE</b>${H(mini(m.matchType||'—'))}</p><p><b>🎯 OVERS</b>${H(mini(m.overs||'—'))}</p><p class="proWide"><b>📍 VENUE</b>${H(mini(m.venueName||m.venue||'—'))} ${m.area||m.district?`• ${H(mini([m.area,m.district,m.state].filter(Boolean).join(', ')))}`:''}</p>${m.ourScore||m.oppScore?`<p><b>RDM SCORE</b>${H(mini(m.ourScore||'—'))}</p><p><b>OPPONENT SCORE</b>${H(mini(m.oppScore||'—'))}</p>`:''}${m.result?`<p class="proWide"><b>🏆 RESULT</b>${H(mini(m.result))} ${H(mini(m.margin||''))}</p>`:''}${m.potm?`<p class="proWide"><b>🏅 PLAYER OF THE MATCH</b>${H(mini(m.potm))}</p>`:''}${m.tossWinner&&m.tossWinner!=='NOT DECIDED'?`<p class="proWide"><b>🪙 TOSS</b>${H(mini(m.tossWinner))} • ${H(mini(m.tossDecision||''))}</p>`:''}</div>${proMapCard(lat,lng)}${m.note?`<p class="proNote">${H(mini(m.note))}</p>`:''}${rdmAdmin()?`<div class="proCardActions"><button class="tinyBtn" onclick="rdmProAddMatch('${m._docId}')">✏️ ᴇᴅɪᴛ</button>${(m.status==='RESULT'||m.matchStatus==='COMPLETED')?`<button class="tinyBtn" onclick="addScorecard('${m._docId}')">📊 SCORECARD</button>`:''}<button class="tinyBtn deleteBtn" onclick="removeItem('matches',${D.matches.indexOf(m)})">🗑️ ᴅᴇʟᴇᴛᴇ</button></div>`:''}</article>`}
-const prevRender=window.render;window.render=function(){prevRender?.();const box=document.getElementById('matchList');if(box)box.innerHTML=(D.matches||[]).length?D.matches.map(matchCard).join(''):'<div class="empty">ɴᴏ ᴍᴀᴛᴄʜ ᴀᴅᴅᴇᴅ ʏᴇᴛ</div>'};
-const prevT=window.v6Tournaments;window.v6Tournaments=function(){prevT?.();const box=document.getElementById('tournamentList');if(!box)return;box.innerHTML=(V6.tournaments||[]).length?V6.tournaments.map(x=>`<article class="tournamentCard proDataCard"><div class="proCardHead"><div><span class="proStatus">${mini(x.status||'TOURNAMENT')}</span><h3>🏆 ${mini(x.name||'TOURNAMENT')}</h3></div></div><div class="proInfoGrid"><p><b>ꜱᴇᴀꜱᴏɴ / ʏᴇᴀʀ</b>${mini(x.season||'—')}</p><p><b>ᴘᴏꜱɪᴛɪᴏɴ</b>${mini(x.position||'—')}</p><p><b>ꜱᴛᴀʀᴛ ᴅᴀᴛᴇ</b>${mini(x.startDate||'—')}</p><p><b>ᴇɴᴅ ᴅᴀᴛᴇ</b>${mini(x.endDate||'—')}</p><p><b>ᴏʀɢᴀɴɪᴢᴇʀ</b>${mini(x.organizer||'—')}</p><p><b>ᴛᴏᴛᴀʟ ᴛᴇᴀᴍꜱ</b>${mini(x.teams||0)}</p><p><b>ʀᴅᴍ ᴍᴀᴛᴄʜᴇꜱ</b>${mini(x.matches||0)}</p><p><b>ᴡ / ʟ / ɴʀ</b>${mini(x.wins||0)} / ${mini(x.losses||0)} / ${mini(x.draws||0)}</p><p class="proWide"><b>📍 ᴠᴇɴᴜᴇ / ʟᴏᴄᴀᴛɪᴏɴ</b>${mini(x.venueName||x.venue||'—')} ${x.area||x.district?`• ${H([x.area,x.district,x.state].filter(Boolean).join(', '))}`:''}</p></div>${proMapCard(x.latitude,x.longitude)}${x.fixtures?`<p class="proNote">${H(x.fixtures)}</p>`:''}${rdmAdmin()?`<div class="proCardActions"><button class="tinyBtn" onclick="v6AddTournament('${x._docId}')">✏️ ᴇᴅɪᴛ</button><button class="tinyBtn deleteBtn" onclick="v6Delete('Tournaments','${x._docId}')">🗑️ ᴅᴇʟᴇᴛᴇ</button></div>`:''}</article>`).join(''):'<div class="empty">ɴᴏ ᴛᴏᴜʀɴᴀᴍᴇɴᴛ ᴀᴅᴅᴇᴅ</div>'};
-setTimeout(()=>{window.render?.();window.v6Tournaments?.()},1200);
-})();
+  const mapUrl = (lat, lng) => lat && lng ? `https://www.openstreetmap.org/export/embed.html?bbox=${Number(lng) - 0.008}%2C${Number(lat) - 0.006}%2C${Number(lng) + 0.008}%2C${Number(lat) + 0.006}&layer=mapnik&marker=${lat}%2C${lng}` : '';
+  const directionsUrl = (lat, lng) => lat && lng ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(lat + ',' + lng)}&travelmode=driving` : '';
+  function proMapCard(lat, lng, label = 'Open Full Map & Directions') {
+    if (!lat || !lng) return '';
+    return `<div class="proMapCardBlock"><div class="proMiniMap"><iframe loading="lazy" src="${H(mapUrl(lat, lng))}"></iframe></div><a class="proMapBelowBtn" href="${H(directionsUrl(lat, lng))}" target="_blank" rel="noopener">📍 ${label}</a></div>`;
+  }
+  window.proMapCard = proMapCard;
 
-/* V6.8.84 HARD OVERRIDE — tournament admin actions + mini match text */
-(function(){
-  function adminNow(){ try{return !!rdmAdmin()}catch(e){return false} }
-  function miniSafe(v){ try{return window.mini?mini(String(v??'')):String(v??'')}catch(e){return String(v??'')} }
-  function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-  window.rdmHardRenderTournaments=function(){
-    const box=document.getElementById('tournamentList'); if(!box||!window.V6)return;
-    const arr=V6.tournaments||[];
-    box.innerHTML=arr.length?arr.map(x=>`<article class="tournamentCard proDataCard rdmHardTournament">
-      <div class="proCardHead"><div><span class="proStatus">${miniSafe(x.status||'TOURNAMENT')}</span><h3>🏆 ${miniSafe(x.name||'TOURNAMENT')}</h3></div></div>
-      <div class="proInfoGrid">
-       <p><b>ꜱᴇᴀꜱᴏɴ / ʏᴇᴀʀ</b>${miniSafe(x.season||'—')}</p><p><b>ᴘᴏꜱɪᴛɪᴏɴ</b>${miniSafe(x.position||'—')}</p>
-       <p><b>ꜱᴛᴀʀᴛ ᴅᴀᴛᴇ</b>${miniSafe(x.startDate||'—')}</p><p><b>ᴇɴᴅ ᴅᴀᴛᴇ</b>${miniSafe(x.endDate||'—')}</p>
-       <p><b>ᴏʀɢᴀɴɪᴢᴇʀ</b>${miniSafe(x.organizer||'—')}</p><p><b>ᴛᴏᴛᴀʟ ᴛᴇᴀᴍꜱ</b>${miniSafe(x.teams||0)}</p>
-       <p><b>ʀᴅᴍ ᴍᴀᴛᴄʜᴇꜱ</b>${miniSafe(x.matches||0)}</p><p><b>ᴡ / ʟ / ɴʀ</b>${miniSafe(x.wins||0)} / ${miniSafe(x.losses||0)} / ${miniSafe(x.draws||0)}</p>
-       <p class="proWide"><b>📍 ᴠᴇɴᴜᴇ / ʟᴏᴄᴀᴛɪᴏɴ</b>${miniSafe(x.venueName||x.venue||'—')} ${x.area||x.district?'• '+miniSafe([x.area,x.district,x.state].filter(Boolean).join(', ')):''}</p>
+  function proField(label, name, value = '', type = 'text', opts = '') {
+    return `<label class="proField"><span>${label}</span><input name="${name}" type="${type}" value="${H(value)}" ${opts}></label>`;
+  }
+  function proSelect(label, name, value, arr) {
+    return `<label class="proField"><span>${label}</span><select name="${name}">${arr.map(x => `<option value="${H(x)}" ${String(x) === String(value) ? 'selected' : ''}>${H(x)}</option>`).join('')}</select></label>`;
+  }
+  function locBlock(x = {}) {
+    return `<section class="proGroup proLocation">
+      <h3>📍 Venue &amp; Location</h3>
+      <div class="proGrid">
+        ${proField('Venue / Ground Name', 'venueName', x.venueName || x.venue || '', 'text', 'required')}
+        ${proField('Area / Village', 'area', x.area || '')}
+        ${proField('City / District', 'district', x.district || '')}
+        ${proField('State', 'state', x.state || 'Bihar')}
+        ${proField('Latitude', 'latitude', x.latitude || '', 'number', 'step="any"')}
+        ${proField('Longitude', 'longitude', x.longitude || '', 'number', 'step="any"')}
       </div>
-      ${window.proMapCard?proMapCard(x.latitude,x.longitude):''}
-      ${x.fixtures?`<p class="proNote">${esc(x.fixtures)}</p>`:''}
-      ${adminNow()?`<div class="proCardActions rdmHardAdminActions"><button type="button" class="tinyBtn rdmEditBtn" data-tedit="${esc(x._docId)}">✏️ ᴇᴅɪᴛ</button><button type="button" class="tinyBtn deleteBtn rdmDeleteBtn" data-tdel="${esc(x._docId)}">🗑️ ᴅᴇʟᴇᴛᴇ</button></div>`:''}
-    </article>`).join(''):'<div class="empty">ɴᴏ ᴛᴏᴜʀɴᴀᴍᴇɴᴛ ᴀᴅᴅᴇᴅ</div>';
-    box.querySelectorAll('[data-tedit]').forEach(b=>b.onclick=()=>window.v6AddTournament?.(b.dataset.tedit));
-    box.querySelectorAll('[data-tdel]').forEach(b=>b.onclick=()=>window.v6Delete?.('Tournaments',b.dataset.tdel));
+      <div class="proLocationActions">
+        <button type="button" class="primary proLocate">Use Current Location</button>
+        <span class="proLocStatus">${x.latitude && x.longitude ? 'Location Saved' : 'Location Optional'}</span>
+      </div>
+      <div class="proMapWrap" ${x.latitude && x.longitude ? '' : 'hidden'}>
+        <iframe class="proMap" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="${H(mapUrl(x.latitude, x.longitude))}"></iframe>
+        <a class="proMapOpen" target="_blank" rel="noopener">Open Map</a>
+      </div>
+    </section>`;
+  }
+
+  function proModal(title, body, onSave) {
+    document.getElementById('rdmProForm')?.remove();
+    const m = document.createElement('div');
+    m.id = 'rdmProForm';
+    m.className = 'modal show rdmUnifiedModal';
+    m.innerHTML = `<form class="dialog rdmUnifiedDialog proDialog">
+      <button class="close" type="button" aria-label="Close">×</button>
+      <div class="proTitle"><h2>${H(title)}</h2><p>Complete RDM Official Record · Live Sync</p></div>
+      ${body}
+      <div class="proBottom"><button type="button" class="secondary proCancel">Cancel</button><button class="primary" type="submit">Save &amp; Sync</button></div>
+    </form>`;
+    document.body.appendChild(m);
+    const close = () => m.remove();
+    m.querySelector('.close').onclick = close;
+    m.querySelector('.proCancel').onclick = close;
+    m.onclick = e => { if (e.target === m) close(); };
+    const locate = m.querySelector('.proLocate');
+    if (locate) {
+      locate.onclick = () => {
+        const st = m.querySelector('.proLocStatus');
+        if (!navigator.geolocation) { st.textContent = 'Location not supported'; return; }
+        st.textContent = 'Getting location…';
+        navigator.geolocation.getCurrentPosition(p => {
+          const lat = p.coords.latitude.toFixed(6), lng = p.coords.longitude.toFixed(6);
+          m.querySelector('[name=latitude]').value = lat;
+          m.querySelector('[name=longitude]').value = lng;
+          st.textContent = 'Current location saved';
+          const w = m.querySelector('.proMapWrap');
+          w.hidden = false;
+          w.querySelector('iframe').src = mapUrl(lat, lng);
+          w.querySelector('a').href = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=17/${lat}/${lng}`;
+        }, () => { st.textContent = 'Location permission not available'; }, { enableHighAccuracy: true, timeout: 10000 });
+      };
+    }
+    m.querySelector('form').onsubmit = async e => {
+      e.preventDefault();
+      const b = e.submitter;
+      b.disabled = true;
+      const d = Object.fromEntries(new FormData(e.currentTarget).entries());
+      try { await onSave(d); close(); }
+      catch (err) { console.error(err); toast?.('Save failed'); b.disabled = false; }
+    };
+  }
+
+  function matchBody(x = {}) {
+    return `<section class="proGroup">
+      <h3>🏏 Match Information</h3>
+      <div class="proGrid">
+        ${proField('Opponent Team', 'opponent', x.opponent || '', 'text', 'required')}
+        ${proSelect('Match Type', 'matchType', x.matchType || 'Friendly', ['Friendly', 'League Match', 'Knockout', 'Semi Final', 'Final', 'Practice'])}
+        ${proField('Date', 'date', x.date || '', 'date')}
+        ${proField('Time', 'time', x.time || '', 'time')}
+        ${proField('Overs', 'overs', x.overs || 20, 'number', 'min="1"')}
+        ${proSelect('Match Status', 'matchStatus', x.matchStatus || x.status || 'UPCOMING', ['UPCOMING', 'LIVE', 'COMPLETED', 'CANCELLED'])}
+        ${proSelect('Toss Winner', 'tossWinner', x.tossWinner || 'NOT DECIDED', ['NOT DECIDED', 'RDM', 'OPPONENT'])}
+        ${proSelect('Toss Decision', 'tossDecision', x.tossDecision || 'NOT DECIDED', ['NOT DECIDED', 'BATTING', 'BOWLING'])}
+      </div>
+    </section>${locBlock(x)}<section class="proGroup">
+      <h3>ℹ Additional Information</h3>
+      <div class="proGrid">
+        ${proSelect('Venue Type', 'venueType', x.venueType || 'Outdoor', ['Outdoor', 'Indoor'])}
+        ${proField('Pitch / Surface', 'pitchType', x.pitchType || '')}
+        ${proField('Umpire / Official', 'official', x.official || '')}
+        ${proField('Tournament', 'tournament', x.tournament || '')}
+      </div>
+      <label class="proField proFull"><span>Notes / Match Details</span><textarea name="note" rows="3">${H(x.note || '')}</textarea></label>
+    </section>`;
+  }
+
+  window.rdmProAddMatch = function (id) {
+    if (!rdmAdmin?.()) return toast?.('Admin only');
+    const x = id ? (D.matches || []).find(z => z._docId === id) || {} : {};
+    proModal(id ? 'Edit Match' : 'Add Match', matchBody(x), async d => {
+      d.venue = d.venueName;
+      d.createdMs = x.createdMs || Date.now();
+      d.overs = num(d.overs);
+      const rec = { ...x, ...d, _docId: id || 'loc_' + Date.now() };
+      if (id) Object.assign(x, rec);
+      else D.matches.unshift(rec);
+      try {
+        const clean = strip({ ...d, updatedAt: rdmStamp() });
+        if (id && !String(id).startsWith('loc_')) await rdmDB.collection('Matches').doc(id).set(clean, { merge: true });
+        else { const ref = await rdmDB.collection('Matches').add(clean); rec._docId = ref.id; }
+      } catch (err) {
+        window.rdmSaveCollectionOverride?.('matches', D.matches);
+        reportErr(err, 'Match sync');
+      }
+      rdmRefresh?.();
+      window.refreshAdminSectionManager?.();
+      toast?.('Match saved & synced');
+    });
   };
-  const oldVT=window.v6Tournaments;
-  window.v6Tournaments=function(){try{oldVT?.()}finally{window.rdmHardRenderTournaments()}};
-  const obs=new MutationObserver(()=>{document.querySelectorAll('#matchList .proDataCard').forEach(c=>c.classList.add('rdmHardMiniMatch'))});
-  document.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{window.rdmHardRenderTournaments();document.querySelectorAll('#matchList .proDataCard').forEach(c=>c.classList.add('rdmHardMiniMatch'))},500)});
-  obs.observe(document.documentElement,{subtree:true,childList:true});
+
+  const oldOpen = window.openEdit;
+  window.openEdit = function (mode, obj) {
+    if (!rdmAdmin?.()) return toast?.('Admin only');
+    if (mode === 'match') return window.rdmProAddMatch();
+    return oldOpen?.(mode, obj);
+  };
+
+  window.addScorecard = function (id) {
+    if (!rdmAdmin?.()) return toast?.('Admin only');
+    const x = id ? (D.matches || []).find(z => z._docId === id) || {} : {};
+    const body = `<section class="proGroup">
+      <h3>🏏 Match &amp; Result</h3>
+      <div class="proGrid">
+        ${proField('Opponent Team', 'opponent', x.opponent || '', 'text', 'required')}
+        ${proField('Date', 'date', x.date || '', 'date')}
+        ${proField('RDM Score', 'ourScore', x.ourScore || '')}
+        ${proField('Opponent Score', 'oppScore', x.oppScore || '')}
+        ${proField('RDM Overs', 'ourOvers', x.ourOvers || '')}
+        ${proField('Opponent Overs', 'oppOvers', x.oppOvers || '')}
+        ${proSelect('Result', 'result', x.result || 'RDM WON', ['RDM WON', 'RDM LOST', 'TIE', 'NO RESULT'])}
+        ${proField('Win / Loss Margin', 'margin', x.margin || '')}
+        ${proField('Player of the Match', 'potm', x.potm || '')}
+        ${proField('Toss Winner', 'tossWinner', x.tossWinner || '')}
+        ${proField('Toss Decision', 'tossDecision', x.tossDecision || '')}
+        ${proField('Match Type', 'matchType', x.matchType || '')}
+      </div>
+    </section>${locBlock(x)}<section class="proGroup">
+      <h3>📊 Score Details</h3>
+      <div class="proGrid">
+        ${proField('RDM Wickets', 'ourWickets', x.ourWickets || 0, 'number')}
+        ${proField('Opponent Wickets', 'oppWickets', x.oppWickets || 0, 'number')}
+        ${proField('RDM Extras', 'ourExtras', x.ourExtras || 0, 'number')}
+        ${proField('Opponent Extras', 'oppExtras', x.oppExtras || 0, 'number')}
+      </div>
+      <label class="proField proFull"><span>Match Summary / Notes</span><textarea name="note" rows="3">${H(x.note || '')}</textarea></label>
+    </section>`;
+    proModal(id ? 'Edit Scorecard' : 'Add Scorecard', body, async d => {
+      d.venue = d.venueName;
+      d.status = 'RESULT';
+      d.matchStatus = 'COMPLETED';
+      d.createdMs = x.createdMs || Date.now();
+      const rec = { ...x, ...d, _docId: id || 'loc_' + Date.now() };
+      if (id) Object.assign(x, rec);
+      else D.matches.unshift(rec);
+      try {
+        const clean = strip({ ...d, updatedAt: rdmStamp() });
+        if (id && !String(id).startsWith('loc_')) await rdmDB.collection('Matches').doc(id).set(clean, { merge: true });
+        else { const ref = await rdmDB.collection('Matches').add(clean); rec._docId = ref.id; }
+      } catch (err) {
+        window.rdmSaveCollectionOverride?.('matches', D.matches);
+        reportErr(err, 'Scorecard sync');
+      }
+      rdmRefresh?.();
+      window.refreshAdminSectionManager?.();
+      toast?.('Scorecard saved & synced');
+    });
+  };
+
+  window.v6AddTournament = function (id) {
+    if (!rdmAdmin?.()) return toast?.('Admin only');
+    const x = id ? (V6.tournaments || []).find(z => z._docId === id) || {} : {};
+    const body = `<section class="proGroup">
+      <h3>🏆 Tournament Information</h3>
+      <div class="proGrid">
+        ${proField('Tournament Name', 'name', x.name || '', 'text', 'required')}
+        ${proField('Season / Year', 'season', x.season || new Date().getFullYear())}
+        ${proSelect('Status', 'status', x.status || 'UPCOMING', ['UPCOMING', 'ONGOING', 'COMPLETED'])}
+        ${proField('Final Position / Status', 'position', x.position || '')}
+        ${proField('Start Date', 'startDate', x.startDate || '', 'date')}
+        ${proField('End Date', 'endDate', x.endDate || '', 'date')}
+        ${proField('Organizer', 'organizer', x.organizer || '')}
+        ${proField('Total Teams', 'teams', x.teams || 0, 'number')}
+        ${proField('RDM Matches', 'matches', x.matches || 0, 'number')}
+        ${proField('RDM Wins', 'wins', x.wins || 0, 'number')}
+        ${proField('RDM Losses', 'losses', x.losses || 0, 'number')}
+        ${proField('RDM Draws / NR', 'draws', x.draws || 0, 'number')}
+      </div>
+    </section>${locBlock(x)}<section class="proGroup">
+      <h3>📝 Fixtures &amp; Notes</h3>
+      <label class="proField proFull"><span>Fixtures / Points / Description</span><textarea name="fixtures" rows="5">${H(x.fixtures || '')}</textarea></label>
+    </section>`;
+    proModal(id ? 'Edit Tournament' : 'Add Tournament', body, async d => {
+      d.venue = d.venueName;
+      d.dates = [d.startDate, d.endDate].filter(Boolean).join(' - ');
+      ['teams', 'matches', 'wins', 'losses', 'draws'].forEach(k => d[k] = num(d[k]));
+      d.createdMs = x.createdMs || Date.now();
+      const rec = { ...x, ...d, _docId: id || 'loc_' + Date.now() };
+      if (id) Object.assign(x, rec);
+      else V6.tournaments.unshift(rec);
+      try {
+        const clean = strip({ ...d, updatedAt: rdmStamp() });
+        if (id && !String(id).startsWith('loc_')) await rdmDB.collection('Tournaments').doc(id).set(clean, { merge: true });
+        else { const ref = await rdmDB.collection('Tournaments').add(clean); rec._docId = ref.id; }
+      } catch (err) {
+        window.v6SaveOverride?.('tournaments', V6.tournaments);
+        reportErr(err, 'Tournament sync');
+      }
+      window.v6render?.();
+      window.rdmHardRenderTournaments?.();
+      window.refreshAdminSectionManager?.();
+      toast?.('Tournament saved & synced');
+    });
+  };
+
+  setTimeout(() => {
+    document.getElementById('addScorecard')?.addEventListener('click', e => { e.preventDefault(); e.stopImmediatePropagation(); window.addScorecard(); }, true);
+    document.getElementById('addTournament')?.addEventListener('click', e => { e.preventDefault(); e.stopImmediatePropagation(); window.v6AddTournament(); }, true);
+  }, 900);
+
+  function matchCard(m) {
+    const lat = m.latitude, lng = m.longitude;
+    return `<article class="card proDataCard rdmHardMiniMatch">
+      <div class="proCardHead">
+        <div>
+          <span class="proStatus">${H(mini(m.matchStatus || m.status || 'MATCH'))}</span>
+          <h3>RDM <span>VS</span> ${H(mini(m.opponent || 'Opponent'))}</h3>
+        </div>
+      </div>
+      <div class="proInfoGrid">
+        <p><b>Date</b>${H(mini(m.date || '—'))}</p>
+        <p><b>Time</b>${H(mini(m.time || '—'))}</p>
+        <p><b>Match Type</b>${H(mini(m.matchType || '—'))}</p>
+        <p><b>Overs</b>${H(mini(m.overs || '—'))}</p>
+        <p class="proWide"><b>Venue</b>${H(mini(m.venueName || m.venue || '—'))}${m.area || m.district ? ` · ${H(mini([m.area, m.district, m.state].filter(Boolean).join(', ')))}` : ''}</p>
+        ${m.ourScore || m.oppScore ? `<p><b>RDM Score</b>${H(mini(m.ourScore || '—'))}</p><p><b>Opponent Score</b>${H(mini(m.oppScore || '—'))}</p>` : ''}
+        ${m.result ? `<p class="proWide"><b>Result</b>${H(mini(m.result))} ${H(mini(m.margin || ''))}</p>` : ''}
+        ${m.potm ? `<p class="proWide"><b>Player of the Match</b>${H(mini(m.potm))}</p>` : ''}
+        ${m.tossWinner && m.tossWinner !== 'NOT DECIDED' ? `<p class="proWide"><b>Toss</b>${H(mini(m.tossWinner))} · ${H(mini(m.tossDecision || ''))}</p>` : ''}
+      </div>
+      ${proMapCard(lat, lng)}
+      ${m.note ? `<p class="proNote">${H(mini(m.note))}</p>` : ''}
+      ${rdmAdmin() ? `<div class="proCardActions"><button class="tinyBtn" onclick="rdmProAddMatch('${m._docId}')">Edit</button>${(m.status === 'RESULT' || m.matchStatus === 'COMPLETED') ? `<button class="tinyBtn" onclick="addScorecard('${m._docId}')">Scorecard</button>` : ''}<button class="tinyBtn deleteBtn" onclick="removeItem('matches',${D.matches.indexOf(m)})">Delete</button></div>` : ''}
+    </article>`;
+  }
+
+  const prevRender = window.render;
+  window.render = function () {
+    prevRender?.();
+    const box = document.getElementById('matchList');
+    if (box) box.innerHTML = (D.matches || []).length ? D.matches.map(matchCard).join('') : '<div class="empty">No match added yet</div>';
+  };
+
+  window.rdmHardRenderTournaments = function () {
+    const box = document.getElementById('tournamentList');
+    if (!box || !window.V6) return;
+    const arr = V6.tournaments || [];
+    box.innerHTML = arr.length
+      ? arr.map(x => `<article class="tournamentCard proDataCard rdmHardTournament">
+          <div class="proCardHead"><div><span class="proStatus">${mini(x.status || 'TOURNAMENT')}</span><h3>🏆 ${mini(x.name || 'Tournament')}</h3></div></div>
+          <div class="proInfoGrid">
+            <p><b>Season / Year</b>${mini(x.season || '—')}</p>
+            <p><b>Position</b>${mini(x.position || '—')}</p>
+            <p><b>Start Date</b>${mini(x.startDate || '—')}</p>
+            <p><b>End Date</b>${mini(x.endDate || '—')}</p>
+            <p><b>Organizer</b>${mini(x.organizer || '—')}</p>
+            <p><b>Total Teams</b>${mini(x.teams || 0)}</p>
+            <p><b>RDM Matches</b>${mini(x.matches || 0)}</p>
+            <p><b>W / L / NR</b>${mini(x.wins || 0)} / ${mini(x.losses || 0)} / ${mini(x.draws || 0)}</p>
+            <p class="proWide"><b>Venue / Location</b>${mini(x.venueName || x.venue || '—')} ${x.area || x.district ? '· ' + mini([x.area, x.district, x.state].filter(Boolean).join(', ')) : ''}</p>
+          </div>
+          ${proMapCard(x.latitude, x.longitude)}
+          ${x.fixtures ? `<p class="proNote">${H(x.fixtures)}</p>` : ''}
+          ${rdmAdmin() ? `<div class="proCardActions rdmHardAdminActions"><button type="button" class="tinyBtn rdmEditBtn" data-tedit="${H(x._docId)}">Edit</button><button type="button" class="tinyBtn deleteBtn rdmDeleteBtn" data-tdel="${H(x._docId)}">Delete</button></div>` : ''}
+        </article>`).join('')
+      : '<div class="empty">No tournament added yet</div>';
+    box.querySelectorAll('[data-tedit]').forEach(b => b.onclick = () => window.v6AddTournament?.(b.dataset.tedit));
+    box.querySelectorAll('[data-tdel]').forEach(b => b.onclick = () => window.v6Delete?.('Tournaments', b.dataset.tdel));
+  };
+
+  const prevVT = window.v6Tournaments;
+  window.v6Tournaments = function () {
+    try { prevVT?.(); } finally { window.rdmHardRenderTournaments(); }
+  };
+  setTimeout(() => { window.render?.(); window.v6Tournaments?.(); }, 1000);
 })();
 
-if(!window.__rdmEscModalBound){
-  window.__rdmEscModalBound=true;
-  document.addEventListener('keydown',e=>{
-    if(e.key!=='Escape')return;
-    const open=[...document.querySelectorAll('.modal.show')];
-    const top=open[open.length-1];
-    if(!top)return;
-    const closeBtn=top.querySelector('.close');
-    if(closeBtn){closeBtn.click();return;}
-    if(['editor','cropModal','lightbox','publicProfileModal','adminPlayerProfileModal'].includes(top.id))top.classList.remove('show');
+if (!window.__rdmEscModalBound) {
+  window.__rdmEscModalBound = true;
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    const open = [...document.querySelectorAll('.modal.show')];
+    const top = open[open.length - 1];
+    if (!top) return;
+    const closeBtn = top.querySelector('.close');
+    if (closeBtn) { closeBtn.click(); return; }
+    if (['editor', 'cropModal', 'lightbox', 'publicProfileModal', 'adminPlayerProfileModal'].includes(top.id)) top.classList.remove('show');
     else top.remove();
   });
 }
-

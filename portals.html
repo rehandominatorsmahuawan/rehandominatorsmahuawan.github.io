@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>RDM Portals Directory | Public Website, Admin Panel &amp; Player Profiles</title>
+  <meta name="description" content="Central access directory for Rehan Dominators Mahuawan (RDM) — open the Public Website, Admin Panel, or any of the 17 password-protected Player Profile portals.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#C81E2B">
+  <link rel="icon" type="image/png" sizes="192x192" href="pwa-192x192.png?v=7400">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=7400">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,700&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=8.0.0">
+  <script>
+    (function(){
+      try {
+        var m = localStorage.getItem('rdm-theme') || 'auto';
+        if (!/^(auto|light|dark)$/.test(m)) m = 'auto';
+        var d = m === 'auto' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : m;
+        document.documentElement.dataset.rdmThemeMode = m;
+        document.documentElement.dataset.rdmTheme = d;
+      } catch (e) {
+        document.documentElement.dataset.rdmThemeMode = 'auto';
+        document.documentElement.dataset.rdmTheme = 'light';
+      }
+    })();
+  </script>
+</head>
+<body class="portalsPage">
+  <header class="top">
+    <a class="brand" href="./">
+      <img src="assets/rdm-logo.png?v=7400" alt="Rehan Dominators Mahuawan Logo" width="44" height="44" decoding="async" referrerPolicy="no-referrer">
+      <span class="brandTextGroup">
+        <span class="brandTitle">Rehan Dominators Mahuawan</span>
+        <span class="brandSub">Portals &amp; Links Directory</span>
+      </span>
+    </a>
+    <div class="headActions">
+      <a class="tinyBtn" href="./">← Public Website</a>
+      <div class="themeControl" id="themeControl">
+        <button type="button" class="themeToggle" id="themeToggle" aria-label="Theme" aria-expanded="false">Theme</button>
+        <div class="themeMenu" id="themeMenu" hidden>
+          <button type="button" data-theme-mode="auto">Auto</button>
+          <button type="button" data-theme-mode="light">Light</button>
+          <button type="button" data-theme-mode="dark">Dark</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="portalsMain">
+    <section class="portalsHero">
+      <div class="portalsHeroCopy">
+        <span class="sectionKicker">Official RDM Access Hub</span>
+        <h1>Club, Admin &amp; Player Portals</h1>
+        <p>Use this directory to jump cleanly between the public fan website, full-control Admin Command Workspace, or any of the 17 password-protected Player Profile portals. Every update syncs live across Web and Android APK.</p>
+      </div>
+      <div class="portalsHeroMeta">
+        <div class="portalsStatBox">
+          <strong>19</strong>
+          <span>Total Portals</span>
+        </div>
+        <div class="portalsStatBox">
+          <strong>17</strong>
+          <span>Player Profiles</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="portalsSection" aria-label="Core Website &amp; Admin Portals">
+      <div class="sectionHead">
+        <div>
+          <span>Core Access</span>
+          <h2>Public Website &amp; Admin Control</h2>
+          <p>Separate public showcase and private administrative workspace</p>
+        </div>
+      </div>
+      <div class="portalsFeaturedGrid">
+        <article class="portalCard portalCardFeatured is-public">
+          <div class="portalCardHead">
+            <span class="portalBadge is-public">Public Showcase</span>
+            <span class="portalCode">OPEN ACCESS</span>
+          </div>
+          <h3>RDM Public Website</h3>
+          <p>View-only club portal for fans, opponents, and visitors — featuring live Squad, Match Centre, Records Leaderboard, Playing XI, Honours, Gallery, News, Updates, and APK download.</p>
+          <div class="portalUrlRow">
+            <input id="publicPortalUrl" type="text" readonly aria-label="Public website URL">
+          </div>
+          <div class="portalActions">
+            <a class="primary" href="./">Open Website ↗</a>
+            <button type="button" class="secondary" data-copy-target="publicPortalUrl">Copy Link</button>
+          </div>
+        </article>
+
+        <article class="portalCard portalCardFeatured is-admin">
+          <div class="portalCardHead">
+            <span class="portalBadge is-admin">Confidential</span>
+            <span class="portalCode">WEB ADMIN KEY</span>
+          </div>
+          <h3>RDM Admin Command Workspace</h3>
+          <p>Direct management link for adding/editing players, matches, scorecards, honours, tournaments, team records, gallery albums, updates, branding, and live Firebase data.</p>
+          <div class="portalUrlRow">
+            <input id="adminPortalUrl" type="text" readonly aria-label="Admin panel URL">
+          </div>
+          <div class="portalActions">
+            <a class="primary" id="adminPortalOpen" href="./?key=0AqlZ35wF8lcXYiAkgz04KjzGeiSfnHs">Open Admin Panel ↗</a>
+            <button type="button" class="secondary" data-copy-target="adminPortalUrl">Copy Link</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="portalsSection" aria-label="Player Profile Portals">
+      <div class="sectionHead">
+        <div>
+          <span>Squad Self-Service</span>
+          <h2>Player Profile Portals (17)</h2>
+          <p>🔒 Password required on open — unlocking lets each player update DP photo, bio, jersey number, socials, and match availability</p>
+        </div>
+      </div>
+
+      <div class="portalsToolbar" role="search" aria-label="Filter player portals">
+        <div class="squadSearchWrap">
+          <svg class="squadSearchIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input id="portalSearch" class="searchPlayer" type="search" autocomplete="off" placeholder="Search player by name, RDM ID, code, or role...">
+        </div>
+        <div class="squadRoleFilters" id="portalRoleFilters" role="group" aria-label="Filter player portals by role">
+          <button type="button" class="squadRoleBtn active" data-filter="ALL">All (17)</button>
+          <button type="button" class="squadRoleBtn" data-filter="LEADERSHIP">Leadership</button>
+          <button type="button" class="squadRoleBtn" data-filter="BATSMAN">Batsman</button>
+          <button type="button" class="squadRoleBtn" data-filter="ALL-ROUNDER">All-Rounder</button>
+          <button type="button" class="squadRoleBtn" data-filter="WICKET-KEEPER">Wicket-Keeper</button>
+        </div>
+      </div>
+
+      <p id="portalFilterStatus" class="squadFilterStatus" aria-live="polite"></p>
+      <div id="playerPortalsGrid" class="portalsPlayerGrid"></div>
+      <div id="portalEmpty" class="empty" hidden>No player portal matches your search or filter.</div>
+    </section>
+  </main>
+
+  <footer>
+    <img src="assets/rdm-logo.png?v=7400" alt="RDM Logo" width="56" height="56" loading="lazy" decoding="async" referrerPolicy="no-referrer">
+    <b>Rehan Dominators Mahuawan</b>
+    <span>One Team • One Dream • One Domination · Mahuawan, Gopalganj, Bihar</span>
+    <nav class="footerLinks" aria-label="Portals footer links">
+      <a href="./">Public Website</a>
+      <a href="./?key=0AqlZ35wF8lcXYiAkgz04KjzGeiSfnHs">Admin Panel</a>
+      <a href="#playerPortalsGrid">Player Portals</a>
+    </nav>
+  </footer>
+
+  <div id="toast"></div>
+
+  <script>
+    (function(){
+      'use strict';
+      const ADMIN_KEY = '0AqlZ35wF8lcXYiAkgz04KjzGeiSfnHs';
+      const PLAYERS = [
+        { id: 'RDM001', code: 'RA08', name: 'Rehan Akhtar', role: 'Captain · All-Rounder', tags: ['LEADERSHIP','ALL-ROUNDER'], key: 'yJjA_yyMuR6OyPJgfvspRUmD' },
+        { id: 'RDM003', code: 'SA-V', name: 'Saif Ali', role: 'Vice-Captain · All-Rounder', tags: ['LEADERSHIP','ALL-ROUNDER'], key: 'iGo217fTX-irxYyJoPfrlXBf' },
+        { id: 'RDM006', code: 'SO-WK', name: 'Soaib Akhtar', role: 'Wicket-Keeper · Batsman', tags: ['LEADERSHIP','WICKET-KEEPER','BATSMAN'], key: 'RLnuOF9niHZMV0yemW4-Mm5O' },
+        { id: 'RDM004', code: 'AKA', name: 'Akib Ansari', role: 'All-Rounder', tags: ['ALL-ROUNDER'], key: 'pArgda-19Jz59OJc6D-WszY4' },
+        { id: 'RDM002', code: 'ASI', name: 'Asif Ali', role: 'Batsman', tags: ['BATSMAN'], key: '6tYIAzsx4WM534_Ovd1mDaE1' },
+        { id: 'RDM007', code: 'WSM', name: 'Wasim', role: 'All-Rounder', tags: ['ALL-ROUNDER'], key: 'ubl_kIeHJdMlhTrMeV39LTjq' },
+        { id: 'RDM008', code: 'JBD', name: 'Jubed', role: 'Batsman', tags: ['BATSMAN'], key: 'HthzwXsiP1scviZJJUWIymep' },
+        { id: 'RDM010', code: 'GLM', name: 'Gulam', role: 'All-Rounder', tags: ['ALL-ROUNDER'], key: 'kSHlVvpggLEs9wpLrlUfTMxs' },
+        { id: 'RDM011', code: 'SHA57', name: 'Sahil Ansari', role: 'Batsman', tags: ['BATSMAN'], key: 'GgSPtAUgj_zIrTTY2WMeLeXW' },
+        { id: 'RDM005', code: 'SAL02', name: 'Sahil Ali', role: 'Batsman', tags: ['BATSMAN'], key: '2GJogYcYn4dG23ug5zkC9c-D' },
+        { id: 'RDM012', code: 'LKY', name: 'Lucky', role: 'All-Rounder', tags: ['ALL-ROUNDER'], key: 'mxXlPl2zOIzz-Lig_jsx6MEm' },
+        { id: 'RDM016', code: 'KLF', name: 'Kaif Lefty', role: 'Batsman', tags: ['BATSMAN'], key: 'UpcsKFrMOK6GEnBLjTCZcdBk' },
+        { id: 'RDM009', code: 'SKH', name: 'SK. Hanif', role: 'Batsman', tags: ['BATSMAN'], key: '88DTqmDck9JVXCybKZXajzzG' },
+        { id: 'RDM013', code: 'ABS', name: 'Abushad', role: 'All-Rounder', tags: ['ALL-ROUNDER'], key: 'uwN3JA0MPpUewH_BFcRVoiJX' },
+        { id: 'RDM014', code: 'SBA', name: 'Sabre Alam', role: 'Batsman', tags: ['BATSMAN'], key: 'wKTMjxcXSV3sweGJWQ4AKZoX' },
+        { id: 'RDM015', code: 'ZSN', name: 'Zishan', role: 'Batsman', tags: ['BATSMAN'], key: 'FYnhheOTlpei4tJD6C43Qc66' },
+        { id: 'RDM017', code: 'JVD', name: 'Javed', role: 'Batsman', tags: ['BATSMAN'], key: 'YvKJ8KIvznZlq_7OQc9AYyvG' }
+      ];
+
+      function portalBaseUrl() {
+        return new URL('./', location.href).href;
+      }
+
+      const base = portalBaseUrl();
+      const publicUrl = base;
+      const adminUrl = base + '?key=' + encodeURIComponent(ADMIN_KEY);
+
+      const pubInput = document.getElementById('publicPortalUrl');
+      const admInput = document.getElementById('adminPortalUrl');
+      const admOpen = document.getElementById('adminPortalOpen');
+      if (pubInput) pubInput.value = publicUrl;
+      if (admInput) admInput.value = adminUrl;
+      if (admOpen) admOpen.href = adminUrl;
+
+      function toast(msg) {
+        const el = document.getElementById('toast');
+        if (!el) return;
+        el.textContent = msg;
+        el.classList.add('show');
+        clearTimeout(toast._t);
+        toast._t = setTimeout(() => el.classList.remove('show'), 1800);
+      }
+
+      async function copyText(text, btn) {
+        let ok = false;
+        try {
+          if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(text); ok = true; }
+        } catch {}
+        if (!ok) {
+          try {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            ok = document.execCommand('copy');
+            ta.remove();
+          } catch {}
+        }
+        if (ok && btn) {
+          const prev = btn.textContent;
+          btn.textContent = 'Copied ✓';
+          setTimeout(() => { if (btn.isConnected) btn.textContent = prev; }, 1600);
+        }
+        toast(ok ? 'Portal link copied' : 'Unable to copy link');
+      }
+
+      let activeFilter = 'ALL';
+      let query = '';
+      const grid = document.getElementById('playerPortalsGrid');
+      const empty = document.getElementById('portalEmpty');
+      const status = document.getElementById('portalFilterStatus');
+
+      function esc(s) {
+        return String(s ?? '').replace(/[&<>"']/g, c => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[c]));
+      }
+
+      function renderPlayers() {
+        const q = query.trim().toLowerCase();
+        const filtered = PLAYERS.filter(p => {
+          const roleMatch = activeFilter === 'ALL' || p.tags.includes(activeFilter);
+          if (!roleMatch) return false;
+          if (!q) return true;
+          return (p.name + ' ' + p.id + ' ' + p.code + ' ' + p.role).toLowerCase().includes(q);
+        });
+
+        if (status) {
+          status.textContent = `Showing ${filtered.length} of ${PLAYERS.length} player portals`;
+        }
+        if (empty) empty.hidden = filtered.length > 0;
+        if (!grid) return;
+
+        grid.innerHTML = filtered.map(p => {
+          const url = base + '?key=' + encodeURIComponent(p.key);
+          const inputId = 'url-' + p.id;
+          return `<article class="portalCard portalPlayerCard">
+            <div class="portalPlayerTop">
+              <img src="assets/rdm-logo.png?v=7400" alt="${esc(p.name)} avatar" width="48" height="48" loading="lazy" decoding="async" referrerPolicy="no-referrer">
+              <div class="portalPlayerInfo">
+                <span class="portalCode">${esc(p.id)} · ${esc(p.code)}</span>
+                <h3>${esc(p.name)}</h3>
+                <b>${esc(p.role)}</b>
+              </div>
+            </div>
+            <div class="portalLockPill">🔒 Password required on open</div>
+            <div class="portalUrlRow">
+              <input id="${inputId}" type="text" readonly value="${esc(url)}" aria-label="${esc(p.name)} portal URL" onclick="this.select()">
+            </div>
+            <div class="portalActions">
+              <a class="primary" href="${esc(url)}">Open Profile ↗</a>
+              <button type="button" class="secondary" data-copy-url="${esc(url)}">Copy Link</button>
+            </div>
+          </article>`;
+        }).join('');
+      }
+
+      document.getElementById('portalSearch')?.addEventListener('input', e => {
+        query = e.target.value || '';
+        renderPlayers();
+      });
+
+      document.getElementById('portalRoleFilters')?.addEventListener('click', e => {
+        const btn = e.target.closest('[data-filter]');
+        if (!btn) return;
+        activeFilter = btn.dataset.filter || 'ALL';
+        document.querySelectorAll('#portalRoleFilters .squadRoleBtn').forEach(b => {
+          b.classList.toggle('active', b === btn);
+        });
+        renderPlayers();
+      });
+
+      document.addEventListener('click', e => {
+        const copyIdBtn = e.target.closest('[data-copy-target]');
+        if (copyIdBtn) {
+          const inp = document.getElementById(copyIdBtn.dataset.copyTarget);
+          if (inp) copyText(inp.value, copyIdBtn);
+          return;
+        }
+        const copyUrlBtn = e.target.closest('[data-copy-url]');
+        if (copyUrlBtn) {
+          copyText(copyUrlBtn.dataset.copyUrl, copyUrlBtn);
+          return;
+        }
+        const input = e.target.closest('.portalUrlRow input');
+        if (input) input.select();
+      });
+
+      // Theme menu logic
+      var control = document.getElementById('themeControl'),
+          toggle = document.getElementById('themeToggle'),
+          menu = document.getElementById('themeMenu');
+      if (control && toggle && menu) {
+        var mq = window.matchMedia('(prefers-color-scheme: dark)');
+        var labels = { auto: 'Auto', light: 'Light', dark: 'Dark' };
+        function mode() { var m = localStorage.getItem('rdm-theme') || 'auto'; return /^(auto|light|dark)$/.test(m) ? m : 'auto'; }
+        function resolved(m) { return m === 'auto' ? (mq.matches ? 'dark' : 'light') : m; }
+        function paint(m) {
+          document.documentElement.dataset.rdmThemeMode = m;
+          document.documentElement.dataset.rdmTheme = resolved(m);
+          toggle.textContent = labels[m] || 'Theme';
+          toggle.setAttribute('aria-label', 'Theme: ' + m);
+          menu.querySelectorAll('[data-theme-mode]').forEach(b => b.classList.toggle('active', b.dataset.themeMode === m));
+        }
+        function choose(m) { localStorage.setItem('rdm-theme', m); paint(m); menu.hidden = true; toggle.setAttribute('aria-expanded', 'false'); }
+        paint(mode());
+        toggle.addEventListener('click', function(e){ e.stopPropagation(); menu.hidden = !menu.hidden; toggle.setAttribute('aria-expanded', String(!menu.hidden)); });
+        menu.addEventListener('click', function(e){ var b = e.target.closest('[data-theme-mode]'); if (b) choose(b.dataset.themeMode); });
+        document.addEventListener('click', function(e){ if (!control.contains(e.target)) { menu.hidden = true; toggle.setAttribute('aria-expanded', 'false'); } });
+        document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { menu.hidden = true; toggle.setAttribute('aria-expanded', 'false'); } });
+        var onSys = function(){ if (mode() === 'auto') paint('auto'); };
+        if (mq.addEventListener) mq.addEventListener('change', onSys); else if (mq.addListener) mq.addListener(onSys);
+      }
+
+      renderPlayers();
+    })();
+  </script>
+</body>
+</html>

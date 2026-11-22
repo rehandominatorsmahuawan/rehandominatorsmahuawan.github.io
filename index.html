@@ -18,7 +18,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="RDM" id="rdmAppleTitle">
-  <link rel="manifest" href="site.webmanifest?v=7700" id="rdmManifestLink">
+  <link rel="manifest" href="site.webmanifest?v=8000" id="rdmManifestLink">
   <script>(function(){try{
     var ADMIN='0AqlZ35wF8lcXYiAkgz04KjzGeiSfnHs';
     var PLAYERS={
@@ -55,7 +55,7 @@
     var link=document.getElementById('rdmManifestLink');
     if(link){
       if(navigator.serviceWorker&&navigator.serviceWorker.controller){
-        link.href=new URL('rdm-portal.webmanifest?key='+encodeURIComponent(key)+'&v=7700',location.href).href;
+        link.href=new URL('rdm-portal.webmanifest?key='+encodeURIComponent(key)+'&v=8000',location.href).href;
       }else{
         var startUrl=location.origin+location.pathname+'?key='+encodeURIComponent(key);
         var scopeUrl=new URL('./',location.href).href;
@@ -87,8 +87,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,700&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=7.7.0">
-  <link rel="stylesheet" href="rdm-v6890-fix.css?v=7.7.0">
+  <link rel="stylesheet" href="style.css?v=8.0.0">
+  <link rel="stylesheet" href="rdm-v6890-fix.css?v=8.0.0">
   <script>(function(){try{if(window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true)document.documentElement.classList.add('rdm-standalone');}catch(e){}})();</script>
 
   <meta property="og:type" content="website">
@@ -130,7 +130,10 @@
   <header class="top">
     <a class="brand" href="#home" onclick="if(typeof go==='function'){go(window.__rdmUrlKeyRole==='admin'?'admin':(window.__rdmUrlKeyRole==='player'?'profile':'home'));return false}">
       <img src="assets/rdm-logo.png?v=7400" alt="Rehan Dominators Mahuawan Logo" width="44" height="44" decoding="async" referrerPolicy="no-referrer">
-      <span class="brandTitle">Rehan Dominators Mahuawan</span>
+      <span class="brandTextGroup">
+        <span class="brandTitle">Rehan Dominators Mahuawan</span>
+        <span class="brandSub">Official Cricket Club · Gopalganj, Bihar</span>
+      </span>
     </a>
     <div class="headActions">
       <div class="themeControl" id="themeControl">
@@ -190,6 +193,11 @@
             <div class="heroShieldMeta">
               <strong>RDM Official</strong>
               <span>Play Hard · Stay Humble · Play As One</span>
+            </div>
+            <div class="heroCrestStats">
+              <div><b>2024</b><span>Est.</span></div>
+              <div><b>2×</b><span>MPL Title</span></div>
+              <div><b>17</b><span>Squad</span></div>
             </div>
           </div>
         </div>
@@ -543,6 +551,7 @@
       <button type="button" data-go="news">News</button>
       <button type="button" data-go="updates">Updates</button>
       <button type="button" data-go="download">Download App</button>
+      <a href="portals.html">Portals Directory</a>
     </nav>
   </footer>
 
@@ -579,18 +588,18 @@
   <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-  <script defer src="firebase-config.js?v=7.7.0"></script>
-  <script defer src="app.js?v=7.7.0"></script>
-  <script defer src="firebase-login.js?v=7.7.0"></script>
-  <script defer src="access-links.js?v=7.7.0"></script>
-  <script defer src="firebase-backend.js?v=7.7.0"></script>
-  <script defer src="enhancements.js?v=7.7.0"></script>
-  <script defer src="admin-player-manager.js?v=7.7.0"></script>
-  <script defer src="admin-auth-email.js?v=7.7.0"></script>
-  <script defer src="v6.js?v=7.7.0"></script>
-  <script defer src="gallery-v686.js?v=7.7.0"></script>
-  <script defer src="updates.js?v=7.7.0"></script>
-  <script defer src="forms-v6821.js?v=7.7.0"></script>
+  <script defer src="firebase-config.js?v=8.0.0"></script>
+  <script defer src="app.js?v=8.0.0"></script>
+  <script defer src="firebase-login.js?v=8.0.0"></script>
+  <script defer src="access-links.js?v=8.0.0"></script>
+  <script defer src="firebase-backend.js?v=8.0.0"></script>
+  <script defer src="enhancements.js?v=8.0.0"></script>
+  <script defer src="admin-player-manager.js?v=8.0.0"></script>
+  <script defer src="admin-auth-email.js?v=8.0.0"></script>
+  <script defer src="v6.js?v=8.0.0"></script>
+  <script defer src="gallery-v686.js?v=8.0.0"></script>
+  <script defer src="updates.js?v=8.0.0"></script>
+  <script defer src="forms-v6821.js?v=8.0.0"></script>
 
   <script>(function(){
     var control=document.getElementById('themeControl'),toggle=document.getElementById('themeToggle'),menu=document.getElementById('themeMenu');
@@ -617,10 +626,10 @@
     if(mq.addEventListener)mq.addEventListener('change',onSystem);else if(mq.addListener)mq.addListener(onSystem);
   })();</script>
 
-  <script defer src="rdm-v6900.js?v=7.7.0"></script>
-  <script defer src="rdm-v6901.js?v=7.7.0"></script>
-  <script defer src="rdm-v6902.js?v=7.7.0"></script>
-  <script defer src="rdm-global-mini.js?v=7.7.0"></script>
-  <script defer src="rdm-pwa.js?v=7.7.0"></script>
+  <script defer src="rdm-v6900.js?v=8.0.0"></script>
+  <script defer src="rdm-v6901.js?v=8.0.0"></script>
+  <script defer src="rdm-v6902.js?v=8.0.0"></script>
+  <script defer src="rdm-global-mini.js?v=8.0.0"></script>
+  <script defer src="rdm-pwa.js?v=8.0.0"></script>
 </body>
 </html>

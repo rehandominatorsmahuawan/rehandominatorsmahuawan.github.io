@@ -1,9 +1,12 @@
-RDM V6.8.96 PRIVATE ACCESS LINKS
+RDM V8.0.0 ACCESS DIRECTORY & PORTAL LINKS
 
-PUBLIC VIEW: https://rehandominatorsmahuawan.github.io/
+PUBLIC WEBSITE (VIEW ONLY): https://rehandominatorsmahuawan.github.io/
 
-ADMIN: https://rehandominatorsmahuawan.github.io/?key=0AqlZ35wF8lcXYiAkgz04KjzGeiSfnHs
+ALL PORTALS HUB DIRECTORY: https://rehandominatorsmahuawan.github.io/portals.html
 
+ADMIN PANEL DIRECT LINK: https://rehandominatorsmahuawan.github.io/?key=0AqlZ35wF8lcXYiAkgz04KjzGeiSfnHs
+
+PLAYER PROFILE PORTALS (🔒 PASSWORD PROTECTED ON OPEN):
 REHAN AKHTAR [RA08]: https://rehandominatorsmahuawan.github.io/?key=yJjA_yyMuR6OyPJgfvspRUmD
 SAIF ALI [SA-V]: https://rehandominatorsmahuawan.github.io/?key=iGo217fTX-irxYyJoPfrlXBf
 SOAIB AKHTAR [SO-WK]: https://rehandominatorsmahuawan.github.io/?key=RLnuOF9niHZMV0yemW4-Mm5O
@@ -22,4 +25,7 @@ SABRE ALAM [SBA]: https://rehandominatorsmahuawan.github.io/?key=wKTMjxcXSV3sweG
 ZISHAN [ZSN]: https://rehandominatorsmahuawan.github.io/?key=FYnhheOTlpei4tJD6C43Qc66
 JAVED [JVD]: https://rehandominatorsmahuawan.github.io/?key=YvKJ8KIvznZlq_7OQc9AYyvG
 
-NOTE: Login has been removed. Each link directly opens that player's Profile portal or Admin Panel without password or sign-in. Keep Admin and player private keys confidential.
+NOTE:
+- Website Admin uses the direct Admin link above; Android APK uses password-only Admin unlock (rehanakhtar) with persistent local session.
+- Player Profile portals require each player's personal password on open (never stored in plaintext in portals.html or this file).
+- Keep the Admin key confidential.
