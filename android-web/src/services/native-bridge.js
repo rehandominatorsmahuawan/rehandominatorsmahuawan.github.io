@@ -1,9 +1,11 @@
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { App as CapApp } from '@capacitor/app';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { Keyboard } from '@capacitor/keyboard';
 import { Browser } from '@capacitor/browser';
+
+const RdmUpdater = Capacitor.isNativePlatform() ? registerPlugin('RdmUpdater') : null;
 
 let backHandlerBound = false;
 let deferredInstallPrompt = null;
@@ -41,14 +43,19 @@ export async function triggerWebPwaInstall() {
   return false;
 }
 
-export async function syncStatusBarTheme(themeKey = 'azure') {
+export async function syncStatusBarTheme(themeKey = 'leather') {
+  const normalized =
+    themeKey === 'night' || themeKey === 'carbon' ? 'carbon' :
+    themeKey === 'daylight' || themeKey === 'alabaster' ? 'alabaster' :
+    themeKey === 'copper' ? 'copper' : 'leather';
+
   const colorMap = {
-    azure: '#F3F7FD',
-    crimson: '#FCF7F7',
-    daylight: '#F8FAFC',
-    night: '#071224'
+    leather: '#FAF9F7',
+    alabaster: '#F8FAFC',
+    copper: '#F7F5F2',
+    carbon: '#090A0D'
   };
-  const color = colorMap[themeKey] || colorMap.azure;
+  const color = colorMap[normalized] || colorMap.leather;
   const meta = document.getElementById('rdmThemeMeta');
   if (meta) meta.content = color;
 
@@ -56,12 +63,12 @@ export async function syncStatusBarTheme(themeKey = 'azure') {
   try {
     await StatusBar.setOverlaysWebView({ overlay: false });
     await StatusBar.setBackgroundColor({ color });
-    await StatusBar.setStyle({ style: themeKey === 'night' ? Style.Dark : Style.Light });
+    await StatusBar.setStyle({ style: normalized === 'carbon' ? Style.Dark : Style.Light });
   } catch (_) {}
 }
 
 export async function initNativeShell(onBackPress) {
-  const savedTheme = localStorage.getItem('rdm-app-theme') || 'azure';
+  const savedTheme = localStorage.getItem('rdm-app-theme') || 'leather';
   await syncStatusBarTheme(savedTheme);
 
   if (Capacitor.isNativePlatform()) {
@@ -126,9 +133,112 @@ export async function openExternalUrl(url) {
   return true;
 }
 
+export async function getNativeAppVersionInfo() {
+  if (!isNativeAndroid() || !RdmUpdater) return null;
+  try {
+    return await RdmUpdater.getVersionInfo();
+  } catch (_) {
+    return null;
+  }
+}
+
+export async function canInstallNativeApk() {
+  if (!isNativeAndroid() || !RdmUpdater) return false;
+  try {
+    const res = await RdmUpdater.canInstallPackages();
+    return Boolean(res?.allowed);
+  } catch (_) {
+    return false;
+  }
+}
+
+export async function openApkInstallPermissionSettings() {
+  if (!isNativeAndroid() || !RdmUpdater) return false;
+  try {
+    const res = await RdmUpdater.openInstallPermissionSettings();
+    return Boolean(res?.opened);
+  } catch (_) {
+    return false;
+  }
+}
+
+export async function checkAndApplyOtaUpdate(manifestUrl) {
+  if (!isNativeAndroid() || !RdmUpdater) return { updated: false };
+  try {
+    return await RdmUpdater.checkAndApplyOta({ manifestUrl });
+  } catch (err) {
+    return { updated: false, error: err?.message || 'OTA check failed' };
+  }
+}
+
+export async function downloadAndInstallNativeApk(url) {
+  const safe = String(url || '').trim();
+  if (!/^https:\/\//i.test(safe)) {
+    throw new Error('HTTPS APK download URL is required.');
+  }
+  if (!isNativeAndroid() || !RdmUpdater) {
+    throw new Error('Native APK updater is only available inside the Android app.');
+  }
+  return await RdmUpdater.downloadAndInstallApk({ url: safe });
+}
+
+export function onApkDownloadProgress(callback) {
+  if (!isNativeAndroid() || !RdmUpdater || typeof callback !== 'function') {
+    return () => {};
+  }
+  let listenerHandle = null;
+  let cancelled = false;
+  try {
+    const promiseOrHandle = RdmUpdater.addListener('apkDownloadProgress', payload => {
+      if (!cancelled) callback(payload || {});
+    });
+    Promise.resolve(promiseOrHandle).then(h => {
+      if (cancelled) {
+        try { h?.remove?.(); } catch (_) {}
+      } else {
+        listenerHandle = h;
+      }
+    }).catch(() => {});
+  } catch (_) {}
+
+  return () => {
+    cancelled = true;
+    try { listenerHandle?.remove?.(); } catch (_) {}
+  };
+}
+
+export function subscribeAppResume(callback) {
+  if (!Capacitor.isNativePlatform() || typeof callback !== 'function') {
+    return () => {};
+  }
+  let listenerHandle = null;
+  let cancelled = false;
+  try {
+    const p = CapApp.addListener('appStateChange', ({ isActive }) => {
+      if (isActive && !cancelled) callback();
+    });
+    Promise.resolve(p).then(h => {
+      if (cancelled) {
+        try { h?.remove?.(); } catch (_) {}
+      } else {
+        listenerHandle = h;
+      }
+    }).catch(() => {});
+  } catch (_) {}
+
+  return () => {
+    cancelled = true;
+    try { listenerHandle?.remove?.(); } catch (_) {}
+  };
+}
+
 export async function downloadApkFile(url) {
   const safe = String(url || '').trim();
   if (!/^https?:\/\//i.test(safe)) return false;
+
+  if (isNativeAndroid() && RdmUpdater) {
+    return await RdmUpdater.downloadAndInstallApk({ url: safe });
+  }
 
   if (Capacitor.isNativePlatform()) {
     try {

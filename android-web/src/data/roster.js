@@ -1,9 +1,10 @@
 export const APP_BUILD_INFO = {
-  versionName: '1.2.1',
-  versionCode: 4
+  versionName: '1.3.0',
+  versionCode: 5
 };
 
 export const REMOTE_VERSION_JSON_URL = 'https://rehandominatorsmahuawan.github.io/version.json';
+export const REMOTE_OTA_MANIFEST_URL = 'https://rehandominatorsmahuawan.github.io/ota/manifest.json';
 
 export const APK_ADMIN_EMAILS = [
   'rehahalam7124517@gmail.com',
@@ -58,8 +59,8 @@ export const CLUB_INFO = {
   apkReleasesUrl: 'https://github.com/RehanDominatorsMahuawan/RehanDominatorsMahuawan.github.io/releases/latest',
   websiteUrl: 'https://rehandominatorsmahuawan.github.io/',
   logoPath: 'assets/rdm-logo.png',
-  heroImagePath: 'src/assets/images/hero_cricket_stadium_1794890926411.jpg',
-  heritageImagePath: 'src/assets/images/club_heritage_banner_1794890926814.jpg'
+  heroImagePath: 'src/assets/images/hero_cricket_pavilion_1795338170696.jpg',
+  heritageImagePath: 'src/assets/images/cricket_craft_edition_1795338169416.jpg'
 };
 
 export const PLAYER_CODES = {

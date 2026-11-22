@@ -4,6 +4,7 @@ import {
   CLUB_INFO,
   DEFAULT_SOCIALS,
   PLAYER_DEFAULTS,
+  REMOTE_OTA_MANIFEST_URL,
   REMOTE_VERSION_JSON_URL,
   SEED_HONOURS,
   SEED_PLAYERS,
@@ -11,6 +12,10 @@ import {
   isLegacyBrokenImage,
   resolveLoginIdentifier
 } from '../data/roster.js';
+import {
+  checkAndApplyOtaUpdate,
+  getNativeAppVersionInfo
+} from './native-bridge.js';
 
 const APK_ADMIN_PW_HASH = '73442ec47da8d19de47638438c8563bb266e880cf4ce8cafa5579ed20d2b94be';
 const APK_ADMIN_SESSION_KEY = 'rdm_apk_admin_unlocked_v1';
@@ -62,17 +67,21 @@ function sanitizePayload(obj) {
   return clean;
 }
 
-function mapFirestoreWriteError(err) {
+export function isPermissionDeniedError(err) {
   const code = String(err?.code || '');
   const msg = String(err?.message || '');
-  if (code === 'permission-denied' || /Missing or insufficient permissions/i.test(msg)) {
+  return code === 'permission-denied' || /Missing or insufficient permissions|Missing cloud permissions/i.test(msg);
+}
+
+function mapFirestoreWriteError(err) {
+  if (isPermissionDeniedError(err)) {
     const out = new Error(
-      "Missing permissions: tap 'Connect Cloud Sync' in Overview or publish updated firestore.rules in Firebase Console."
+      'Missing cloud permissions: connect Firebase Cloud Sync below or publish updated firestore.rules.'
     );
     out.code = 'permission-denied';
     return out;
   }
-  return err instanceof Error ? err : new Error(msg || 'Sync failed');
+  return err instanceof Error ? err : new Error(String(err?.message || 'Sync failed'));
 }
 
 const mapDoc = doc => ({ ...doc.data(), _docId: doc.id });
@@ -92,6 +101,11 @@ export const state = {
   apkReleasesUrl: CLUB_INFO.apkReleasesUrl,
   appVersion: APP_BUILD_INFO.versionName,
   appVersionCode: APP_BUILD_INFO.versionCode,
+  nativeVersionName: null,
+  nativeVersionCode: null,
+  otaBuild: 0,
+  otaVersion: '',
+  canInstallPackages: false,
   updateNotes: '',
   forceUpdate: false,
   remoteVersionInfo: null,
@@ -815,13 +829,27 @@ function applyBrandSettingsData(bData) {
   }
 }
 
+export async function syncNativeVersionInfo() {
+  const info = await getNativeAppVersionInfo();
+  if (info && (info.versionName || info.versionCode)) {
+    state.nativeVersionName = String(info.versionName || APP_BUILD_INFO.versionName).trim();
+    state.nativeVersionCode = Number(info.versionCode) || APP_BUILD_INFO.versionCode;
+    state.otaBuild = Number(info.otaBuild) || 0;
+    state.otaVersion = String(info.otaVersion || '');
+    state.canInstallPackages = Boolean(info.canInstallPackages);
+  }
+  return info;
+}
+
 export function evaluateAvailableUpdate() {
+  const installedVersionName = state.nativeVersionName || APP_BUILD_INFO.versionName;
+  const installedVersionCode = Number(state.nativeVersionCode) || APP_BUILD_INFO.versionCode;
   const candidates = [];
 
   if (state.appVersion || state.appVersionCode) {
     candidates.push({
-      versionName: state.appVersion || APP_BUILD_INFO.versionName,
-      versionCode: Number(state.appVersionCode) || APP_BUILD_INFO.versionCode,
+      versionName: state.appVersion || installedVersionName,
+      versionCode: Number(state.appVersionCode) || installedVersionCode,
       apkDownloadUrl: state.apkDownloadUrl || CLUB_INFO.apkDownloadUrl,
       apkReleasesUrl: state.apkReleasesUrl || CLUB_INFO.apkReleasesUrl,
       notes: state.updateNotes || '',
@@ -834,8 +862,8 @@ export function evaluateAvailableUpdate() {
   }
 
   let best = {
-    versionName: APP_BUILD_INFO.versionName,
-    versionCode: APP_BUILD_INFO.versionCode,
+    versionName: installedVersionName,
+    versionCode: installedVersionCode,
     apkDownloadUrl: state.apkDownloadUrl || CLUB_INFO.apkDownloadUrl,
     apkReleasesUrl: state.apkReleasesUrl || CLUB_INFO.apkReleasesUrl,
     notes: '',
@@ -860,23 +888,27 @@ export function evaluateAvailableUpdate() {
   });
 
   const hasNewerVersion =
-    compareVersions(APP_BUILD_INFO.versionName, best.versionName) < 0 ||
-    Number(best.versionCode) > Number(APP_BUILD_INFO.versionCode);
+    compareVersions(installedVersionName, best.versionName) < 0 ||
+    Number(best.versionCode) > Number(installedVersionCode);
 
   return {
     hasUpdate: hasNewerVersion,
-    currentVersion: APP_BUILD_INFO.versionName,
-    currentCode: APP_BUILD_INFO.versionCode,
+    currentVersion: installedVersionName,
+    currentCode: installedVersionCode,
+    otaBuild: Number(state.otaBuild) || 0,
+    otaVersion: state.otaVersion || '',
+    canInstallPackages: Boolean(state.canInstallPackages),
     latestVersion: best.versionName,
     latestCode: best.versionCode,
     apkUrl: best.apkDownloadUrl,
     releasesUrl: best.apkReleasesUrl,
-    notes: best.notes || 'A newer version of RDM Official Android APK is ready with the latest updates and improvements.',
+    notes: best.notes || 'A newer version of RDM Official Android APK is ready with automatic in-app update support.',
     forceUpdate: best.forceUpdate
   };
 }
 
 export async function checkRemoteAppVersion() {
+  await syncNativeVersionInfo().catch(() => null);
   const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
   const timer = controller ? setTimeout(() => controller.abort(), 5000) : null;
   const urls = [];
@@ -908,6 +940,12 @@ export async function checkRemoteAppVersion() {
   }
   if (timer) clearTimeout(timer);
   return evaluateAvailableUpdate();
+}
+
+export async function runAutomaticAppUpdates() {
+  const otaResult = await checkAndApplyOtaUpdate(REMOTE_OTA_MANIFEST_URL).catch(() => ({ updated: false }));
+  const apkUpdate = await checkRemoteAppVersion();
+  return { otaResult, apkUpdate };
 }
 
 export async function adminDeleteDoc(collection, docId) {

@@ -3,14 +3,11 @@ import '@fontsource/plus-jakarta-sans/500.css';
 import '@fontsource/plus-jakarta-sans/600.css';
 import '@fontsource/plus-jakarta-sans/700.css';
 import '@fontsource/plus-jakarta-sans/800.css';
-import '@fontsource/outfit/600.css';
-import '@fontsource/outfit/700.css';
-import '@fontsource/outfit/800.css';
-import '@fontsource/barlow-condensed/700.css';
-import '@fontsource/barlow-condensed/800.css';
-import '@fontsource/jetbrains-mono/500.css';
-import '@fontsource/jetbrains-mono/600.css';
-import '@fontsource/jetbrains-mono/700.css';
+import '@fontsource/oswald/600.css';
+import '@fontsource/oswald/700.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '@fontsource/ibm-plex-mono/600.css';
+import '@fontsource/ibm-plex-mono/700.css';
 import {
   APP_BUILD_INFO,
   CLUB_INFO,
@@ -34,11 +31,13 @@ import {
   connectAdminCloudSync,
   evaluateAvailableUpdate,
   isFirebaseCloudAdmin,
+  isPermissionDeniedError,
   isVerifiedAdmin,
   loadClubData,
   loginAdminWithPassword,
   loginWithEmailPassword,
   logoutAccount,
+  runAutomaticAppUpdates,
   savePlayerAvailability,
   savePlayerPortalProfile,
   state,
@@ -46,13 +45,19 @@ import {
   subscribeClubDataRealtime
 } from './services/firebase-service.js';
 import {
+  canInstallNativeApk,
   canInstallWebPwa,
+  downloadAndInstallNativeApk,
   downloadApkFile,
   exitNativeApp,
   hideNativeSplash,
   initNativeShell,
+  isNativeAndroid,
   isNativePlatform,
+  onApkDownloadProgress,
+  openApkInstallPermissionSettings,
   openExternalUrl,
+  subscribeAppResume,
   syncStatusBarTheme,
   triggerWebPwaInstall
 } from './services/native-bridge.js';
@@ -70,10 +75,10 @@ import {
 } from './ui/components.js';
 
 const THEMES = [
-  { id: 'azure', label: 'Sky Azure', desc: 'Official Royal Blue & White', swatches: ['#F3F7FD', '#FFFFFF', '#0958D9'] },
-  { id: 'crimson', label: 'Dominator Crimson', desc: 'Club Crest Red & White', swatches: ['#FCF7F7', '#FFFFFF', '#C61D2E'] },
-  { id: 'daylight', label: 'Stadium Daylight', desc: 'Crisp High-Key White', swatches: ['#F8FAFC', '#FFFFFF', '#1D4ED8'] },
-  { id: 'night', label: 'Floodlight Night', desc: 'Deep Stadium Navy', swatches: ['#071224', '#0E1F3A', '#38BDF8'] }
+  { id: 'leather', label: 'Editorial Crimson', desc: 'Alabaster Chalk & Leather Crimson', swatches: ['#FAF9F7', '#FFFFFF', '#9F1239'] },
+  { id: 'carbon', label: 'Floodlight Carbon', desc: 'Dark Carbon Stadium Slate', swatches: ['#090A0D', '#12141A', '#E11D48'] },
+  { id: 'alabaster', label: 'Pavilion Ivory', desc: 'Clean Ivory & Deep Sapphire', swatches: ['#F8FAFC', '#FFFFFF', '#1D4ED8'] },
+  { id: 'copper', label: 'Heritage Copper', desc: 'Warm Stone & Burnished Bronze', swatches: ['#F7F5F2', '#FFFFFF', '#9A3412'] }
 ];
 
 const ui = {
@@ -210,25 +215,30 @@ function stepBackOne() {
   return false;
 }
 
+function migrateThemeId(id) {
+  if (id === 'turf' || id === 'azure' || id === 'crimson') return 'leather';
+  if (id === 'daylight') return 'alabaster';
+  if (id === 'night') return 'carbon';
+  return THEMES.some(t => t.id === id) ? id : 'leather';
+}
+
 function loadInitialTheme() {
   try {
-    const saved = localStorage.getItem('rdm-app-theme') || 'azure';
-    if (saved === 'turf') {
-      localStorage.setItem('rdm-app-theme', 'azure');
-      return 'azure';
-    }
-    return THEMES.some(t => t.id === saved) ? saved : 'azure';
+    const raw = localStorage.getItem('rdm-app-theme') || 'leather';
+    const next = migrateThemeId(raw);
+    if (next !== raw) localStorage.setItem('rdm-app-theme', next);
+    return next;
   } catch {
-    return 'azure';
+    return 'leather';
   }
 }
 
 function getThemeLabel(id) {
-  return THEMES.find(t => t.id === id)?.label || 'Sky Azure';
+  return THEMES.find(t => t.id === id)?.label || 'Editorial Crimson';
 }
 
 function applyTheme(nextTheme) {
-  const valid = THEMES.some(t => t.id === nextTheme) ? nextTheme : 'azure';
+  const valid = migrateThemeId(nextTheme);
   ui.theme = valid;
   document.documentElement.setAttribute('data-theme', valid);
   try { localStorage.setItem('rdm-app-theme', valid); } catch (_) {}
@@ -249,7 +259,7 @@ function currentReleasesUrl() {
 }
 
 function currentAppVersion() {
-  return String(state.appVersion || APP_BUILD_INFO.versionName || CLUB_INFO.appVersion || '1.1.0').replace(/^v/i, '');
+  return String(state.nativeVersionName || state.appVersion || APP_BUILD_INFO.versionName || CLUB_INFO.appVersion || '1.3.0').replace(/^v/i, '');
 }
 
 function avatarAttrs(imgUrl) {
@@ -856,9 +866,9 @@ function renderMoreTab() {
     <section class="surfaceCard">
       <div class="sectionHeader">
         <div>
-          <span class="sectionKicker">Official App · v${escHtml(currentAppVersion())}</span>
+          <span class="sectionKicker">Official App · v${escHtml(currentAppVersion())}${state.otaBuild ? ` · OTA #${state.otaBuild}` : ''}</span>
           <h3 class="sectionTitle" style="font-size:1.22rem;">App &amp; Sync</h3>
-          <p class="sectionSub">${isNativePlatform() ? `Installed Build v${escHtml(APP_BUILD_INFO.versionName)} · Live Cloud Sync Active` : 'Sync live team data or open the Android App & Updates centre'}</p>
+          <p class="sectionSub">${isNativePlatform() ? `Installed Build v${escHtml(state.nativeVersionName || APP_BUILD_INFO.versionName)} · Auto-Update Active` : 'Sync live team data or open the Android App & Updates centre'}</p>
         </div>
         <div class="rowActions">
           <button type="button" class="btnPrimary btnSm" data-open-subpage="download">App &amp; Updates ›</button>
@@ -1051,22 +1061,23 @@ function renderTeamSubpage() {
   } else {
     const showWebInstall = canInstallWebPwa();
     const upd = evaluateAvailableUpdate();
+    const otaLabel = upd.otaBuild ? ` · OTA #${upd.otaBuild}` : '';
     body = `
       <div class="surfaceCard">
         <span class="sectionKicker">Official Android APK · v${escHtml(upd.latestVersion)}</span>
         <h3 class="sectionTitle" style="font-size:1.35rem;margin-bottom:8px;">RDM Official Android App</h3>
         <p style="margin:0 0 12px;color:var(--ink-secondary);font-size:0.9rem;">
           ${isNativePlatform()
-            ? `You are running the native RDM Official Android App (v${escHtml(APP_BUILD_INFO.versionName)}). Check for the newest build and download updates directly right here — all data stays synced live with the Website.`
-            : 'Download the latest RDM Official Android APK directly to your phone. The Website, PWA, and Android App share the exact same live squad profiles, fixtures, and Admin Panel.'}
+            ? `You are running the native RDM Official Android App (v${escHtml(upd.currentVersion)}${escHtml(otaLabel)}). Updates apply silently in the background or install right inside the app without uninstalling.`
+            : 'Download the latest RDM Official Android APK directly to your phone. All updates install smoothly in place while preserving your data.'}
         </p>
-        ${upd.hasUpdate ? `<div class="infoBanner" style="margin-bottom:12px;"><span>Update v${escHtml(upd.latestVersion)} available — ${escHtml(upd.notes)}</span></div>` : ''}
+        ${upd.hasUpdate ? `<div class="infoBanner" style="margin-bottom:12px;"><span>Update v${escHtml(upd.latestVersion)} ready — ${escHtml(upd.notes)}</span></div>` : ''}
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
-          <span class="metaCode">${isNativePlatform() ? `Installed: v${escHtml(APP_BUILD_INFO.versionName)}` : `Web Version: v${escHtml(APP_BUILD_INFO.versionName)}`}</span>
+          <span class="metaCode">${isNativePlatform() ? `Installed: v${escHtml(upd.currentVersion)}${escHtml(otaLabel)}` : `Web Version: v${escHtml(upd.currentVersion)}`}</span>
           <span class="metaCode">Latest APK: v${escHtml(upd.latestVersion)}</span>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:10px;">
-          <button type="button" class="btnPrimary btnSm" id="btnDownloadLatestApk">Download Latest APK (v${escHtml(upd.latestVersion)})</button>
+          <button type="button" class="btnPrimary btnSm" id="btnDownloadLatestApk">${isNativeAndroid() ? (upd.hasUpdate ? `Update In-Place (v${escHtml(upd.latestVersion)})` : `Reinstall APK (v${escHtml(upd.latestVersion)})`) : `Download Latest APK (v${escHtml(upd.latestVersion)})`}</button>
           <button type="button" class="btnSecondary btnSm" id="btnCheckAppUpdate">Check for Update</button>
           ${showWebInstall ? `<button type="button" class="btnSecondary btnSm" id="btnInstallWebApp">Install Web App</button>` : ''}
           <button type="button" class="btnSecondary btnSm" data-public-tab="home">Back to Home</button>
@@ -1502,6 +1513,12 @@ function renderAdminDashboard() {
     })}
 
     <div class="tabContent fullPageContent">
+      ${!isFirebaseCloudAdmin() ? `
+        <div class="infoBanner">
+          <span><strong>Local Admin Mode:</strong> Connect Firebase Cloud Sync once if deleting or saving records returns a permission error.</span>
+          <button type="button" class="btnPrimary btnSm" id="btnAdminConnectFirebaseBanner">Connect Sync</button>
+        </div>
+      ` : ''}
       <div class="filterRow">
         ${[
           ['overview', 'Overview'],
@@ -1629,15 +1646,23 @@ function bindScreenEvents() {
 
   q('btnDownloadLatestApk')?.addEventListener('click', () => {
     const upd = evaluateAvailableUpdate();
+    if (isNativeAndroid()) {
+      openNativeUpdateFlow(upd);
+      return;
+    }
     downloadApkFile(upd.apkUrl || currentApkUrl());
     showToast(`Downloading RDM Official APK v${upd.latestVersion}...`);
   });
 
   q('btnCheckAppUpdate')?.addEventListener('click', async () => {
-    showToast('Checking for latest APK update...');
-    await checkRemoteAppVersion();
+    showToast('Checking for latest update...');
+    const res = await runAutomaticAppUpdates();
     renderApp();
-    maybeShowAppUpdatePopup(true);
+    if (res?.otaResult?.updated) {
+      showToast(`App updated silently to OTA v${res.otaResult.otaVersion || ''}`);
+      return;
+    }
+    await maybeShowAppUpdatePopup(true);
   });
 
   q('btnRefreshClub')?.addEventListener('click', async () => {
@@ -1951,7 +1976,7 @@ function bindAdminDashboardEvents() {
     btn.addEventListener('click', () => {
       const p = state.players.find(x => x.id === btn.dataset.adminEditPlayer);
       if (!p) return;
-      openFormSheet({
+      openAdminFormSheet({
         title: `Edit ${formatTextCase(p.name)}`,
         fields: [
           { name: 'name', label: 'Player Name', value: p.name, required: true },
@@ -1977,35 +2002,27 @@ function bindAdminDashboardEvents() {
     btn.addEventListener('click', () => {
       const id = btn.dataset.adminRemovePlayer;
       const p = state.players.find(x => x.id === id);
+      const runRemove = async () => {
+        await adminRemovePlayer(id);
+        renderApp();
+        showToast('Player removed');
+      };
       openConfirmSheet({
         title: 'Remove Player',
         message: `Remove ${formatTextCase(p?.name || id)} (${id}) from the active RDM squad?`,
         confirmLabel: 'Remove',
         danger: true,
-        onConfirm: async () => {
-          await adminRemovePlayer(id);
-          renderApp();
-          showToast('Player removed');
-        }
+        onConfirm: runRemove,
+        onPermissionDenied: () => openConnectCloudSyncSheet(runRemove)
       });
     });
   });
 
   document.getElementById('btnAdminConnectFirebase')?.addEventListener('click', () => {
-    openFormSheet({
-      title: 'Connect Firebase Cloud Sync',
-      subtitle: 'Sign in once with your Firebase Admin email and Firebase account password.',
-      fields: [
-        { name: 'email', label: 'Firebase Admin Email', type: 'email', value: 'rehahalam7124517@gmail.com', required: true },
-        { name: 'password', label: 'Firebase Password', type: 'password', required: true }
-      ],
-      submitLabel: 'Connect Cloud Sync',
-      onSubmit: async d => {
-        await connectAdminCloudSync(d.email, d.password);
-        renderApp();
-        showToast('Firebase Cloud Sync connected');
-      }
-    });
+    openConnectCloudSyncSheet();
+  });
+  document.getElementById('btnAdminConnectFirebaseBanner')?.addEventListener('click', () => {
+    openConnectCloudSyncSheet();
   });
 
   document.querySelectorAll('[data-admin-edit-stats]').forEach(btn => {
@@ -2013,7 +2030,7 @@ function bindAdminDashboardEvents() {
       const id = btn.dataset.adminEditStats;
       const p = state.players.find(x => x.id === id);
       const s = state.stats.find(x => x.playerId === id) || {};
-      openFormSheet({
+      openAdminFormSheet({
         title: `Stats · ${formatTextCase(p?.name || id)}`,
         fields: [
           { name: 'matches', label: 'Matches', type: 'number', value: s.matches || 0 },
@@ -2057,7 +2074,7 @@ function bindAdminDashboardEvents() {
     btn.addEventListener('click', () => {
       const id = btn.dataset.adminAvail;
       const cur = state.availability.find(a => a.playerId === id)?.status || 'AVAILABLE';
-      openFormSheet({
+      openAdminFormSheet({
         title: `Availability · ${id}`,
         fields: [{ name: 'status', label: 'Status', type: 'select', value: cur, options: ['AVAILABLE', 'UNAVAILABLE'] }],
         onSubmit: async d => {
@@ -2080,7 +2097,7 @@ function bindAdminDashboardEvents() {
     btn.addEventListener('click', () => {
       const s = state.socials.find(x => x._docId === btn.dataset.adminEditSocial);
       if (!s) return;
-      openFormSheet({
+      openAdminFormSheet({
         title: 'Edit Social Channel',
         fields: [
           { name: 'name', label: 'Platform', value: s.name || '', required: true },
@@ -2109,11 +2126,18 @@ function bindAdminDashboardEvents() {
       const id = parts[1] || '';
       const pinFlag = parts[2] || '0';
       if (!col || !id) return;
-      try {
+      const runPin = async () => {
         await adminSetPinned(col, id, pinFlag === '1');
         renderApp();
         showToast(pinFlag === '1' ? 'Pinned to Home' : 'Unpinned');
+      };
+      try {
+        await runPin();
       } catch (err) {
+        if (isPermissionDeniedError(err)) {
+          openConnectCloudSyncSheet(runPin);
+          return;
+        }
         showToast(err?.message || 'Pin update failed');
       }
     });
@@ -2129,23 +2153,62 @@ function bindAdminDashboardEvents() {
         showToast('Invalid record identifier');
         return;
       }
+      const runDelete = async () => {
+        await adminDeleteDoc(col, docId);
+        renderApp();
+        showToast('Deleted');
+      };
       openConfirmSheet({
         title: 'Delete Record',
         message: 'Permanently delete this record from Firestore?',
         confirmLabel: 'Delete',
         danger: true,
-        onConfirm: async () => {
-          await adminDeleteDoc(col, docId);
-          renderApp();
-          showToast('Deleted');
-        }
+        onConfirm: runDelete,
+        onPermissionDenied: () => openConnectCloudSyncSheet(runDelete)
       });
     });
   });
 }
 
-function handleAdminMatchModal(existing = null) {
+function openConnectCloudSyncSheet(onConnected) {
   openFormSheet({
+    title: 'Connect Firebase Cloud Sync',
+    subtitle: 'Sign in with your Firebase Admin account to authorize this cloud write or delete, or publish updated firestore.rules in Firebase Console.',
+    fields: [
+      { name: 'email', label: 'Firebase Admin Email', type: 'email', value: 'rehahalam7124517@gmail.com', required: true },
+      { name: 'password', label: 'Firebase Password', type: 'password', required: true }
+    ],
+    submitLabel: 'Connect & Retry',
+    onSubmit: async d => {
+      await connectAdminCloudSync(d.email, d.password);
+      if (typeof onConnected === 'function') {
+        await onConnected();
+      } else {
+        renderApp();
+        showToast('Firebase Cloud Sync connected');
+      }
+    }
+  });
+}
+
+function openAdminFormSheet(opts) {
+  let lastSubmitted = null;
+  openFormSheet({
+    ...opts,
+    onSubmit: async d => {
+      lastSubmitted = d;
+      return await opts.onSubmit(d);
+    },
+    onPermissionDenied: () => openConnectCloudSyncSheet(async () => {
+      if (lastSubmitted && typeof opts.onSubmit === 'function') {
+        await opts.onSubmit(lastSubmitted);
+      }
+    })
+  });
+}
+
+function handleAdminMatchModal(existing = null) {
+  openAdminFormSheet({
     title: existing ? 'Edit Match' : 'Add Match / Result',
     fields: [
       { name: 'opponent', label: 'Opponent Team', value: existing?.opponent || '', required: true },
@@ -2176,7 +2239,7 @@ function handleAdminCreateAction(action) {
   if (action === 'addMatch') return handleAdminMatchModal(null);
 
   if (action === 'addNews') {
-    return openFormSheet({
+    return openAdminFormSheet({
       title: 'Add Team News',
       fields: [
         { name: 'title', label: 'Title', required: true },
@@ -2192,7 +2255,7 @@ function handleAdminCreateAction(action) {
   }
 
   if (action === 'addUpdate') {
-    return openFormSheet({
+    return openAdminFormSheet({
       title: 'Add Official Update',
       fields: [
         { name: 'category', label: 'Category', type: 'select', options: ['WEBSITE', 'SOCIAL MEDIA', 'PLATFORM', 'ACCOUNT', 'FEATURE', 'OTHER'] },
@@ -2218,7 +2281,7 @@ function handleAdminCreateAction(action) {
   }
 
   if (action === 'addGallery') {
-    return openFormSheet({
+    return openAdminFormSheet({
       title: 'Add Gallery Photo',
       fields: [
         { name: 'photo', label: 'Select Image', type: 'file', required: true },
@@ -2238,7 +2301,7 @@ function handleAdminCreateAction(action) {
   if (action === 'addPlayer') {
     const nums = state.players.map(p => Number(String(p.id).replace(/\D/g, ''))).filter(Number.isFinite);
     const nextId = `RDM${String(Math.max(17, ...nums) + 1).padStart(3, '0')}`;
-    return openFormSheet({
+    return openAdminFormSheet({
       title: `Add Player (${nextId})`,
       fields: [
         { name: 'name', label: 'Full Name', required: true },
@@ -2266,7 +2329,7 @@ function handleAdminCreateAction(action) {
   }
 
   if (action === 'addLineup') {
-    return openFormSheet({
+    return openAdminFormSheet({
       title: 'Publish Playing XI',
       fields: [
         { name: 'title', label: 'Title', value: 'Playing XI', required: true },
@@ -2287,7 +2350,7 @@ function handleAdminCreateAction(action) {
   }
 
   if (action === 'addHonour') {
-    return openFormSheet({
+    return openAdminFormSheet({
       title: 'Add Team Honour',
       fields: [
         { name: 'year', label: 'Year', value: String(new Date().getFullYear()), required: true },
@@ -2303,7 +2366,7 @@ function handleAdminCreateAction(action) {
   }
 
   if (action === 'addTournament') {
-    return openFormSheet({
+    return openAdminFormSheet({
       title: 'Add Tournament',
       fields: [
         { name: 'name', label: 'Tournament Name', required: true },
@@ -2329,7 +2392,7 @@ function handleAdminCreateAction(action) {
   }
 
   if (action === 'addRecord') {
-    return openFormSheet({
+    return openAdminFormSheet({
       title: 'Add Team Record',
       fields: [
         { name: 'title', label: 'Record Title', placeholder: 'e.g. Highest Team Score', required: true },
@@ -2346,7 +2409,7 @@ function handleAdminCreateAction(action) {
   }
 
   if (action === 'editAppConfig') {
-    return openFormSheet({
+    return openAdminFormSheet({
       title: 'App & APK Update',
       subtitle: 'Bump Version & Version Code to trigger automatic Update Popup in all older Android APKs',
       fields: [
@@ -2376,7 +2439,7 @@ function handleAdminCreateAction(action) {
   }
 
   if (action === 'addSocial') {
-    return openFormSheet({
+    return openAdminFormSheet({
       title: 'Add Social Channel',
       fields: [
         { name: 'name', label: 'Platform', placeholder: 'INSTAGRAM', required: true },
@@ -2392,7 +2455,30 @@ function handleAdminCreateAction(action) {
   }
 }
 
-function maybeShowAppUpdatePopup(manual = false) {
+async function openNativeUpdateFlow(upd) {
+  const native = isNativeAndroid();
+  const canInstall = native ? await canInstallNativeApk() : true;
+  openAppUpdateSheet({
+    currentVersion: upd.currentVersion,
+    latestVersion: upd.latestVersion,
+    notes: upd.notes,
+    forceUpdate: upd.forceUpdate,
+    isNative: native,
+    needsInstallPermission: native && !canInstall,
+    onOpenPermissionSettings: () => openApkInstallPermissionSettings(),
+    onSubscribeProgress: cb => onApkDownloadProgress(cb),
+    onDownload: async () => {
+      if (native) {
+        return await downloadAndInstallNativeApk(upd.apkUrl || currentApkUrl());
+      }
+      downloadApkFile(upd.apkUrl || currentApkUrl());
+      showToast(`Downloading RDM Official APK v${upd.latestVersion}...`);
+      return { started: true };
+    }
+  });
+}
+
+async function maybeShowAppUpdatePopup(manual = false) {
   const upd = evaluateAvailableUpdate();
   if (!upd.hasUpdate) {
     if (manual) showToast(`You are on the latest version (v${upd.currentVersion})`);
@@ -2405,16 +2491,7 @@ function maybeShowAppUpdatePopup(manual = false) {
       }
     } catch (_) {}
   }
-  openAppUpdateSheet({
-    currentVersion: upd.currentVersion,
-    latestVersion: upd.latestVersion,
-    notes: upd.notes,
-    forceUpdate: upd.forceUpdate,
-    onDownload: () => {
-      downloadApkFile(upd.apkUrl || currentApkUrl());
-      showToast(`Downloading RDM Official APK v${upd.latestVersion}...`);
-    }
-  });
+  await openNativeUpdateFlow(upd);
   return true;
 }
 
@@ -2491,9 +2568,22 @@ async function bootstrap() {
 
   await loadClubData();
 
-  checkRemoteAppVersion().then(() => {
+  let lastAutoCheckAt = Date.now();
+  runAutomaticAppUpdates().then(res => {
+    if (res?.otaResult?.updated) {
+      showToast(`Updated silently to v${res.otaResult.otaVersion || ''}`);
+    }
     maybeShowAppUpdatePopup(false);
   }).catch(() => {});
+
+  subscribeAppResume(() => {
+    const now = Date.now();
+    if (now - lastAutoCheckAt < 30000) return;
+    lastAutoCheckAt = now;
+    runAutomaticAppUpdates().then(() => {
+      maybeShowAppUpdatePopup(false);
+    }).catch(() => {});
+  });
 
   subscribeClubDataRealtime(() => {
     const activeEl = document.activeElement;

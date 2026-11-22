@@ -35,7 +35,7 @@ function copyStaticFilesPlugin() {
     'version.json',
     'googlecd319e61dfe51dd1.html'
   ];
-  const staticDirs = ['assets', 'src/assets'];
+  const staticDirs = ['assets', 'src/assets', 'ota'];
 
   function copyDir(src, dest) {
     if (!fs.existsSync(src)) return;
@@ -65,16 +65,17 @@ function copyStaticFilesPlugin() {
       if (fs.existsSync(distIndex)) {
         let html = fs.readFileSync(distIndex, 'utf8');
         html = html
-          .replace(/(?:\.?\/)?assets\/site-[^"']+\.webmanifest(?:\?[^"']*)?/g, 'site.webmanifest?v=9000')
+          .replace(/(?:\.?\/)?assets\/site-[^"']+\.webmanifest(?:\?[^"']*)?/g, 'site.webmanifest?v=11000')
           .replace(/(?:\.?\/)?assets\/pwa-192x192-[^"']+\.png(?:\?[^"']*)?/g, 'pwa-192x192.png?v=7400')
           .replace(/(?:\.?\/)?assets\/apple-touch-icon-[^"']+\.png(?:\?[^"']*)?/g, 'apple-touch-icon.png?v=7400')
           .replace(/(?:\.?\/)?assets\/rdm-logo-[^"']+\.png(?:\?[^"']*)?/g, 'assets/rdm-logo.png?v=7400')
-          .replace(/(?:\.?\/)?assets\/hero_cricket_stadium_[^"']+\.jpg(?:\?[^"']*)?/g, 'src/assets/images/hero_cricket_stadium_1794890926411.jpg')
-          .replace(/(?:\.?\/)?assets\/club_heritage_banner_[^"']+\.jpg(?:\?[^"']*)?/g, 'src/assets/images/club_heritage_banner_1794890926814.jpg');
+          .replace(/(?:\.?\/)?assets\/hero_cricket_pavilion_[^"']+\.jpg(?:\?[^"']*)?/g, 'src/assets/images/hero_cricket_pavilion_1795338170696.jpg')
+          .replace(/(?:\.?\/)?assets\/cricket_craft_edition_[^"']+\.jpg(?:\?[^"']*)?/g, 'src/assets/images/cricket_craft_edition_1795338169416.jpg')
+          .replace(/(?:\.?\/)?assets\/portals_pavilion_terrace_[^"']+\.jpg(?:\?[^"']*)?/g, 'src/assets/images/portals_pavilion_terrace_1795338169671.jpg');
         if (!html.includes('style.css')) {
           html = html.replace(
             '</head>',
-            '  <link rel="stylesheet" href="style.css?v=9.0.0">\n  <link rel="stylesheet" href="rdm-v6890-fix.css?v=9.0.0">\n</head>'
+            '  <link rel="stylesheet" href="style.css?v=11.0.0">\n  <link rel="stylesheet" href="rdm-v6890-fix.css?v=11.0.0">\n</head>'
           );
         }
         fs.writeFileSync(distIndex, html, 'utf8');

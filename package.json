@@ -9,7 +9,8 @@
     "preview": "vite preview --host 0.0.0.0 --port 3000",
     "web:sync": "npm run build",
     "android:dev": "vite --config vite.android.config.js --host 0.0.0.0 --port 3001",
-    "android:build": "vite build --config vite.android.config.js",
+    "android:ota": "node scripts/build-android-ota.mjs",
+    "android:build": "vite build --config vite.android.config.js && node scripts/build-android-ota.mjs",
     "android:sync": "npm run android:build && npx cap sync android"
   },
   "devDependencies": {
@@ -25,7 +26,9 @@
     "@capacitor/splash-screen": "^8.0.2",
     "@capacitor/status-bar": "^8.0.4",
     "@fontsource/barlow-condensed": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
     "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/oswald": "^5.3.0",
     "@fontsource/outfit": "^5.3.0",
     "@fontsource/plus-jakarta-sans": "^5.3.0",
     "@types/express": "^5.0.6",

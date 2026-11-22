@@ -6,13 +6,13 @@
   <title>RDM Portals Directory | Public Website, Admin Panel &amp; Player Profiles</title>
   <meta name="description" content="Central access directory for Rehan Dominators Mahuawan (RDM) — open the Public Website, Admin Panel, or any of the 17 password-protected Player Profile portals.">
   <meta name="robots" content="noindex, nofollow">
-  <meta name="theme-color" content="#047857">
+  <meta name="theme-color" content="#9F1239">
   <link rel="icon" type="image/png" sizes="192x192" href="pwa-192x192.png?v=7400">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=7400">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=9.0.0">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&family=Oswald:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=11.0.0">
   <script>
     (function(){
       try {
@@ -31,16 +31,16 @@
 <body class="portalsPage">
   <header class="top">
     <a class="brand" href="./">
-      <img src="assets/rdm-logo.png?v=7400" alt="Rehan Dominators Mahuawan Logo" width="40" height="40" decoding="async" referrerPolicy="no-referrer">
+      <img src="assets/rdm-logo.png?v=7400" alt="Rehan Dominators Mahuawan Logo" width="38" height="38" decoding="async" referrerPolicy="no-referrer">
       <span class="brandTitle">Rehan Dominators</span>
     </a>
     <nav class="nav portalsTopNav" aria-label="Portals navigation">
       <a class="navLink" href="./">Public Website</a>
       <a class="navLink active" href="portals.html" aria-current="page">Portals Hub</a>
+      <a class="navLink" href="#corePortals">Admin Access</a>
       <a class="navLink" href="#playerPortalsGrid">Player Portals</a>
     </nav>
     <div class="headActions">
-      <a class="tinyBtn" href="./">Public Site</a>
       <div class="themeControl" id="themeControl">
         <button type="button" class="themeToggle" id="themeToggle" aria-label="Theme" aria-expanded="false">Theme</button>
         <div class="themeMenu" id="themeMenu" hidden>
@@ -49,29 +49,35 @@
           <button type="button" data-theme-mode="dark">Dark</button>
         </div>
       </div>
+      <a class="primary headPortalsCta" href="./">Public Site</a>
     </div>
   </header>
 
   <main class="portalsMain">
     <section class="portalsHero">
-      <div class="portalsHeroCopy">
-        <span class="sectionKicker">Official RDM Access Hub</span>
-        <h1>Club, Admin &amp; Player Portals</h1>
-        <p>Launch the view-only Public Showcase, open the password-protected Web Admin Workspace, or access any of the 17 squad Player Portals. Verified edits sync live across Web and Android APK.</p>
+      <div class="portalsHeroBackdrop" aria-hidden="true">
+        <img src="src/assets/images/portals_pavilion_terrace_1795338169671.jpg" alt="" decoding="async" referrerPolicy="no-referrer">
       </div>
-      <div class="portalsHeroMeta">
-        <div class="portalsStatBox">
-          <strong>19</strong>
-          <span>Total Portals</span>
+      <div class="portalsHeroContent">
+        <div class="portalsHeroCopy">
+          <span class="sectionKicker">Mahuawan · Gopalganj, Bihar · Access Hub</span>
+          <h1>Club, Admin &amp; Player Portals</h1>
+          <p>Launch the view-only Public Showcase, unlock the password-gated Web Admin Workspace, or open any of the 17 squad Player Portals. Verified edits sync across Website and Android APK.</p>
         </div>
-        <div class="portalsStatBox">
-          <strong>17</strong>
-          <span>Player Profiles</span>
+        <div class="portalsHeroMeta">
+          <div class="portalsStatBox">
+            <strong>19</strong>
+            <span>Active Portals</span>
+          </div>
+          <div class="portalsStatBox">
+            <strong>17</strong>
+            <span>Player Profiles</span>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="portalsSection" aria-label="Core Website &amp; Admin Portals">
+    <section class="portalsSection" id="corePortals" aria-label="Core Website &amp; Admin Portals">
       <div class="sectionHead">
         <div>
           <span>Core Access</span>
@@ -82,11 +88,10 @@
       <div class="portalsFeaturedGrid">
         <article class="portalCard portalCardFeatured is-public">
           <div class="portalCardHead">
-            <span class="portalBadge is-public">Public Showcase</span>
-            <span class="portalCode">OPEN ACCESS</span>
+            <span class="portalBadge is-public">Public Showcase · Open Access</span>
           </div>
           <h3>RDM Public Website</h3>
-          <p>View-only club portal for fans, opponents, and visitors — featuring live Squad, Match Centre, Records Leaderboard, Playing XI, Honours, Gallery, News, Updates, and APK download.</p>
+          <p>View-only club portal for supporters and opponents — featuring live Squad, Match Centre, Records Leaderboard, Playing XI, Honours, Gallery, News, Updates, and Android APK.</p>
           <div class="portalUrlRow">
             <input id="publicPortalUrl" type="text" readonly aria-label="Public website URL">
           </div>
@@ -98,12 +103,11 @@
 
         <article class="portalCard portalCardFeatured is-admin">
           <div class="portalCardHead">
-            <span class="portalBadge is-admin">Restricted Access</span>
-            <span class="portalCode">WEB ADMIN GATE</span>
+            <span class="portalBadge is-admin">Restricted Access · Web Admin Gate</span>
           </div>
           <h3>RDM Admin Command Workspace</h3>
-          <p>Password required on open · Separate from APK login. Manage players, fixtures, scorecards, honours, tournaments, team records, gallery albums, updates, branding, and live Firestore sync.</p>
-          <div class="portalLockPill">Password required on open · Separate from APK login</div>
+          <p>Password required on open · Separate from APK login. Manage squad players, fixtures, scorecards, honours, tournaments, team records, gallery albums, and club branding.</p>
+          <p class="portalLockPill">Password protected on entry · Synced to Web &amp; APK</p>
           <div class="portalUrlRow">
             <input id="adminPortalUrl" type="text" readonly aria-label="Admin panel URL">
           </div>
@@ -120,7 +124,7 @@
         <div>
           <span>Squad Self-Service</span>
           <h2>Player Profile Portals (17)</h2>
-          <p>Password required on open — unlocking lets each player update DP photo, bio, jersey number, socials, and match availability</p>
+          <p>Password required on open — unlocking lets each player update photo, bio, jersey number, socials, and match availability</p>
         </div>
       </div>
 
@@ -265,14 +269,14 @@
           const inputId = 'url-' + p.id;
           return `<article class="portalCard portalPlayerCard">
             <div class="portalPlayerTop">
-              <img src="assets/rdm-logo.png?v=7400" alt="${esc(p.name)} avatar" width="48" height="48" loading="lazy" decoding="async" referrerPolicy="no-referrer">
+              <img src="assets/rdm-logo.png?v=7400" alt="${esc(p.name)} avatar" width="46" height="46" loading="lazy" decoding="async" referrerPolicy="no-referrer">
               <div class="portalPlayerInfo">
                 <span class="portalCode">${esc(p.id)} · ${esc(p.code)}</span>
                 <h3>${esc(p.name)}</h3>
                 <b>${esc(p.role)}</b>
               </div>
             </div>
-            <div class="portalLockPill">Password required on open</div>
+            <p class="portalLockPill">Password required on open</p>
             <div class="portalUrlRow">
               <input id="${inputId}" type="text" readonly value="${esc(url)}" aria-label="${esc(p.name)} portal URL" onclick="this.select()">
             </div>

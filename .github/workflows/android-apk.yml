@@ -62,6 +62,12 @@ jobs:
             export RDM_KEYSTORE_PATH="rdm-custom.keystore"
             export RDM_KEYSTORE_TYPE="JKS"
           fi
+          RUN_NUM="${{ github.run_number }}"
+          if [ "$RUN_NUM" -ge 5 ]; then
+            export RDM_VERSION_CODE="$RUN_NUM"
+          else
+            export RDM_VERSION_CODE="5"
+          fi
           chmod +x gradlew
           ./gradlew assembleRelease --no-daemon --stacktrace
 
@@ -77,6 +83,8 @@ jobs:
           path: |
             RDM-Official.apk
             android/app/build/outputs/apk/release/app-release.apk
+            ota/manifest.json
+            ota/android-ota.zip
           if-no-files-found: error
           retention-days: 30
 

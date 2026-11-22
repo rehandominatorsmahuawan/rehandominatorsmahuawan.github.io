@@ -38,7 +38,11 @@ function registerModal(el) {
   };
 }
 
-export function openConfirmSheet({ title, message, confirmLabel = 'Confirm', danger = false, onConfirm }) {
+function isPermErr(err) {
+  return err?.code === 'permission-denied' || /Missing (?:or insufficient|cloud) permissions/i.test(String(err?.message || ''));
+}
+
+export function openConfirmSheet({ title, message, confirmLabel = 'Confirm', danger = false, onConfirm, onPermissionDenied }) {
   const overlay = document.createElement('div');
   overlay.className = 'sheetOverlay show';
   overlay.innerHTML = `
@@ -65,13 +69,18 @@ export function openConfirmSheet({ title, message, confirmLabel = 'Confirm', dan
       await onConfirm();
       close();
     } catch (err) {
+      if (isPermErr(err) && typeof onPermissionDenied === 'function') {
+        close();
+        onPermissionDenied(err);
+        return;
+      }
       btn.disabled = false;
       showToast(err?.message || 'Action failed');
     }
   };
 }
 
-export function openFormSheet({ title, subtitle = '', fields, submitLabel = 'Save', onSubmit }) {
+export function openFormSheet({ title, subtitle = '', fields, submitLabel = 'Save', onSubmit, onPermissionDenied }) {
   const overlay = document.createElement('div');
   overlay.className = 'sheetOverlay show';
 
@@ -164,6 +173,11 @@ export function openFormSheet({ title, subtitle = '', fields, submitLabel = 'Sav
       await onSubmit(data);
       close();
     } catch (err) {
+      if (isPermErr(err) && typeof onPermissionDenied === 'function') {
+        close();
+        onPermissionDenied(err);
+        return;
+      }
       submitBtn.disabled = false;
       showToast(err?.message || 'Save failed');
     }
@@ -175,28 +189,28 @@ export function openThemeSheet({ currentTheme, onSelectTheme }) {
   overlay.className = 'sheetOverlay show';
   const themes = [
     {
-      id: 'azure',
-      name: 'Sky Azure',
-      desc: 'Official Royal Blue & crisp white palette',
-      swatches: ['#F3F7FD', '#FFFFFF', '#0958D9']
+      id: 'leather',
+      name: 'Editorial Crimson',
+      desc: 'Alabaster Chalk canvas & Cricket Leather Crimson',
+      swatches: ['#FAF9F7', '#FFFFFF', '#9F1239']
     },
     {
-      id: 'crimson',
-      name: 'Dominator Crimson',
-      desc: 'Club crest crimson red & clean white',
-      swatches: ['#FCF7F7', '#FFFFFF', '#C61D2E']
+      id: 'carbon',
+      name: 'Floodlight Carbon',
+      desc: 'Dark carbon stadium slate with crimson accents',
+      swatches: ['#090A0D', '#12141A', '#E11D48']
     },
     {
-      id: 'daylight',
-      name: 'Stadium Daylight',
-      desc: 'Minimal high-clarity bright white canvas',
+      id: 'alabaster',
+      name: 'Pavilion Ivory',
+      desc: 'Clean daylight alabaster with deep sapphire ink',
       swatches: ['#F8FAFC', '#FFFFFF', '#1D4ED8']
     },
     {
-      id: 'night',
-      name: 'Floodlight Night',
-      desc: 'Deep stadium navy dark mode',
-      swatches: ['#071224', '#0E1F3A', '#38BDF8']
+      id: 'copper',
+      name: 'Heritage Copper',
+      desc: 'Warm stone chalk & burnished bronze accent',
+      swatches: ['#F7F5F2', '#FFFFFF', '#9A3412']
     }
   ];
 
@@ -396,13 +410,13 @@ export async function downloadPlayerProfileCard({ player, brandLogo }) {
   };
 
   const bg = ctx.createLinearGradient(0, 0, W, H);
-  bg.addColorStop(0, '#EDF5FF');
-  bg.addColorStop(1, '#FFFFFF');
+  bg.addColorStop(0, '#FAF9F7');
+  bg.addColorStop(1, '#F2EFEA');
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
 
-  roundRect(40, 40, W - 80, H - 80, 40, '#FFFFFF', '#C9DFF7');
-  roundRect(80, 80, W - 160, 10, 5, '#0958D9', null);
+  roundRect(40, 40, W - 80, H - 80, 28, '#FFFFFF', '#E5E0D8');
+  roundRect(80, 80, W - 160, 8, 4, '#9F1239', null);
 
   let logo = null;
   try { logo = await loadImg(brandLogo || CLUB_INFO.logoPath); } catch (_) {}
@@ -410,12 +424,12 @@ export async function downloadPlayerProfileCard({ player, brandLogo }) {
     ctx.drawImage(logo, 84, 120, 74, 74);
   }
   ctx.textAlign = 'left';
-  ctx.fillStyle = '#0B2340';
-  ctx.font = '800 34px "Barlow Condensed", "Plus Jakarta Sans", sans-serif';
+  ctx.fillStyle = '#161412';
+  ctx.font = '700 34px "Oswald", "Plus Jakarta Sans", sans-serif';
   ctx.fillText('REHAN DOMINATORS MAHUAWAN', 176, 156);
-  ctx.fillStyle = '#5B7693';
+  ctx.fillStyle = '#665E57';
   ctx.font = '600 18px "Plus Jakarta Sans", sans-serif';
-  ctx.fillText('MAHUAWAN • GOPALGANJ • BIHAR', 176, 186);
+  ctx.fillText('MAHUAWAN · GOPALGANJ · BIHAR', 176, 186);
 
   let avatar = null;
   try {
@@ -431,7 +445,7 @@ export async function downloadPlayerProfileCard({ player, brandLogo }) {
     const sc = Math.max(280 / avatar.width, 280 / avatar.height);
     ctx.drawImage(avatar, W / 2 - (avatar.width * sc) / 2, 370 - (avatar.height * sc) / 2, avatar.width * sc, avatar.height * sc);
     ctx.restore();
-    ctx.strokeStyle = '#0958D9';
+    ctx.strokeStyle = '#9F1239';
     ctx.lineWidth = 8;
     ctx.beginPath();
     ctx.arc(W / 2, 370, 146, 0, Math.PI * 2);
@@ -439,34 +453,34 @@ export async function downloadPlayerProfileCard({ player, brandLogo }) {
   }
 
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#0B2340';
-  ctx.font = '800 58px "Barlow Condensed", "Plus Jakarta Sans", sans-serif';
+  ctx.fillStyle = '#161412';
+  ctx.font = '700 58px "Oswald", "Plus Jakarta Sans", sans-serif';
   ctx.fillText(formatTextCase(player.name), W / 2, 580);
 
-  roundRect(120, 620, 840, 124, 24, '#F2F7FD', '#CFE2F7');
-  ctx.fillStyle = '#0958D9';
+  roundRect(120, 620, 840, 124, 18, '#FAF9F7', '#E5E0D8');
+  ctx.fillStyle = '#9F1239';
   ctx.font = '700 16px "Plus Jakarta Sans", sans-serif';
   ctx.fillText('PLAYER CODE', 330, 662);
   ctx.fillText('JERSEY NUMBER', 750, 662);
-  ctx.fillStyle = '#0B2340';
-  ctx.font = '700 30px "JetBrains Mono", monospace';
+  ctx.fillStyle = '#161412';
+  ctx.font = '700 30px "IBM Plex Mono", monospace';
   ctx.fillText(PLAYER_CODES[player.id] || player.id, 330, 708);
   ctx.fillText(player.jersey ? `#${player.jersey}` : '—', 750, 708);
 
-  roundRect(120, 774, 840, 140, 24, '#F8FBFF', '#D9E8F7');
-  ctx.fillStyle = '#0958D9';
+  roundRect(120, 774, 840, 140, 18, '#F2EFEA', '#E5E0D8');
+  ctx.fillStyle = '#9F1239';
   ctx.font = '700 24px "Plus Jakarta Sans", sans-serif';
   ctx.fillText(formatTextCase(player.role || ''), W / 2, 828);
-  ctx.fillStyle = '#3E5A78';
+  ctx.fillStyle = '#3B3530';
   ctx.font = '600 20px "Plus Jakarta Sans", sans-serif';
   ctx.fillText(formatTextCase(player.detail || '').slice(0, 66), W / 2, 872);
 
-  ctx.fillStyle = '#0958D9';
+  ctx.fillStyle = '#9F1239';
   ctx.font = '700 18px "Plus Jakarta Sans", sans-serif';
-  ctx.fillText('ONE TEAM • ONE DREAM • ONE DOMINATION', W / 2, 1234);
-  ctx.fillStyle = '#5B7693';
-  ctx.font = '600 15px "Plus Jakarta Sans", sans-serif';
-  ctx.fillText('RDM OFFICIAL • PLAYER IDENTITY CARD', W / 2, 1266);
+  ctx.fillText('ONE TEAM · ONE DREAM · ONE DOMINATION', W / 2, 1234);
+  ctx.fillStyle = '#665E57';
+  ctx.font = '600 15px "IBM Plex Mono", monospace';
+  ctx.fillText('RDM OFFICIAL · PLAYER IDENTITY CARD', W / 2, 1266);
 
   const fileName = `${player.id}-${String(player.name || 'PLAYER').replace(/\s+/g, '-')}-RDM-CARD.png`;
   const blob = await new Promise(resolve => c.toBlob(resolve, 'image/png'));
@@ -506,34 +520,96 @@ export async function downloadPlayerProfileCard({ player, brandLogo }) {
   showToast('Player card generated');
 }
 
-export function openAppUpdateSheet({ currentVersion, latestVersion, notes, forceUpdate = false, onDownload }) {
+export function openAppUpdateSheet({
+  currentVersion,
+  latestVersion,
+  notes,
+  forceUpdate = false,
+  isNative = false,
+  needsInstallPermission = false,
+  onDownload,
+  onOpenPermissionSettings,
+  onSubscribeProgress
+}) {
   if (document.getElementById('rdmUpdateSheetOverlay')) return;
   const overlay = document.createElement('div');
   overlay.id = 'rdmUpdateSheetOverlay';
   overlay.className = 'sheetOverlay show';
+
+  let permMissing = Boolean(isNative && needsInstallPermission);
+  const actionLabel = isNative
+    ? (permMissing ? 'Allow App Updates Setting' : `Update App In-Place (v${escHtml(latestVersion)})`)
+    : `Download APK v${escHtml(latestVersion)}`;
+
   overlay.innerHTML = `
     <div class="sheetCard confirmCard" role="dialog" aria-modal="true" aria-label="App Update Available">
       <div class="sheetHandle"></div>
       <div class="sheetHeader">
         <div>
           <span class="sectionKicker">New Version Available</span>
-          <h3>Update RDM Official APK</h3>
+          <h3>${isNative ? 'Update RDM Official' : 'Update RDM Official APK'}</h3>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
         <span class="metaCode">Installed: v${escHtml(currentVersion)}</span>
-        <span class="metaCode" style="background:var(--brand-blue);color:#fff;">Latest: v${escHtml(latestVersion)}</span>
+        <span class="metaCode" style="color:var(--brand-blue);">Latest: v${escHtml(latestVersion)}</span>
       </div>
-      <p class="confirmMessage richText" style="margin-bottom:16px;">${escHtml(notes || 'A newer version of RDM Official Android App is ready to download and install.')}</p>
+      <p class="confirmMessage richText" style="margin-bottom:12px;">${escHtml(notes || 'A newer version of RDM Official Android App is ready to install right inside the app without uninstalling.')}</p>
+      <div class="updatePermBox" id="rdmUpdatePermBox" style="${permMissing ? '' : 'display:none;'}">
+        <strong>One-Time Android Permission Needed</strong>
+        <span>Allow "Install unknown apps" for RDM Official so Android can update your app automatically in place without losing your login or data.</span>
+      </div>
+      <div class="updateProgressWrap" id="rdmUpdateProgressWrap" style="display:none;">
+        <div class="updateProgressTop">
+          <span id="rdmUpdateStatusText">Preparing update...</span>
+          <span id="rdmUpdatePercentText" class="num">0%</span>
+        </div>
+        <div class="updateProgressTrack">
+          <div class="updateProgressFill" id="rdmUpdateProgressFill" style="width:0%;"></div>
+        </div>
+      </div>
+      <div class="errorBanner" id="rdmUpdateErrorBox" style="display:none;margin-bottom:12px;"></div>
       <div class="sheetActions"${forceUpdate ? ' style="grid-template-columns:1fr;"' : ''}>
         ${forceUpdate ? '' : '<button type="button" class="btnSecondary" data-later>Later</button>'}
-        <button type="button" class="btnPrimary" data-download>Download Update v${escHtml(latestVersion)}</button>
+        <button type="button" class="btnPrimary" data-download>${actionLabel}</button>
       </div>
     </div>
   `;
   document.body.appendChild(overlay);
-  const close = registerModal(overlay);
+  const rawClose = registerModal(overlay);
+
+  const permBox = overlay.querySelector('#rdmUpdatePermBox');
+  const progressWrap = overlay.querySelector('#rdmUpdateProgressWrap');
+  const statusEl = overlay.querySelector('#rdmUpdateStatusText');
+  const pctEl = overlay.querySelector('#rdmUpdatePercentText');
+  const fillEl = overlay.querySelector('#rdmUpdateProgressFill');
+  const errEl = overlay.querySelector('#rdmUpdateErrorBox');
+  const dlBtn = overlay.querySelector('[data-download]');
   const laterBtn = overlay.querySelector('[data-later]');
+
+  let unsubProgress = () => {};
+  const close = () => {
+    unsubProgress();
+    rawClose();
+  };
+
+  if (typeof onSubscribeProgress === 'function') {
+    unsubProgress = onSubscribeProgress(({ percent = 0, downloadedBytes = 0, totalBytes = 0 }) => {
+      progressWrap.style.display = 'block';
+      errEl.style.display = 'none';
+      const safePct = Math.max(0, Math.min(100, Number(percent) || 0));
+      fillEl.style.width = `${safePct}%`;
+      pctEl.textContent = `${safePct}%`;
+      const mbDown = (downloadedBytes / (1024 * 1024)).toFixed(1);
+      if (totalBytes > 0) {
+        const mbTot = (totalBytes / (1024 * 1024)).toFixed(1);
+        statusEl.textContent = safePct >= 100 ? 'Verifying & opening Android updater...' : `Downloading ${mbDown} / ${mbTot} MB...`;
+      } else {
+        statusEl.textContent = `Downloading ${mbDown} MB...`;
+      }
+    });
+  }
+
   if (laterBtn) {
     laterBtn.onclick = () => {
       try { sessionStorage.setItem(`rdm-dismiss-update-${latestVersion}`, '1'); } catch (_) {}
@@ -548,8 +624,52 @@ export function openAppUpdateSheet({ currentVersion, latestVersion, notes, force
       }
     });
   }
-  overlay.querySelector('[data-download]').onclick = () => {
-    if (typeof onDownload === 'function') onDownload();
-    if (!forceUpdate) close();
+
+  dlBtn.onclick = async () => {
+    errEl.style.display = 'none';
+    if (isNative && permMissing) {
+      permMissing = false;
+      permBox.style.display = 'none';
+      dlBtn.textContent = `Update App In-Place (v${latestVersion})`;
+      if (typeof onOpenPermissionSettings === 'function') {
+        await onOpenPermissionSettings();
+      }
+      return;
+    }
+
+    if (!isNative) {
+      if (typeof onDownload === 'function') onDownload();
+      if (!forceUpdate) close();
+      return;
+    }
+
+    dlBtn.disabled = true;
+    dlBtn.textContent = 'Downloading Update...';
+    progressWrap.style.display = 'block';
+    statusEl.textContent = 'Starting secure download...';
+    try {
+      const result = await onDownload?.();
+      if (result && result.needsPermission) {
+        permMissing = true;
+        permBox.style.display = 'flex';
+        progressWrap.style.display = 'none';
+        dlBtn.disabled = false;
+        dlBtn.textContent = 'Allow App Updates Setting';
+        return;
+      }
+      statusEl.textContent = 'Installer ready. Confirm Update on Android prompt.';
+      pctEl.textContent = '100%';
+      fillEl.style.width = '100%';
+      dlBtn.disabled = false;
+      dlBtn.textContent = `Install Update v${latestVersion}`;
+      if (!forceUpdate) {
+        setTimeout(() => close(), 900);
+      }
+    } catch (err) {
+      dlBtn.disabled = false;
+      dlBtn.textContent = `Retry Update (v${latestVersion})`;
+      errEl.textContent = err?.message || 'Unable to download update. Please check your connection and try again.';
+      errEl.style.display = 'block';
+    }
   };
 }
