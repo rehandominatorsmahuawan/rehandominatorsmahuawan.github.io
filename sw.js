@@ -1,4 +1,4 @@
-const CACHE = 'rdm-v8000';
+const CACHE = 'rdm-v8001';
 const CORE = [
   './',
   'index.html',

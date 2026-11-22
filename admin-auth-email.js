@@ -55,6 +55,9 @@
     const adminBody = document.getElementById('adminBody');
 
     let card = document.getElementById('adminFirebaseEmailCard');
+    const activeInside = card && card.contains(document.activeElement) && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || '');
+    if (activeInside) return;
+
     if (!card) {
       card = document.createElement('section');
       card.id = 'adminFirebaseEmailCard';
@@ -200,6 +203,8 @@
 
     fetchTargetStatus();
   }
+
+  window.rdmInjectEmailToolCard = renderEmailToolCard;
 
   const prevRenderAdmin = window.renderAdmin;
   window.renderAdmin = function () {

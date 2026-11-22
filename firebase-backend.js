@@ -36,9 +36,13 @@ const safeUrl = u => /^https?:\/\//i.test(String(u || '')) ? String(u) : '';
 const rdmStaticPlayerImage = u => /^(?:\.?\/)?assets\/(?:rehan\.png|players\/)/i.test(String(u || ''));
 
 function rdmStripDocMeta(obj) {
-  const clean = { ...(obj || {}) };
-  delete clean._docId;
-  delete clean._profileUid;
+  const clean = {};
+  if (!obj || typeof obj !== 'object') return clean;
+  for (const [k, v] of Object.entries(obj)) {
+    if (k === '_docId' || k === '_profileUid' || k === '_col') continue;
+    if (v === undefined || v === null) continue;
+    clean[k] = v;
+  }
   return clean;
 }
 window.rdmStripDocMeta = rdmStripDocMeta;
@@ -839,7 +843,7 @@ window.removeItem = async (k, i) => {
   const item = D[k]?.[i], col = RCOL[k];
   if (!item || !col) return;
   const run = async () => {
-    if (item._docId) {
+    if (item._docId && !String(item._docId).startsWith('loc_')) {
       try {
         await rdmDB.collection(col).doc(item._docId).delete();
       } catch (err) {
@@ -932,12 +936,21 @@ q('#editForm').onsubmit = async e => {
       editObj.url = v('e2');
       editObj.icon = v('e3') || editObj.icon || '↗';
       if (img) editObj.image = img;
-      if (editObj._docId) {
+      if (editObj._docId && !String(editObj._docId).startsWith('loc_')) {
         try {
           await rdmDB.collection(RCOL.socials).doc(editObj._docId).set({
             name: editObj.name, displayName: editObj.displayName, url: editObj.url, icon: editObj.icon,
             ...(img ? { image: img } : {}), updatedAt: rdmStamp()
           }, { merge: true });
+        } catch (err) { rdmReportWriteError(err, 'Edit Social'); }
+      } else {
+        try {
+          const ref = await rdmDB.collection(RCOL.socials).add({
+            name: editObj.name, displayName: editObj.displayName, url: editObj.url, icon: editObj.icon,
+            order: editObj.order || D.socials.length, createdMs: editObj.createdMs || now,
+            ...(img ? { image: img } : {}), updatedAt: rdmStamp()
+          });
+          editObj._docId = ref.id;
         } catch (err) { rdmReportWriteError(err, 'Edit Social'); }
       }
     }

@@ -20,9 +20,9 @@
         "id": { "type": "string", "maxLength": 32 },
         "name": { "type": "string", "maxLength": 120 },
         "role": { "type": "string", "maxLength": 120 },
-        "detail": { "type": "string", "maxLength": 400 },
+        "detail": { "type": "string", "maxLength": 600 },
         "jersey": { "type": "string", "maxLength": 16 },
-        "image": { "type": "string", "maxLength": 950000 },
+        "image": { "type": "string", "maxLength": 960000 },
         "order": { "type": "number" },
         "active": { "type": "boolean" }
       }
@@ -35,11 +35,11 @@
         "playerId": { "type": "string", "maxLength": 32 },
         "name": { "type": "string", "maxLength": 120 },
         "role": { "type": "string", "maxLength": 120 },
-        "detail": { "type": "string", "maxLength": 400 },
+        "detail": { "type": "string", "maxLength": 600 },
         "jersey": { "type": "string", "maxLength": 16 },
         "nick": { "type": "string", "maxLength": 120 },
-        "bio": { "type": "string", "maxLength": 1200 },
-        "image": { "type": "string", "maxLength": 950000 },
+        "bio": { "type": "string", "maxLength": 1600 },
+        "image": { "type": "string", "maxLength": 960000 },
         "socials": { "type": "array" },
         "updatedMs": { "type": "number" }
       }
@@ -52,6 +52,11 @@
         "opponent": { "type": "string", "maxLength": 160 },
         "date": { "type": "string", "maxLength": 64 },
         "time": { "type": "string", "maxLength": 64 },
+        "matchDate": { "type": "string", "maxLength": 64 },
+        "matchTime": { "type": "string", "maxLength": 64 },
+        "dateTime": { "type": "string", "maxLength": 64 },
+        "scheduledAt": { "type": "string", "maxLength": 64 },
+        "startTime": { "type": "string", "maxLength": 64 },
         "venue": { "type": "string", "maxLength": 240 },
         "venueName": { "type": "string", "maxLength": 240 },
         "status": { "type": "string", "maxLength": 64 },
@@ -69,8 +74,8 @@
       "description": "Official team news announcement.",
       "type": "object",
       "properties": {
-        "title": { "type": "string", "maxLength": 200 },
-        "text": { "type": "string", "maxLength": 8000 },
+        "title": { "type": "string", "maxLength": 240 },
+        "text": { "type": "string", "maxLength": 12000 },
         "pinned": { "type": "boolean" },
         "createdMs": { "type": "number" }
       }
@@ -81,8 +86,8 @@
       "type": "object",
       "properties": {
         "category": { "type": "string", "maxLength": 64 },
-        "title": { "type": "string", "maxLength": 200 },
-        "text": { "type": "string", "maxLength": 8000 },
+        "title": { "type": "string", "maxLength": 240 },
+        "text": { "type": "string", "maxLength": 12000 },
         "date": { "type": "string", "maxLength": 64 },
         "url": { "type": "string", "maxLength": 500 },
         "pinned": { "type": "boolean" },
@@ -97,7 +102,7 @@
         "year": { "type": "string", "maxLength": 24 },
         "title": { "type": "string", "maxLength": 160 },
         "sub": { "type": "string", "maxLength": 240 },
-        "image": { "type": "string", "maxLength": 950000 },
+        "image": { "type": "string", "maxLength": 960000 },
         "order": { "type": "number" }
       }
     },
@@ -106,8 +111,8 @@
       "description": "Club gallery photo entry.",
       "type": "object",
       "properties": {
-        "image": { "type": "string", "maxLength": 950000 },
-        "caption": { "type": "string", "maxLength": 300 },
+        "image": { "type": "string", "maxLength": 960000 },
+        "caption": { "type": "string", "maxLength": 400 },
         "album": { "type": "string", "maxLength": 64 },
         "createdMs": { "type": "number" }
       }
@@ -119,9 +124,9 @@
       "properties": {
         "name": { "type": "string", "maxLength": 64 },
         "displayName": { "type": "string", "maxLength": 120 },
-        "url": { "type": "string", "maxLength": 500 },
+        "url": { "type": "string", "maxLength": 600 },
         "icon": { "type": "string", "maxLength": 32 },
-        "image": { "type": "string", "maxLength": 950000 },
+        "image": { "type": "string", "maxLength": 960000 },
         "order": { "type": "number" }
       }
     },
@@ -144,7 +149,7 @@
         "economy": { "type": "number" },
         "ballsFaced": { "type": "number" },
         "bestBowling": { "type": "string", "maxLength": 64 },
-        "last5": { "type": "string", "maxLength": 200 },
+        "last5": { "type": "string", "maxLength": 240 },
         "season": { "type": "string", "maxLength": 32 }
       }
     },
@@ -155,7 +160,7 @@
       "properties": {
         "title": { "type": "string", "maxLength": 200 },
         "playerName": { "type": "string", "maxLength": 120 },
-        "detail": { "type": "string", "maxLength": 1000 },
+        "detail": { "type": "string", "maxLength": 1200 },
         "season": { "type": "string", "maxLength": 32 },
         "createdMs": { "type": "number" }
       }
@@ -190,13 +195,13 @@
         "category": { "type": "string", "maxLength": 64 },
         "season": { "type": "string", "maxLength": 32 },
         "title": { "type": "string", "maxLength": 200 },
-        "value": { "type": "string", "maxLength": 120 },
+        "value": { "type": "string", "maxLength": 160 },
         "player": { "type": "string", "maxLength": 120 },
         "player2": { "type": "string", "maxLength": 120 },
         "wicket": { "type": "string", "maxLength": 64 },
         "opponent": { "type": "string", "maxLength": 120 },
         "date": { "type": "string", "maxLength": 64 },
-        "note": { "type": "string", "maxLength": 1000 },
+        "note": { "type": "string", "maxLength": 1200 },
         "createdMs": { "type": "number" }
       }
     },
@@ -210,7 +215,7 @@
         "status": { "type": "string", "maxLength": 32 },
         "position": { "type": "string", "maxLength": 120 },
         "venue": { "type": "string", "maxLength": 240 },
-        "fixtures": { "type": "string", "maxLength": 4000 },
+        "fixtures": { "type": "string", "maxLength": 5000 },
         "createdMs": { "type": "number" }
       }
     },
@@ -231,14 +236,14 @@
       "description": "Global logo, icons, and APK release configuration.",
       "type": "object",
       "properties": {
-        "logo": { "type": "string", "maxLength": 950000 },
-        "favicon": { "type": "string", "maxLength": 950000 },
-        "appIcon": { "type": "string", "maxLength": 950000 },
-        "socialPreview": { "type": "string", "maxLength": 950000 },
+        "logo": { "type": "string", "maxLength": 960000 },
+        "favicon": { "type": "string", "maxLength": 960000 },
+        "appIcon": { "type": "string", "maxLength": 960000 },
+        "socialPreview": { "type": "string", "maxLength": 960000 },
         "brandVersion": { "type": "string", "maxLength": 32 },
         "appVersion": { "type": "string", "maxLength": 32 },
         "appVersionCode": { "type": "number" },
-        "updateNotes": { "type": "string", "maxLength": 2000 },
+        "updateNotes": { "type": "string", "maxLength": 2500 },
         "forceUpdate": { "type": "boolean" },
         "apkDownloadUrl": { "type": "string", "maxLength": 500 },
         "apkReleasesUrl": { "type": "string", "maxLength": 500 },

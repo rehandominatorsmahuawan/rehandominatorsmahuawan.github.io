@@ -51,6 +51,30 @@ function serverStamp() {
   return window.firebase?.firestore?.FieldValue?.serverTimestamp?.() || new Date();
 }
 
+function sanitizePayload(obj) {
+  const clean = {};
+  if (!obj || typeof obj !== 'object') return clean;
+  for (const [k, v] of Object.entries(obj)) {
+    if (k === '_docId' || k === '_profileUid' || k === '_col') continue;
+    if (v === undefined || v === null) continue;
+    clean[k] = v;
+  }
+  return clean;
+}
+
+function mapFirestoreWriteError(err) {
+  const code = String(err?.code || '');
+  const msg = String(err?.message || '');
+  if (code === 'permission-denied' || /Missing or insufficient permissions/i.test(msg)) {
+    const out = new Error(
+      "Missing permissions: tap 'Connect Cloud Sync' in Overview or publish updated firestore.rules in Firebase Console."
+    );
+    out.code = 'permission-denied';
+    return out;
+  }
+  return err instanceof Error ? err : new Error(msg || 'Sync failed');
+}
+
 const mapDoc = doc => ({ ...doc.data(), _docId: doc.id });
 
 export const state = {
@@ -504,6 +528,20 @@ export async function loginAdminWithPassword(password) {
   return { ok: true, role: 'admin', cloudSynced };
 }
 
+export async function connectAdminCloudSync(identifier, password) {
+  const res = await loginWithEmailPassword(identifier, password);
+  if (res.role !== 'admin') {
+    await logoutAccount();
+    const err = new Error('This Firebase account is not an active Admin in Accounts/{uid}.');
+    err.code = 'NOT_ADMIN_ACCOUNT';
+    throw err;
+  }
+  state.apkAdminUnlocked = true;
+  state.role = 'admin';
+  writeApkAdminFlag(true);
+  return res;
+}
+
 export async function sendResetPasswordEmail(identifier) {
   const auth = getAuth();
   if (!auth) throw new Error('FIREBASE_UNAVAILABLE');
@@ -613,20 +651,24 @@ export async function savePlayerPortalProfile(targetPlayerId, updates) {
     payload.image = String(updates.image || '');
   }
 
-  await db.collection('PlayerProfiles').doc(docId).set(payload, { merge: true });
-  if ('jersey' in updates || 'image' in updates) {
-    const teamPatch = {
-      id: targetPlayerId,
-      jersey: payload.jersey,
-      updatedMs: payload.updatedMs,
-      updatedAt: serverStamp()
-    };
-    if ('image' in updates) teamPatch.image = payload.image;
-    try {
-      await db.collection('TeamPlayers').doc(targetPlayerId).set(teamPatch, { merge: true });
-    } catch (_) {}
+  try {
+    await db.collection('PlayerProfiles').doc(docId).set(sanitizePayload(payload), { merge: true });
+    if ('jersey' in updates || 'image' in updates) {
+      const teamPatch = sanitizePayload({
+        id: targetPlayerId,
+        jersey: payload.jersey,
+        updatedMs: payload.updatedMs,
+        updatedAt: serverStamp()
+      });
+      if ('image' in updates) teamPatch.image = payload.image;
+      try {
+        await db.collection('TeamPlayers').doc(targetPlayerId).set(teamPatch, { merge: true });
+      } catch (_) {}
+    }
+    await loadClubData();
+  } catch (err) {
+    throw mapFirestoreWriteError(err);
   }
-  await loadClubData();
 }
 
 export async function saveOwnPlayerProfile(updates) {
@@ -645,35 +687,43 @@ export async function savePlayerAvailability(playerId, status) {
     throw new Error('NOT_ALLOWED');
   }
 
-  await db.collection('Availability').doc(playerId).set({
-    playerId,
-    status: cleanStatus,
-    updatedAt: serverStamp()
-  }, { merge: true });
+  try {
+    await db.collection('Availability').doc(playerId).set({
+      playerId,
+      status: cleanStatus,
+      updatedAt: serverStamp()
+    }, { merge: true });
 
-  await loadClubData();
+    await loadClubData();
+  } catch (err) {
+    throw mapFirestoreWriteError(err);
+  }
 }
 
 export async function adminUpsertDoc(collection, docId, payload) {
   const db = getDB();
   if (!db || !isVerifiedAdmin()) throw new Error('ADMIN_REQUIRED');
 
-  const data = { ...payload, updatedAt: serverStamp() };
-  delete data._docId;
+  const data = sanitizePayload({ ...payload, updatedAt: serverStamp() });
+  const validId = docId && !String(docId).startsWith('loc_') ? String(docId) : '';
 
-  if (docId) {
-    await db.collection(collection).doc(docId).set(data, { merge: true });
-  } else {
-    await db.collection(collection).add({ ...data, createdMs: data.createdMs || Date.now() });
+  try {
+    if (validId) {
+      await db.collection(collection).doc(validId).set(data, { merge: true });
+    } else {
+      await db.collection(collection).add({ ...data, createdMs: data.createdMs || Date.now() });
+    }
+    await loadClubData();
+  } catch (err) {
+    throw mapFirestoreWriteError(err);
   }
-  await loadClubData();
 }
 
 export async function adminUpdatePlayer(playerId, fields) {
   const db = getDB();
   if (!db || !isVerifiedAdmin()) throw new Error('ADMIN_REQUIRED');
 
-  const playerPayload = {
+  const playerPayload = sanitizePayload({
     id: playerId,
     name: String(fields.name || '').trim(),
     role: String(fields.role || '').trim(),
@@ -681,35 +731,39 @@ export async function adminUpdatePlayer(playerId, fields) {
     jersey: String(fields.jersey || '').trim(),
     active: true,
     updatedAt: serverStamp()
-  };
-  if ('image' in fields && fields.image !== undefined) {
-    playerPayload.image = fields.image;
+  });
+  if ('image' in fields && fields.image !== undefined && fields.image !== null) {
+    playerPayload.image = String(fields.image);
   }
-  await db.collection('TeamPlayers').doc(playerId).set(playerPayload, { merge: true });
 
-  // Also sync profile metadata if existing profile doc found or under profile_<id>
   const target = state.players.find(p => p.id === playerId);
   const profileDocId = target?._profileUid || `profile_${playerId}`;
-  const profPayload = {
+  const profPayload = sanitizePayload({
     playerId,
     jersey: playerPayload.jersey,
     nick: String(fields.nick ?? target?.nick ?? '').trim(),
     bio: String(fields.bio ?? target?.bio ?? '').trim(),
     updatedMs: Date.now(),
     updatedAt: serverStamp()
-  };
-  if ('image' in fields && fields.image !== undefined) {
-    profPayload.image = fields.image;
+  });
+  if ('image' in fields && fields.image !== undefined && fields.image !== null) {
+    profPayload.image = String(fields.image);
   }
-  await db.collection('PlayerProfiles').doc(profileDocId).set(profPayload, { merge: true });
-  await loadClubData();
+
+  try {
+    await db.collection('TeamPlayers').doc(playerId).set(playerPayload, { merge: true });
+    await db.collection('PlayerProfiles').doc(profileDocId).set(profPayload, { merge: true });
+    await loadClubData();
+  } catch (err) {
+    throw mapFirestoreWriteError(err);
+  }
 }
 
 export async function adminSaveBrandSettings(fields) {
   const db = getDB();
   if (!db || !isVerifiedAdmin()) throw new Error('ADMIN_REQUIRED');
   const parsedCode = Number(fields.appVersionCode);
-  const payload = {
+  const payload = sanitizePayload({
     appVersion: String(fields.appVersion || CLUB_INFO.appVersion).trim(),
     appVersionCode: Number.isFinite(parsedCode) && parsedCode > 0 ? parsedCode : state.appVersionCode || APP_BUILD_INFO.versionCode,
     updateNotes: String(fields.updateNotes ?? '').trim(),
@@ -718,12 +772,16 @@ export async function adminSaveBrandSettings(fields) {
     apkReleasesUrl: String(fields.apkReleasesUrl || CLUB_INFO.apkReleasesUrl).trim(),
     updatedMs: Date.now(),
     updatedAt: serverStamp()
-  };
+  });
   if (fields.logo) {
     payload.logo = String(fields.logo);
   }
-  await db.collection('BrandSettings').doc('main').set(payload, { merge: true });
-  await loadClubData();
+  try {
+    await db.collection('BrandSettings').doc('main').set(payload, { merge: true });
+    await loadClubData();
+  } catch (err) {
+    throw mapFirestoreWriteError(err);
+  }
 }
 
 function applyBrandSettingsData(bData) {
@@ -849,43 +907,57 @@ export async function checkRemoteAppVersion() {
 export async function adminDeleteDoc(collection, docId) {
   const db = getDB();
   if (!db || !isVerifiedAdmin() || !docId) throw new Error('ADMIN_REQUIRED');
-  await db.collection(collection).doc(docId).delete();
-  await loadClubData();
+  if (String(docId).startsWith('loc_')) return;
+  try {
+    await db.collection(collection).doc(String(docId)).delete();
+    await loadClubData();
+  } catch (err) {
+    throw mapFirestoreWriteError(err);
+  }
 }
 
 export async function adminRemovePlayer(playerId) {
   const db = getDB();
   if (!db || !isVerifiedAdmin() || !playerId) throw new Error('ADMIN_REQUIRED');
   const isSeed = SEED_PLAYERS.some(p => p.id === playerId);
-  if (isSeed) {
-    await db.collection('TeamPlayers').doc(playerId).set({
-      id: playerId,
-      active: false,
-      updatedAt: serverStamp()
-    }, { merge: true });
-  } else {
-    await db.collection('TeamPlayers').doc(playerId).delete();
+  try {
+    if (isSeed) {
+      await db.collection('TeamPlayers').doc(playerId).set({
+        id: playerId,
+        active: false,
+        updatedAt: serverStamp()
+      }, { merge: true });
+    } else {
+      await db.collection('TeamPlayers').doc(playerId).delete();
+    }
+    await loadClubData();
+  } catch (err) {
+    throw mapFirestoreWriteError(err);
   }
-  await loadClubData();
 }
 
 export async function adminSetPinned(collection, targetId, pinned) {
   const db = getDB();
-  if (!db || !isVerifiedAdmin()) throw new Error('ADMIN_REQUIRED');
-  if (pinned) {
-    const snap = await db.collection(collection).where('pinned', '==', true).get();
-    if (!snap.empty) {
-      const batch = db.batch();
-      snap.docs.forEach(d => {
-        if (d.id !== targetId) {
-          batch.set(d.ref, { pinned: false, updatedAt: serverStamp() }, { merge: true });
-        }
-      });
-      await batch.commit();
+  if (!db || !isVerifiedAdmin() || !targetId) throw new Error('ADMIN_REQUIRED');
+  if (String(targetId).startsWith('loc_')) return;
+  try {
+    if (pinned) {
+      const snap = await db.collection(collection).where('pinned', '==', true).get();
+      if (!snap.empty) {
+        const batch = db.batch();
+        snap.docs.forEach(d => {
+          if (d.id !== targetId) {
+            batch.set(d.ref, { pinned: false, updatedAt: serverStamp() }, { merge: true });
+          }
+        });
+        await batch.commit();
+      }
     }
+    await db.collection(collection).doc(targetId).set({ pinned: !!pinned, updatedAt: serverStamp() }, { merge: true });
+    await loadClubData();
+  } catch (err) {
+    throw mapFirestoreWriteError(err);
   }
-  await db.collection(collection).doc(targetId).set({ pinned: !!pinned, updatedAt: serverStamp() }, { merge: true });
-  await loadClubData();
 }
 
 export function compressImageFile(file, maxDim = 960, quality = 0.74) {

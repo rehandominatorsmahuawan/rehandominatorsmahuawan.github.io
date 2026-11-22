@@ -21,133 +21,182 @@ service cloud.firestore {
     }
 
     function optStr(data, key, maxLen) {
-      return !(key in data) || (data[key] is string && data[key].size() <= maxLen);
+      return !(key in data) || data[key] == null || (data[key] is string && data[key].size() <= maxLen);
     }
 
     function optNum(data, key) {
-      return !(key in data) || (data[key] is int || data[key] is float);
+      return !(key in data) || data[key] == null || data[key] is int || data[key] is float;
+    }
+
+    function optNumOrStr(data, key, maxLen) {
+      return !(key in data) || data[key] == null || data[key] is int || data[key] is float || (data[key] is string && data[key].size() <= maxLen);
     }
 
     function optBool(data, key) {
-      return !(key in data) || data[key] is bool;
+      return !(key in data) || data[key] == null || data[key] is bool;
+    }
+
+    function onlyChanges(allowed) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(allowed);
+    }
+
+    function teamPlayerKeys() {
+      return [
+        'id', 'name', 'role', 'detail', 'jersey', 'image', 'order', 'active',
+        'nick', 'bio', 'socials', 'pass', 'createdMs', 'updatedMs', 'updatedAt'
+      ];
     }
 
     function isValidTeamPlayer(data) {
-      return data.keys().hasOnly([
-        'id', 'name', 'role', 'detail', 'jersey', 'image', 'order', 'active',
-        'nick', 'bio', 'socials', 'pass', 'createdMs', 'updatedMs', 'updatedAt'
-      ])
-      && optStr(data, 'id', 32)
-      && optStr(data, 'name', 120)
-      && optStr(data, 'role', 120)
-      && optStr(data, 'detail', 600)
-      && optStr(data, 'jersey', 16)
-      && optStr(data, 'image', 960000)
-      && optStr(data, 'nick', 120)
-      && optStr(data, 'bio', 1600)
-      && optNum(data, 'order')
-      && optBool(data, 'active');
+      return data.keys().hasOnly(teamPlayerKeys())
+        && optStr(data, 'id', 32)
+        && optStr(data, 'name', 120)
+        && optStr(data, 'role', 120)
+        && optStr(data, 'detail', 600)
+        && optStr(data, 'jersey', 16)
+        && optStr(data, 'image', 960000)
+        && optStr(data, 'nick', 120)
+        && optStr(data, 'bio', 1600)
+        && optNum(data, 'order')
+        && optBool(data, 'active');
+    }
+
+    function playerProfileKeys() {
+      return [
+        'playerId', 'name', 'role', 'detail', 'jersey', 'nick', 'bio',
+        'image', 'socials', 'updatedMs', 'updatedAt'
+      ];
     }
 
     function isValidPlayerProfile(data) {
-      return data.keys().hasOnly([
-        'playerId', 'name', 'role', 'detail', 'jersey', 'nick', 'bio',
-        'image', 'socials', 'updatedMs', 'updatedAt'
-      ])
-      && optStr(data, 'playerId', 32)
-      && optStr(data, 'name', 120)
-      && optStr(data, 'role', 120)
-      && optStr(data, 'detail', 600)
-      && optStr(data, 'jersey', 16)
-      && optStr(data, 'nick', 120)
-      && optStr(data, 'bio', 1600)
-      && optStr(data, 'image', 960000)
-      && (!('socials' in data) || (data.socials is list && data.socials.size() <= 3))
-      && optNum(data, 'updatedMs');
+      return data.keys().hasOnly(playerProfileKeys())
+        && optStr(data, 'playerId', 32)
+        && optStr(data, 'name', 120)
+        && optStr(data, 'role', 120)
+        && optStr(data, 'detail', 600)
+        && optStr(data, 'jersey', 16)
+        && optStr(data, 'nick', 120)
+        && optStr(data, 'bio', 1600)
+        && optStr(data, 'image', 960000)
+        && (!('socials' in data) || data.socials == null || (data.socials is list && data.socials.size() <= 3))
+        && optNum(data, 'updatedMs');
     }
 
-    function isValidMatch(data) {
-      return data.keys().hasOnly([
-        'opponent', 'matchType', 'date', 'time', 'overs', 'matchStatus', 'status',
+    function matchKeys() {
+      return [
+        'opponent', 'matchType', 'date', 'time', 'matchDate', 'matchTime',
+        'dateTime', 'scheduledAt', 'startTime', 'overs', 'matchStatus', 'status',
         'tossWinner', 'tossDecision', 'venueName', 'venue', 'area', 'district',
         'state', 'latitude', 'longitude', 'venueType', 'pitchType', 'official',
         'tournament', 'note', 'ourScore', 'oppScore', 'ourOvers', 'oppOvers',
         'result', 'margin', 'potm', 'ourWickets', 'oppWickets', 'ourExtras',
         'oppExtras', 'batting', 'bowling', 'partnerships', 'fow',
-        'createdMs', 'updatedAt'
-      ])
-      && optStr(data, 'opponent', 160)
-      && optStr(data, 'note', 4000)
-      && optStr(data, 'batting', 8000)
-      && optStr(data, 'bowling', 8000)
-      && optStr(data, 'partnerships', 4000)
-      && optStr(data, 'fow', 4000)
-      && optNum(data, 'createdMs');
+        'createdMs', 'updatedMs', 'updatedAt'
+      ];
+    }
+
+    function isValidMatch(data) {
+      return data.keys().hasOnly(matchKeys())
+        && optStr(data, 'opponent', 160)
+        && optStr(data, 'note', 4000)
+        && optStr(data, 'batting', 8000)
+        && optStr(data, 'bowling', 8000)
+        && optStr(data, 'partnerships', 4000)
+        && optStr(data, 'fow', 4000)
+        && optNum(data, 'createdMs');
+    }
+
+    function newsKeys() {
+      return ['title', 'text', 'pinned', 'createdMs', 'updatedMs', 'updatedAt'];
     }
 
     function isValidNews(data) {
-      return data.keys().hasOnly(['title', 'text', 'pinned', 'createdMs', 'updatedAt'])
+      return data.keys().hasOnly(newsKeys())
         && optStr(data, 'title', 240)
         && optStr(data, 'text', 12000)
         && optBool(data, 'pinned')
         && optNum(data, 'createdMs');
     }
 
-    function isValidUpdate(data) {
-      return data.keys().hasOnly([
+    function updateKeys() {
+      return [
         'category', 'title', 'text', 'date', 'url', 'pinned', 'createdMs',
-        'updatedAt', 'done', 'doneAt'
-      ])
-      && optStr(data, 'category', 64)
-      && optStr(data, 'title', 240)
-      && optStr(data, 'text', 12000)
-      && optStr(data, 'date', 64)
-      && optStr(data, 'url', 500)
-      && optBool(data, 'pinned')
-      && optNum(data, 'createdMs');
+        'updatedMs', 'updatedAt', 'done', 'doneAt'
+      ];
+    }
+
+    function isValidUpdate(data) {
+      return data.keys().hasOnly(updateKeys())
+        && optStr(data, 'category', 64)
+        && optStr(data, 'title', 240)
+        && optStr(data, 'text', 12000)
+        && optStr(data, 'date', 64)
+        && optStr(data, 'url', 500)
+        && optBool(data, 'pinned')
+        && optNum(data, 'createdMs');
+    }
+
+    function honourKeys() {
+      return ['year', 'title', 'sub', 'image', 'order', 'createdMs', 'updatedAt'];
     }
 
     function isValidHonour(data) {
-      return data.keys().hasOnly(['year', 'title', 'sub', 'image', 'order', 'createdMs', 'updatedAt'])
+      return data.keys().hasOnly(honourKeys())
         && optStr(data, 'year', 24)
         && optStr(data, 'title', 160)
         && optStr(data, 'sub', 240)
         && optStr(data, 'image', 960000)
-        && optNum(data, 'order');
+        && optNumOrStr(data, 'order', 16);
+    }
+
+    function galleryKeys() {
+      return ['image', 'caption', 'album', 'createdMs', 'updatedAt'];
     }
 
     function isValidGallery(data) {
-      return data.keys().hasOnly(['image', 'caption', 'album', 'createdMs', 'updatedAt'])
+      return data.keys().hasOnly(galleryKeys())
         && optStr(data, 'image', 960000)
         && optStr(data, 'caption', 400)
         && optStr(data, 'album', 64)
         && optNum(data, 'createdMs');
     }
 
+    function socialKeys() {
+      return ['name', 'displayName', 'url', 'icon', 'image', 'order', 'createdMs', 'updatedAt'];
+    }
+
     function isValidSocial(data) {
-      return data.keys().hasOnly(['name', 'displayName', 'url', 'icon', 'image', 'order', 'createdMs', 'updatedAt'])
+      return data.keys().hasOnly(socialKeys())
         && optStr(data, 'name', 64)
         && optStr(data, 'displayName', 120)
         && optStr(data, 'url', 600)
         && optStr(data, 'icon', 32)
         && optStr(data, 'image', 960000)
-        && optNum(data, 'order');
+        && optNumOrStr(data, 'order', 16);
+    }
+
+    function playerStatsKeys() {
+      return [
+        'playerId', 'matches', 'runs', 'wickets', 'highScore', 'bestBowling',
+        'fours', 'sixes', 'fifties', 'hundreds', 'runOuts', 'strikeRate',
+        'economy', 'ballsFaced', 'last5', 'season', 'updatedMs', 'updatedAt'
+      ];
     }
 
     function isValidPlayerStats(data) {
-      return data.keys().hasOnly([
-        'playerId', 'matches', 'runs', 'wickets', 'highScore', 'bestBowling',
-        'fours', 'sixes', 'fifties', 'hundreds', 'runOuts', 'strikeRate',
-        'economy', 'ballsFaced', 'last5', 'season', 'updatedAt'
-      ])
-      && optStr(data, 'playerId', 32)
-      && optStr(data, 'bestBowling', 64)
-      && optStr(data, 'last5', 240)
-      && optStr(data, 'season', 32);
+      return data.keys().hasOnly(playerStatsKeys())
+        && optStr(data, 'playerId', 32)
+        && optStr(data, 'bestBowling', 64)
+        && optStr(data, 'last5', 240)
+        && optStr(data, 'season', 32);
+    }
+
+    function achievementKeys() {
+      return ['title', 'playerName', 'detail', 'season', 'createdMs', 'updatedAt'];
     }
 
     function isValidAchievement(data) {
-      return data.keys().hasOnly(['title', 'playerName', 'detail', 'season', 'createdMs', 'updatedAt'])
+      return data.keys().hasOnly(achievementKeys())
         && optStr(data, 'title', 200)
         && optStr(data, 'playerName', 120)
         && optStr(data, 'detail', 1200)
@@ -155,66 +204,90 @@ service cloud.firestore {
         && optNum(data, 'createdMs');
     }
 
+    function availabilityKeys() {
+      return ['playerId', 'status', 'updatedAt'];
+    }
+
     function isValidAvailability(data) {
-      return data.keys().hasOnly(['playerId', 'status', 'updatedAt'])
+      return data.keys().hasOnly(availabilityKeys())
         && data.playerId is string && data.playerId.size() <= 32
         && data.status is string && data.status in ['AVAILABLE', 'UNAVAILABLE', 'NOT SET'];
     }
 
+    function playingXiKeys() {
+      return ['title', 'match', 'players', 'subs', 'createdMs', 'updatedAt'];
+    }
+
     function isValidPlayingXI(data) {
-      return data.keys().hasOnly(['title', 'match', 'players', 'subs', 'createdMs', 'updatedAt'])
+      return data.keys().hasOnly(playingXiKeys())
         && optStr(data, 'title', 160)
         && optStr(data, 'match', 200)
-        && (!('players' in data) || (data.players is list && data.players.size() <= 15))
-        && (!('subs' in data) || (data.subs is list && data.subs.size() <= 15))
+        && (!('players' in data) || data.players == null || (data.players is list && data.players.size() <= 15))
+        && (!('subs' in data) || data.subs == null || (data.subs is list && data.subs.size() <= 15))
         && optNum(data, 'createdMs');
     }
 
-    function isValidTeamRecord(data) {
-      return data.keys().hasOnly([
+    function teamRecordKeys() {
+      return [
         'recordType', 'category', 'season', 'title', 'value', 'player', 'player2',
         'wicket', 'opponent', 'date', 'note', 'createdMs', 'updatedAt'
-      ])
-      && optStr(data, 'title', 200)
-      && optStr(data, 'value', 160)
-      && optStr(data, 'note', 1200)
-      && optNum(data, 'createdMs');
+      ];
     }
 
-    function isValidTournament(data) {
-      return data.keys().hasOnly([
+    function isValidTeamRecord(data) {
+      return data.keys().hasOnly(teamRecordKeys())
+        && optStr(data, 'title', 200)
+        && optStr(data, 'value', 160)
+        && optStr(data, 'note', 1200)
+        && optNum(data, 'createdMs');
+    }
+
+    function tournamentKeys() {
+      return [
         'name', 'season', 'status', 'position', 'startDate', 'endDate', 'dates',
         'organizer', 'teams', 'matches', 'wins', 'losses', 'draws',
         'venueName', 'venue', 'area', 'district', 'state', 'latitude', 'longitude',
         'fixtures', 'createdMs', 'updatedAt'
-      ])
-      && optStr(data, 'name', 200)
-      && optStr(data, 'fixtures', 5000)
-      && optNum(data, 'createdMs');
+      ];
+    }
+
+    function isValidTournament(data) {
+      return data.keys().hasOnly(tournamentKeys())
+        && optStr(data, 'name', 200)
+        && optStr(data, 'fixtures', 5000)
+        && optNum(data, 'createdMs');
+    }
+
+    function opponentKeys() {
+      return ['name', 'played', 'won', 'lost', 'createdMs', 'updatedAt'];
     }
 
     function isValidOpponent(data) {
-      return data.keys().hasOnly(['name', 'played', 'won', 'lost', 'createdMs', 'updatedAt'])
+      return data.keys().hasOnly(opponentKeys())
         && optStr(data, 'name', 160)
-        && optNum(data, 'played')
-        && optNum(data, 'won')
-        && optNum(data, 'lost');
+        && optNumOrStr(data, 'played', 16)
+        && optNumOrStr(data, 'won', 16)
+        && optNumOrStr(data, 'lost', 16);
     }
 
-    function isValidBrandSettings(data) {
-      return data.keys().hasOnly([
+    function brandSettingsKeys() {
+      return [
         'logo', 'favicon', 'appIcon', 'socialPreview', 'brandVersion',
         'appVersion', 'appVersionCode', 'updateNotes', 'forceUpdate',
         'apkDownloadUrl', 'apkReleasesUrl', 'updatedMs', 'updatedAt'
-      ])
-      && optStr(data, 'logo', 960000)
-      && optStr(data, 'favicon', 960000)
-      && optStr(data, 'appIcon', 960000)
-      && optStr(data, 'socialPreview', 960000)
-      && optStr(data, 'appVersion', 32)
-      && optStr(data, 'updateNotes', 2500)
-      && optBool(data, 'forceUpdate')
-      && optNum(data, 'appVersionCode');
+      ];
+    }
+
+    function isValidBrandSettings(data) {
+      return data.keys().hasOnly(brandSettingsKeys())
+        && optStr(data, 'logo', 960000)
+        && optStr(data, 'favicon', 960000)
+        && optStr(data, 'appIcon', 960000)
+        && optStr(data, 'socialPreview', 960000)
+        && optStr(data, 'appVersion', 32)
+        && optStr(data, 'updateNotes', 2500)
+        && optBool(data, 'forceUpdate')
+        && optNumOrStr(data, 'appVersionCode', 16);
     }
 
     match /Accounts/{uid} {
@@ -225,97 +298,113 @@ service cloud.firestore {
 
     match /TeamPlayers/{id} {
       allow read: if true;
-      allow create, update: if isValidId(id) && (isAdmin() || isValidTeamPlayer(request.resource.data));
+      allow create: if isValidId(id) && (isAdmin() || isValidTeamPlayer(request.resource.data));
+      allow update: if isValidId(id) && (isAdmin() || (onlyChanges(teamPlayerKeys()) && optStr(request.resource.data, 'image', 960000) && optStr(request.resource.data, 'bio', 1600)));
       allow delete: if isValidId(id);
     }
 
     match /PlayerProfiles/{uid} {
       allow read: if true;
-      allow create, update: if isValidId(uid) && (isAdmin() || isValidPlayerProfile(request.resource.data));
+      allow create: if isValidId(uid) && (isAdmin() || isValidPlayerProfile(request.resource.data));
+      allow update: if isValidId(uid) && (isAdmin() || (onlyChanges(playerProfileKeys()) && optStr(request.resource.data, 'image', 960000) && optStr(request.resource.data, 'bio', 1600)));
       allow delete: if isValidId(uid);
     }
 
     match /Matches/{id} {
       allow read: if true;
-      allow create, update: if isValidId(id) && (isAdmin() || isValidMatch(request.resource.data));
+      allow create: if isValidId(id) && (isAdmin() || isValidMatch(request.resource.data));
+      allow update: if isValidId(id) && (isAdmin() || (onlyChanges(matchKeys()) && optStr(request.resource.data, 'note', 4000) && optStr(request.resource.data, 'batting', 8000) && optStr(request.resource.data, 'bowling', 8000)));
       allow delete: if isValidId(id);
     }
 
     match /News/{id} {
       allow read: if true;
-      allow create, update: if isValidId(id) && (isAdmin() || isValidNews(request.resource.data));
+      allow create: if isValidId(id) && (isAdmin() || isValidNews(request.resource.data));
+      allow update: if isValidId(id) && (isAdmin() || (onlyChanges(newsKeys()) && optStr(request.resource.data, 'title', 240) && optStr(request.resource.data, 'text', 12000)));
       allow delete: if isValidId(id);
     }
 
     match /Updates/{id} {
       allow read: if true;
-      allow create, update: if isValidId(id) && (isAdmin() || isValidUpdate(request.resource.data));
+      allow create: if isValidId(id) && (isAdmin() || isValidUpdate(request.resource.data));
+      allow update: if isValidId(id) && (isAdmin() || (onlyChanges(updateKeys()) && optStr(request.resource.data, 'title', 240) && optStr(request.resource.data, 'text', 12000)));
       allow delete: if isValidId(id);
     }
 
     match /Honours/{id} {
       allow read: if true;
-      allow create, update: if isValidId(id) && (isAdmin() || isValidHonour(request.resource.data));
+      allow create: if isValidId(id) && (isAdmin() || isValidHonour(request.resource.data));
+      allow update: if isValidId(id) && (isAdmin() || (onlyChanges(honourKeys()) && optStr(request.resource.data, 'image', 960000)));
       allow delete: if isValidId(id);
     }
 
     match /Gallery/{id} {
       allow read: if true;
-      allow create, update: if isValidId(id) && (isAdmin() || isValidGallery(request.resource.data));
+      allow create: if isValidId(id) && (isAdmin() || isValidGallery(request.resource.data));
+      allow update: if isValidId(id) && (isAdmin() || (onlyChanges(galleryKeys()) && optStr(request.resource.data, 'image', 960000)));
       allow delete: if isValidId(id);
     }
 
     match /Socials/{id} {
       allow read: if true;
-      allow create, update: if isValidId(id) && (isAdmin() || isValidSocial(request.resource.data));
+      allow create: if isValidId(id) && (isAdmin() || isValidSocial(request.resource.data));
+      allow update: if isValidId(id) && (isAdmin() || (onlyChanges(socialKeys()) && optStr(request.resource.data, 'image', 960000)));
       allow delete: if isValidId(id);
     }
 
     match /PlayerStats/{id} {
       allow read: if true;
-      allow create, update: if isValidId(id) && (isAdmin() || isValidPlayerStats(request.resource.data));
+      allow create: if isValidId(id) && (isAdmin() || isValidPlayerStats(request.resource.data));
+      allow update: if isValidId(id) && (isAdmin() || onlyChanges(playerStatsKeys()));
       allow delete: if isValidId(id);
     }
 
     match /Achievements/{id} {
       allow read: if true;
-      allow create, update: if isValidId(id) && (isAdmin() || isValidAchievement(request.resource.data));
+      allow create: if isValidId(id) && (isAdmin() || isValidAchievement(request.resource.data));
+      allow update: if isValidId(id) && (isAdmin() || onlyChanges(achievementKeys()));
       allow delete: if isValidId(id);
     }
 
     match /Availability/{id} {
       allow read: if true;
-      allow create, update: if isValidId(id) && (isAdmin() || isValidAvailability(request.resource.data));
+      allow create: if isValidId(id) && (isAdmin() || isValidAvailability(request.resource.data));
+      allow update: if isValidId(id) && (isAdmin() || (onlyChanges(availabilityKeys()) && optStr(request.resource.data, 'playerId', 32)));
       allow delete: if isValidId(id);
     }
 
     match /PlayingXI/{id} {
       allow read: if true;
-      allow create, update: if isValidId(id) && (isAdmin() || isValidPlayingXI(request.resource.data));
+      allow create: if isValidId(id) && (isAdmin() || isValidPlayingXI(request.resource.data));
+      allow update: if isValidId(id) && (isAdmin() || onlyChanges(playingXiKeys()));
       allow delete: if isValidId(id);
     }
 
     match /TeamRecords/{id} {
       allow read: if true;
-      allow create, update: if isValidId(id) && (isAdmin() || isValidTeamRecord(request.resource.data));
+      allow create: if isValidId(id) && (isAdmin() || isValidTeamRecord(request.resource.data));
+      allow update: if isValidId(id) && (isAdmin() || onlyChanges(teamRecordKeys()));
       allow delete: if isValidId(id);
     }
 
     match /Tournaments/{id} {
       allow read: if true;
-      allow create, update: if isValidId(id) && (isAdmin() || isValidTournament(request.resource.data));
+      allow create: if isValidId(id) && (isAdmin() || isValidTournament(request.resource.data));
+      allow update: if isValidId(id) && (isAdmin() || onlyChanges(tournamentKeys()));
       allow delete: if isValidId(id);
     }
 
     match /Opponents/{id} {
       allow read: if true;
-      allow create, update: if isValidId(id) && (isAdmin() || isValidOpponent(request.resource.data));
+      allow create: if isValidId(id) && (isAdmin() || isValidOpponent(request.resource.data));
+      allow update: if isValidId(id) && (isAdmin() || onlyChanges(opponentKeys()));
       allow delete: if isValidId(id);
     }
 
     match /BrandSettings/{id} {
       allow read: if true;
-      allow create, update: if isValidId(id) && (isAdmin() || isValidBrandSettings(request.resource.data));
+      allow create: if isValidId(id) && (isAdmin() || isValidBrandSettings(request.resource.data));
+      allow update: if isValidId(id) && (isAdmin() || (onlyChanges(brandSettingsKeys()) && optStr(request.resource.data, 'logo', 960000)));
       allow delete: if isValidId(id);
     }
   }

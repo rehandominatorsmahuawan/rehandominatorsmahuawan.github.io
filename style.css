@@ -4491,13 +4491,23 @@ html[data-rdm-portal="player"] .footerLinks {
     padding: 0 12px;
   }
 
+  .countdownTimer {
+    gap: 5px;
+    flex-wrap: nowrap;
+    max-width: 100%;
+  }
+
   .cdUnit {
-    min-width: 56px;
-    padding: 6px 8px;
+    min-width: 52px;
+    padding: 6px 6px;
   }
 
   .cdUnit strong {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
+  }
+
+  .cdUnit span {
+    font-size: 9.5px;
   }
 
   .hero {

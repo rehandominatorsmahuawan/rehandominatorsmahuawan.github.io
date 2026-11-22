@@ -210,10 +210,26 @@ window.pinUpdate = async (id, pinned) => {
     if (pinned) {
       const s = await rdmDB.collection(UPDATE_COL).where('pinned', '==', true).get();
       const b = rdmDB.batch();
-      s.docs.forEach(d => b.set(d.ref, { pinned: false, updatedAt: rdmStamp() }, { merge: true }));
+      s.docs.forEach(d => {
+        if (d.id !== id) b.set(d.ref, { pinned: false, updatedAt: rdmStamp() }, { merge: true });
+      });
       if (!s.empty) await b.commit();
     }
-    await rdmDB.collection(UPDATE_COL).doc(id).set({ pinned, updatedAt: rdmStamp() }, { merge: true });
+    if (id && !String(id).startsWith('loc_')) {
+      await rdmDB.collection(UPDATE_COL).doc(id).set({ pinned: !!pinned, updatedAt: rdmStamp() }, { merge: true });
+    } else if (target) {
+      const ref = await rdmDB.collection(UPDATE_COL).add({
+        category: target.category || 'WEBSITE',
+        title: target.title || 'Update',
+        text: target.text || '',
+        date: target.date || '',
+        url: target.url || '',
+        pinned: !!pinned,
+        createdMs: target.createdMs || Date.now(),
+        updatedAt: rdmStamp()
+      });
+      target._docId = ref.id;
+    }
   } catch (err) {
     saveUpdatesOverride();
     window.rdmReportWriteError?.(err, 'Pin update sync');

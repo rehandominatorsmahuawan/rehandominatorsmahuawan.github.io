@@ -32,6 +32,7 @@ function copyStaticFilesPlugin() {
     'apple-touch-icon.png',
     'robots.txt',
     'sitemap.xml',
+    'version.json',
     'googlecd319e61dfe51dd1.html'
   ];
   const staticDirs = ['assets', 'src/assets'];

@@ -4,7 +4,7 @@
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   }[c]));
   const N = v => Number(v || 0) || 0;
-  const strip = obj => typeof window.rdmStripDocMeta === 'function' ? window.rdmStripDocMeta(obj) : (() => { const c = { ...(obj || {}) }; delete c._docId; delete c._profileUid; return c; })();
+  const strip = obj => typeof window.rdmStripDocMeta === 'function' ? window.rdmStripDocMeta(obj) : (() => { const c = {}; for (const [k, v] of Object.entries(obj || {})) { if (k !== '_docId' && k !== '_profileUid' && k !== '_col' && v !== undefined && v !== null) c[k] = v; } return c; })();
   const reportErr = (err, label) => typeof window.rdmReportWriteError === 'function' ? window.rdmReportWriteError(err, label) : console.warn(label, err);
 
   function rdmMiniText(v) {
@@ -144,7 +144,13 @@
       const clean = { title: String(d.title || '').trim(), playerName: String(d.playerName || 'TEAM').trim(), detail: String(d.detail || '').trim() };
       Object.assign(a, clean);
       try {
-        await rdmDB.collection('Achievements').doc(id).set({ ...strip(clean), updatedAt: rdmStamp() }, { merge: true });
+        const clean = { ...strip(clean), updatedAt: rdmStamp() };
+        if (id && !String(id).startsWith('loc_')) {
+          await rdmDB.collection('Achievements').doc(id).set(clean, { merge: true });
+        } else {
+          const ref = await rdmDB.collection('Achievements').add({ ...clean, createdMs: a.createdMs || Date.now() });
+          a._docId = ref.id;
+        }
       } catch (err) {
         window.xSaveOverride?.('achievements', XD.achievements);
         reportErr(err, 'Edit achievement sync');
@@ -234,7 +240,13 @@
       l.players = nextPlayers;
       l.subs = nextSubs;
       try {
-        await rdmDB.collection('PlayingXI').doc(docId).set({ players: nextPlayers, subs: nextSubs, updatedAt: rdmStamp() }, { merge: true });
+        const clean = { players: nextPlayers, subs: nextSubs, updatedAt: rdmStamp() };
+        if (docId && !String(docId).startsWith('loc_')) {
+          await rdmDB.collection('PlayingXI').doc(docId).set(clean, { merge: true });
+        } else {
+          const ref = await rdmDB.collection('PlayingXI').add({ title: l.title || 'PLAYING XI', match: l.match || '', ...clean, createdMs: l.createdMs || Date.now() });
+          l._docId = ref.id;
+        }
       } catch (err) {
         window.xSaveOverride?.('lineups', XD.lineups);
         reportErr(err, 'Swap XI sync');
@@ -312,7 +324,13 @@
     ], async d => {
       Object.assign(m, d);
       try {
-        await rdmDB.collection('Matches').doc(id).set({ ...strip(d), updatedAt: rdmStamp() }, { merge: true });
+        const clean = { ...strip(d), updatedAt: rdmStamp() };
+        if (id && !String(id).startsWith('loc_')) {
+          await rdmDB.collection('Matches').doc(id).set(clean, { merge: true });
+        } else {
+          const ref = await rdmDB.collection('Matches').add({ ...clean, opponent: m.opponent || 'Opponent', createdMs: m.createdMs || Date.now() });
+          m._docId = ref.id;
+        }
       } catch (err) {
         window.rdmSaveCollectionOverride?.('matches', D.matches);
         reportErr(err, 'Match details sync');
@@ -366,7 +384,7 @@ window.rdmConfirmModal = function (title, message, onConfirm) {
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   }[c]));
   const num = v => Number(v || 0) || 0;
-  const strip = obj => typeof window.rdmStripDocMeta === 'function' ? window.rdmStripDocMeta(obj) : (() => { const c = { ...(obj || {}) }; delete c._docId; delete c._profileUid; return c; })();
+  const strip = obj => typeof window.rdmStripDocMeta === 'function' ? window.rdmStripDocMeta(obj) : (() => { const c = {}; for (const [k, v] of Object.entries(obj || {})) { if (k !== '_docId' && k !== '_profileUid' && k !== '_col' && v !== undefined && v !== null) c[k] = v; } return c; })();
   const reportErr = (err, label) => typeof window.rdmReportWriteError === 'function' ? window.rdmReportWriteError(err, label) : console.warn(label, err);
 
   const mapUrl = (lat, lng) => lat && lng ? `https://www.openstreetmap.org/export/embed.html?bbox=${Number(lng) - 0.008}%2C${Number(lat) - 0.006}%2C${Number(lng) + 0.008}%2C${Number(lat) + 0.006}&layer=mapnik&marker=${lat}%2C${lng}` : '';
@@ -538,6 +556,7 @@ window.rdmConfirmModal = function (title, message, onConfirm) {
       d.venue = d.venueName;
       d.status = 'RESULT';
       d.matchStatus = 'COMPLETED';
+      ['ourWickets', 'oppWickets', 'ourExtras', 'oppExtras'].forEach(k => d[k] = num(d[k]));
       d.createdMs = x.createdMs || Date.now();
       const rec = { ...x, ...d, _docId: id || 'loc_' + Date.now() };
       if (id) Object.assign(x, rec);

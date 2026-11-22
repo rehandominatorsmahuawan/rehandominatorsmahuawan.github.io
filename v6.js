@@ -76,20 +76,63 @@ function v6render() {
   setTimeout(v6EnhanceMatches, 30);
 }
 
+function rdmParseClockParts(str) {
+  const m = String(str || '').match(/(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)?/i);
+  if (!m) return null;
+  let hh = Number(m[1]);
+  const mm = Number(m[2]);
+  const ss = Number(m[3] || 0);
+  const mer = (m[4] || '').toUpperCase();
+  if (mer === 'PM' && hh < 12) hh += 12;
+  if (mer === 'AM' && hh === 12) hh = 0;
+  return { hh, mm, ss };
+}
+
 function rdmParseMatchDateTime(m) {
   if (!m) return null;
-  const rawDate = String(m.date || '').trim();
+  const rawField = m.scheduledAt ?? m.startTime ?? m.dateTime ?? m.date ?? m.matchDate;
+  if (rawField && typeof rawField === 'object') {
+    if (typeof rawField.toDate === 'function') {
+      const d = rawField.toDate();
+      return isNaN(d?.getTime?.()) ? null : d;
+    }
+    if (typeof rawField.seconds === 'number') {
+      const d = new Date(rawField.seconds * 1000);
+      return isNaN(d.getTime()) ? null : d;
+    }
+  }
+  const rawDate = String(rawField || '').trim();
   if (!rawDate) return null;
-  const rawTime = String(m.time || '').trim();
+  const rawTime = String(m.time ?? m.matchTime ?? '').trim();
+  const timeFromTimeField = rdmParseClockParts(rawTime);
+  const timeFromDateField = rdmParseClockParts(rawDate);
+  const clock = timeFromTimeField || timeFromDateField || { hh: 9, mm: 0, ss: 0 };
+
+  const isoDate = rawDate.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:$|[^\d])/);
+  if (isoDate) {
+    if (/[T]\d{2}:\d{2}/.test(rawDate) && /(?:Z|[+-]\d{2}:?\d{2})$/i.test(rawDate) && !timeFromTimeField) {
+      const exactIso = new Date(rawDate);
+      if (!isNaN(exactIso.getTime())) return exactIso;
+    }
+    return new Date(Number(isoDate[1]), Number(isoDate[2]) - 1, Number(isoDate[3]), clock.hh, clock.mm, clock.ss, 0);
+  }
+
+  const dmy = rawDate.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+  if (dmy) {
+    return new Date(Number(dmy[3]), Number(dmy[2]) - 1, Number(dmy[1]), clock.hh, clock.mm, clock.ss, 0);
+  }
+
   const combined = rawTime && !/\d{1,2}:\d{2}/.test(rawDate) ? `${rawDate} ${rawTime}` : rawDate;
-  const isoOnly = combined.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
-  if (isoOnly) return new Date(Number(isoOnly[1]), Number(isoOnly[2]) - 1, Number(isoOnly[3]), 9, 0, 0, 0);
-  const isoTime = combined.match(/^(\d{4})-(\d{1,2})-(\d{1,2})[T\s](\d{1,2}):(\d{2})(?::(\d{2}))?/);
-  if (isoTime) return new Date(Number(isoTime[1]), Number(isoTime[2]) - 1, Number(isoTime[3]), Number(isoTime[4]), Number(isoTime[5]), Number(isoTime[6] || 0), 0);
-  const dmy = combined.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})(?:\s+(\d{1,2}):(\d{2}))?/);
-  if (dmy) return new Date(Number(dmy[3]), Number(dmy[2]) - 1, Number(dmy[1]), Number(dmy[4] || 9), Number(dmy[5] || 0), 0, 0);
   const parsed = new Date(combined);
-  return isNaN(parsed.getTime()) ? null : parsed;
+  if (!isNaN(parsed.getTime())) {
+    if (timeFromTimeField && !/\d{1,2}:\d{2}/.test(rawDate)) {
+      parsed.setHours(timeFromTimeField.hh, timeFromTimeField.mm, timeFromTimeField.ss, 0);
+    } else if (!timeFromTimeField && !timeFromDateField) {
+      parsed.setHours(9, 0, 0, 0);
+    }
+    return parsed;
+  }
+  return null;
 }
 function rdmPad2(n) { return String(Math.max(0, Math.floor(n))).padStart(2, '0'); }
 
@@ -97,41 +140,67 @@ window.rdmTickHomeCountdown = function () {
   const cd = document.getElementById('homeCountdown');
   const note = document.getElementById('homeCountdownNote');
   if (!cd) return;
+  const isLive = cd.dataset.isLive === '1';
+  if (isLive) {
+    cd.hidden = true;
+    if (note) { note.hidden = false; note.textContent = 'LIVE NOW'; }
+    return;
+  }
   const ts = Number(cd.dataset.targetMs || '0');
   if (!ts) {
     cd.hidden = true;
     if (note) {
       note.hidden = cd.dataset.hasUpcoming !== '1';
-      if (cd.dataset.hasUpcoming === '1') note.textContent = 'Schedule Date TBA';
+      if (cd.dataset.hasUpcoming === '1') note.textContent = 'Schedule Date & Time TBA';
     }
     return;
   }
   const left = ts - Date.now();
   if (left <= 0) {
     cd.hidden = true;
-    if (note) { note.hidden = false; note.textContent = 'Match Day / In Progress'; }
+    if (note) { note.hidden = false; note.textContent = 'Match Day / Starting Soon'; }
     return;
   }
-  const days = Math.floor(left / 86400000);
-  const hours = Math.floor((left % 86400000) / 3600000);
-  const minutes = Math.floor((left % 3600000) / 60000);
+  const totalSec = Math.floor(left / 1000);
+  const days = Math.floor(totalSec / 86400);
+  const hours = Math.floor((totalSec % 86400) / 3600);
+  const minutes = Math.floor((totalSec % 3600) / 60);
+  const seconds = totalSec % 60;
   const dEl = document.getElementById('cdDays');
   const hEl = document.getElementById('cdHours');
   const mEl = document.getElementById('cdMinutes');
+  const sEl = document.getElementById('cdSeconds');
   if (dEl) dEl.textContent = rdmPad2(days);
   if (hEl) hEl.textContent = rdmPad2(hours);
   if (mEl) mEl.textContent = rdmPad2(minutes);
+  if (sEl) sEl.textContent = rdmPad2(seconds);
   cd.hidden = false;
   if (note) note.hidden = true;
 };
 
 function rdmClassifyMatchStatus(m) {
   if (!m) return 'UPCOMING';
-  const blob = [m.matchStatus, m.status, m.result, m.note].filter(Boolean).join(' ').toUpperCase();
-  if (/\bLIVE\b/.test(String(m.matchStatus || m.status || '').toUpperCase())) return 'LIVE';
+  const explicit = String(m.matchStatus || m.status || '').trim().toUpperCase();
+  if (/\bLIVE\b/.test(explicit)) return 'LIVE';
+  if (/^(UPCOMING|SCHEDULED|FIXTURE|NEXT)$/.test(explicit)) return 'UPCOMING';
+  if (/^(COMPLETED|RESULT|FINISHED|WON|LOST|DRAW|TIE|NO RESULT)$/.test(explicit)) return 'COMPLETED';
+  if (/CANCEL/.test(explicit)) return 'CANCELLED';
+  const blob = [explicit, m.result, m.note].filter(Boolean).join(' ').toUpperCase();
   if (/COMPLETED|RESULT|FINISHED|WON|LOST|DRAW|TIE|NO RESULT/.test(blob)) return 'COMPLETED';
   if (/CANCEL/.test(blob)) return 'CANCELLED';
   return 'UPCOMING';
+}
+
+function rdmPickNextUpcomingMatch(matches) {
+  const upcomingPool = (matches || []).filter(x => rdmClassifyMatchStatus(x) === 'UPCOMING');
+  if (!upcomingPool.length) return null;
+  const now = Date.now();
+  const withDates = upcomingPool.map(m => ({ m, ts: rdmParseMatchDateTime(m)?.getTime() ?? null }));
+  const futureDated = withDates.filter(x => x.ts && x.ts > now).sort((a, b) => a.ts - b.ts);
+  if (futureDated.length) return futureDated[0].m;
+  const anyDated = withDates.filter(x => x.ts).sort((a, b) => b.ts - a.ts);
+  if (anyDated.length) return anyDated[0].m;
+  return upcomingPool[0];
 }
 
 window.rdmRenderHomeMatchHub = function () {
@@ -139,7 +208,7 @@ window.rdmRenderHomeMatchHub = function () {
   if (!hub) return;
   const matches = Array.isArray(window.D?.matches) ? D.matches : [];
   const liveMatch = matches.find(x => rdmClassifyMatchStatus(x) === 'LIVE');
-  const upcoming = liveMatch || matches.find(x => rdmClassifyMatchStatus(x) === 'UPCOMING');
+  const upcoming = liveMatch || rdmPickNextUpcomingMatch(matches);
   const recent = matches.find(x => rdmClassifyMatchStatus(x) === 'COMPLETED');
   const isLive = !!liveMatch;
   const target = isLive ? null : rdmParseMatchDateTime(upcoming);
@@ -157,15 +226,17 @@ window.rdmRenderHomeMatchHub = function () {
     const recentScore = recent && (recent.ourScore || recent.oppScore) ? `RDM ${esc(recent.ourScore || '—')} · ${mini(recent.opponent || 'Opp')} ${esc(recent.oppScore || '—')}` : '';
     const recentText = recent ? [recentScore, mini(recent.result || recent.note || recent.status || '')].filter(Boolean).join(' — ') : 'Latest scorecard updates will appear here';
     hub.innerHTML = `<div class="miniMatch miniMatchNext">
-      <span>${isLive ? 'Live Fixture' : 'Next Fixture'}</span>
+      <span>${isLive ? 'Live Fixture' : 'Next Match'}</span>
       <b id="homeNextMatch">${upcoming ? 'RDM vs ' + mini(upcoming.opponent || 'Opponent') : 'No upcoming match'}</b>
       ${upcoming ? (upScore ? `<small>${upScore}${upMeta ? ' · ' + upMeta : ''}</small>` : (upMeta ? `<small>${upMeta}</small>` : '<small>Date &amp; venue to be confirmed</small>')) : '<small>Check Match Centre for upcoming schedule</small>'}
-      <div class="countdownTimer" id="homeCountdown" data-target-ms="${targetMs || ''}" data-has-upcoming="${upcoming && !isLive ? '1' : '0'}" hidden>
+      <div class="countdownTimer" id="homeCountdown" data-target-ms="${targetMs || ''}" data-has-upcoming="${upcoming && !isLive ? '1' : '0'}" data-is-live="${isLive ? '1' : '0'}" hidden>
         <div class="cdUnit"><strong id="cdDays">00</strong><span>Days</span></div>
         <span class="cdSep" aria-hidden="true">:</span>
         <div class="cdUnit"><strong id="cdHours">00</strong><span>Hours</span></div>
         <span class="cdSep" aria-hidden="true">:</span>
         <div class="cdUnit"><strong id="cdMinutes">00</strong><span>Minutes</span></div>
+        <span class="cdSep" aria-hidden="true">:</span>
+        <div class="cdUnit"><strong id="cdSeconds">00</strong><span>Seconds</span></div>
       </div>
       <span class="countdown" id="homeCountdownNote" hidden></span>
       <button type="button" class="miniMatchLink" data-go="matches">Open Match Centre ›</button>
@@ -384,7 +455,13 @@ async function v6EditMatch(id) {
   const fow = xp('Fall of wickets', m.fow || '');
   const potm = xp('Player of the Match', m.potm || '');
   try {
-    await rdmDB.collection('Matches').doc(id).set({ tossWinner, tossDecision, batting, bowling, partnerships, fow, potm, updatedAt: rdmStamp() }, { merge: true });
+    const clean = v6Strip({ tossWinner, tossDecision, batting, bowling, partnerships, fow, potm, updatedAt: rdmStamp() });
+    if (id && !String(id).startsWith('loc_')) {
+      await rdmDB.collection('Matches').doc(id).set(clean, { merge: true });
+    } else {
+      const ref = await rdmDB.collection('Matches').add({ ...clean, opponent: m.opponent || 'Opponent', createdMs: m.createdMs || Date.now() });
+      m._docId = ref.id;
+    }
   } catch (err) {
     v6Err(err, 'Match details sync');
   }
@@ -415,7 +492,9 @@ async function v6AddOpponent(id) {
   const lost = xnum(xp('RDM losses', x.lost || 0));
   const d = { name, played, won, lost, updatedAt: rdmStamp(), createdMs: x.createdMs || Date.now() };
   try {
-    id ? await rdmDB.collection(V6COL.opponents).doc(id).set(v6Strip(d), { merge: true }) : await rdmDB.collection(V6COL.opponents).add(v6Strip(d));
+    (id && !String(id).startsWith('loc_'))
+      ? await rdmDB.collection(V6COL.opponents).doc(id).set(v6Strip(d), { merge: true })
+      : await rdmDB.collection(V6COL.opponents).add(v6Strip(d));
   } catch (err) {
     v6Err(err, 'Opponent sync');
   }
@@ -761,6 +840,7 @@ function v61Admin(force = false) {
   if (typeof bindAdds === 'function') bindAdds();
   window.rdmInjectPlayerManager?.();
   window.rdmInjectBrandAdmin?.();
+  window.rdmInjectEmailToolCard?.();
   window.rdmSyncInstallButtons?.();
 }
 
@@ -823,7 +903,9 @@ async function v6AddRecord(id) {
     d.updatedAt = rdmStamp();
     d.createdMs = x.createdMs || Date.now();
     try {
-      id ? await rdmDB.collection(V6COL.records).doc(id).set(v6Strip(d), { merge: true }) : await rdmDB.collection(V6COL.records).add(v6Strip(d));
+      (id && !String(id).startsWith('loc_'))
+        ? await rdmDB.collection(V6COL.records).doc(id).set(v6Strip(d), { merge: true })
+        : await rdmDB.collection(V6COL.records).add(v6Strip(d));
     } catch (err) {
       v6Err(err, 'Record sync');
     }
@@ -879,7 +961,9 @@ async function v6AddTournament(id) {
     d.updatedAt = rdmStamp();
     d.createdMs = x.createdMs || Date.now();
     try {
-      id ? await rdmDB.collection(V6COL.tournaments).doc(id).set(v6Strip(d), { merge: true }) : await rdmDB.collection(V6COL.tournaments).add(v6Strip(d));
+      (id && !String(id).startsWith('loc_'))
+        ? await rdmDB.collection(V6COL.tournaments).doc(id).set(v6Strip(d), { merge: true })
+        : await rdmDB.collection(V6COL.tournaments).add(v6Strip(d));
     } catch (err) {
       v6Err(err, 'Tournament sync');
     }

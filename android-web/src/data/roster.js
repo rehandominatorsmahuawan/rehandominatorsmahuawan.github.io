@@ -1,11 +1,12 @@
 export const APP_BUILD_INFO = {
-  versionName: '1.2.0',
-  versionCode: 3
+  versionName: '1.2.1',
+  versionCode: 4
 };
 
 export const REMOTE_VERSION_JSON_URL = 'https://rehandominatorsmahuawan.github.io/version.json';
 
 export const APK_ADMIN_EMAILS = [
+  'rehahalam7124517@gmail.com',
   'rehanalam7124517@gmail.com',
   'admin@rdm-official.in'
 ];

@@ -1,8 +1,8 @@
 {
-  "versionName": "1.2.0",
-  "versionCode": 3,
+  "versionName": "1.2.1",
+  "versionCode": 4,
   "apkDownloadUrl": "https://github.com/RehanDominatorsMahuawan/RehanDominatorsMahuawan.github.io/releases/latest/download/RDM-Official.apk",
   "apkReleasesUrl": "https://github.com/RehanDominatorsMahuawan/RehanDominatorsMahuawan.github.io/releases/latest",
-  "notes": "• Consistent APK release signing so future app updates install smoothly without package conflicts\n• Password-only Admin Panel unlock inside the Android APK\n• Redesigned RDM Official Website with unified live Firebase sync",
+  "notes": "• Fixed Firestore permissions & record deletion across APK and Website\n• Added one-tap Firebase Cloud Sync connection in APK Admin Overview\n• Real-time Next Match countdown timer and unified payload validation",
   "forceUpdate": false
 }

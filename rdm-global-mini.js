@@ -88,7 +88,8 @@
 (function(){
   const classify = b => {
     if (!b || b.nodeType !== 1) return;
-    const t = toReadableCase(b.textContent || '').toLowerCase().replace(/\s+/g, ' ');
+    const raw = b.textContent || '';
+    const t = (typeof window.rdmGlobalMini === 'function' ? window.rdmGlobalMini(raw) : raw).toLowerCase().replace(/\s+/g, ' ');
     b.classList.remove('rdmDeleteAction', 'rdmEditAction', 'rdmPinAction');
     if (t.includes('delete') || t.includes('remove')) b.classList.add('rdmDeleteAction');
     else if (t.includes('unpin') || /(^|\s)pin(\s|$)/.test(t)) b.classList.add('rdmPinAction');

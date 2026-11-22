@@ -31,6 +31,7 @@ import {
   canEditPlayerPortal,
   checkRemoteAppVersion,
   compressImageFile,
+  connectAdminCloudSync,
   evaluateAvailableUpdate,
   isFirebaseCloudAdmin,
   isVerifiedAdmin,
@@ -1305,9 +1306,12 @@ function renderAdminDashboard() {
             <h3 class="sectionTitle" style="font-size:1.22rem;">Website, PWA &amp; Android APK Connected</h3>
             <p class="sectionSub">${isFirebaseCloudAdmin()
               ? 'Every change published here saves to Firebase and updates Website, PWA, and all installed Android APKs in real time.'
-              : 'APK Admin unlocked with password. Ensure your Firebase Admin account password matches in Firebase Console so cloud writes sync across Website and APKs.'}</p>
+              : 'APK Admin unlocked with password. Connect Firebase Cloud Sync once if live cloud rules require signed-in Firebase Admin Auth.'}</p>
           </div>
-          <button type="button" class="btnSecondary btnSm" data-admin-action="editAppConfig">Configure APK</button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            ${!isFirebaseCloudAdmin() ? '<button type="button" class="btnPrimary btnSm" id="btnAdminConnectFirebase">Connect Cloud Sync</button>' : ''}
+            <button type="button" class="btnSecondary btnSm" data-admin-action="editAppConfig">Configure APK</button>
+          </div>
         </div>
       </div>
     `;
@@ -1987,6 +1991,23 @@ function bindAdminDashboardEvents() {
     });
   });
 
+  document.getElementById('btnAdminConnectFirebase')?.addEventListener('click', () => {
+    openFormSheet({
+      title: 'Connect Firebase Cloud Sync',
+      subtitle: 'Sign in once with your Firebase Admin email and Firebase account password.',
+      fields: [
+        { name: 'email', label: 'Firebase Admin Email', type: 'email', value: 'rehahalam7124517@gmail.com', required: true },
+        { name: 'password', label: 'Firebase Password', type: 'password', required: true }
+      ],
+      submitLabel: 'Connect Cloud Sync',
+      onSubmit: async d => {
+        await connectAdminCloudSync(d.email, d.password);
+        renderApp();
+        showToast('Firebase Cloud Sync connected');
+      }
+    });
+  });
+
   document.querySelectorAll('[data-admin-edit-stats]').forEach(btn => {
     btn.addEventListener('click', () => {
       const id = btn.dataset.adminEditStats;
@@ -2022,8 +2043,8 @@ function bindAdminDashboardEvents() {
             hundreds: n(d.hundreds),
             strikeRate: n(d.strikeRate),
             economy: n(d.economy),
-            bestBowling: d.bestBowling,
-            season: d.season
+            bestBowling: String(d.bestBowling || '').trim(),
+            season: String(d.season || '2027').trim()
           });
           renderApp();
           showToast('Player stats saved');
@@ -2083,7 +2104,11 @@ function bindAdminDashboardEvents() {
 
   document.querySelectorAll('[data-admin-pin]').forEach(btn => {
     btn.addEventListener('click', async () => {
-      const [col, id, pinFlag] = btn.dataset.adminPin.split(':');
+      const parts = String(btn.dataset.adminPin || '').split(':');
+      const col = parts[0] || '';
+      const id = parts[1] || '';
+      const pinFlag = parts[2] || '0';
+      if (!col || !id) return;
       try {
         await adminSetPinned(col, id, pinFlag === '1');
         renderApp();
@@ -2096,7 +2121,14 @@ function bindAdminDashboardEvents() {
 
   document.querySelectorAll('[data-admin-del]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const [col, docId] = btn.dataset.adminDel.split(':');
+      const raw = String(btn.dataset.adminDel || '');
+      const sep = raw.indexOf(':');
+      const col = sep > 0 ? raw.slice(0, sep) : '';
+      const docId = sep > 0 ? raw.slice(sep + 1) : '';
+      if (!col || !docId) {
+        showToast('Invalid record identifier');
+        return;
+      }
       openConfirmSheet({
         title: 'Delete Record',
         message: 'Permanently delete this record from Firestore?',
@@ -2281,7 +2313,15 @@ function handleAdminCreateAction(action) {
         { name: 'venueName', label: 'Venue' }
       ],
       onSubmit: async d => {
-        await adminUpsertDoc('Tournaments', null, { ...d, venue: d.venueName, createdMs: Date.now() });
+        await adminUpsertDoc('Tournaments', null, {
+          name: String(d.name || '').trim(),
+          season: String(d.season || '').trim(),
+          status: String(d.status || 'UPCOMING').trim(),
+          position: String(d.position || '').trim(),
+          venueName: String(d.venueName || '').trim(),
+          venue: String(d.venueName || '').trim(),
+          createdMs: Date.now()
+        });
         renderApp();
         showToast('Tournament added');
       }

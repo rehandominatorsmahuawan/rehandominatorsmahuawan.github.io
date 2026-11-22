@@ -128,6 +128,8 @@ function renderHomeExtras() {
       <div class="cdUnit"><strong id="cdHours">00</strong><span>Hours</span></div>
       <span class="cdSep" aria-hidden="true">:</span>
       <div class="cdUnit"><strong id="cdMinutes">00</strong><span>Minutes</span></div>
+      <span class="cdSep" aria-hidden="true">:</span>
+      <div class="cdUnit"><strong id="cdSeconds">00</strong><span>Seconds</span></div>
     </div>
   </div>
   <div class="miniMatch miniMatchRecent">
@@ -352,7 +354,12 @@ async function editNews(id) {
     x.title = String(d.title || '').trim();
     x.text = String(d.text || '').trim();
     try {
-      await rdmDB.collection('News').doc(id).set({ title: x.title, text: x.text, updatedAt: rdmStamp() }, { merge: true });
+      if (id && !String(id).startsWith('loc_')) {
+        await rdmDB.collection('News').doc(id).set({ title: x.title, text: x.text, updatedAt: rdmStamp() }, { merge: true });
+      } else {
+        const ref = await rdmDB.collection('News').add({ title: x.title, text: x.text, pinned: !!x.pinned, createdMs: x.createdMs || Date.now(), updatedAt: rdmStamp() });
+        x._docId = ref.id;
+      }
     } catch (err) {
       window.rdmSaveCollectionOverride?.('news', D.news);
       xReportErr(err, 'News sync');
@@ -369,7 +376,12 @@ async function togglePin(id, pinned) {
   const x = (D.news || []).find(n => n._docId === id);
   if (x) x.pinned = pinned;
   try {
-    await rdmDB.collection('News').doc(id).set({ pinned, updatedAt: rdmStamp() }, { merge: true });
+    if (id && !String(id).startsWith('loc_')) {
+      await rdmDB.collection('News').doc(id).set({ pinned: !!pinned, updatedAt: rdmStamp() }, { merge: true });
+    } else if (x) {
+      const ref = await rdmDB.collection('News').add({ title: x.title || '', text: x.text || '', pinned: !!pinned, createdMs: x.createdMs || Date.now(), updatedAt: rdmStamp() });
+      x._docId = ref.id;
+    }
   } catch (err) {
     window.rdmSaveCollectionOverride?.('news', D.news);
     xReportErr(err, 'Pin sync');
@@ -383,26 +395,34 @@ async function togglePin(id, pinned) {
 async function xdelete(col, id) {
   if (!rdmAdmin()) return;
   const run = async () => {
+    let failed = false;
     if (id && !String(id).startsWith('loc_')) {
       try {
         await rdmDB.collection(col).doc(id).delete();
       } catch (err) {
+        failed = true;
         xReportErr(err, 'Delete ' + col);
       }
     }
     if (col === 'Gallery') {
       D.gallery = D.gallery.filter(x => x._docId !== id);
+      if (failed) window.rdmSaveCollectionOverride?.('gallery', D.gallery);
       rdmRefresh();
     } else if (col === 'News') {
       D.news = D.news.filter(x => x._docId !== id);
+      if (failed) window.rdmSaveCollectionOverride?.('news', D.news);
       rdmRefresh();
     } else if (col === 'Matches') {
       D.matches = D.matches.filter(x => x._docId !== id);
+      if (failed) window.rdmSaveCollectionOverride?.('matches', D.matches);
       rdmRefresh();
     } else {
       const map = { Achievements: 'achievements', PlayingXI: 'lineups', PlayerStats: 'stats', Availability: 'availability' };
       const k = map[col];
-      if (k) XD[k] = XD[k].filter(x => x._docId !== id);
+      if (k) {
+        XD[k] = XD[k].filter(x => x._docId !== id);
+        if (failed) xSaveOverride(k, XD[k]);
+      }
       xrender();
     }
     window.refreshAdminSectionManager?.();
