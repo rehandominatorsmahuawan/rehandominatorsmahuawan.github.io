@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en" data-theme="leather">
+<html lang="en" data-theme="royal">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#FAF9F7" id="rdmThemeMeta">
+  <meta name="theme-color" content="#F5F7FB" id="rdmThemeMeta">
   <title>RDM Official | Rehan Dominators Mahuawan (RDM)</title>
   <meta name="description" content="Official cricket team app for Rehan Dominators Mahuawan (RDM), Gopalganj, Bihar — featuring the squad, match centre, team records, tournaments, playing XI, honours, gallery, and updates.">
   <meta property="og:type" content="website">
@@ -16,22 +16,23 @@
   <script>
     (function(){
       try {
-        var t = localStorage.getItem('rdm-app-theme') || 'leather';
-        if (t === 'turf' || t === 'azure' || t === 'crimson') {
-          t = 'leather';
-          localStorage.setItem('rdm-app-theme', 'leather');
-        } else if (t === 'daylight') {
-          t = 'alabaster';
-          localStorage.setItem('rdm-app-theme', 'alabaster');
-        } else if (t === 'night') {
-          t = 'carbon';
-          localStorage.setItem('rdm-app-theme', 'carbon');
+        var t = localStorage.getItem('rdm-app-theme') || 'royal';
+        if (t === 'leather' || t === 'turf' || t === 'azure' || t === 'alabaster' || t === 'daylight') {
+          t = 'royal';
+          localStorage.setItem('rdm-app-theme', 'royal');
+        } else if (t === 'carbon' || t === 'night') {
+          t = 'floodlight';
+          localStorage.setItem('rdm-app-theme', 'floodlight');
+        } else if (t === 'copper') {
+          t = 'crimson';
+          localStorage.setItem('rdm-app-theme', 'crimson');
         }
-        if (!/^(leather|carbon|alabaster|copper)$/.test(t)) t = 'leather';
+        if (!/^(royal|floodlight|emerald|crimson)$/.test(t)) t = 'royal';
         document.documentElement.setAttribute('data-theme', t);
         var meta = document.getElementById('rdmThemeMeta');
         if (meta) {
-          meta.content = t === 'carbon' ? '#090A0D' : (t === 'alabaster' ? '#F8FAFC' : (t === 'copper' ? '#F7F5F2' : '#FAF9F7'));
+          var metaMap = { royal: '#F5F7FB', floodlight: '#070C18', emerald: '#F6F9F7', crimson: '#FAF7F6' };
+          meta.content = metaMap[t] || '#F5F7FB';
         }
       } catch (e) {}
       try {
@@ -62,9 +63,9 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&family=Oswald:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="./assets/index-DJG39fqS.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-ykhLBd-e.css">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="./assets/index-Bj8IYAug.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-CrQOtMDt.css">
 </head>
 <body>
   <div id="rdmAppRoot" class="appShell">

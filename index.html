@@ -9,7 +9,7 @@
   <meta name="author" content="Rehan Dominators Mahuawan">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <meta name="googlebot" content="index, follow, max-image-preview:large">
-  <meta name="theme-color" content="#9F1239">
+  <meta name="theme-color" content="#1D4ED8">
 
   <link rel="canonical" href="https://rehandominatorsmahuawan.github.io/">
   <link rel="icon" type="image/png" sizes="192x192" href="pwa-192x192.png?v=7400">
@@ -18,7 +18,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="RDM" id="rdmAppleTitle">
-  <link rel="manifest" href="site.webmanifest?v=11000" id="rdmManifestLink">
+  <link rel="manifest" href="site.webmanifest?v=13000" id="rdmManifestLink">
   <script>(function(){try{
     var ADMIN='0AqlZ35wF8lcXYiAkgz04KjzGeiSfnHs';
     var PLAYERS={
@@ -55,7 +55,7 @@
     var link=document.getElementById('rdmManifestLink');
     if(link){
       if(navigator.serviceWorker&&navigator.serviceWorker.controller){
-        link.href=new URL('rdm-portal.webmanifest?key='+encodeURIComponent(key)+'&v=11000',location.href).href;
+        link.href=new URL('rdm-portal.webmanifest?key='+encodeURIComponent(key)+'&v=13000',location.href).href;
       }else{
         var startUrl=location.origin+location.pathname+'?key='+encodeURIComponent(key);
         var scopeUrl=new URL('./',location.href).href;
@@ -68,8 +68,8 @@
           scope:scopeUrl,
           display:'standalone',
           orientation:'any',
-          background_color:'#090A0D',
-          theme_color:'#9F1239',
+          background_color:'#070C18',
+          theme_color:'#1D4ED8',
           prefer_related_applications:false,
           categories:['sports'],
           icons:[
@@ -85,10 +85,10 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&family=Oswald:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=11.0.0">
-  <link rel="stylesheet" href="rdm-v6890-fix.css?v=11.0.0">
+  <link rel="stylesheet" href="style.css?v=13.0.0">
+  <link rel="stylesheet" href="rdm-v6890-fix.css?v=13.0.0">
   <script>(function(){try{if(window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true)document.documentElement.classList.add('rdm-standalone');}catch(e){}})();</script>
 
   <meta property="og:type" content="website">
@@ -172,9 +172,6 @@
   <main>
     <section class="page active" id="home">
       <div class="hero">
-        <div class="heroBackdrop" aria-hidden="true">
-          <img src="src/assets/images/hero_cricket_pavilion_1795338170696.jpg" alt="" fetchpriority="high" decoding="async" referrerPolicy="no-referrer">
-        </div>
         <div class="heroInner heroEditorial">
           <div class="heroCopy">
             <p class="eyebrow">Mahuawan · Gopalganj, Bihar · Est. 2024</p>
@@ -192,34 +189,39 @@
           </div>
 
           <aside class="heroPavilionCard" aria-label="Club Honours Dossier">
-            <div class="heroPavilionHead">
-              <img class="heroCrestThumb" src="assets/rdm-logo.png?v=7400" alt="RDM Official Crest" width="52" height="52" fetchpriority="high" decoding="async" referrerPolicy="no-referrer">
-              <div>
-                <span class="heroPavilionKicker">Official Cricket Almanac</span>
-                <strong>RDM · Est. 2024</strong>
+            <div class="heroBackdrop">
+              <img src="src/assets/images/hero_cobalt_stadium_1795345341929.jpg" alt="Floodlit midnight cobalt cricket ground and pavilion in Mahuawan" fetchpriority="high" decoding="async" referrerPolicy="no-referrer">
+              <div class="heroPavilionOverlayHead">
+                <img class="heroCrestThumb" src="assets/rdm-logo.png?v=7400" alt="RDM Official Crest" width="50" height="50" fetchpriority="high" decoding="async" referrerPolicy="no-referrer">
+                <div>
+                  <span class="heroPavilionKicker">Official Cricket Almanac</span>
+                  <strong>RDM · Est. 2024</strong>
+                </div>
               </div>
             </div>
-            <div class="heroPavilionStats">
-              <div class="heroPavStat">
-                <strong>2× MPL</strong>
-                <span>Champions</span>
+            <div class="heroPavilionLedger">
+              <div class="heroPavilionStats">
+                <div class="heroPavStat">
+                  <strong>2× MPL</strong>
+                  <span>Champions</span>
+                </div>
+                <div class="heroPavStat">
+                  <strong>17</strong>
+                  <span>Active Roster</span>
+                </div>
+                <div class="heroPavStat">
+                  <strong>T20 / LO</strong>
+                  <span>Formats</span>
+                </div>
+                <div class="heroPavStat">
+                  <strong>RDM001</strong>
+                  <span>Capt. Rehan Akhtar</span>
+                </div>
               </div>
-              <div class="heroPavStat">
-                <strong>17</strong>
-                <span>Active Roster</span>
+              <div class="heroPavilionFoot">
+                <button type="button" class="heroPavLink" data-go="honours">Trophy Cabinet ›</button>
+                <a class="heroPavLink" href="portals.html">Member Portals ›</a>
               </div>
-              <div class="heroPavStat">
-                <strong>T20 / LO</strong>
-                <span>Formats</span>
-              </div>
-              <div class="heroPavStat">
-                <strong>RDM001</strong>
-                <span>Capt. Rehan Akhtar</span>
-              </div>
-            </div>
-            <div class="heroPavilionFoot">
-              <button type="button" class="heroPavLink" data-go="honours">Trophy Cabinet ›</button>
-              <a class="heroPavLink" href="portals.html">Member Portals ›</a>
             </div>
           </aside>
         </div>
@@ -288,7 +290,7 @@
 
       <section class="rdmHeritageGrid" aria-label="About Rehan Dominators Mahuawan">
         <div class="heritageMedia">
-          <img src="src/assets/images/cricket_craft_edition_1795338169416.jpg" alt="Handcrafted cricket bat, stitched red leather ball, bails, and championship cup" loading="lazy" decoding="async" referrerPolicy="no-referrer">
+          <img src="src/assets/images/craft_willow_cobalt_1795345340935.jpg" alt="Seasoned English willow bat, stitched leather cricket ball, and scorebook in midnight cobalt" loading="lazy" decoding="async" referrerPolicy="no-referrer">
         </div>
         <div class="rdmSeoIntro">
           <span class="sectionKicker">Club Heritage</span>
@@ -296,7 +298,7 @@
           <p>Founded in 2024 in Mahuawan, Gopalganj, Bihar, Rehan Dominators Mahuawan (RDM) is a competitive village and regional cricket club built around discipline, brotherhood, and fearless limited-overs cricket. Champions of Mahuawan Premier League Seasons 1 &amp; 2, RDM competes across Gopalganj district tournaments.</p>
           <div class="clubFactsGrid" aria-label="Club details">
             <div class="clubFactItem"><span>Home Ground</span><strong>Mahuawan, Gopalganj</strong></div>
-            <div class="clubFactItem"><span>Club Colours</span><strong>Alabaster Chalk &amp; Leather Crimson</strong></div>
+            <div class="clubFactItem"><span>Club Colours</span><strong>Midnight Cobalt &amp; Stadium Gold</strong></div>
             <div class="clubFactItem"><span>Formats</span><strong>Limited Overs &amp; T20</strong></div>
             <div class="clubFactItem"><span>Captaincy</span><strong>Rehan Akhtar &amp; Saif Ali</strong></div>
           </div>
@@ -613,18 +615,18 @@
   <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-  <script defer src="firebase-config.js?v=11.0.0"></script>
-  <script defer src="app.js?v=11.0.0"></script>
-  <script defer src="firebase-login.js?v=11.0.0"></script>
-  <script defer src="access-links.js?v=11.0.0"></script>
-  <script defer src="firebase-backend.js?v=11.0.0"></script>
-  <script defer src="enhancements.js?v=11.0.0"></script>
-  <script defer src="admin-player-manager.js?v=11.0.0"></script>
-  <script defer src="admin-auth-email.js?v=11.0.0"></script>
-  <script defer src="v6.js?v=11.0.0"></script>
-  <script defer src="gallery-v686.js?v=11.0.0"></script>
-  <script defer src="updates.js?v=11.0.0"></script>
-  <script defer src="forms-v6821.js?v=11.0.0"></script>
+  <script defer src="firebase-config.js?v=13.0.0"></script>
+  <script defer src="app.js?v=13.0.0"></script>
+  <script defer src="firebase-login.js?v=13.0.0"></script>
+  <script defer src="access-links.js?v=13.0.0"></script>
+  <script defer src="firebase-backend.js?v=13.0.0"></script>
+  <script defer src="enhancements.js?v=13.0.0"></script>
+  <script defer src="admin-player-manager.js?v=13.0.0"></script>
+  <script defer src="admin-auth-email.js?v=13.0.0"></script>
+  <script defer src="v6.js?v=13.0.0"></script>
+  <script defer src="gallery-v686.js?v=13.0.0"></script>
+  <script defer src="updates.js?v=13.0.0"></script>
+  <script defer src="forms-v6821.js?v=13.0.0"></script>
 
   <script>(function(){
     var control=document.getElementById('themeControl'),toggle=document.getElementById('themeToggle'),menu=document.getElementById('themeMenu');
@@ -721,10 +723,10 @@
     document.addEventListener('DOMContentLoaded',syncMoreActive);
   })();</script>
 
-  <script defer src="rdm-v6900.js?v=11.0.0"></script>
-  <script defer src="rdm-v6901.js?v=11.0.0"></script>
-  <script defer src="rdm-v6902.js?v=11.0.0"></script>
-  <script defer src="rdm-global-mini.js?v=11.0.0"></script>
-  <script defer src="rdm-pwa.js?v=11.0.0"></script>
+  <script defer src="rdm-v6900.js?v=13.0.0"></script>
+  <script defer src="rdm-v6901.js?v=13.0.0"></script>
+  <script defer src="rdm-v6902.js?v=13.0.0"></script>
+  <script defer src="rdm-global-mini.js?v=13.0.0"></script>
+  <script defer src="rdm-pwa.js?v=13.0.0"></script>
 </body>
 </html>

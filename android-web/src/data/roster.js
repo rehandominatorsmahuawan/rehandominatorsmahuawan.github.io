@@ -7,8 +7,8 @@ export const REMOTE_VERSION_JSON_URL = 'https://rehandominatorsmahuawan.github.i
 export const REMOTE_OTA_MANIFEST_URL = 'https://rehandominatorsmahuawan.github.io/ota/manifest.json';
 
 export const APK_ADMIN_EMAILS = [
-  'rehahalam7124517@gmail.com',
   'rehanalam7124517@gmail.com',
+  'rehahalam7124517@gmail.com',
   'admin@rdm-official.in'
 ];
 
@@ -59,8 +59,8 @@ export const CLUB_INFO = {
   apkReleasesUrl: 'https://github.com/RehanDominatorsMahuawan/RehanDominatorsMahuawan.github.io/releases/latest',
   websiteUrl: 'https://rehandominatorsmahuawan.github.io/',
   logoPath: 'assets/rdm-logo.png',
-  heroImagePath: 'src/assets/images/hero_cricket_pavilion_1795338170696.jpg',
-  heritageImagePath: 'src/assets/images/cricket_craft_edition_1795338169416.jpg'
+  heroImagePath: 'src/assets/images/hero_cobalt_stadium_1795345341929.jpg',
+  heritageImagePath: 'src/assets/images/craft_willow_cobalt_1795345340935.jpg'
 };
 
 export const PLAYER_CODES = {

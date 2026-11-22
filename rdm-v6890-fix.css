@@ -1,6 +1,6 @@
-/* RDM Squad Responsive Multi-Column Grid & Wrapping Polish */
+/* RDM Squad Responsive Multi-Column Grid & Wrapping Polish (v13.0.0) */
 #players {
-  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)) !important;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)) !important;
 }
 #players .player {
   min-width: 0;
@@ -27,7 +27,7 @@
   display: none !important;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 640px) {
   #players {
     grid-template-columns: minmax(0, 1fr) !important;
   }

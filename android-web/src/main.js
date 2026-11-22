@@ -2,12 +2,12 @@ import '@fontsource/plus-jakarta-sans/400.css';
 import '@fontsource/plus-jakarta-sans/500.css';
 import '@fontsource/plus-jakarta-sans/600.css';
 import '@fontsource/plus-jakarta-sans/700.css';
-import '@fontsource/plus-jakarta-sans/800.css';
-import '@fontsource/oswald/600.css';
-import '@fontsource/oswald/700.css';
-import '@fontsource/ibm-plex-mono/500.css';
-import '@fontsource/ibm-plex-mono/600.css';
-import '@fontsource/ibm-plex-mono/700.css';
+import '@fontsource/outfit/600.css';
+import '@fontsource/outfit/700.css';
+import '@fontsource/outfit/800.css';
+import '@fontsource/jetbrains-mono/500.css';
+import '@fontsource/jetbrains-mono/600.css';
+import '@fontsource/jetbrains-mono/700.css';
 import {
   APP_BUILD_INFO,
   CLUB_INFO,
@@ -75,10 +75,10 @@ import {
 } from './ui/components.js';
 
 const THEMES = [
-  { id: 'leather', label: 'Editorial Crimson', desc: 'Alabaster Chalk & Leather Crimson', swatches: ['#FAF9F7', '#FFFFFF', '#9F1239'] },
-  { id: 'carbon', label: 'Floodlight Carbon', desc: 'Dark Carbon Stadium Slate', swatches: ['#090A0D', '#12141A', '#E11D48'] },
-  { id: 'alabaster', label: 'Pavilion Ivory', desc: 'Clean Ivory & Deep Sapphire', swatches: ['#F8FAFC', '#FFFFFF', '#1D4ED8'] },
-  { id: 'copper', label: 'Heritage Copper', desc: 'Warm Stone & Burnished Bronze', swatches: ['#F7F5F2', '#FFFFFF', '#9A3412'] }
+  { id: 'royal', label: 'Royal Cobalt', desc: 'Crisp Daylight Frost & Midnight Cobalt', swatches: ['#F5F7FB', '#FFFFFF', '#1D4ED8'] },
+  { id: 'floodlight', label: 'Floodlight Navy', desc: 'Deep Stadium Navy & Championship Gold', swatches: ['#070C18', '#0F172A', '#2563EB'] },
+  { id: 'emerald', label: 'Pavilion Emerald', desc: 'Classic Turf Mint & Pavilion Emerald', swatches: ['#F6F9F7', '#FFFFFF', '#0F5132'] },
+  { id: 'crimson', label: 'Test Crimson', desc: 'Editorial Chalk & Cricket Leather Crimson', swatches: ['#FAF7F6', '#FFFFFF', '#9F1239'] }
 ];
 
 const ui = {
@@ -216,25 +216,25 @@ function stepBackOne() {
 }
 
 function migrateThemeId(id) {
-  if (id === 'turf' || id === 'azure' || id === 'crimson') return 'leather';
-  if (id === 'daylight') return 'alabaster';
-  if (id === 'night') return 'carbon';
-  return THEMES.some(t => t.id === id) ? id : 'leather';
+  if (id === 'leather' || id === 'turf' || id === 'azure' || id === 'alabaster' || id === 'daylight') return 'royal';
+  if (id === 'carbon' || id === 'night') return 'floodlight';
+  if (id === 'copper') return 'crimson';
+  return THEMES.some(t => t.id === id) ? id : 'royal';
 }
 
 function loadInitialTheme() {
   try {
-    const raw = localStorage.getItem('rdm-app-theme') || 'leather';
+    const raw = localStorage.getItem('rdm-app-theme') || 'royal';
     const next = migrateThemeId(raw);
     if (next !== raw) localStorage.setItem('rdm-app-theme', next);
     return next;
   } catch {
-    return 'leather';
+    return 'royal';
   }
 }
 
 function getThemeLabel(id) {
-  return THEMES.find(t => t.id === id)?.label || 'Editorial Crimson';
+  return THEMES.find(t => t.id === id)?.label || 'Royal Cobalt';
 }
 
 function applyTheme(nextTheme) {
@@ -467,26 +467,52 @@ function renderHomeTab() {
       <div class="heroPhotoLayer" aria-hidden="true">
         <img src="${escHtml(CLUB_INFO.heroImagePath)}" alt="" referrerPolicy="no-referrer">
       </div>
-      <div class="heroBannerInner">
-        <div class="heroBannerTop">
-          <img class="heroBannerLogo" src="${escHtml(currentLogo())}" alt="RDM Official Crest" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='${CLUB_INFO.logoPath}'">
-          <div class="heroBannerCopy">
-            <span class="heroEyebrow">OFFICIAL CRICKET TEAM</span>
-            <h1 class="heroDisplayTitle">${escHtml(CLUB_INFO.orgName)}</h1>
-            <p>${escHtml(CLUB_INFO.motto)}</p>
+      <div class="heroBannerGrid">
+        <div class="heroBannerInner">
+          <div class="heroBannerTop">
+            <img class="heroBannerLogo" src="${escHtml(currentLogo())}" alt="RDM Official Crest" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='${CLUB_INFO.logoPath}'">
+            <div class="heroBannerCopy">
+              <span class="heroEyebrow">OFFICIAL CRICKET CLUB · EST. ${escHtml(CLUB_INFO.founded)}</span>
+              <h1 class="heroDisplayTitle">${escHtml(CLUB_INFO.orgName)}</h1>
+              <p>${escHtml(CLUB_INFO.motto)}</p>
+            </div>
+          </div>
+          <div class="heroBannerBottom">
+            <div class="heroBannerMeta">
+              <span>${escHtml(CLUB_INFO.locationLabel)}</span>
+              <span aria-hidden="true">·</span>
+              <span>Limited Overs &amp; T20</span>
+            </div>
+            <div class="heroToolbarActions">
+              <button type="button" class="heroGhostBtn" data-open-subpage="news">Team News</button>
+              <button type="button" class="heroPrimaryBtn" data-public-tab="squad">Explore Squad</button>
+            </div>
           </div>
         </div>
-        <div class="heroBannerBottom">
-          <div class="heroBannerMeta">
-            <span>Est. ${escHtml(CLUB_INFO.founded)}</span>
-            <span aria-hidden="true">·</span>
-            <span>${escHtml(CLUB_INFO.locationLabel)}</span>
+        <aside class="heroDossierCard" aria-label="Club Almanac">
+          <div class="heroDossierHead">
+            <span>Official Almanac</span>
+            <strong>RDM · ${escHtml(CLUB_INFO.founded)}</strong>
           </div>
-          <div class="heroToolbarActions">
-            <button type="button" class="heroGhostBtn" data-open-subpage="news">Team News</button>
-            <button type="button" class="heroPrimaryBtn" data-public-tab="squad">Explore Squad</button>
+          <div class="heroDossierStats">
+            <div>
+              <strong>2× MPL</strong>
+              <span>Champions</span>
+            </div>
+            <div>
+              <strong class="num">${state.players.length}</strong>
+              <span>Active Roster</span>
+            </div>
+            <div>
+              <strong>T20 / LO</strong>
+              <span>Formats</span>
+            </div>
+            <div>
+              <strong>Rehan Akhtar</strong>
+              <span>Captain (RA08)</span>
+            </div>
           </div>
-        </div>
+        </aside>
       </div>
     </section>
 
@@ -603,7 +629,7 @@ function renderMatchSummaryBlock(m) {
         </div>
       ` : ''}
       ${(m.result || m.note) ? `<p class="richText" style="margin:6px 0 0;font-size:0.84rem;color:var(--ink-secondary);">${escHtml(formatTextCase(m.result ? `${m.result}${m.margin ? ' · ' + m.margin : ''}` : m.note))}</p>` : ''}
-      ${m.potm ? `<p style="margin:6px 0 0;font-size:0.8rem;font-weight:700;color:var(--brand-blue);">Player of the Match: ${escHtml(formatTextCase(m.potm))}</p>` : ''}
+      ${m.potm ? `<p style="margin:6px 0 0;font-size:0.8rem;font-weight:700;color:var(--brand-text);">Player of the Match: ${escHtml(formatTextCase(m.potm))}</p>` : ''}
     </div>
   `;
 }
@@ -737,7 +763,7 @@ function renderRecordsAndTournamentsList() {
         <article class="surfaceCard">
           <span class="sectionKicker">${escHtml(formatTextCase(r.season || 'Team Record'))}</span>
           <h3 style="margin:0 0 4px;font-size:1.22rem;">${escHtml(formatTextCase(r.title || 'Record'))}</h3>
-          <p style="margin:0;font-weight:700;color:var(--brand-blue);" class="num">${escHtml(formatTextCase(r.value || ''))}${r.player ? ' · ' + escHtml(formatTextCase(r.player)) : ''}</p>
+          <p style="margin:0;font-weight:700;color:var(--brand-text);" class="num">${escHtml(formatTextCase(r.value || ''))}${r.player ? ' · ' + escHtml(formatTextCase(r.player)) : ''}</p>
         </article>
       `).join('')}
       ${state.opponents.map(o => `
@@ -918,7 +944,7 @@ function renderPlayerDetailPage() {
           <div class="fullProfileRole">${escHtml(formatTextCase(player.role))}</div>
           ${player.detail ? `<p class="fullProfileMeta richText" style="margin:6px auto 0;">${escHtml(formatTextCase(player.detail))}</p>` : ''}
           ${player.nick ? `<p class="sectionSub" style="margin-top:6px;">Nickname: ${escHtml(formatTextCase(player.nick))}</p>` : ''}
-          ${availability?.status ? `<p class="sectionSub" style="margin-top:4px;font-weight:700;color:var(--brand-blue);">Match Status: ${escHtml(formatTextCase(availability.status))}</p>` : ''}
+          ${availability?.status ? `<p class="sectionSub" style="margin-top:4px;font-weight:700;color:var(--brand-text);">Match Status: ${escHtml(formatTextCase(availability.status))}</p>` : ''}
         </div>
         <div>
           <button type="button" class="btnPrimary btnSm" id="btnDownloadDetailCard">Download Player Card</button>
@@ -1046,7 +1072,7 @@ function renderTeamSubpage() {
           <div>
             <span class="sectionKicker">Est. ${escHtml(CLUB_INFO.founded)} · ${escHtml(CLUB_INFO.locationLabel)}</span>
             <h3 class="sectionTitle">${escHtml(formatTextCase(CLUB_INFO.orgName))}</h3>
-            <p class="sectionSub" style="font-weight:700;color:var(--brand-blue);">${escHtml(CLUB_INFO.motto)}</p>
+            <p class="sectionSub" style="font-weight:700;color:var(--brand-text);">${escHtml(CLUB_INFO.motto)}</p>
           </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:14px;color:var(--ink-secondary);font-size:0.93rem;line-height:1.72;">
@@ -1213,7 +1239,7 @@ function renderPlayerPortalScreen() {
           <div>
             <span class="sectionKicker">Match Status</span>
             <h2 class="sectionTitle" style="font-size:1.25rem;">My Match Availability</h2>
-            <p class="sectionSub" style="font-weight:700;color:var(--brand-blue);">Current: ${escHtml(formatTextCase(availability))}</p>
+            <p class="sectionSub" style="font-weight:700;color:var(--brand-text);">Current: ${escHtml(formatTextCase(availability))}</p>
           </div>
           <div class="rowActions">
             <button type="button" class="btnPrimary btnSm" id="btnPortalAvailYes">Available</button>
@@ -2175,7 +2201,7 @@ function openConnectCloudSyncSheet(onConnected) {
     title: 'Connect Firebase Cloud Sync',
     subtitle: 'Sign in with your Firebase Admin account to authorize this cloud write or delete, or publish updated firestore.rules in Firebase Console.',
     fields: [
-      { name: 'email', label: 'Firebase Admin Email', type: 'email', value: 'rehahalam7124517@gmail.com', required: true },
+      { name: 'email', label: 'Firebase Admin Email', type: 'email', value: 'rehanalam7124517@gmail.com', required: true },
       { name: 'password', label: 'Firebase Password', type: 'password', required: true }
     ],
     submitLabel: 'Connect & Retry',

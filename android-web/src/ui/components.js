@@ -189,28 +189,28 @@ export function openThemeSheet({ currentTheme, onSelectTheme }) {
   overlay.className = 'sheetOverlay show';
   const themes = [
     {
-      id: 'leather',
-      name: 'Editorial Crimson',
-      desc: 'Alabaster Chalk canvas & Cricket Leather Crimson',
-      swatches: ['#FAF9F7', '#FFFFFF', '#9F1239']
+      id: 'royal',
+      name: 'Royal Cobalt',
+      desc: 'Crisp Daylight Frost & Midnight Cobalt',
+      swatches: ['#F5F7FB', '#FFFFFF', '#1D4ED8']
     },
     {
-      id: 'carbon',
-      name: 'Floodlight Carbon',
-      desc: 'Dark carbon stadium slate with crimson accents',
-      swatches: ['#090A0D', '#12141A', '#E11D48']
+      id: 'floodlight',
+      name: 'Floodlight Navy',
+      desc: 'Deep Stadium Navy & Championship Gold',
+      swatches: ['#070C18', '#0F172A', '#2563EB']
     },
     {
-      id: 'alabaster',
-      name: 'Pavilion Ivory',
-      desc: 'Clean daylight alabaster with deep sapphire ink',
-      swatches: ['#F8FAFC', '#FFFFFF', '#1D4ED8']
+      id: 'emerald',
+      name: 'Pavilion Emerald',
+      desc: 'Classic Turf Mint & Pavilion Emerald',
+      swatches: ['#F6F9F7', '#FFFFFF', '#0F5132']
     },
     {
-      id: 'copper',
-      name: 'Heritage Copper',
-      desc: 'Warm stone chalk & burnished bronze accent',
-      swatches: ['#F7F5F2', '#FFFFFF', '#9A3412']
+      id: 'crimson',
+      name: 'Test Crimson',
+      desc: 'Editorial Chalk & Cricket Leather Crimson',
+      swatches: ['#FAF7F6', '#FFFFFF', '#9F1239']
     }
   ];
 
@@ -410,13 +410,13 @@ export async function downloadPlayerProfileCard({ player, brandLogo }) {
   };
 
   const bg = ctx.createLinearGradient(0, 0, W, H);
-  bg.addColorStop(0, '#FAF9F7');
-  bg.addColorStop(1, '#F2EFEA');
+  bg.addColorStop(0, '#F5F7FB');
+  bg.addColorStop(1, '#E8EEF8');
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
 
-  roundRect(40, 40, W - 80, H - 80, 28, '#FFFFFF', '#E5E0D8');
-  roundRect(80, 80, W - 160, 8, 4, '#9F1239', null);
+  roundRect(40, 40, W - 80, H - 80, 28, '#FFFFFF', '#DCE4F0');
+  roundRect(80, 80, W - 160, 8, 4, '#1D4ED8', null);
 
   let logo = null;
   try { logo = await loadImg(brandLogo || CLUB_INFO.logoPath); } catch (_) {}
@@ -424,10 +424,10 @@ export async function downloadPlayerProfileCard({ player, brandLogo }) {
     ctx.drawImage(logo, 84, 120, 74, 74);
   }
   ctx.textAlign = 'left';
-  ctx.fillStyle = '#161412';
-  ctx.font = '700 34px "Oswald", "Plus Jakarta Sans", sans-serif';
+  ctx.fillStyle = '#0B1324';
+  ctx.font = '700 34px "Outfit", "Plus Jakarta Sans", sans-serif';
   ctx.fillText('REHAN DOMINATORS MAHUAWAN', 176, 156);
-  ctx.fillStyle = '#665E57';
+  ctx.fillStyle = '#576780';
   ctx.font = '600 18px "Plus Jakarta Sans", sans-serif';
   ctx.fillText('MAHUAWAN · GOPALGANJ · BIHAR', 176, 186);
 
@@ -445,7 +445,7 @@ export async function downloadPlayerProfileCard({ player, brandLogo }) {
     const sc = Math.max(280 / avatar.width, 280 / avatar.height);
     ctx.drawImage(avatar, W / 2 - (avatar.width * sc) / 2, 370 - (avatar.height * sc) / 2, avatar.width * sc, avatar.height * sc);
     ctx.restore();
-    ctx.strokeStyle = '#9F1239';
+    ctx.strokeStyle = '#1D4ED8';
     ctx.lineWidth = 8;
     ctx.beginPath();
     ctx.arc(W / 2, 370, 146, 0, Math.PI * 2);
@@ -453,33 +453,33 @@ export async function downloadPlayerProfileCard({ player, brandLogo }) {
   }
 
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#161412';
-  ctx.font = '700 58px "Oswald", "Plus Jakarta Sans", sans-serif';
+  ctx.fillStyle = '#0B1324';
+  ctx.font = '700 58px "Outfit", "Plus Jakarta Sans", sans-serif';
   ctx.fillText(formatTextCase(player.name), W / 2, 580);
 
-  roundRect(120, 620, 840, 124, 18, '#FAF9F7', '#E5E0D8');
-  ctx.fillStyle = '#9F1239';
+  roundRect(120, 620, 840, 124, 18, '#F5F7FB', '#DCE4F0');
+  ctx.fillStyle = '#1D4ED8';
   ctx.font = '700 16px "Plus Jakarta Sans", sans-serif';
   ctx.fillText('PLAYER CODE', 330, 662);
   ctx.fillText('JERSEY NUMBER', 750, 662);
-  ctx.fillStyle = '#161412';
-  ctx.font = '700 30px "IBM Plex Mono", monospace';
+  ctx.fillStyle = '#0B1324';
+  ctx.font = '700 30px "JetBrains Mono", monospace';
   ctx.fillText(PLAYER_CODES[player.id] || player.id, 330, 708);
   ctx.fillText(player.jersey ? `#${player.jersey}` : '—', 750, 708);
 
-  roundRect(120, 774, 840, 140, 18, '#F2EFEA', '#E5E0D8');
-  ctx.fillStyle = '#9F1239';
+  roundRect(120, 774, 840, 140, 18, '#EAEFF7', '#DCE4F0');
+  ctx.fillStyle = '#1D4ED8';
   ctx.font = '700 24px "Plus Jakarta Sans", sans-serif';
   ctx.fillText(formatTextCase(player.role || ''), W / 2, 828);
-  ctx.fillStyle = '#3B3530';
+  ctx.fillStyle = '#27344D';
   ctx.font = '600 20px "Plus Jakarta Sans", sans-serif';
   ctx.fillText(formatTextCase(player.detail || '').slice(0, 66), W / 2, 872);
 
-  ctx.fillStyle = '#9F1239';
+  ctx.fillStyle = '#B45309';
   ctx.font = '700 18px "Plus Jakarta Sans", sans-serif';
   ctx.fillText('ONE TEAM · ONE DREAM · ONE DOMINATION', W / 2, 1234);
-  ctx.fillStyle = '#665E57';
-  ctx.font = '600 15px "IBM Plex Mono", monospace';
+  ctx.fillStyle = '#576780';
+  ctx.font = '600 15px "JetBrains Mono", monospace';
   ctx.fillText('RDM OFFICIAL · PLAYER IDENTITY CARD', W / 2, 1266);
 
   const fileName = `${player.id}-${String(player.name || 'PLAYER').replace(/\s+/g, '-')}-RDM-CARD.png`;
@@ -552,7 +552,7 @@ export function openAppUpdateSheet({
       </div>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
         <span class="metaCode">Installed: v${escHtml(currentVersion)}</span>
-        <span class="metaCode" style="color:var(--brand-blue);">Latest: v${escHtml(latestVersion)}</span>
+        <span class="metaCode" style="color:var(--brand-text);">Latest: v${escHtml(latestVersion)}</span>
       </div>
       <p class="confirmMessage richText" style="margin-bottom:12px;">${escHtml(notes || 'A newer version of RDM Official Android App is ready to install right inside the app without uninstalling.')}</p>
       <div class="updatePermBox" id="rdmUpdatePermBox" style="${permMissing ? '' : 'display:none;'}">

@@ -43,19 +43,19 @@ export async function triggerWebPwaInstall() {
   return false;
 }
 
-export async function syncStatusBarTheme(themeKey = 'leather') {
+export async function syncStatusBarTheme(themeKey = 'royal') {
   const normalized =
-    themeKey === 'night' || themeKey === 'carbon' ? 'carbon' :
-    themeKey === 'daylight' || themeKey === 'alabaster' ? 'alabaster' :
-    themeKey === 'copper' ? 'copper' : 'leather';
+    themeKey === 'night' || themeKey === 'carbon' || themeKey === 'floodlight' ? 'floodlight' :
+    themeKey === 'emerald' ? 'emerald' :
+    themeKey === 'copper' || themeKey === 'crimson' ? 'crimson' : 'royal';
 
   const colorMap = {
-    leather: '#FAF9F7',
-    alabaster: '#F8FAFC',
-    copper: '#F7F5F2',
-    carbon: '#090A0D'
+    royal: '#F5F7FB',
+    floodlight: '#070C18',
+    emerald: '#F6F9F7',
+    crimson: '#FAF7F6'
   };
-  const color = colorMap[normalized] || colorMap.leather;
+  const color = colorMap[normalized] || colorMap.royal;
   const meta = document.getElementById('rdmThemeMeta');
   if (meta) meta.content = color;
 
@@ -63,12 +63,12 @@ export async function syncStatusBarTheme(themeKey = 'leather') {
   try {
     await StatusBar.setOverlaysWebView({ overlay: false });
     await StatusBar.setBackgroundColor({ color });
-    await StatusBar.setStyle({ style: normalized === 'carbon' ? Style.Dark : Style.Light });
+    await StatusBar.setStyle({ style: normalized === 'floodlight' ? Style.Dark : Style.Light });
   } catch (_) {}
 }
 
 export async function initNativeShell(onBackPress) {
-  const savedTheme = localStorage.getItem('rdm-app-theme') || 'leather';
+  const savedTheme = localStorage.getItem('rdm-app-theme') || 'royal';
   await syncStatusBarTheme(savedTheme);
 
   if (Capacitor.isNativePlatform()) {

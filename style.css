@@ -1,68 +1,78 @@
 /* ==========================================================================
-   REHAN DOMINATORS MAHUAWAN (RDM) · EDITORIAL CHALK & LEATHER CRIMSON / FLOODLIGHT CARBON
-   Edition v11.0.0 · Display: Oswald | UI: Plus Jakarta Sans | Data: IBM Plex Mono
+   REHAN DOMINATORS MAHUAWAN (RDM) · MIDNIGHT COBALT & STADIUM GOLD v13.0.0
+   Display: Outfit | Body & UI: Plus Jakarta Sans | Data & Clocks: JetBrains Mono
+   Light: Crisp Stadium Mist & Midnight Cobalt
+   Dark:  Floodlight Navy & Electric Cobalt / Gold
    ========================================================================== */
 
 :root,
 [data-rdm-theme="light"] {
   color-scheme: light;
-  --bg: #FAF9F7;
+  --bg: #F5F7FB;
   --surface: #FFFFFF;
-  --subtle: #F2EFEA;
-  --surface-alt: #F6F3EE;
-  --line: #E5E0D8;
-  --line-strong: #CCC4B8;
-  --ink: #161412;
-  --ink-2: #3B3530;
-  --muted: #665E57;
-  --accent: #9F1239;
-  --accent-hover: #881337;
+  --subtle: #EAEFF7;
+  --surface-alt: #F0F4FA;
+  --line: #DCE4F0;
+  --line-strong: #BFCBDC;
+  --ink: #0B1324;
+  --ink-2: #27344D;
+  --muted: #576780;
+  --accent: #1D4ED8;
+  --accent-text: #1D4ED8;
+  --accent-hover: #1E40AF;
   --accent-ink: #FFFFFF;
-  --accent-soft: rgba(159, 18, 57, 0.08);
-  --brass: #9A5B13;
-  --brass-soft: rgba(154, 91, 19, 0.09);
-  --win: #0F766E;
-  --win-soft: rgba(15, 118, 110, 0.09);
+  --accent-soft: rgba(29, 78, 216, 0.09);
+  --brass: #B45309;
+  --brass-soft: rgba(180, 83, 9, 0.11);
+  --win: #047857;
+  --win-soft: rgba(4, 120, 87, 0.10);
   --danger: #B91C1C;
   --danger-soft: rgba(185, 28, 28, 0.09);
-  --header-bg: rgba(250, 249, 247, 0.92);
-  --shadow-sm: 0 1px 2px rgba(22, 20, 18, 0.04);
-  --shadow-md: 0 10px 26px rgba(22, 20, 18, 0.07);
-  --shadow-lg: 0 22px 52px rgba(22, 20, 18, 0.14);
-  --font-display: "Oswald", "Arial Narrow", sans-serif;
+  --header-bg: rgba(245, 247, 251, 0.94);
+  --hero-card-bg: #0B1426;
+  --hero-scrim: linear-gradient(180deg, rgba(7, 12, 24, 0.10) 0%, rgba(7, 12, 24, 0.78) 100%);
+  --trophy-stage: #0B1426;
+  --shadow-sm: 0 1px 2px rgba(11, 19, 36, 0.05);
+  --shadow-md: 0 8px 24px rgba(11, 19, 36, 0.08);
+  --shadow-lg: 0 20px 48px rgba(11, 19, 36, 0.14);
+  --font-display: "Outfit", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-ui: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
-  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-rdm-theme="dark"] {
   color-scheme: dark;
-  --bg: #090A0D;
-  --surface: #12141A;
-  --subtle: #1A1D26;
-  --surface-alt: #161922;
-  --line: rgba(245, 243, 239, 0.11);
-  --line-strong: rgba(245, 243, 239, 0.22);
-  --ink: #F5F3EF;
-  --ink-2: #D6D1C9;
-  --muted: #9E978E;
-  --accent: #E11D48;
-  --accent-hover: #BE123C;
+  --bg: #070C18;
+  --surface: #0F172A;
+  --subtle: #162238;
+  --surface-alt: #131E33;
+  --line: rgba(226, 232, 240, 0.12);
+  --line-strong: rgba(226, 232, 240, 0.24);
+  --ink: #F8FAFC;
+  --ink-2: #CBD5E1;
+  --muted: #94A3B8;
+  --accent: #2563EB;
+  --accent-text: #60A5FA;
+  --accent-hover: #1D4ED8;
   --accent-ink: #FFFFFF;
-  --accent-soft: rgba(225, 29, 72, 0.15);
+  --accent-soft: rgba(59, 130, 246, 0.16);
   --brass: #F59E0B;
-  --brass-soft: rgba(245, 158, 11, 0.14);
-  --win: #2DD4BF;
-  --win-soft: rgba(45, 212, 191, 0.12);
+  --brass-soft: rgba(245, 158, 11, 0.16);
+  --win: #34D399;
+  --win-soft: rgba(52, 211, 153, 0.14);
   --danger: #FB7185;
   --danger-soft: rgba(251, 113, 133, 0.15);
-  --header-bg: rgba(9, 10, 13, 0.9);
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.34);
-  --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.46);
-  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.68);
+  --header-bg: rgba(7, 12, 24, 0.92);
+  --hero-card-bg: #0B1222;
+  --hero-scrim: linear-gradient(180deg, rgba(7, 12, 24, 0.14) 0%, rgba(7, 12, 24, 0.86) 100%);
+  --trophy-stage: #091020;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.36);
+  --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 22px 54px rgba(0, 0, 0, 0.65);
 }
 
 *,
@@ -83,12 +93,13 @@ body {
   display: flex;
   flex-direction: column;
   font-family: var(--font-ui);
-  font-size: 16px;
-  line-height: 1.62;
+  font-size: 15px;
+  line-height: 1.56;
   color: var(--ink);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  transition: background-color 0.18s var(--ease), color 0.18s var(--ease);
 }
 
 [data-rdm-theme="dark"] body {
@@ -118,7 +129,7 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-text);
   outline-offset: 2px;
 }
 
@@ -131,10 +142,11 @@ h2,
 h3,
 h4 {
   font-family: var(--font-display);
-  letter-spacing: 0.005em;
-  line-height: 1.06;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
   text-wrap: balance;
   margin: 0;
+  font-weight: 700;
 }
 
 .num,
@@ -148,22 +160,22 @@ h4 {
   word-break: break-word;
 }
 
-/* ==================== TOP NAVIGATION BAR (STRICT 3-ZONE) ==================== */
+/* ==================== TOP BAR CONTRACT (STRICT 3-ZONE DESKTOP SHELL) ==================== */
 
 .top {
   position: sticky;
   top: 0;
   z-index: 60;
-  height: 66px;
+  height: 60px;
   padding: 0 28px;
   background: var(--header-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--line);
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
-  gap: 20px;
+  justify-content: space-between;
+  gap: 24px;
 }
 
 .brand {
@@ -177,8 +189,8 @@ h4 {
 }
 
 .brand img {
-  width: 38px;
-  height: 38px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   object-fit: cover;
   background: #FFFFFF;
@@ -188,12 +200,12 @@ h4 {
 
 .brandTitle {
   font-family: var(--font-display);
-  font-size: 1.18rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+  font-size: 1.14rem;
+  font-weight: 800;
+  letter-spacing: -0.015em;
   color: var(--ink);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .nav {
@@ -211,30 +223,30 @@ h4 {
   background: transparent;
   border: 0;
   border-bottom: 2px solid transparent;
-  padding: 8px 12px;
-  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-  font-size: 0.875rem;
+  padding: 6px 11px;
+  min-height: 38px;
+  font-size: 0.84rem;
   font-weight: 600;
   color: var(--muted);
   cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: color 0.16s var(--ease), background-color 0.16s var(--ease), border-color 0.16s var(--ease);
+  transition: color 0.16s var(--ease), border-color 0.16s var(--ease);
 }
 
 .nav button:hover,
 .nav .navLink:hover,
 .navMoreBtn:hover {
   color: var(--ink);
-  background: var(--subtle);
+  border-bottom-color: var(--line-strong);
 }
 
 .nav button.active,
 .nav .navLink.active,
 .navMoreBtn.is-child-active {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
+  color: var(--accent-text);
+  border-bottom-color: var(--accent-text);
   font-weight: 700;
 }
 
@@ -264,8 +276,9 @@ h4 {
   text-align: left;
   border: 0;
   border-radius: var(--radius-sm);
-  padding: 9px 12px;
-  font-size: 0.84rem;
+  padding: 8px 12px;
+  min-height: 36px;
+  font-size: 0.83rem;
   font-weight: 600;
   color: var(--ink-2);
   background: transparent;
@@ -280,11 +293,12 @@ h4 {
 .navMoreLink:hover {
   background: var(--subtle);
   color: var(--ink);
+  border-bottom-color: transparent;
 }
 
 .navMoreMenu button.active {
   background: var(--accent-soft);
-  color: var(--accent);
+  color: var(--accent-text);
   border-bottom-color: transparent;
 }
 
@@ -302,13 +316,13 @@ h4 {
 
 .themeToggle,
 .mobileMenuBtn {
-  height: 38px;
-  padding: 0 13px;
+  height: 36px;
+  padding: 0 11px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
   background: var(--surface);
   color: var(--ink);
-  font-size: 0.8125rem;
+  font-size: 0.78rem;
   font-weight: 700;
   display: inline-flex;
   align-items: center;
@@ -317,6 +331,7 @@ h4 {
   cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
+  flex-shrink: 0;
   transition: background-color 0.16s var(--ease), border-color 0.16s var(--ease);
 }
 
@@ -326,11 +341,12 @@ h4 {
 }
 
 .headPortalsCta {
-  min-height: 38px !important;
-  height: 38px;
-  padding: 0 15px !important;
-  font-size: 0.8125rem !important;
+  min-height: 36px !important;
+  height: 36px;
+  padding: 0 14px !important;
+  font-size: 0.78rem !important;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .mobileMenuBtn {
@@ -341,7 +357,7 @@ h4 {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  min-width: 128px;
+  min-width: 124px;
   padding: 5px;
   background: var(--surface);
   border: 1px solid var(--line-strong);
@@ -358,9 +374,9 @@ h4 {
   background: transparent;
   border: 0;
   border-radius: var(--radius-sm);
-  padding: 8px 10px;
+  padding: 7px 10px;
   text-align: left;
-  font-size: 0.8125rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--ink-2);
   cursor: pointer;
@@ -373,7 +389,7 @@ h4 {
 
 .themeMenu button.active {
   background: var(--accent-soft);
-  color: var(--accent);
+  color: var(--accent-text);
   font-weight: 700;
 }
 
@@ -384,7 +400,7 @@ main {
   width: 100%;
   max-width: 1240px;
   margin: 0 auto;
-  padding: 28px 28px 64px;
+  padding: 24px 28px 60px;
 }
 
 .page {
@@ -393,13 +409,13 @@ main {
 
 .page.active {
   display: block;
-  animation: rdmFadeUp 0.2s var(--ease);
+  animation: rdmFadeUp 0.18s var(--ease);
 }
 
 @keyframes rdmFadeUp {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(5px);
   }
   to {
     opacity: 1;
@@ -416,16 +432,18 @@ a.primary {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 44px;
+  min-height: 42px;
   padding: 0 20px;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   background: var(--accent);
   color: var(--accent-ink);
   font-family: var(--font-ui);
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   font-weight: 700;
   text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
   cursor: pointer;
   transition: background-color 0.16s var(--ease), transform 0.14s var(--ease);
 }
@@ -447,16 +465,18 @@ a.secondary {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 44px;
-  padding: 0 18px;
+  min-height: 42px;
+  padding: 0 16px;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
   background: var(--surface);
   color: var(--ink);
   font-family: var(--font-ui);
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   font-weight: 700;
   text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
   cursor: pointer;
   transition: background-color 0.16s var(--ease), border-color 0.16s var(--ease);
 }
@@ -482,7 +502,7 @@ button.wide {
   border: 1px solid var(--line-strong);
   background: var(--surface);
   color: var(--ink-2);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 700;
   text-decoration: none;
   cursor: pointer;
@@ -507,7 +527,7 @@ button.wide {
 .secondary.dangerBtn,
 .deleteConfirmBtn {
   color: var(--danger);
-  border-color: rgba(185, 28, 28, 0.32);
+  border-color: rgba(185, 28, 28, 0.35);
 }
 
 .tinyBtn.deleteBtn:hover,
@@ -523,15 +543,15 @@ button.wide {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 16px;
+  gap: 14px;
   flex-wrap: wrap;
-  padding-bottom: 14px;
-  margin-bottom: 20px;
+  padding-bottom: 12px;
+  margin-bottom: 18px;
   border-bottom: 1px solid var(--line);
 }
 
 .sectionHead.subHead {
-  margin-top: 34px;
+  margin-top: 32px;
 }
 
 .sectionHead > div > span,
@@ -541,9 +561,9 @@ button.wide {
 .adminModuleHead > span {
   display: inline-block;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.69rem;
   font-weight: 700;
-  letter-spacing: 0.11em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   color: var(--brass);
   margin-bottom: 4px;
@@ -555,87 +575,65 @@ button.wide {
 .sectionHead h2,
 .leadTitle h2,
 .rdmSeoIntro h2 {
-  font-size: clamp(1.65rem, 2.7vw, 2.25rem);
-  font-weight: 700;
-  text-transform: uppercase;
+  font-size: clamp(1.28rem, 2.2vw, 1.72rem);
+  font-weight: 800;
   color: var(--ink);
 }
 
 .sectionHead p {
   margin: 4px 0 0;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   color: var(--muted);
 }
 
 .v62Help {
-  margin: -8px 0 18px;
-  font-size: 0.9rem;
+  margin: -6px 0 16px;
+  font-size: 0.88rem;
   color: var(--muted);
 }
 
-/* ==================== HERO SHOWCASE (EDITORIAL PAVILION CARBON) ==================== */
+/* ==================== DESKTOP-CALIBER SPLIT STADIUM HERO ==================== */
 
 .hero {
   position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  background: #090A0D;
-  color: #F5F3EF;
-  border: 1px solid rgba(245, 158, 11, 0.24);
-  box-shadow: var(--shadow-lg);
-}
-
-.heroBackdrop {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.heroBackdrop img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 45%;
-  opacity: 0.44;
-}
-
-.heroBackdrop::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(106deg, rgba(9, 10, 13, 0.96) 0%, rgba(28, 13, 20, 0.85) 52%, rgba(9, 10, 13, 0.92) 100%),
-    radial-gradient(circle at 82% 20%, rgba(225, 29, 72, 0.2), transparent 50%);
+  box-shadow: var(--shadow-sm);
 }
 
 .heroInner.heroEditorial {
-  position: relative;
-  z-index: 2;
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(290px, 0.92fr);
-  align-items: center;
-  gap: 36px;
-  padding: 52px 48px;
+  grid-template-columns: minmax(0, 1.24fr) minmax(290px, 0.96fr);
+  align-items: stretch;
+  gap: 0;
+}
+
+.heroCopy {
+  padding: 34px 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .hero .eyebrow {
-  margin: 0 0 14px;
+  margin: 0 0 10px;
   font-family: var(--font-mono);
-  font-size: 0.76rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #F59E0B;
+  color: var(--brass);
 }
 
 .hero h1 {
   font-family: var(--font-display);
-  font-size: clamp(2.85rem, 6vw, 4.7rem);
-  font-weight: 700;
-  line-height: 0.96;
-  text-transform: uppercase;
-  letter-spacing: 0.005em;
-  color: #FFFFFF;
+  font-size: clamp(1.85rem, 3.6vw, 3.05rem);
+  font-weight: 800;
+  line-height: 1.04;
+  color: var(--ink);
+  letter-spacing: -0.025em;
 }
 
 .hero h1 span {
@@ -645,147 +643,163 @@ button.wide {
 .hero h1 em {
   display: block;
   font-style: normal;
-  color: #F43F5E;
-  margin-top: 4px;
+  font-weight: 700;
+  color: var(--accent-text);
+  margin-top: 2px;
 }
 
 .heroTeam {
-  margin: 18px 0 8px;
+  margin: 14px 0 6px;
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: #EAE6DF;
+  color: var(--ink-2);
 }
 
 .heroMotto {
-  margin: 0 0 26px;
-  max-width: 560px;
-  font-size: 1rem;
-  line-height: 1.65;
-  color: #D6D1C9;
+  margin: 0 0 22px;
+  max-width: 56ch;
+  font-size: 0.94rem;
+  line-height: 1.6;
+  color: var(--muted);
 }
 
 .actions.homeActions {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-}
-
-.hero .primary {
-  background: #E11D48;
-  color: #FFFFFF;
-  border-color: #E11D48;
-}
-
-.hero .primary:hover {
-  background: #BE123C;
-}
-
-.hero .secondary {
-  background: rgba(255, 255, 255, 0.08);
-  color: #FFFFFF;
-  border-color: rgba(255, 255, 255, 0.28);
-}
-
-.hero .secondary:hover {
-  background: rgba(255, 255, 255, 0.16);
+  gap: 10px;
 }
 
 .heroTextLink {
-  margin-left: 6px;
-  font-size: 0.875rem;
+  margin-left: 4px;
+  font-size: 0.84rem;
   font-weight: 700;
-  color: #FCD34D;
+  color: var(--accent-text);
   text-decoration: none;
-  border-bottom: 1px solid rgba(252, 211, 77, 0.45);
+  border-bottom: 1px solid currentColor;
   padding-bottom: 2px;
+  white-space: nowrap;
 }
 
 .heroTextLink:hover {
-  color: #FFFFFF;
-  border-bottom-color: #FFFFFF;
+  color: var(--accent-hover);
 }
 
-/* Pavilion Dossier Card inside Hero */
+/* Right Architectural Pavilion Photo & Almanac Frame */
 .heroPavilionCard {
-  background: rgba(14, 15, 20, 0.88);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(245, 158, 11, 0.28);
-  border-radius: var(--radius-md);
-  padding: 22px;
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  justify-content: flex-end;
+  min-height: 360px;
+  border-left: 1px solid var(--line);
+  background: var(--hero-card-bg);
+  color: #F8FAFC;
 }
 
-.heroPavilionHead {
+.heroBackdrop {
+  position: relative;
+  flex: 1 1 auto;
+  overflow: hidden;
+  min-height: 205px;
+}
+
+.heroBackdrop img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+
+.heroBackdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--hero-scrim);
+  pointer-events: none;
+}
+
+.heroPavilionOverlayHead {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 14px;
+  z-index: 2;
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(245, 243, 239, 0.14);
+  gap: 11px;
 }
 
 .heroCrestThumb {
-  width: 54px;
-  height: 54px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
   background: #FFFFFF;
-  border: 2px solid #E11D48;
+  border: 2px solid rgba(248, 250, 252, 0.8);
   flex-shrink: 0;
 }
 
 .heroPavilionKicker {
   display: block;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.11em;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #F59E0B;
   margin-bottom: 2px;
 }
 
-.heroPavilionHead strong {
+.heroPavilionOverlayHead strong {
   font-family: var(--font-display);
-  font-size: 1.38rem;
-  text-transform: uppercase;
+  font-size: 1.24rem;
+  font-weight: 700;
   color: #FFFFFF;
-  letter-spacing: 0.03em;
+  line-height: 1.05;
+}
+
+.heroPavilionLedger {
+  background: #0B1426;
+  border-top: 1px solid rgba(226, 232, 240, 0.14);
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .heroPavilionStats {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
 }
 
 .heroPavStat {
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(245, 243, 239, 0.12);
+  padding-bottom: 7px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.12);
 }
 
 .heroPavStat strong {
   display: block;
   font-family: var(--font-display);
-  font-size: 1.4rem;
-  color: #FCD34D;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #F8FAFC;
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
 
 .heroPavStat span {
   display: block;
-  margin-top: 3px;
-  font-size: 0.74rem;
-  font-weight: 600;
-  color: #D6D1C9;
+  margin-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #94A3B8;
 }
 
 .heroPavilionFoot {
@@ -793,8 +807,6 @@ button.wide {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(245, 243, 239, 0.14);
 }
 
 .heroPavLink {
@@ -802,11 +814,11 @@ button.wide {
   border: 0;
   padding: 0;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #FCD34D;
+  color: #F59E0B;
   text-decoration: none;
   cursor: pointer;
 }
@@ -815,25 +827,25 @@ button.wide {
   color: #FFFFFF;
 }
 
-/* ==================== ARCHITECTURAL 4-COLUMN STAT RIBBON ==================== */
+/* ==================== 4-COLUMN ALMANAC METRICS RIBBON ==================== */
 
 .metrics {
-  margin-top: 20px;
+  margin-top: 18px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  box-shadow: var(--shadow-sm);
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
 .metricItem {
-  padding: 20px 22px;
+  padding: 16px 20px;
   border-right: 1px solid var(--line);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .metricItem:last-child {
@@ -842,51 +854,52 @@ button.wide {
 
 .metricItem strong {
   font-family: var(--font-display);
-  font-size: 2.2rem;
-  font-weight: 700;
-  line-height: 1;
+  font-size: 1.85rem;
+  font-weight: 800;
+  line-height: 1.05;
   color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
 
 .metricItem span {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
-/* ==================== HOME MATCH HUB, COUNTDOWN & UPDATES ==================== */
+/* ==================== HOME MATCH HUB, COUNTDOWN & DISPATCHES ==================== */
 
 .homeMatchHub {
-  margin-top: 24px;
+  margin-top: 20px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  gap: 16px;
 }
 
 .miniMatch {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 22px 24px;
+  padding: 20px 22px;
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
 }
 
 .miniMatch b {
-  font-size: 1.08rem;
-  font-weight: 800;
+  font-family: var(--font-display);
+  font-size: 1.24rem;
+  font-weight: 700;
   color: var(--ink);
-  line-height: 1.35;
+  line-height: 1.2;
 }
 
 .miniMatch span {
-  font-size: 0.875rem;
+  font-size: 0.86rem;
   color: var(--muted);
 }
 
@@ -897,11 +910,11 @@ button.wide {
   background: none;
   border: 0;
   font-family: var(--font-mono);
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   cursor: pointer;
 }
 
@@ -910,16 +923,17 @@ button.wide {
 }
 
 .countdownTimer {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  gap: 8px;
-  margin: 6px 0 4px;
-  flex-wrap: wrap;
+  gap: 5px;
+  max-width: 340px;
+  margin: 8px 0 4px;
 }
 
 .cdUnit {
-  min-width: 62px;
-  padding: 10px 8px;
+  min-width: 0;
+  padding: 8px 4px;
   background: var(--subtle);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
@@ -929,10 +943,10 @@ button.wide {
 .cdUnit strong {
   display: block;
   font-family: var(--font-mono);
-  font-size: 1.45rem;
+  font-size: clamp(1.08rem, 2.4vw, 1.34rem);
   font-weight: 700;
   line-height: 1;
-  color: var(--accent);
+  color: var(--accent-text);
   font-variant-numeric: tabular-nums;
 }
 
@@ -940,9 +954,9 @@ button.wide {
   display: block;
   margin-top: 4px;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -950,21 +964,52 @@ button.wide {
 .cdSep {
   font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: var(--muted);
+  text-align: center;
 }
 
 .countdown {
   font-family: var(--font-mono);
-  font-size: 0.76rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 700;
   color: var(--brass);
 }
 
 #noticeBanner {
-  margin-top: 20px;
+  margin-top: 16px;
   background: var(--surface);
   border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.noticeBannerMain {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.noticeBannerMain strong {
+  font-size: 0.92rem;
+  color: var(--ink);
+}
+
+.noticeBannerMain span {
+  font-size: 0.84rem;
+  color: var(--muted);
+}
+
+#homeUpdateHub {
+  margin-top: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: var(--radius-md);
   padding: 16px 20px;
   display: flex;
@@ -974,96 +1019,67 @@ button.wide {
   flex-wrap: wrap;
 }
 
-.noticeBannerMain {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 0;
-}
-
-.noticeBannerMain strong {
-  font-size: 0.96rem;
-  color: var(--ink);
-}
-
-.noticeBannerMain span {
-  font-size: 0.86rem;
-  color: var(--muted);
-}
-
-#homeUpdateHub {
-  margin-top: 18px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  padding: 18px 22px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  flex-wrap: wrap;
-}
-
 .homeUpdateTag {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.69rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .homeUpdatePreview {
   margin: 4px 0;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--ink-2);
 }
 
 .homeUpdateTime {
   font-family: var(--font-mono);
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   color: var(--muted);
 }
 
 /* ==================== LEADERSHIP & HERITAGE ==================== */
 
 .homeLeadership {
-  margin-top: 40px;
+  margin-top: 34px;
 }
 
 .leadTitle {
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .leadGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  gap: 16px;
 }
 
 .leadCard {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 20px 22px;
+  padding: 18px 20px;
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 15px;
   box-shadow: var(--shadow-sm);
+  cursor: pointer;
   transition: border-color 0.16s var(--ease), transform 0.16s var(--ease);
 }
 
 .leadCard:hover {
-  border-color: var(--accent);
+  border-color: var(--accent-text);
   transform: translateY(-1px);
 }
 
 .leadCard img {
-  width: 78px;
-  height: 78px;
+  width: 62px;
+  height: 62px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid var(--accent);
+  border: 2px solid var(--accent-text);
   background: #FFFFFF;
   flex-shrink: 0;
 }
@@ -1071,28 +1087,27 @@ button.wide {
 .leadRole {
   display: inline-block;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   color: var(--brass);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .leadMeta h3 {
-  font-size: 1.55rem;
-  text-transform: uppercase;
+  font-size: 1.24rem;
   color: var(--ink);
 }
 
 .leadMeta p {
-  margin: 4px 0 0;
-  font-size: 0.875rem;
+  margin: 3px 0 0;
+  font-size: 0.84rem;
   color: var(--muted);
 }
 
 .rdmHeritageGrid {
-  margin-top: 40px;
+  margin-top: 34px;
   display: grid;
   grid-template-columns: minmax(280px, 0.92fr) minmax(0, 1.35fr);
   gap: 0;
@@ -1105,8 +1120,8 @@ button.wide {
 }
 
 .heritageMedia {
-  min-height: 290px;
-  background: #090A0D;
+  min-height: 270px;
+  background: #0B1426;
   overflow: hidden;
 }
 
@@ -1117,37 +1132,34 @@ button.wide {
 }
 
 .rdmSeoIntro {
-  padding: 30px 32px;
+  padding: 28px 32px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
 .rdmSeoIntro p {
-  margin: 12px 0 0;
-  font-size: 0.94rem;
+  margin: 10px 0 0;
+  font-size: 0.9rem;
   color: var(--ink-2);
+  max-width: 65ch;
 }
 
 .clubFactsGrid {
-  margin-top: 20px;
+  margin-top: 18px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.clubFactItem {
-  padding: 12px 14px;
-  background: var(--subtle);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
+  gap: 10px 18px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
 }
 
 .clubFactItem span {
   display: block;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 600;
+  font-size: 0.65rem;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -1156,19 +1168,19 @@ button.wide {
 .clubFactItem strong {
   display: block;
   margin-top: 2px;
-  font-size: 0.92rem;
-  font-weight: 800;
+  font-size: 0.88rem;
+  font-weight: 700;
   color: var(--ink);
 }
 
 .rdmSeoNames {
-  margin-top: 16px !important;
-  font-size: 0.84rem !important;
+  margin-top: 12px !important;
+  font-size: 0.82rem !important;
   color: var(--muted) !important;
 }
 
 .clubQuickLinks {
-  margin-top: 18px;
+  margin-top: 16px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -1181,15 +1193,15 @@ button.wide {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  gap: 12px;
   flex-wrap: wrap;
   margin-bottom: 12px;
 }
 
 .squadSearchWrap {
   position: relative;
-  flex: 1 1 280px;
-  min-width: 220px;
+  flex: 1 1 260px;
+  min-width: 210px;
 }
 
 .squadSearchIcon {
@@ -1197,26 +1209,26 @@ button.wide {
   left: 13px;
   top: 50%;
   transform: translateY(-50%);
-  width: 17px;
-  height: 17px;
+  width: 16px;
+  height: 16px;
   color: var(--muted);
   pointer-events: none;
 }
 
 .searchPlayer {
   width: 100%;
-  height: 44px;
-  padding: 0 38px 0 40px;
+  height: 42px;
+  padding: 0 36px 0 38px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
   background: var(--surface);
   color: var(--ink);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
 }
 
 .searchPlayer:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: var(--accent-text);
 }
 
 .squadSearchClear {
@@ -1224,13 +1236,13 @@ button.wide {
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: var(--radius-sm);
   border: 0;
   background: var(--subtle);
   color: var(--ink);
-  font-size: 1.05rem;
+  font-size: 1rem;
   cursor: pointer;
 }
 
@@ -1242,7 +1254,11 @@ button.wide {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  background: var(--subtle);
+  border: 1px solid var(--line);
 }
 
 .squadRoleBtn,
@@ -1251,16 +1267,17 @@ button.wide {
 .recordTypeBtn,
 .albumTab {
   appearance: none;
-  min-height: 36px;
-  padding: 0 13px;
+  min-height: 32px;
+  padding: 0 12px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--line-strong);
-  background: var(--surface);
-  color: var(--ink-2);
-  font-size: 0.8125rem;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.78rem;
   font-weight: 700;
+  white-space: nowrap;
   cursor: pointer;
-  transition: background-color 0.15s var(--ease), color 0.15s var(--ease), border-color 0.15s var(--ease);
+  transition: background-color 0.15s var(--ease), color 0.15s var(--ease), box-shadow 0.15s var(--ease);
 }
 
 .squadRoleBtn:hover,
@@ -1268,7 +1285,6 @@ button.wide {
 .seasonFilterBtn:hover,
 .recordTypeBtn:hover,
 .albumTab:hover {
-  background: var(--subtle);
   color: var(--ink);
 }
 
@@ -1277,50 +1293,54 @@ button.wide {
 .seasonFilterBtn.on,
 .recordTypeBtn.on,
 .albumTab.on {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-ink);
+  background: var(--surface);
+  color: var(--accent-text);
+  box-shadow: var(--shadow-sm);
 }
 
 .squadFilterStatus {
-  margin: 0 0 16px;
+  margin: 0 0 14px;
   font-family: var(--font-mono);
-  font-size: 0.76rem;
-  font-weight: 600;
+  font-size: 0.73rem;
+  font-weight: 700;
   color: var(--muted);
 }
 
 .players {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 14px;
 }
 
 .player {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 20px;
+  padding: 16px 18px;
   display: flex;
-  gap: 18px;
+  gap: 14px;
   align-items: flex-start;
   box-shadow: var(--shadow-sm);
   transition: border-color 0.16s var(--ease), box-shadow 0.16s var(--ease);
 }
 
+.player.clickablePlayer {
+  cursor: pointer;
+}
+
 .player.clickablePlayer:hover {
-  border-color: var(--accent);
+  border-color: var(--accent-text);
   box-shadow: var(--shadow-md);
 }
 
 .player .photo,
 .player img.photo {
-  width: 78px;
-  height: 78px;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
   object-fit: cover;
   background: #FFFFFF;
-  border: 2px solid var(--line-strong);
+  border: 1.5px solid var(--line-strong);
   flex-shrink: 0;
 }
 
@@ -1333,11 +1353,11 @@ button.wide {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 6px 10px;
-  margin-bottom: 5px;
+  gap: 5px 8px;
+  margin-bottom: 4px;
 }
 
-/* ZERO-PILL DISCIPLINE: Static metadata is inline mono/uppercase typography, never bordered pills */
+/* ZERO-PILL DISCIPLINE: Static metadata rendered cleanly without bordered pill capsules */
 .simplePlayerId,
 .jerseyTag,
 .leadershipBadge,
@@ -1354,11 +1374,11 @@ button.wide {
 .downloadBadge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   padding: 0;
   border: 0;
@@ -1371,7 +1391,7 @@ button.wide {
 .v62Chip,
 .portalLockPill,
 .downloadBadge {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .leadershipBadge,
@@ -1386,37 +1406,36 @@ button.wide {
 }
 
 .player .pbody h3 {
-  font-size: 1.52rem;
-  text-transform: uppercase;
+  font-size: 1.18rem;
   color: var(--ink);
   margin-bottom: 2px;
 }
 
 .player .pbody b {
   display: block;
-  font-size: 0.875rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  color: var(--accent);
-  margin-bottom: 4px;
+  color: var(--accent-text);
+  margin-bottom: 3px;
 }
 
 .player .pbody p {
   margin: 0;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--muted);
 }
 
 .squadNick {
-  margin-top: 4px !important;
+  margin-top: 3px !important;
   font-style: italic;
   color: var(--ink-2) !important;
 }
 
 .squadStatLines {
-  margin-top: 8px;
+  margin-top: 6px;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 700;
   color: var(--ink-2);
 }
 
@@ -1424,33 +1443,33 @@ button.wide {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .squadCardActions {
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 12px;
+  gap: 6px;
+  margin-top: 10px;
 }
 
 .squadStatsPanel {
-  margin-top: 12px;
-  padding-top: 12px;
+  margin-top: 10px;
+  padding-top: 10px;
   border-top: 1px solid var(--line);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .squadStatsGroupTitle {
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
 .squadStatsGrid {
@@ -1461,7 +1480,7 @@ button.wide {
 
 .squadStatsGrid > div,
 .playerPortalStatsGrid > div {
-  padding: 7px 8px;
+  padding: 7px 6px;
   border-radius: var(--radius-sm);
   background: var(--subtle);
   border: 1px solid var(--line);
@@ -1472,7 +1491,7 @@ button.wide {
 .playerPortalStatsGrid strong {
   display: block;
   font-family: var(--font-mono);
-  font-size: 0.98rem;
+  font-size: 0.92rem;
   font-weight: 700;
   color: var(--ink);
   font-variant-numeric: tabular-nums;
@@ -1481,7 +1500,7 @@ button.wide {
 .squadStatsGrid span,
 .playerPortalStatsGrid span {
   display: block;
-  font-size: 0.66rem;
+  font-size: 0.64rem;
   font-weight: 700;
   text-transform: uppercase;
   color: var(--muted);
@@ -1497,7 +1516,7 @@ button.wide {
   border: 1px solid var(--line-strong);
   background: var(--subtle);
   color: var(--ink);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 700;
   cursor: pointer;
 }
@@ -1507,7 +1526,7 @@ button.wide {
 .matchSummaryStrip,
 .availSummaryBar {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
   gap: 10px;
   margin-bottom: 16px;
 }
@@ -1516,7 +1535,7 @@ button.wide {
 .availSummaryStat {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   padding: 12px 14px;
 }
 
@@ -1524,18 +1543,19 @@ button.wide {
 .availSummaryStat strong {
   display: block;
   font-family: var(--font-display);
-  font-size: 1.65rem;
+  font-size: 1.5rem;
+  font-weight: 800;
   color: var(--ink);
-  line-height: 1;
+  line-height: 1.05;
   font-variant-numeric: tabular-nums;
 }
 
 .matchSummaryItem span,
 .availSummaryStat span {
   display: block;
-  margin-top: 4px;
+  margin-top: 3px;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1552,8 +1572,8 @@ button.wide {
 
 .list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
   margin-top: 14px;
 }
 
@@ -1568,19 +1588,18 @@ button.wide {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 20px;
+  padding: 18px 20px;
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 9px;
 }
 
 .card h3,
 .proTitle,
 .recordCard h3,
 .tournamentCard h3 {
-  font-size: 1.38rem;
-  text-transform: uppercase;
+  font-size: 1.18rem;
   color: var(--ink);
 }
 
@@ -1596,13 +1615,17 @@ button.wide {
 }
 
 .scoreLine {
-  padding: 10px 12px;
+  padding: 9px 12px;
   border-radius: var(--radius-sm);
   background: var(--subtle);
+  border: 1px solid var(--line);
   font-family: var(--font-mono);
-  font-size: 0.9rem;
+  font-size: 0.84rem;
   font-weight: 700;
   color: var(--ink);
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1617,27 +1640,27 @@ button.wide {
 .proNote,
 .contentTime,
 .v62Note {
-  font-size: 0.84rem;
+  font-size: 0.83rem;
   color: var(--muted);
 }
 
 .matchScorecardAccordion {
   margin-top: 4px;
   border-top: 1px solid var(--line);
-  padding-top: 10px;
+  padding-top: 9px;
 }
 
 .matchScorecardAccordion summary {
   cursor: pointer;
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .matchScorecardBody {
-  margin-top: 10px;
+  margin-top: 8px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -1647,7 +1670,7 @@ button.wide {
   padding: 8px 10px;
   border-radius: var(--radius-sm);
   background: var(--subtle);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: var(--ink-2);
 }
 
@@ -1659,12 +1682,12 @@ button.wide {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: auto;
-  padding-top: 6px;
+  padding-top: 4px;
 }
 
 .proMiniMap {
   width: 100%;
-  height: 160px;
+  height: 150px;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
 }
@@ -1686,30 +1709,31 @@ button.wide {
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .leaderboardSection {
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
 }
 
 .leaderCard strong {
   font-family: var(--font-display);
-  font-size: 2rem;
-  color: var(--accent);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--accent-text);
   font-variant-numeric: tabular-nums;
 }
 
 .recordValue {
   font-family: var(--font-display);
-  font-size: 1.85rem;
-  font-weight: 700;
-  color: var(--accent);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--accent-text);
   font-variant-numeric: tabular-nums;
 }
 
 .statsTableScroll {
-  margin-top: 18px;
+  margin-top: 16px;
   overflow-x: auto;
   background: var(--surface);
   border: 1px solid var(--line);
@@ -1720,15 +1744,15 @@ button.wide {
 .statsLeaderboardTable {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.875rem;
+  font-size: 0.84rem;
   font-variant-numeric: tabular-nums;
 }
 
 .statsLeaderboardTable th {
-  padding: 12px 14px;
+  padding: 11px 14px;
   text-align: left;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1739,7 +1763,7 @@ button.wide {
 }
 
 .statsLeaderboardTable td {
-  padding: 12px 14px;
+  padding: 10px 14px;
   border-bottom: 1px solid var(--line);
   color: var(--ink-2);
 }
@@ -1762,38 +1786,38 @@ button.wide {
 .statsHighlightVal {
   font-family: var(--font-mono);
   font-weight: 700;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 /* ==================== PLAYING XI & AVAILABILITY ==================== */
 
 .xiGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
   gap: 8px;
 }
 
 .xiOrder {
-  padding: 8px 11px;
+  padding: 8px 10px;
   border-radius: var(--radius-sm);
   background: var(--subtle);
   border: 1px solid var(--line);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 700;
   color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
 
 .xiSubsRow {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: var(--muted);
-  padding-top: 6px;
+  padding-top: 8px;
   border-top: 1px solid var(--line);
 }
 
 .availabilityList {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
   gap: 10px;
 }
 
@@ -1801,7 +1825,7 @@ button.wide {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  padding: 12px 14px;
+  padding: 11px 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1810,12 +1834,12 @@ button.wide {
 
 .availabilityPlayerInfo strong {
   display: block;
-  font-size: 0.94rem;
+  font-size: 0.9rem;
   color: var(--ink);
 }
 
 .availabilityPlayerInfo span {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: var(--muted);
 }
 
@@ -1831,8 +1855,8 @@ button.wide {
 
 .honours {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
+  gap: 16px;
 }
 
 .honour {
@@ -1849,30 +1873,29 @@ button.wide {
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  background: #090A0D;
+  background: var(--trophy-stage);
   border-bottom: 1px solid var(--line);
 }
 
 .honour .badge {
   align-self: flex-start;
-  margin: 16px 18px 0;
+  margin: 14px 18px 0;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.09em;
   color: var(--brass);
 }
 
 .honour h3 {
-  margin: 4px 18px 4px;
-  font-size: 1.5rem;
-  text-transform: uppercase;
+  margin: 3px 18px 4px;
+  font-size: 1.28rem;
   color: var(--ink);
 }
 
 .honour p {
-  margin: 0 18px 18px;
-  font-size: 0.9rem;
+  margin: 0 18px 16px;
+  font-size: 0.86rem;
   color: var(--muted);
 }
 
@@ -1880,24 +1903,24 @@ button.wide {
 
 .socialGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+  gap: 14px;
 }
 
 .socialCard {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 20px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   box-shadow: var(--shadow-sm);
 }
 
 .socialIcon {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: var(--radius-sm);
   background: var(--subtle);
   display: inline-flex;
@@ -1906,8 +1929,8 @@ button.wide {
 }
 
 .socialBrandSvg {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
 }
 
 .socialActions {
@@ -1919,9 +1942,9 @@ button.wide {
 
 .gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
-  margin-top: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
 }
 
 .galleryCard {
@@ -1941,9 +1964,9 @@ button.wide {
 }
 
 .galleryAlbumName {
-  margin: 12px 14px 2px;
+  margin: 10px 14px 2px;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1951,21 +1974,21 @@ button.wide {
 }
 
 .galleryNote {
-  margin: 0 14px 8px;
-  font-size: 0.9rem;
+  margin: 0 14px 6px;
+  font-size: 0.86rem;
   font-weight: 700;
   color: var(--ink);
 }
 
 .galleryDateTime {
-  margin: 0 14px 12px;
+  margin: 0 14px 10px;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: var(--muted);
 }
 
 .galleryAdminActions {
-  padding: 0 14px 14px;
+  padding: 0 14px 12px;
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
@@ -1975,56 +1998,56 @@ button.wide {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  padding: 32px;
+  padding: 28px;
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 26px;
   box-shadow: var(--shadow-sm);
 }
 
 .downloadAppCard img {
-  width: 124px;
-  height: 124px;
+  width: 104px;
+  height: 104px;
   border-radius: 50%;
   object-fit: cover;
   background: #FFFFFF;
-  border: 2px solid var(--accent);
+  border: 2px solid var(--accent-text);
   flex-shrink: 0;
 }
 
 .downloadBadge {
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .downloadAppCopy h2 {
-  font-size: 1.95rem;
-  text-transform: uppercase;
-  margin-bottom: 8px;
+  font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+  margin-bottom: 6px;
 }
 
 .downloadAppCopy p {
-  margin: 0 0 18px;
+  margin: 0 0 14px;
   color: var(--ink-2);
-  max-width: 640px;
+  font-size: 0.9rem;
+  max-width: 65ch;
 }
 
 .downloadBtnRow {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .downloadAppCopy small {
   display: block;
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
 }
 
 /* ==================== PLAYER PORTAL & PASSWORD LOCK GATES ==================== */
 
 .playerLockGateWrap {
-  max-width: 480px;
+  max-width: 460px;
   margin: 24px auto;
 }
 
@@ -2032,7 +2055,7 @@ button.wide {
   background: var(--surface);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-lg);
-  padding: 28px;
+  padding: 26px;
   box-shadow: var(--shadow-md);
 }
 
@@ -2040,37 +2063,37 @@ button.wide {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .playerLockAvatar {
-  width: 60px;
-  height: 60px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   object-fit: cover;
   background: #FFFFFF;
-  border: 2px solid var(--accent);
+  border: 2px solid var(--accent-text);
   flex-shrink: 0;
 }
 
 .playerLockDesc {
-  margin: 0 0 18px;
-  font-size: 0.9rem;
+  margin: 0 0 16px;
+  font-size: 0.88rem;
   color: var(--muted);
 }
 
 .playerLockForm {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
 .playerLockField span {
   display: block;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 700;
   color: var(--ink-2);
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
 .playerPwInputRow {
@@ -2080,8 +2103,8 @@ button.wide {
 
 .playerPwInputRow input {
   flex: 1 1 auto;
-  height: 44px;
-  padding: 0 14px;
+  height: 42px;
+  padding: 0 12px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
   background: var(--subtle);
@@ -2089,11 +2112,11 @@ button.wide {
 }
 
 .playerLockError {
-  padding: 10px 12px;
+  padding: 9px 12px;
   border-radius: var(--radius-sm);
   background: var(--danger-soft);
   color: var(--danger);
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   font-weight: 700;
 }
 
@@ -2108,27 +2131,27 @@ button.wide {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  padding: 28px;
+  padding: 24px;
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .profileHeroBanner {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
   flex-wrap: wrap;
 }
 
 .profileAvatar {
-  width: 96px;
-  height: 96px;
+  width: 84px;
+  height: 84px;
   border-radius: 50%;
   object-fit: cover;
   background: #FFFFFF;
-  border: 2.5px solid var(--accent);
+  border: 2px solid var(--accent-text);
 }
 
 .profileOfficial {
@@ -2146,14 +2169,14 @@ button.wide {
 
 .identityItem {
   font-family: var(--font-mono);
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: var(--muted);
 }
 
 .profileTagLine {
-  font-size: 0.9rem;
-  color: var(--accent);
+  font-size: 0.86rem;
+  color: var(--accent-text);
   font-weight: 700;
 }
 
@@ -2167,12 +2190,12 @@ button.wide {
 .publicProfileFooterActions {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
 
 .playerPortalStatsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
   gap: 8px;
 }
 
@@ -2180,7 +2203,7 @@ button.wide {
 .profileBioBlock,
 .playerPortalCard,
 .ownSocials {
-  padding: 16px 18px;
+  padding: 16px;
   background: var(--subtle);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
@@ -2200,11 +2223,11 @@ button.wide {
 }
 
 .playerSyncStatusBanner {
-  padding: 12px 14px;
+  padding: 10px 14px;
   border-radius: var(--radius-sm);
   background: var(--win-soft);
   color: var(--win);
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -2219,8 +2242,8 @@ button.wide {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 14px 18px;
-  margin-bottom: 20px;
+  padding: 12px 18px;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2236,40 +2259,39 @@ button.wide {
 
 .adminShell {
   display: grid;
-  grid-template-columns: 248px minmax(0, 1fr);
-  gap: 20px;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 18px;
   align-items: start;
 }
 
 .adminSidebar {
   position: sticky;
-  top: 84px;
+  top: 76px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   box-shadow: var(--shadow-sm);
 }
 
 .adminSideBrand {
-  padding-bottom: 12px;
+  padding-bottom: 10px;
   border-bottom: 1px solid var(--line);
 }
 
 .adminSideBrand strong {
   display: block;
   font-family: var(--font-display);
-  font-size: 1.3rem;
-  text-transform: uppercase;
+  font-size: 1.2rem;
   color: var(--ink);
 }
 
 .adminSideBrand span {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   color: var(--brass);
   text-transform: uppercase;
 }
@@ -2277,19 +2299,20 @@ button.wide {
 .adminSideNav {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .adminSideNav button {
   appearance: none;
   width: 100%;
   text-align: left;
-  padding: 9px 12px;
+  padding: 8px 11px;
+  min-height: 38px;
   border-radius: var(--radius-sm);
   border: 0;
   background: transparent;
   color: var(--ink-2);
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   font-weight: 700;
   cursor: pointer;
   transition: background-color 0.14s var(--ease), color 0.14s var(--ease);
@@ -2298,50 +2321,51 @@ button.wide {
 .adminSideNav button:hover,
 .adminSideNav button.active {
   background: var(--accent-soft);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .adminSideFooter {
-  padding-top: 10px;
+  padding-top: 8px;
   border-top: 1px solid var(--line);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: var(--muted);
 }
 
 .adminWorkspaceMain {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   min-width: 0;
 }
 
 .adminKpiGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 10px;
 }
 
 .adminKpiCard {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 16px 18px;
+  padding: 14px 16px;
 }
 
 .adminKpiCard strong {
   display: block;
   font-family: var(--font-display);
-  font-size: 1.95rem;
+  font-size: 1.7rem;
+  font-weight: 800;
   color: var(--ink);
-  line-height: 1;
+  line-height: 1.05;
   font-variant-numeric: tabular-nums;
 }
 
 .adminKpiCard span {
   display: block;
-  margin-top: 5px;
+  margin-top: 4px;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.66rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -2354,8 +2378,8 @@ button.wide {
 .adminGrid,
 .brandAdminGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
 }
 
 .adminModuleCard,
@@ -2366,25 +2390,25 @@ button.wide {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 18px;
+  padding: 16px;
   box-shadow: var(--shadow-sm);
 }
 
 .accessLinkRowHighlight {
-  border-color: var(--accent);
+  border-color: var(--accent-text);
 }
 
 .brandLogoPreviewRow {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .brandLogoPreviewRow img {
-  width: 56px;
-  height: 56px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   object-fit: cover;
   border: 1.5px solid var(--line-strong);
@@ -2399,8 +2423,8 @@ button.wide {
 .adminEmailActions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
+  gap: 7px;
+  margin-top: 10px;
 }
 
 .adminManagerHead {
@@ -2414,7 +2438,7 @@ button.wide {
 .adminManagerMeta,
 .accessLinkMeta,
 .adminEmailSessionStatus {
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   color: var(--muted);
 }
 
@@ -2422,38 +2446,38 @@ button.wide {
 .accessLinkList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 12px;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .adminManagerRow {
   background: var(--subtle);
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  padding: 12px 14px;
+  padding: 10px 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
 .adminEmailField input,
 .adminEmailInlineForm input {
   width: 100%;
-  height: 40px;
-  padding: 0 12px;
+  height: 38px;
+  padding: 0 11px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
   background: var(--subtle);
 }
 
 .adminEmailStatusBox {
-  padding: 10px 12px;
+  padding: 9px 12px;
   border-radius: var(--radius-sm);
   background: var(--subtle);
   border: 1px solid var(--line);
-  font-size: 0.84rem;
+  font-size: 0.82rem;
 }
 
 .adminEmailStatusBox.is-signed-in {
@@ -2465,12 +2489,12 @@ button.wide {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.86rem;
+  font-size: 0.84rem;
 }
 
 .adminEmailResult {
-  margin-top: 10px;
-  font-size: 0.84rem;
+  margin-top: 8px;
+  font-size: 0.82rem;
   color: var(--ink-2);
 }
 
@@ -2481,124 +2505,126 @@ button.wide {
   width: 100%;
   max-width: 1240px;
   margin: 0 auto;
-  padding: 32px 28px 64px;
+  padding: 24px 28px 60px;
   display: flex;
   flex-direction: column;
-  gap: 36px;
+  gap: 30px;
 }
 
 .portalsHero {
-  position: relative;
-  overflow: hidden;
-  background: #090A0D;
-  color: #FFFFFF;
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  grid-template-columns: minmax(0, 1.24fr) minmax(290px, 0.96fr);
+  align-items: stretch;
 }
 
 .portalsHeroBackdrop {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+  position: relative;
+  min-height: 240px;
+  order: 2;
+  border-left: 1px solid var(--line);
+  background: var(--hero-card-bg);
+  overflow: hidden;
 }
 
 .portalsHeroBackdrop img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.36;
 }
 
 .portalsHeroBackdrop::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(106deg, rgba(9, 10, 13, 0.96) 0%, rgba(28, 13, 20, 0.85) 54%, rgba(9, 10, 13, 0.92) 100%);
+  background: var(--hero-scrim);
 }
 
 .portalsHeroContent {
-  position: relative;
-  z-index: 2;
-  padding: 40px 44px;
+  order: 1;
+  padding: 32px 36px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: space-between;
-  gap: 28px;
-  flex-wrap: wrap;
+  gap: 18px;
 }
 
 .portalsHeroCopy {
-  max-width: 660px;
+  max-width: 58ch;
 }
 
 .portalsHeroCopy h1 {
-  font-size: clamp(2.15rem, 4.2vw, 3.25rem);
-  text-transform: uppercase;
-  color: #FFFFFF;
-  margin: 6px 0 10px;
+  font-size: clamp(1.7rem, 3.2vw, 2.55rem);
+  font-weight: 800;
+  color: var(--ink);
+  margin: 3px 0 8px;
 }
 
 .portalsHeroCopy p {
   margin: 0;
-  color: #D6D1C9;
-  font-size: 0.96rem;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 .portalsHeroMeta {
-  display: flex;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  max-width: 310px;
 }
 
 .portalsStatBox {
-  min-width: 118px;
-  padding: 16px 18px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(245, 158, 11, 0.28);
+  padding: 12px 14px;
+  background: var(--subtle);
+  border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  text-align: center;
 }
 
 .portalsStatBox strong {
   display: block;
   font-family: var(--font-display);
-  font-size: 2.15rem;
-  color: #FCD34D;
-  line-height: 1;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--accent-text);
+  line-height: 1.05;
   font-variant-numeric: tabular-nums;
 }
 
 .portalsStatBox span {
   display: block;
-  margin-top: 4px;
+  margin-top: 3px;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #D6D1C9;
+  color: var(--muted);
 }
 
 .portalsFeaturedGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  gap: 16px;
 }
 
 .portalsPlayerGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(305px, 1fr));
+  gap: 14px;
 }
 
 .portalCard {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 22px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   box-shadow: var(--shadow-sm);
 }
 
@@ -2610,14 +2636,13 @@ button.wide {
 }
 
 .portalCard h3 {
-  font-size: 1.5rem;
-  text-transform: uppercase;
+  font-size: 1.24rem;
   color: var(--ink);
 }
 
 .portalCard p {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 0.86rem;
   color: var(--muted);
 }
 
@@ -2628,8 +2653,8 @@ button.wide {
 }
 
 .portalPlayerTop img {
-  width: 48px;
-  height: 48px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   object-fit: cover;
   background: #FFFFFF;
@@ -2638,13 +2663,13 @@ button.wide {
 }
 
 .portalPlayerInfo h3 {
-  font-size: 1.32rem;
-  margin: 3px 0 1px;
+  font-size: 1.15rem;
+  margin: 2px 0 1px;
 }
 
 .portalPlayerInfo b {
-  font-size: 0.82rem;
-  color: var(--accent);
+  font-size: 0.8rem;
+  color: var(--accent-text);
 }
 
 .portalUrlRow input {
@@ -2655,7 +2680,7 @@ button.wide {
   border: 1px solid var(--line);
   background: var(--subtle);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: var(--ink-2);
 }
 
@@ -2669,7 +2694,7 @@ button.wide {
 /* ==================== MODALS, DIALOGS, LIGHTBOX & EMPTY ==================== */
 
 .empty {
-  padding: 36px 24px;
+  padding: 32px 22px;
   text-align: center;
   background: var(--surface);
   border: 1px dashed var(--line-strong);
@@ -2684,8 +2709,8 @@ button.wide {
   display: none;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  background: rgba(9, 10, 13, 0.76);
+  padding: 18px;
+  background: rgba(7, 12, 24, 0.76);
   backdrop-filter: blur(6px);
 }
 
@@ -2696,43 +2721,42 @@ button.wide {
 .dialog {
   position: relative;
   width: 100%;
-  max-width: 560px;
+  max-width: 540px;
   max-height: 90dvh;
   overflow-y: auto;
   background: var(--surface);
   color: var(--ink);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-lg);
-  padding: 26px 24px 24px;
+  padding: 22px;
   box-shadow: var(--shadow-lg);
 }
 
 .dialog .close {
   position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 36px;
-  height: 36px;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line);
   background: var(--subtle);
   color: var(--ink);
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   line-height: 1;
   cursor: pointer;
 }
 
 .dialog h2 {
-  font-size: 1.6rem;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-  padding-right: 42px;
+  font-size: 1.42rem;
+  margin-bottom: 10px;
+  padding-right: 40px;
 }
 
 .dialog label {
   display: block;
-  margin-bottom: 12px;
-  font-size: 0.82rem;
+  margin-bottom: 11px;
+  font-size: 0.8rem;
   font-weight: 700;
   color: var(--ink-2);
 }
@@ -2742,8 +2766,8 @@ button.wide {
 .dialog textarea {
   display: block;
   width: 100%;
-  margin-top: 5px;
-  padding: 10px 12px;
+  margin-top: 4px;
+  padding: 9px 11px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
   background: var(--subtle);
@@ -2775,17 +2799,17 @@ button.wide {
 }
 
 .proLocStatus {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--muted);
 }
 
 .proMapWrap {
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .proMap {
   width: 100%;
-  height: 200px;
+  height: 190px;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
 }
@@ -2794,25 +2818,25 @@ button.wide {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 14px;
+  margin-top: 12px;
 }
 
 .matchPosterCard {
   background: var(--subtle);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 18px;
+  padding: 16px;
   margin-bottom: 12px;
 }
 
 .posterScore {
   font-family: var(--font-display);
-  font-size: 1.5rem;
-  color: var(--accent);
+  font-size: 1.35rem;
+  color: var(--accent-text);
 }
 
 .posterMeta {
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   color: var(--muted);
 }
 
@@ -2829,30 +2853,30 @@ button.wide {
 
 .light .close {
   position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 40px;
-  height: 40px;
+  top: 18px;
+  right: 18px;
+  width: 38px;
+  height: 38px;
   border-radius: var(--radius-sm);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  background: rgba(9, 10, 13, 0.88);
+  background: rgba(7, 12, 24, 0.88);
   color: #FFFFFF;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   cursor: pointer;
 }
 
 #toast {
   position: fixed;
   left: 50%;
-  bottom: 26px;
+  bottom: 24px;
   transform: translate(-50%, 16px);
   z-index: 120;
   padding: 10px 18px;
   border-radius: var(--radius-sm);
-  background: #161412;
-  color: #FFFFFF;
-  border: 1px solid rgba(245, 158, 11, 0.4);
-  font-size: 0.85rem;
+  background: #0F172A;
+  color: #F8FAFC;
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  font-size: 0.84rem;
   font-weight: 700;
   opacity: 0;
   pointer-events: none;
@@ -2866,11 +2890,11 @@ button.wide {
 
 .backToTop {
   position: fixed;
-  right: 20px;
-  bottom: 22px;
+  right: 18px;
+  bottom: 20px;
   z-index: 70;
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
   background: var(--surface);
@@ -2893,7 +2917,7 @@ button.wide {
 .profileEditRow {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   margin-top: 10px;
 }
 
@@ -2901,7 +2925,7 @@ button.wide {
 .profileEditRow button {
   width: 100%;
   text-align: left;
-  padding: 13px 15px;
+  padding: 12px 14px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
   background: var(--subtle);
@@ -2915,19 +2939,19 @@ button.wide {
 
 .squadEditChoice:hover,
 .profileEditRow button:hover {
-  border-color: var(--accent);
+  border-color: var(--accent-text);
   background: var(--accent-soft);
 }
 
 .squadEditChoice b {
   display: block;
-  font-size: 0.94rem;
+  font-size: 0.9rem;
   color: var(--ink);
 }
 
 .squadEditChoice small {
   display: block;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: var(--muted);
 }
 
@@ -2935,7 +2959,7 @@ button.wide {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin: 12px 0 16px;
+  margin: 10px 0 14px;
 }
 
 .socialManagerRow {
@@ -2943,7 +2967,7 @@ button.wide {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 10px 12px;
+  padding: 9px 12px;
   border-radius: var(--radius-sm);
   background: var(--subtle);
   border: 1px solid var(--line);
@@ -2953,16 +2977,16 @@ button.wide {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px;
+  padding: 10px 12px;
   border-radius: var(--radius-sm);
   background: var(--subtle);
   border: 1px solid var(--line);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .sharePlayerPreview img {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
   background: #FFFFFF;
@@ -2971,14 +2995,14 @@ button.wide {
 .shareUrlBox {
   display: flex;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .shareChannelGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .shareChannelBtn {
@@ -2986,19 +3010,19 @@ button.wide {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 40px;
+  min-height: 38px;
   padding: 0 12px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
   background: var(--subtle);
   color: var(--ink);
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   font-weight: 700;
   text-decoration: none;
 }
 
 .shareChannelBtn:hover {
-  border-color: var(--accent);
+  border-color: var(--accent-text);
 }
 
 .cropStage {
@@ -3009,21 +3033,21 @@ button.wide {
 
 #cropCanvas {
   border-radius: 50%;
-  border: 2px solid var(--accent);
+  border: 2px solid var(--accent-text);
   background: var(--subtle);
   touch-action: none;
 }
 
 .cropHelp {
   margin: 0 0 8px;
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   color: var(--muted);
 }
 
 .authModalSub,
 .profileDownloadNote {
   margin: 0 0 12px;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   color: var(--muted);
 }
 
@@ -3031,12 +3055,12 @@ button.wide {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .installGuideHead img {
-  width: 52px;
-  height: 52px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   object-fit: cover;
   background: #FFFFFF;
@@ -3046,11 +3070,11 @@ button.wide {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   padding: 12px;
   border-radius: var(--radius-sm);
   background: var(--subtle);
-  font-size: 0.86rem;
+  font-size: 0.84rem;
 }
 
 .installGuideActions,
@@ -3058,12 +3082,12 @@ button.wide {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 12px;
+  margin-top: 10px;
 }
 
 .rdmConfirmText {
   margin: 0 0 10px;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   color: var(--ink-2);
 }
 
@@ -3073,17 +3097,17 @@ footer {
   margin-top: auto;
   background: var(--surface);
   border-top: 1px solid var(--line);
-  padding: 36px 24px;
+  padding: 32px 24px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 footer img {
-  width: 50px;
-  height: 50px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   object-fit: cover;
   background: #FFFFFF;
@@ -3092,14 +3116,13 @@ footer img {
 
 footer b {
   font-family: var(--font-display);
-  font-size: 1.3rem;
-  text-transform: uppercase;
+  font-size: 1.32rem;
   color: var(--ink);
 }
 
 footer span {
   font-family: var(--font-mono);
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   color: var(--muted);
 }
 
@@ -3108,7 +3131,7 @@ footer span {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 14px;
+  gap: 12px;
 }
 
 .footerLinks button,
@@ -3116,7 +3139,7 @@ footer span {
   background: none;
   border: 0;
   padding: 2px 4px;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: var(--ink-2);
   text-decoration: none;
@@ -3125,14 +3148,15 @@ footer span {
 
 .footerLinks button:hover,
 .footerLinks a:hover {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
-/* ==================== RESPONSIVE BREAKPOINTS ==================== */
+/* ==================== RESPONSIVE BREAKPOINTS (DESKTOP PARITY) ==================== */
 
 @media (max-width: 1040px) {
   .top {
     padding: 0 16px;
+    gap: 12px;
   }
 
   .mobileMenuBtn {
@@ -3142,7 +3166,7 @@ footer span {
   .nav:not(.portalsTopNav) {
     display: none;
     position: fixed;
-    top: 66px;
+    top: 60px;
     left: 0;
     right: 0;
     padding: 12px 16px 18px;
@@ -3152,7 +3176,7 @@ footer span {
     flex-direction: column;
     align-items: stretch;
     gap: 4px;
-    max-height: calc(100dvh - 66px);
+    max-height: calc(100dvh - 60px);
     overflow-y: auto;
     z-index: 65;
   }
@@ -3177,10 +3201,26 @@ footer span {
     margin-top: 4px;
   }
 
-  .heroInner.heroEditorial {
+  .heroInner.heroEditorial,
+  .portalsHero {
     grid-template-columns: 1fr;
-    padding: 36px 28px;
-    gap: 24px;
+  }
+
+  .heroPavilionCard,
+  .portalsHeroBackdrop {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    min-height: 270px;
+  }
+
+  .portalsHeroBackdrop {
+    order: 1;
+    border-top: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .portalsHeroContent {
+    order: 2;
   }
 
   .adminShell {
@@ -3195,11 +3235,24 @@ footer span {
 @media (max-width: 820px) {
   main,
   .portalsMain {
-    padding: 20px 16px 48px;
+    padding: 18px 14px 44px;
+  }
+
+  .heroCopy,
+  .portalsHeroContent {
+    padding: 24px 20px;
   }
 
   .metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .metricItem {
+    padding: 13px 15px;
+  }
+
+  .metricItem strong {
+    font-size: 1.5rem;
   }
 
   .metricItem:nth-child(2) {
@@ -3220,10 +3273,14 @@ footer span {
     grid-template-columns: 1fr;
   }
 
+  .heritageMedia {
+    min-height: 200px;
+  }
+
   .downloadAppCard {
     flex-direction: column;
     text-align: center;
-    padding: 24px 20px;
+    padding: 22px 18px;
   }
 
   .downloadBtnRow {
@@ -3231,7 +3288,18 @@ footer span {
   }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 600px) {
+  .top {
+    height: 54px;
+    padding: 0 12px;
+    gap: 8px;
+  }
+
+  .nav:not(.portalsTopNav) {
+    top: 54px;
+    max-height: calc(100dvh - 54px);
+  }
+
   .portalsTopNav {
     display: none;
   }
@@ -3240,13 +3308,23 @@ footer span {
     font-size: 1.02rem;
   }
 
-  .heroInner.heroEditorial,
-  .portalsHeroContent {
-    padding: 26px 20px;
+  .headPortalsCta {
+    padding: 0 10px !important;
+    font-size: 0.74rem !important;
   }
 
-  .clubFactsGrid {
-    grid-template-columns: 1fr;
+  .heroCopy,
+  .portalsHeroContent,
+  .rdmSeoIntro {
+    padding: 20px 16px;
+  }
+
+  .heroBackdrop {
+    min-height: 175px;
+  }
+
+  .heroPavilionCard {
+    min-height: 240px;
   }
 
   .players {
@@ -3254,14 +3332,25 @@ footer span {
   }
 
   .player {
-    padding: 16px;
-    gap: 14px;
+    padding: 14px;
+    gap: 12px;
   }
 
   .player .photo,
   .player img.photo {
-    width: 64px;
-    height: 64px;
+    width: 52px;
+    height: 52px;
+  }
+
+  .leadCard img {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+@media (max-width: 360px) {
+  .clubFactsGrid {
+    grid-template-columns: 1fr;
   }
 }
 
