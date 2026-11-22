@@ -18,5 +18,5 @@ window.rdmRequestNotificationPermission=async function(){if(!('Notification' in 
 window.rdmPermissionPreferences=function(){try{return JSON.parse(localStorage.getItem(CONSENT_KEY)||'{}')}catch(_){return {}}};
 
 /* Permission is requested from a clear user action, never automatically on page load. */
-document.addEventListener('click',async function(e){const b=e.target.closest&&e.target.closest('#enableRdmNotifications');if(!b)return;b.disabled=true;const s=await window.rdmRequestNotificationPermission();b.textContent=s==='granted'?'✓ ɴᴏᴛɪꜰɪᴄᴀᴛɪᴏɴꜱ ᴀʟʟᴏᴡᴇᴅ':s==='denied'?'ɴᴏᴛɪꜰɪᴄᴀᴛɪᴏɴꜱ ʙʟᴏᴄᴋᴇᴅ':'ɴᴏᴛɪꜰɪᴄᴀᴛɪᴏɴꜱ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ';b.disabled=false});
+document.addEventListener('click',async function(e){const b=e.target.closest&&e.target.closest('#enableRdmNotifications');if(!b)return;b.disabled=true;const s=await window.rdmRequestNotificationPermission();b.textContent=s==='granted'?'Notifications Allowed':s==='denied'?'Notifications Blocked':'Notifications Unavailable';b.disabled=false});
 })();

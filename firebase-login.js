@@ -1,16 +1,19 @@
 /* RDM Portal Session & Password Lock Controller */
-(function(){
+(function () {
   'use strict';
 
-  window.openPrivateKeyAuthModal = function(){};
+  window.openPrivateKeyAuthModal = function () {};
 
-  window.rdmLogout = function(){
+  window.rdmLogout = function () {
+    if (window.__rdmUrlKeyRole === 'admin') {
+      window.rdmLockAdmin?.();
+      return;
+    }
     if (window.__rdmUrlPlayerId) {
       try { sessionStorage.removeItem('rdm_player_pw_' + window.__rdmUrlPlayerId); } catch (_) {}
     }
     if (window.__rdmUrlKeyRole === 'player' && window.__rdmUrlPlayerId) {
-      window.renderProfile?.();
-      window.toast?.('Profile locked');
+      window.rdmLockPlayer?.(window.__rdmUrlPlayerId);
       return;
     }
     session = null;

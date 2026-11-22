@@ -185,9 +185,15 @@ function mergeSeedPlayers(remoteDocs, profileDocs, uid) {
   sortedProfiles.forEach(pr => {
     const target = list.find(p => p.id === pr.playerId);
     if (!target) return;
-    if (pr.jersey !== undefined && pr.jersey !== null && pr.jersey !== '') target.jersey = String(pr.jersey);
-    if (pr.nick !== undefined && pr.nick !== null && pr.nick !== '') target.nick = String(pr.nick);
-    if (pr.bio !== undefined && pr.bio !== null && pr.bio !== '') target.bio = String(pr.bio);
+    if ('jersey' in pr && pr.jersey !== undefined && pr.jersey !== null) target.jersey = String(pr.jersey);
+    if ('nick' in pr && pr.nick !== undefined && pr.nick !== null) {
+      target.nick = String(pr.nick);
+      target._nickCustom = true;
+    }
+    if ('bio' in pr && pr.bio !== undefined && pr.bio !== null) {
+      target.bio = String(pr.bio);
+      target._bioCustom = true;
+    }
     if ('image' in pr && pr.image !== undefined && pr.image !== null) {
       target.image = isLegacyBrokenImage(pr.image) ? '' : String(pr.image);
     }
@@ -200,8 +206,8 @@ function mergeSeedPlayers(remoteDocs, profileDocs, uid) {
   list.forEach(p => {
     const def = PLAYER_DEFAULTS[p.id];
     if (def) {
-      if (!p.nick) p.nick = def.nick;
-      if (!p.bio) p.bio = def.bio;
+      if (!p._nickCustom && !p.nick) p.nick = def.nick;
+      if (!p._bioCustom && !p.bio) p.bio = def.bio;
     }
   });
 

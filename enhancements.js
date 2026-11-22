@@ -12,13 +12,18 @@ let xRealtimeActive = false;
 function rdmWhen(ms) {
   if (!ms) return '';
   const d = new Date(ms);
-  return '🕒 ' + d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + ' • ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + ' · ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 }
 
 const xdoc = d => ({ ...d.data(), _docId: d.id });
 const xStrip = obj => typeof window.rdmStripDocMeta === 'function' ? window.rdmStripDocMeta(obj) : (() => { const c = { ...(obj || {}) }; delete c._docId; delete c._profileUid; return c; })();
 const xReportErr = (err, label) => typeof window.rdmReportWriteError === 'function' ? window.rdmReportWriteError(err, label) : console.warn(label, err);
 const xCanEditPlayer = id => rdmAdmin() || (window.__rdmUrlKeyRole === 'player' && session?.mode === 'player' && session.playerId === id && (typeof window.rdmIsPlayerUnlocked !== 'function' || window.rdmIsPlayerUnlocked(id)));
+
+function xHasPending(key) {
+  const ov = window.rdmGetOverrides?.();
+  return !!(ov?.xdPending?.[key] && Array.isArray(ov?.xd?.[key]));
+}
 
 function xHydrateLocal() {
   const ov = window.rdmGetOverrides?.();
@@ -29,19 +34,24 @@ function xHydrateLocal() {
   }
 }
 
-function xClearOverride(key) {
+function xClearOverride(key, force = false) {
   window.rdmSetOverrides?.(o => {
+    if (!force && o.xdPending?.[key]) return;
     if (o.xd && key in o.xd) delete o.xd[key];
+    if (o.xdPending && key in o.xdPending) delete o.xdPending[key];
   });
 }
 
-function xSaveOverride(key, arr) {
+function xSaveOverride(key, arr, pending = true) {
   window.rdmSetOverrides?.(o => {
     o.xd = o.xd || {};
     o.xd[key] = arr;
+    o.xdPending = o.xdPending || {};
+    o.xdPending[key] = pending;
   });
 }
 window.xSaveOverride = xSaveOverride;
+window.xClearOverride = xClearOverride;
 
 async function xload() {
   if (typeof rdmDB === 'undefined') return;
@@ -52,11 +62,18 @@ async function xload() {
       rdmDB.collection(XCOL.availability).get(),
       rdmDB.collection(XCOL.lineups).get()
     ]);
-    XD.stats = s.docs.map(xdoc);
-    XD.achievements = a.docs.map(xdoc).sort((x, y) => (y.createdMs || 0) - (x.createdMs || 0));
-    XD.availability = v.docs.map(xdoc);
-    XD.lineups = l.docs.map(xdoc).sort((x, y) => (y.createdMs || 0) - (x.createdMs || 0));
-    ['stats', 'achievements', 'availability', 'lineups'].forEach(xClearOverride);
+    const ov = window.rdmGetOverrides?.();
+    if (xHasPending('stats')) XD.stats = ov.xd.stats;
+    else { XD.stats = s.docs.map(xdoc); xClearOverride('stats'); }
+
+    if (xHasPending('achievements')) XD.achievements = ov.xd.achievements;
+    else { XD.achievements = a.docs.map(xdoc).sort((x, y) => (y.createdMs || 0) - (x.createdMs || 0)); xClearOverride('achievements'); }
+
+    if (xHasPending('availability')) XD.availability = ov.xd.availability;
+    else { XD.availability = v.docs.map(xdoc); xClearOverride('availability'); }
+
+    if (xHasPending('lineups')) XD.lineups = ov.xd.lineups;
+    else { XD.lineups = l.docs.map(xdoc).sort((x, y) => (y.createdMs || 0) - (x.createdMs || 0)); xClearOverride('lineups'); }
   } catch (e) {
     console.warn('Local fallback for enhancements', e?.code || e);
     xHydrateLocal();
@@ -71,6 +88,11 @@ function xStartRealtimeSync() {
   const watch = (col, key, sorter) => {
     try {
       rdmDB.collection(col).onSnapshot(snap => {
+        if (xHasPending(key)) {
+          xHydrateLocal();
+          xrender();
+          return;
+        }
         const docs = snap.docs.map(xdoc);
         XD[key] = sorter ? docs.sort(sorter) : docs;
         xClearOverride(key);
@@ -202,7 +224,7 @@ function renderAchievements() {
   if (!el) return;
   el.innerHTML = XD.achievements.length
     ? XD.achievements.map(a => `<article class="card">
-        <h3>🏆 ${mini(a.title)}</h3>
+        <h3>${mini(a.title)}</h3>
         <p>${mini(a.playerName || 'TEAM')} · ${mini(a.detail || '')}</p>
         ${rdmAdmin() ? `<button class="tinyBtn deleteBtn" onclick="xdelete('${XCOL.achievements}','${a._docId}')">Delete</button>` : ''}
       </article>`).join('')
@@ -330,7 +352,7 @@ function renderPinnedNews() {
   const sorted = [...D.news].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.createdMs || 0) - (a.createdMs || 0));
   n.innerHTML = sorted.length
     ? sorted.map(x => `<article class="card ${x.pinned ? 'pinnedNews' : ''}">
-        ${x.pinned ? '<span class="pinTag">📌 Pinned Announcement</span>' : ''}
+        ${x.pinned ? '<span class="pinTag">Pinned Announcement</span>' : ''}
         <div class="contentTime topTime">${rdmWhen(x.createdMs)}</div>
         <h3>${mini(x.title)}</h3>
         <p class="preserveLines">${mini(x.text)}</p>
@@ -487,7 +509,7 @@ function enhanceMatchCards() {
         <p>${mini(m.date || '')} · ${mini(m.venue || '')}</p>
         ${m.ourScore || m.oppScore ? `<div class="scoreLine"><b>RDM ${esc(m.ourScore || '—')}</b><b>${mini(m.opponent)} ${esc(m.oppScore || '—')}</b></div>` : ''}
         <p class="preserveLines">${mini(m.note || '')}</p>
-        ${m.potm ? `<p>🏅 Player of the Match · ${mini(m.potm)}</p>` : ''}
+        ${m.potm ? `<p>Player of the Match · ${mini(m.potm)}</p>` : ''}
         ${rdmAdmin() ? `<button class="tinyBtn deleteBtn" onclick="xdelete('Matches','${m._docId}')">Delete</button>` : ''}
       </article>`).join('')
     : '<div class="empty">No match added yet</div>';

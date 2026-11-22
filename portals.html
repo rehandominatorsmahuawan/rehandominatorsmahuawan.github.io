@@ -6,13 +6,13 @@
   <title>RDM Portals Directory | Public Website, Admin Panel &amp; Player Profiles</title>
   <meta name="description" content="Central access directory for Rehan Dominators Mahuawan (RDM) — open the Public Website, Admin Panel, or any of the 17 password-protected Player Profile portals.">
   <meta name="robots" content="noindex, nofollow">
-  <meta name="theme-color" content="#C81E2B">
+  <meta name="theme-color" content="#047857">
   <link rel="icon" type="image/png" sizes="192x192" href="pwa-192x192.png?v=7400">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=7400">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,700&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=8.0.0">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=9.0.0">
   <script>
     (function(){
       try {
@@ -31,14 +31,16 @@
 <body class="portalsPage">
   <header class="top">
     <a class="brand" href="./">
-      <img src="assets/rdm-logo.png?v=7400" alt="Rehan Dominators Mahuawan Logo" width="44" height="44" decoding="async" referrerPolicy="no-referrer">
-      <span class="brandTextGroup">
-        <span class="brandTitle">Rehan Dominators Mahuawan</span>
-        <span class="brandSub">Portals &amp; Links Directory</span>
-      </span>
+      <img src="assets/rdm-logo.png?v=7400" alt="Rehan Dominators Mahuawan Logo" width="40" height="40" decoding="async" referrerPolicy="no-referrer">
+      <span class="brandTitle">Rehan Dominators</span>
     </a>
+    <nav class="nav portalsTopNav" aria-label="Portals navigation">
+      <a class="navLink" href="./">Public Website</a>
+      <a class="navLink active" href="portals.html" aria-current="page">Portals Hub</a>
+      <a class="navLink" href="#playerPortalsGrid">Player Portals</a>
+    </nav>
     <div class="headActions">
-      <a class="tinyBtn" href="./">← Public Website</a>
+      <a class="tinyBtn" href="./">Public Site</a>
       <div class="themeControl" id="themeControl">
         <button type="button" class="themeToggle" id="themeToggle" aria-label="Theme" aria-expanded="false">Theme</button>
         <div class="themeMenu" id="themeMenu" hidden>
@@ -55,7 +57,7 @@
       <div class="portalsHeroCopy">
         <span class="sectionKicker">Official RDM Access Hub</span>
         <h1>Club, Admin &amp; Player Portals</h1>
-        <p>Use this directory to jump cleanly between the public fan website, full-control Admin Command Workspace, or any of the 17 password-protected Player Profile portals. Every update syncs live across Web and Android APK.</p>
+        <p>Launch the view-only Public Showcase, open the password-protected Web Admin Workspace, or access any of the 17 squad Player Portals. Verified edits sync live across Web and Android APK.</p>
       </div>
       <div class="portalsHeroMeta">
         <div class="portalsStatBox">
@@ -74,7 +76,7 @@
         <div>
           <span>Core Access</span>
           <h2>Public Website &amp; Admin Control</h2>
-          <p>Separate public showcase and private administrative workspace</p>
+          <p>Strict separation between public match showcase and password-gated club administration</p>
         </div>
       </div>
       <div class="portalsFeaturedGrid">
@@ -96,16 +98,17 @@
 
         <article class="portalCard portalCardFeatured is-admin">
           <div class="portalCardHead">
-            <span class="portalBadge is-admin">Confidential</span>
-            <span class="portalCode">WEB ADMIN KEY</span>
+            <span class="portalBadge is-admin">Restricted Access</span>
+            <span class="portalCode">WEB ADMIN GATE</span>
           </div>
           <h3>RDM Admin Command Workspace</h3>
-          <p>Direct management link for adding/editing players, matches, scorecards, honours, tournaments, team records, gallery albums, updates, branding, and live Firebase data.</p>
+          <p>Password required on open · Separate from APK login. Manage players, fixtures, scorecards, honours, tournaments, team records, gallery albums, updates, branding, and live Firestore sync.</p>
+          <div class="portalLockPill">Password required on open · Separate from APK login</div>
           <div class="portalUrlRow">
             <input id="adminPortalUrl" type="text" readonly aria-label="Admin panel URL">
           </div>
           <div class="portalActions">
-            <a class="primary" id="adminPortalOpen" href="./?key=0AqlZ35wF8lcXYiAkgz04KjzGeiSfnHs">Open Admin Panel ↗</a>
+            <a class="primary" id="adminPortalOpen" href="./?key=0AqlZ35wF8lcXYiAkgz04KjzGeiSfnHs&amp;portal=hub">Open Admin Panel ↗</a>
             <button type="button" class="secondary" data-copy-target="adminPortalUrl">Copy Link</button>
           </div>
         </article>
@@ -117,7 +120,7 @@
         <div>
           <span>Squad Self-Service</span>
           <h2>Player Profile Portals (17)</h2>
-          <p>🔒 Password required on open — unlocking lets each player update DP photo, bio, jersey number, socials, and match availability</p>
+          <p>Password required on open — unlocking lets each player update DP photo, bio, jersey number, socials, and match availability</p>
         </div>
       </div>
 
@@ -145,12 +148,12 @@
   </main>
 
   <footer>
-    <img src="assets/rdm-logo.png?v=7400" alt="RDM Logo" width="56" height="56" loading="lazy" decoding="async" referrerPolicy="no-referrer">
+    <img src="assets/rdm-logo.png?v=7400" alt="RDM Logo" width="52" height="52" loading="lazy" decoding="async" referrerPolicy="no-referrer">
     <b>Rehan Dominators Mahuawan</b>
-    <span>One Team • One Dream • One Domination · Mahuawan, Gopalganj, Bihar</span>
+    <span>One Team · One Dream · One Domination · Mahuawan, Gopalganj, Bihar</span>
     <nav class="footerLinks" aria-label="Portals footer links">
       <a href="./">Public Website</a>
-      <a href="./?key=0AqlZ35wF8lcXYiAkgz04KjzGeiSfnHs">Admin Panel</a>
+      <a href="./?key=0AqlZ35wF8lcXYiAkgz04KjzGeiSfnHs&amp;portal=hub">Admin Panel</a>
       <a href="#playerPortalsGrid">Player Portals</a>
     </nav>
   </footer>
@@ -187,7 +190,7 @@
 
       const base = portalBaseUrl();
       const publicUrl = base;
-      const adminUrl = base + '?key=' + encodeURIComponent(ADMIN_KEY);
+      const adminUrl = base + '?key=' + encodeURIComponent(ADMIN_KEY) + '&portal=hub';
 
       const pubInput = document.getElementById('publicPortalUrl');
       const admInput = document.getElementById('adminPortalUrl');
@@ -269,7 +272,7 @@
                 <b>${esc(p.role)}</b>
               </div>
             </div>
-            <div class="portalLockPill">🔒 Password required on open</div>
+            <div class="portalLockPill">Password required on open</div>
             <div class="portalUrlRow">
               <input id="${inputId}" type="text" readonly value="${esc(url)}" aria-label="${esc(p.name)} portal URL" onclick="this.select()">
             </div>
@@ -312,7 +315,6 @@
         if (input) input.select();
       });
 
-      // Theme menu logic
       var control = document.getElementById('themeControl'),
           toggle = document.getElementById('themeToggle'),
           menu = document.getElementById('themeMenu');

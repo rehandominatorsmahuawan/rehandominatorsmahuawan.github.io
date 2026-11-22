@@ -9,6 +9,11 @@ const v6doc = d => ({ ...d.data(), _docId: d.id });
 const v6Strip = obj => typeof window.rdmStripDocMeta === 'function' ? window.rdmStripDocMeta(obj) : (() => { const c = { ...(obj || {}) }; delete c._docId; delete c._profileUid; return c; })();
 const v6Err = (err, label) => typeof window.rdmReportWriteError === 'function' ? window.rdmReportWriteError(err, label) : console.warn(label, err);
 
+function v6HasPending(key) {
+  const ov = window.rdmGetOverrides?.();
+  return !!(ov?.v6Pending?.[key] && Array.isArray(ov?.v6?.[key]));
+}
+
 function v6HydrateLocal() {
   const ov = window.rdmGetOverrides?.();
   if (ov?.v6) {
@@ -18,28 +23,38 @@ function v6HydrateLocal() {
   }
 }
 
-function v6ClearOverride(key) {
+function v6ClearOverride(key, force = false) {
   window.rdmSetOverrides?.(o => {
+    if (!force && o.v6Pending?.[key]) return;
     if (o.v6 && key in o.v6) delete o.v6[key];
+    if (o.v6Pending && key in o.v6Pending) delete o.v6Pending[key];
   });
 }
 
-function v6SaveOverride(key, arr) {
+function v6SaveOverride(key, arr, pending = true) {
   window.rdmSetOverrides?.(o => {
     o.v6 = o.v6 || {};
     o.v6[key] = arr;
+    o.v6Pending = o.v6Pending || {};
+    o.v6Pending[key] = pending;
   });
 }
 window.v6SaveOverride = v6SaveOverride;
+window.v6ClearOverride = v6ClearOverride;
 
 async function v6load() {
   if (typeof rdmDB === 'undefined') return;
   try {
     const [r, t, o] = await Promise.all(Object.values(V6COL).map(c => rdmDB.collection(c).get()));
-    V6.records = r.docs.map(v6doc);
-    V6.tournaments = t.docs.map(v6doc);
-    V6.opponents = o.docs.map(v6doc);
-    ['records', 'tournaments', 'opponents'].forEach(v6ClearOverride);
+    const ov = window.rdmGetOverrides?.();
+    if (v6HasPending('records')) V6.records = ov.v6.records;
+    else { V6.records = r.docs.map(v6doc); v6ClearOverride('records'); }
+
+    if (v6HasPending('tournaments')) V6.tournaments = ov.v6.tournaments;
+    else { V6.tournaments = t.docs.map(v6doc); v6ClearOverride('tournaments'); }
+
+    if (v6HasPending('opponents')) V6.opponents = ov.v6.opponents;
+    else { V6.opponents = o.docs.map(v6doc); v6ClearOverride('opponents'); }
   } catch (e) {
     console.warn('Local fallback for v6', e?.code || e);
     v6HydrateLocal();
@@ -53,6 +68,11 @@ function v6StartRealtimeSync() {
   const watch = (col, key) => {
     try {
       rdmDB.collection(col).onSnapshot(snap => {
+        if (v6HasPending(key)) {
+          v6HydrateLocal();
+          v6render();
+          return;
+        }
         V6[key] = snap.docs.map(v6doc);
         v6ClearOverride(key);
         v6render();
@@ -256,7 +276,7 @@ window.rdmRenderHomeMatchHub = function () {
     const pinSig = JSON.stringify([pin.title || '', pin.text || '']);
     if (b.dataset.pinSig !== pinSig) {
       b.dataset.pinSig = pinSig;
-      b.innerHTML = `<div class="noticeBannerMain"><span class="pinTag">📌 Club Notice</span><b>${mini(pin.title || 'Team Update')}</b><div class="preserveLines">${mini(pin.text || '')}</div></div><button type="button" class="tinyBtn" data-go="news">Open News ›</button>`;
+      b.innerHTML = `<div class="noticeBannerMain"><span class="pinTag">Pinned Club Notice</span><b>${mini(pin.title || 'Team Update')}</b><div class="preserveLines">${mini(pin.text || '')}</div></div><button type="button" class="tinyBtn" data-go="news">Open News ›</button>`;
     }
   } else if (b) {
     b.remove();
@@ -601,7 +621,7 @@ function buildAdminManagerHtml(type) {
       title: 'Manage News & Announcements',
       sub: 'Create, edit, pin to Home notice banner, or remove announcements',
       top: `<div class="adminManagerTopBtns"><button type="button" class="primary" onclick="openEdit('news')">+ Add News</button></div>`,
-      body: listWrap(arr.map(n => `<div class="adminManagerRow"><div class="adminManagerMeta"><strong>${n.pinned ? '📌 ' : ''}${mini(n.title || 'Announcement')}</strong><small>${admEsc(String(n.text || '').slice(0, 110))}</small></div><div class="adminManagerBtns"><button type="button" class="tinyBtn" onclick="editNews('${admEsc(n._docId)}')">Edit</button><button type="button" class="tinyBtn" onclick="togglePin('${admEsc(n._docId)}',${!n.pinned})">${n.pinned ? 'Unpin' : 'Pin to Home'}</button><button type="button" class="tinyBtn deleteBtn" onclick="xdelete('News','${admEsc(n._docId)}')">Delete</button></div></div>`), 'No news added yet')
+      body: listWrap(arr.map(n => `<div class="adminManagerRow"><div class="adminManagerMeta"><strong>${n.pinned ? '[Pinned] ' : ''}${mini(n.title || 'Announcement')}</strong><small>${admEsc(String(n.text || '').slice(0, 110))}</small></div><div class="adminManagerBtns"><button type="button" class="tinyBtn" onclick="editNews('${admEsc(n._docId)}')">Edit</button><button type="button" class="tinyBtn" onclick="togglePin('${admEsc(n._docId)}',${!n.pinned})">${n.pinned ? 'Unpin' : 'Pin to Home'}</button><button type="button" class="tinyBtn deleteBtn" onclick="xdelete('News','${admEsc(n._docId)}')">Delete</button></div></div>`), 'No news added yet')
     };
   }
   if (type === 'updates') {
@@ -610,7 +630,7 @@ function buildAdminManagerHtml(type) {
       title: 'Manage Official Updates',
       sub: 'Publish dispatches, pin important notices to Home, edit or remove',
       top: `<div class="adminManagerTopBtns"><button type="button" class="primary" onclick="addUpdate()">+ Add Update</button></div>`,
-      body: listWrap(arr.map(u => `<div class="adminManagerRow"><div class="adminManagerMeta"><strong>${u.pinned ? '📌 ' : ''}${mini(u.title || 'Update')}</strong><small>${admEsc([u.category || 'WEBSITE', u.date].filter(Boolean).join(' · '))}</small></div><div class="adminManagerBtns"><button type="button" class="tinyBtn" onclick="editUpdate('${admEsc(u._docId)}')">Edit</button><button type="button" class="tinyBtn" onclick="pinUpdate('${admEsc(u._docId)}',${!u.pinned})">${u.pinned ? 'Unpin' : 'Pin to Home'}</button><button type="button" class="tinyBtn deleteBtn" onclick="deleteUpdate('${admEsc(u._docId)}')">Delete</button></div></div>`), 'No updates yet')
+      body: listWrap(arr.map(u => `<div class="adminManagerRow"><div class="adminManagerMeta"><strong>${u.pinned ? '[Pinned] ' : ''}${mini(u.title || 'Update')}</strong><small>${admEsc([u.category || 'WEBSITE', u.date].filter(Boolean).join(' · '))}</small></div><div class="adminManagerBtns"><button type="button" class="tinyBtn" onclick="editUpdate('${admEsc(u._docId)}')">Edit</button><button type="button" class="tinyBtn" onclick="pinUpdate('${admEsc(u._docId)}',${!u.pinned})">${u.pinned ? 'Unpin' : 'Pin to Home'}</button><button type="button" class="tinyBtn deleteBtn" onclick="deleteUpdate('${admEsc(u._docId)}')">Delete</button></div></div>`), 'No updates yet')
     };
   }
   if (type === 'stats') {
@@ -632,7 +652,7 @@ function buildAdminManagerHtml(type) {
       title: 'Manage Awards & Achievements',
       sub: 'Add POTM awards, tournament trophies, and player milestones',
       top: `<div class="adminManagerTopBtns"><button type="button" class="primary" onclick="addAchievement()">+ Add Achievement</button></div>`,
-      body: listWrap(arr.map(a => `<div class="adminManagerRow"><div class="adminManagerMeta"><strong>🏆 ${mini(a.title || 'Award')}</strong><small>${admEsc([a.playerName || 'TEAM', a.detail].filter(Boolean).join(' · '))}</small></div><div class="adminManagerBtns"><button type="button" class="tinyBtn" onclick="v6EditAchievement('${admEsc(a._docId)}')">Edit</button><button type="button" class="tinyBtn deleteBtn" onclick="xdelete('Achievements','${admEsc(a._docId)}')">Delete</button></div></div>`), 'No achievements yet')
+      body: listWrap(arr.map(a => `<div class="adminManagerRow"><div class="adminManagerMeta"><strong>${mini(a.title || 'Award')}</strong><small>${admEsc([a.playerName || 'TEAM', a.detail].filter(Boolean).join(' · '))}</small></div><div class="adminManagerBtns"><button type="button" class="tinyBtn" onclick="v6EditAchievement('${admEsc(a._docId)}')">Edit</button><button type="button" class="tinyBtn deleteBtn" onclick="xdelete('Achievements','${admEsc(a._docId)}')">Delete</button></div></div>`), 'No achievements yet')
     };
   }
   if (type === 'records') {
@@ -653,7 +673,7 @@ function buildAdminManagerHtml(type) {
       title: 'Manage Tournaments & Fixtures',
       sub: 'Add, update standings, dates, venue maps, or delete tournaments',
       top: `<div class="adminManagerTopBtns"><button type="button" class="primary" onclick="v6AddTournament()">+ Add Tournament</button></div>`,
-      body: listWrap(arr.map(t => `<div class="adminManagerRow"><div class="adminManagerMeta"><strong>🏆 ${mini(t.name || 'Tournament')}</strong><small>${admEsc([t.season, t.status, t.position].filter(Boolean).join(' · '))}</small></div><div class="adminManagerBtns"><button type="button" class="tinyBtn" onclick="v6AddTournament('${admEsc(t._docId)}')">Edit</button><button type="button" class="tinyBtn deleteBtn" onclick="v6Delete('${V6COL.tournaments}','${admEsc(t._docId)}')">Delete</button></div></div>`), 'No tournaments yet')
+      body: listWrap(arr.map(t => `<div class="adminManagerRow"><div class="adminManagerMeta"><strong>${mini(t.name || 'Tournament')}</strong><small>${admEsc([t.season, t.status, t.position].filter(Boolean).join(' · '))}</small></div><div class="adminManagerBtns"><button type="button" class="tinyBtn" onclick="v6AddTournament('${admEsc(t._docId)}')">Edit</button><button type="button" class="tinyBtn deleteBtn" onclick="v6Delete('${V6COL.tournaments}','${admEsc(t._docId)}')">Delete</button></div></div>`), 'No tournaments yet')
     };
   }
   if (type === 'opponents') {
@@ -694,7 +714,7 @@ function buildAdminManagerHtml(type) {
       title: 'Manage Club Honours & Trophies',
       sub: 'Add or remove club silverware',
       top: `<div class="adminManagerTopBtns"><button type="button" class="primary" onclick="openEdit('honour')">+ Add Honour</button></div>`,
-      body: listWrap(arr.map((h, i) => `<div class="adminManagerRow"><div class="adminManagerMeta"><strong>🏆 ${admEsc(h.year)} · ${mini(h.title || 'Honour')}</strong><small>${admEsc(h.sub || '')}</small></div><div class="adminManagerBtns"><button type="button" class="tinyBtn deleteBtn" onclick="removeItem('honours',${i})">Delete</button></div></div>`), 'No honours added yet')
+      body: listWrap(arr.map((h, i) => `<div class="adminManagerRow"><div class="adminManagerMeta"><strong>${admEsc(h.year)} · ${mini(h.title || 'Honour')}</strong><small>${admEsc(h.sub || '')}</small></div><div class="adminManagerBtns"><button type="button" class="tinyBtn deleteBtn" onclick="removeItem('honours',${i})">Delete</button></div></div>`), 'No honours added yet')
     };
   }
   if (type === 'gallery') {
@@ -743,7 +763,7 @@ window.refreshAdminSectionManager = function () {
   window.openAdminSectionManager(_rdmCurrentAdminManager);
 };
 
-/* Completely Redesigned Categorized Admin Command Workspace */
+/* Redesigned Sidebar + Main Workspace Admin Console */
 function v61Admin(force = false) {
   if (!rdmAdmin()) return;
   const a = document.getElementById('adminBody');
@@ -758,84 +778,108 @@ function v61Admin(force = false) {
   const nUpdates = Array.isArray(window.RDM_UPDATES) ? RDM_UPDATES.length : 0;
   const nGallery = Array.isArray(window.D?.gallery) ? D.gallery.length : 0;
 
-  a.innerHTML = `<div class="adminSessionBar">
-      <div>
-        <span class="sectionKicker">Live Firestore Command Workspace</span>
-        <strong>RDM Official Admin Panel</strong>
-        <span>Changes published here sync instantaneously to both the Public Website and Android APK.</span>
+  const jump = id => `document.getElementById('${id}')?.scrollIntoView({behavior:'smooth',block:'start'})`;
+
+  a.innerHTML = `<div class="adminShell">
+    <aside class="adminSidebar" aria-label="Admin workspace navigation">
+      <div class="adminSideBrand">
+        <span class="sectionKicker">Control Plane</span>
+        <strong>RDM Command</strong>
+        <small>Live Web &amp; APK Sync</small>
       </div>
-      <div class="adminSessionActions">
+      <nav class="adminSideNav">
+        <button type="button" onclick="${jump('adminKpiOverview')}">Overview &amp; KPIs</button>
+        <button type="button" onclick="${jump('adminModulesGrid')}">Operations Console</button>
+        <button type="button" onclick="${jump('adminPlayerManager')}">Squad Profiles (${nPlayers})</button>
+        <button type="button" onclick="${jump('adminAccessLinksBox')}">Portals &amp; Keys</button>
+        <button type="button" onclick="document.querySelector('.brandAdminBox')?.scrollIntoView({behavior:'smooth',block:'start'})">Club Branding</button>
+        <button type="button" onclick="${jump('adminFirebaseEmailCard')}">Auth Email SDK</button>
+      </nav>
+      <div class="adminSideFooter">
         <a class="secondary" href="./" target="_blank" rel="noopener">Public Site ↗</a>
         <a class="secondary" href="./portals.html" target="_blank" rel="noopener">Portals Hub ↗</a>
         <button type="button" class="primary" id="adminInstallAppBtn" data-rdm-install-btn>Install Admin App</button>
+        <button type="button" class="secondary dangerBtn" onclick="rdmLockAdmin()">Lock Admin Panel</button>
+      </div>
+    </aside>
+
+    <div class="adminWorkspaceMain" id="adminWorkspaceMain">
+      <div class="adminSessionBar">
+        <div>
+          <span class="sectionKicker">Authenticated Admin Session</span>
+          <strong>RDM Official Command Workspace</strong>
+          <span>Changes published here persist to Firestore and update Website &amp; Android APK live.</span>
+        </div>
+        <div class="adminSessionActions">
+          <button type="button" class="secondary dangerBtn" onclick="rdmLockAdmin()">Lock Admin</button>
+        </div>
+      </div>
+
+      <div class="adminKpiGrid" id="adminKpiOverview" aria-label="Club overview counts">
+        <div class="adminKpiCard"><span>Squad</span><strong>${nPlayers}</strong><small>Registered Players</small></div>
+        <div class="adminKpiCard"><span>Fixtures</span><strong>${nMatches}</strong><small>Matches &amp; Results</small></div>
+        <div class="adminKpiCard"><span>Competitions</span><strong>${nTourn}</strong><small>Tournaments</small></div>
+        <div class="adminKpiCard"><span>Dispatches</span><strong>${nNews + nUpdates}</strong><small>News &amp; Updates</small></div>
+        <div class="adminKpiCard"><span>Archive</span><strong>${nGallery}</strong><small>Gallery Photos</small></div>
+      </div>
+
+      <div class="adminCategoryGrid" id="adminModulesGrid">
+        <section class="adminModuleCard">
+          <div class="adminModuleHead">
+            <span class="sectionKicker">01 · Matchday Operations</span>
+            <h3>Fixtures, Playing XI &amp; Availability</h3>
+          </div>
+          <div class="adminModuleActions">
+            <button type="button" class="primary" data-add="match">+ Upcoming Match</button>
+            <button type="button" class="primary" onclick="addScorecard()">+ Scorecard / Result</button>
+            <button type="button" class="secondary" onclick="openAdminSectionManager('matches')">Manage Matches</button>
+            <button type="button" class="secondary" onclick="addLineup()">+ Publish Playing XI</button>
+            <button type="button" class="secondary" onclick="openAdminSectionManager('lineup')">Manage XI &amp; Swap</button>
+            <button type="button" class="secondary" onclick="openAdminSectionManager('availability')">Player Availability</button>
+          </div>
+        </section>
+
+        <section class="adminModuleCard">
+          <div class="adminModuleHead">
+            <span class="sectionKicker">02 · Squad, Stats &amp; Records</span>
+            <h3>Players, Career Numbers &amp; History</h3>
+          </div>
+          <div class="adminModuleActions">
+            <button type="button" class="primary" data-add="player">+ Add Player</button>
+            <button type="button" class="secondary" onclick="openAdminSectionManager('stats')">Edit Player Stats</button>
+            <button type="button" class="secondary" onclick="addAchievement()">+ Award / POTM</button>
+            <button type="button" class="secondary" onclick="openAdminSectionManager('achievements')">Manage Awards</button>
+            <button type="button" class="secondary" onclick="v63AddPlayerRecord()">+ Player Record</button>
+            <button type="button" class="secondary" onclick="v63AddTeamRecord()">+ Team Record</button>
+            <button type="button" class="secondary" onclick="v63AddPartnershipRecord()">+ Partnership</button>
+            <button type="button" class="secondary" onclick="openAdminSectionManager('records')">Manage Records</button>
+            <button type="button" class="secondary" onclick="v6AddTournament()">+ Tournament</button>
+            <button type="button" class="secondary" onclick="openAdminSectionManager('tournaments')">Manage Tournaments</button>
+            <button type="button" class="secondary" onclick="v6AddOpponent()">+ Opponent H2H</button>
+            <button type="button" class="secondary" onclick="openAdminSectionManager('opponents')">Manage Opponents</button>
+          </div>
+        </section>
+
+        <section class="adminModuleCard">
+          <div class="adminModuleHead">
+            <span class="sectionKicker">03 · Media, News &amp; Club Channels</span>
+            <h3>Announcements, Honours &amp; Branding</h3>
+          </div>
+          <div class="adminModuleActions">
+            <button type="button" class="primary" data-add="news">+ Add Team News</button>
+            <button type="button" class="secondary" onclick="openAdminSectionManager('news')">Manage &amp; Pin News</button>
+            <button type="button" class="secondary manageUpdatesBtn" onclick="openAdminSectionManager('updates')">Manage Updates</button>
+            <button type="button" class="secondary" data-add="gallery">+ Gallery Photo</button>
+            <button type="button" class="secondary" onclick="openAdminSectionManager('gallery')">Manage Gallery</button>
+            <button type="button" class="secondary" data-add="honour">+ Add Honour</button>
+            <button type="button" class="secondary" onclick="openAdminSectionManager('honours')">Manage Honours</button>
+            <button type="button" class="secondary" data-add="social">+ Add Social</button>
+            <button type="button" class="secondary" onclick="openAdminSectionManager('socials')">Manage Socials</button>
+          </div>
+        </section>
       </div>
     </div>
-
-    <div class="adminKpiGrid" aria-label="Club overview counts">
-      <div class="adminKpiCard"><span>Squad</span><strong>${nPlayers}</strong><small>Registered Players</small></div>
-      <div class="adminKpiCard"><span>Fixtures</span><strong>${nMatches}</strong><small>Matches &amp; Results</small></div>
-      <div class="adminKpiCard"><span>Competitions</span><strong>${nTourn}</strong><small>Tournaments</small></div>
-      <div class="adminKpiCard"><span>Dispatches</span><strong>${nNews + nUpdates}</strong><small>News &amp; Updates</small></div>
-      <div class="adminKpiCard"><span>Archive</span><strong>${nGallery}</strong><small>Gallery Photos</small></div>
-    </div>
-
-    <div class="adminCategoryGrid">
-      <section class="adminModuleCard">
-        <div class="adminModuleHead">
-          <span class="sectionKicker">01 · Matchday Operations</span>
-          <h3>Fixtures, Playing XI &amp; Availability</h3>
-        </div>
-        <div class="adminModuleActions">
-          <button type="button" class="primary" data-add="match">+ Upcoming Match</button>
-          <button type="button" class="primary" onclick="addScorecard()">+ Scorecard / Result</button>
-          <button type="button" class="secondary" onclick="openAdminSectionManager('matches')">Manage Matches</button>
-          <button type="button" class="secondary" onclick="addLineup()">+ Publish Playing XI</button>
-          <button type="button" class="secondary" onclick="openAdminSectionManager('lineup')">Manage XI &amp; Swap</button>
-          <button type="button" class="secondary" onclick="openAdminSectionManager('availability')">Player Availability</button>
-        </div>
-      </section>
-
-      <section class="adminModuleCard">
-        <div class="adminModuleHead">
-          <span class="sectionKicker">02 · Squad, Stats &amp; Records</span>
-          <h3>Players, Career Numbers &amp; History</h3>
-        </div>
-        <div class="adminModuleActions">
-          <button type="button" class="primary" data-add="player">+ Add Player</button>
-          <button type="button" class="secondary" onclick="openAdminSectionManager('stats')">Edit Player Stats</button>
-          <button type="button" class="secondary" onclick="addAchievement()">+ Award / POTM</button>
-          <button type="button" class="secondary" onclick="openAdminSectionManager('achievements')">Manage Awards</button>
-          <button type="button" class="secondary" onclick="v63AddPlayerRecord()">+ Player Record</button>
-          <button type="button" class="secondary" onclick="v63AddTeamRecord()">+ Team Record</button>
-          <button type="button" class="secondary" onclick="v63AddPartnershipRecord()">+ Partnership</button>
-          <button type="button" class="secondary" onclick="openAdminSectionManager('records')">Manage Records</button>
-          <button type="button" class="secondary" onclick="v6AddTournament()">+ Tournament</button>
-          <button type="button" class="secondary" onclick="openAdminSectionManager('tournaments')">Manage Tournaments</button>
-          <button type="button" class="secondary" onclick="v6AddOpponent()">+ Opponent H2H</button>
-          <button type="button" class="secondary" onclick="openAdminSectionManager('opponents')">Manage Opponents</button>
-        </div>
-      </section>
-
-      <section class="adminModuleCard">
-        <div class="adminModuleHead">
-          <span class="sectionKicker">03 · Media, News &amp; Club Channels</span>
-          <h3>Announcements, Honours &amp; Branding</h3>
-        </div>
-        <div class="adminModuleActions">
-          <button type="button" class="primary" data-add="news">+ Add Team News</button>
-          <button type="button" class="secondary" onclick="openAdminSectionManager('news')">Manage &amp; Pin News</button>
-          <button type="button" class="secondary manageUpdatesBtn" onclick="openAdminSectionManager('updates')">Manage Updates</button>
-          <button type="button" class="secondary" data-add="gallery">+ Gallery Photo</button>
-          <button type="button" class="secondary" onclick="openAdminSectionManager('gallery')">Manage Gallery</button>
-          <button type="button" class="secondary" data-add="honour">+ Add Honour</button>
-          <button type="button" class="secondary" onclick="openAdminSectionManager('honours')">Manage Honours</button>
-          <button type="button" class="secondary" data-add="social">+ Add Social</button>
-          <button type="button" class="secondary" onclick="openAdminSectionManager('socials')">Manage Socials</button>
-          <button type="button" class="secondary" onclick="document.querySelector('.brandAdminBox')?.scrollIntoView({behavior:'smooth',block:'start'})">Club Branding ↓</button>
-          <button type="button" class="secondary" onclick="document.getElementById('adminAccessLinksBox')?.scrollIntoView({behavior:'smooth',block:'start'})">Portals &amp; Links ↓</button>
-        </div>
-      </section>
-    </div>`;
+  </div>`;
 
   if (typeof bindAdds === 'function') bindAdds();
   window.rdmInjectPlayerManager?.();
@@ -854,7 +898,7 @@ window.renderAdmin = function () {
 setInterval(() => {
   window.rdmRenderHomeMatchHub?.();
   window.rdmEnhanceMatchCentre?.();
-  if (document.body.classList.contains('admin') && document.getElementById('admin')?.classList.contains('active')) {
+  if (rdmAdmin() && document.body.classList.contains('admin') && document.getElementById('admin')?.classList.contains('active')) {
     v61Admin(false);
   }
 }, 1500);
@@ -919,9 +963,9 @@ function v6Tournaments() {
   if (t) {
     t.innerHTML = V6.tournaments.length
       ? [...V6.tournaments].sort((a, b) => String(b.season || '').localeCompare(String(a.season || ''))).map(x => `<article class="tournamentCard">
-          <h3>🏆 ${mini(x.name)}</h3>
+          <h3>${mini(x.name)}</h3>
           <div class="v62Meta"><span class="seasonTag">${mini(x.season || '')}</span>${x.status ? `<span class="v62Chip">${mini(x.status)}</span>` : ''}${x.position ? `<span class="v62Chip">${mini(x.position)}</span>` : ''}</div>
-          ${x.venue ? `<p>📍 ${mini(x.venue)}</p>` : ''}${x.dates ? `<p>📅 ${mini(x.dates)}</p>` : ''}${x.organizer ? `<p>🏏 ${mini(x.organizer)}</p>` : ''}
+          ${x.venue ? `<p>Venue · ${mini(x.venue)}</p>` : ''}${x.dates ? `<p>Dates · ${mini(x.dates)}</p>` : ''}${x.organizer ? `<p>Organizer · ${mini(x.organizer)}</p>` : ''}
           <p>${x.teams ? mini(x.teams) + ' Teams · ' : ''}${x.matches ? mini(x.matches) + ' Matches · ' : ''}${x.wins ? mini(x.wins) + ' Wins · ' : ''}${x.losses ? mini(x.losses) + ' Losses' : ''}</p>
           ${x.fixtures ? `<p class="v62Note">${mini(x.fixtures)}</p>` : ''}
           ${rdmAdmin() ? `<div class="v62Actions"><button class="tinyBtn" onclick="v6AddTournament('${x._docId}')">Edit</button><button class="tinyBtn deleteBtn" onclick="v6Delete('${V6COL.tournaments}','${x._docId}')">Delete</button></div>` : ''}
@@ -964,6 +1008,7 @@ async function v6AddTournament(id) {
       (id && !String(id).startsWith('loc_'))
         ? await rdmDB.collection(V6COL.tournaments).doc(id).set(v6Strip(d), { merge: true })
         : await rdmDB.collection(V6COL.tournaments).add(v6Strip(d));
+      v6ClearOverride('tournaments', true);
     } catch (err) {
       v6Err(err, 'Tournament sync');
     }
@@ -994,11 +1039,11 @@ function v63Card(x, editFn) {
     <div class="v62Meta"><span class="seasonTag">${mini(x.season || 'ALL TIME')}</span>${x.category ? `<span class="v62Chip">${mini(x.category)}</span>` : ''}</div>
     <h3>${mini(x.title || 'Record')}</h3>
     <div class="recordValue">${mini(x.value || '—')}</div>
-    ${x.player ? `<p>👤 ${mini(x.player)}</p>` : ''}
-    ${x.player2 ? `<p>👥 ${mini(x.player2)}</p>` : ''}
-    ${x.wicket ? `<p>🏏 ${mini(x.wicket)}</p>` : ''}
-    ${x.opponent ? `<p>🆚 ${mini(x.opponent)}</p>` : ''}
-    ${x.date ? `<p>📅 ${mini(v63Date(x.date))}</p>` : ''}
+    ${x.player ? `<p>Player · ${mini(x.player)}</p>` : ''}
+    ${x.player2 ? `<p>Partner · ${mini(x.player2)}</p>` : ''}
+    ${x.wicket ? `<p>Stand · ${mini(x.wicket)}</p>` : ''}
+    ${x.opponent ? `<p>Opponent · ${mini(x.opponent)}</p>` : ''}
+    ${x.date ? `<p>Date · ${mini(v63Date(x.date))}</p>` : ''}
     ${x.note ? `<p class="v62Note">${mini(x.note)}</p>` : ''}
     ${rdmAdmin() ? `<div class="v62Actions"><button class="tinyBtn" onclick="${editFn}('${x._docId}')">Edit</button><button class="tinyBtn deleteBtn" onclick="v6Delete('${V6COL.records}','${x._docId}')">Delete</button></div>` : ''}
   </article>`;
@@ -1036,8 +1081,8 @@ function v6Records() {
   const potm = Object.entries(awards).sort((a, b) => b[1] - a[1])[0];
   const lb = document.getElementById('leaderboard');
   if (lb) {
-    const items = [['🏏', 'Top Run Scorer', best('runs'), 'runs'], ['🎯', 'Top Wicket Taker', best('wickets'), 'wickets'], ['💥', 'Most Sixes', best('sixes'), 'sixes'], ['4️⃣', 'Most Fours', best('fours'), 'fours']];
-    lb.innerHTML = `<div class="leaderGrid">${items.map(([i, t, x, k]) => `<div class="leaderCard">${i} ${t}<b>${x ? mini(x.p.name) + ' · ' + x.s[k] : 'No stats recorded yet'}</b></div>`).join('')}<div class="leaderCard">🏅 Most POTM<b>${potm ? mini(potm[0]) + ' · ' + potm[1] : 'No POTM awards yet'}</b></div></div>`;
+    const items = [['Top Run Scorer', best('runs'), 'runs'], ['Top Wicket Taker', best('wickets'), 'wickets'], ['Most Sixes', best('sixes'), 'sixes'], ['Most Fours', best('fours'), 'fours']];
+    lb.innerHTML = `<div class="leaderGrid">${items.map(([t, x, k]) => `<div class="leaderCard"><span>${t}</span><b>${x ? mini(x.p.name) + ' · ' + x.s[k] : 'No stats recorded yet'}</b></div>`).join('')}<div class="leaderCard"><span>Most POTM</span><b>${potm ? mini(potm[0]) + ' · ' + potm[1] : 'No POTM awards yet'}</b></div></div>`;
   }
   const tblWrap = document.getElementById('squadLeaderboardTableWrap');
   if (tblWrap) {
@@ -1047,7 +1092,7 @@ function v6Records() {
   }
   const autoDefs = [['Highest Individual Score', 'highScore', ' Runs'], ['Most Runs', 'runs', ' Runs'], ['Most Wickets', 'wickets', ' Wickets'], ['Most Sixes', 'sixes', ' Sixes'], ['Most Fours', 'fours', ' Fours'], ['Most 50s', 'fifties', ''], ['Most 100s', 'hundreds', ''], ['Most Run Outs', 'runOuts', ''], ['Best Strike Rate', 'strikeRate', ''], ['Best Economy', 'economy', '', true]];
   const pr = document.getElementById('playerRecordList');
-  if (pr) pr.innerHTML = autoDefs.map(([title, k, suf, low]) => { const x = best(k, !!low); return `<article class="recordCard"><span class="v62Chip">Auto Stats</span><h3>${mini(title)}</h3><div class="recordValue">${x ? mini(String(x.s[k]) + suf) : '—'}</div><p>👤 ${x ? mini(x.p.name) : 'No stats recorded yet'}</p></article>`; }).join('');
+  if (pr) pr.innerHTML = autoDefs.map(([title, k, suf, low]) => { const x = best(k, !!low); return `<article class="recordCard"><span class="v62Chip">Auto Stats</span><h3>${mini(title)}</h3><div class="recordValue">${x ? mini(String(x.s[k]) + suf) : '—'}</div><p>${x ? mini(x.p.name) : 'No stats recorded yet'}</p></article>`; }).join('');
   const all = (v6Season === 'ALL' ? V6.records : V6.records.filter(x => String(x.season || '') === String(v6Season))).sort((a, b) => (b.createdMs || 0) - (a.createdMs || 0));
   v63List('teamRecordList', all.filter(x => v63Type(x) === 'TEAM'), 'v63AddTeamRecord', 'No team records added yet');
   v63List('partnershipRecordList', all.filter(x => v63Type(x) === 'PARTNERSHIP'), 'v63AddPartnershipRecord', 'No partnership records added yet');
@@ -1071,6 +1116,8 @@ async function v63Save(id, x, d, type) {
   const rec = { ...x, ...d, _docId: id || 'loc_' + Date.now() };
   if (id) Object.assign(x, rec);
   else V6.records.unshift(rec);
+  v6SaveOverride('records', V6.records, true);
+  let synced = true;
   try {
     const clean = v6Strip({ ...d, createdMs: rec.createdMs, updatedAt: rdmStamp() });
     if (id && !String(id).startsWith('loc_')) {
@@ -1079,13 +1126,14 @@ async function v63Save(id, x, d, type) {
       const ref = await rdmDB.collection(V6COL.records).add(clean);
       rec._docId = ref.id;
     }
+    v6ClearOverride('records', true);
   } catch (err) {
-    v6SaveOverride('records', V6.records);
+    synced = false;
     v6Err(err, 'Record sync');
   }
   v6render();
   window.refreshAdminSectionManager?.();
-  toast('Record saved & synced');
+  if (synced) toast('Record saved & synced');
 }
 
 function v63AddPlayerRecord(id) {

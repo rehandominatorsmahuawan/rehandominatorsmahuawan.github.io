@@ -24,24 +24,32 @@ const updTime = ms => {
 const updDay = x => x?.date ? updDate(x.date) : (x?.createdMs ? new Date(x.createdMs).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '');
 const updDateTime = x => {
   const d = updDay(x), t = updTime(x?.createdMs);
-  return [d && ('📅 ' + d), t && ('🕒 ' + t)].filter(Boolean).join(' · ');
+  return [d, t].filter(Boolean).join(' · ');
 };
 const updSort = (a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.createdMs || 0) - (a.createdMs || 0);
+
+function hasUpdatesPending() {
+  const ov = window.rdmGetOverrides?.();
+  return !!(ov?.updatesPending && Array.isArray(ov?.updates));
+}
 
 function hydrateUpdatesLocal() {
   const ov = window.rdmGetOverrides?.();
   if (Array.isArray(ov?.updates)) RDM_UPDATES = ov.updates;
 }
 
-function clearUpdatesOverride() {
+function clearUpdatesOverride(force = false) {
   window.rdmSetOverrides?.(o => {
+    if (!force && o.updatesPending) return;
     if ('updates' in o) delete o.updates;
+    if ('updatesPending' in o) delete o.updatesPending;
   });
 }
 
-function saveUpdatesOverride() {
+function saveUpdatesOverride(pending = true) {
   window.rdmSetOverrides?.(o => {
     o.updates = RDM_UPDATES;
+    o.updatesPending = pending;
   });
 }
 
@@ -49,11 +57,15 @@ async function loadUpdates() {
   if (typeof rdmDB === 'undefined') return;
   try {
     const s = await rdmDB.collection(UPDATE_COL).get();
-    RDM_UPDATES = s.docs
-      .filter(d => d.id !== '_news_updates_swap_v1')
-      .map(d => ({ ...d.data(), _docId: d.id }))
-      .sort(updSort);
-    clearUpdatesOverride();
+    if (hasUpdatesPending()) {
+      hydrateUpdatesLocal();
+    } else {
+      RDM_UPDATES = s.docs
+        .filter(d => d.id !== '_news_updates_swap_v1')
+        .map(d => ({ ...d.data(), _docId: d.id }))
+        .sort(updSort);
+      clearUpdatesOverride();
+    }
   } catch (e) {
     console.warn('Local fallback for updates', e?.code || e);
     hydrateUpdatesLocal();
@@ -66,6 +78,11 @@ function startUpdatesRealtimeSync() {
   updatesRealtimeActive = true;
   try {
     rdmDB.collection(UPDATE_COL).onSnapshot(snap => {
+      if (hasUpdatesPending()) {
+        hydrateUpdatesLocal();
+        renderUpdates();
+        return;
+      }
       RDM_UPDATES = snap.docs
         .filter(d => d.id !== '_news_updates_swap_v1')
         .map(d => ({ ...d.data(), _docId: d.id }))
@@ -84,7 +101,7 @@ function renderUpdates() {
   if (el) {
     el.innerHTML = RDM_UPDATES.length
       ? RDM_UPDATES.map(x => `<article class="card updateCard ${x.pinned ? 'pinnedUpdate' : ''}">
-          ${x.pinned ? '<span class="pinTag">📌 Pinned Update</span>' : ''}
+          ${x.pinned ? '<span class="pinTag">Pinned Update</span>' : ''}
           <div class="updateMeta">
             <span>${mini(x.category || 'WEBSITE')}</span>
             <span>${updDateTime(x) || 'Date not set'}</span>
@@ -120,7 +137,7 @@ function renderHomeUpdate() {
     (mh || home.querySelector('.metrics'))?.insertAdjacentElement(mh ? 'afterend' : 'beforebegin', box);
   }
   const raw = String(x.text || '').trim();
-  box.innerHTML = `<div class="homeUpdateTag">📌 Pinned Club Dispatch</div>
+  box.innerHTML = `<div class="homeUpdateTag">Pinned Club Dispatch</div>
     <h3>${mini(x.title || 'Update')}</h3>
     <p class="homeUpdatePreview">${mini(raw)}</p>
     <div class="homeUpdateTime">${updDateTime(x)}</div>

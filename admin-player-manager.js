@@ -39,7 +39,7 @@
 
   function add() {
     if (!window.rdmAdmin?.() || !document.getElementById('adminBody')) return;
-    const body = document.getElementById('adminBody');
+    const body = document.getElementById('adminWorkspaceMain') || document.getElementById('adminBody');
 
     let box = document.getElementById('adminPlayerManager');
     if (!box) {
@@ -81,7 +81,7 @@
       const code = typeof playerCode === 'function' ? playerCode(p.id) : p.id;
       return `<div class="accessLinkRow">
         <div class="accessLinkMeta">
-          <strong>${mini(p.name)} <span class="pwProtectedTag">🔒 Password Protected</span></strong>
+          <strong>${mini(p.name)} <span class="pwProtectedTag">Password Protected</span></strong>
           <small>${p.id} · ${code}${p.jersey ? ' · #' + p.jersey : ''}</small>
           <input type="text" readonly value="${url}" aria-label="${mini(p.name)} portal link" onclick="this.select()">
         </div>

@@ -23,7 +23,7 @@ let rdmRealtimeTimer = null;
 
 const rdmStamp = () => firebase.firestore.FieldValue.serverTimestamp();
 const rdmDocData = d => ({ ...d.data(), _docId: d.id });
-const rdmAdmin = () => session?.mode === 'admin' && window.__rdmUrlKeyRole === 'admin';
+const rdmAdmin = () => session?.mode === 'admin' && window.__rdmUrlKeyRole === 'admin' && (typeof window.rdmIsAdminUnlocked !== 'function' || window.rdmIsAdminUnlocked());
 const rdmPlayerUnlockedNow = id => typeof window.rdmIsPlayerUnlocked === 'function' ? window.rdmIsPlayerUnlocked(id) : true;
 const rdmPlayer = () => {
   if (session?.mode !== 'player' || window.__rdmUrlKeyRole !== 'player') return null;
@@ -134,17 +134,52 @@ function rdmSaveCollectionOverride(key, arr) {
   rdmSetOverrides(o => {
     o.collections = o.collections || {};
     o.collections[key] = arr;
+    o.collectionsPending = o.collectionsPending || {};
+    o.collectionsPending[key] = true;
   });
   if (typeof save === 'function') save();
 }
 window.rdmSaveCollectionOverride = rdmSaveCollectionOverride;
 
-function rdmClearCollectionOverride(key) {
+function rdmClearCollectionOverride(key, force = false) {
   rdmSetOverrides(o => {
+    if (!force && o.collectionsPending?.[key]) return;
     if (o.collections && key in o.collections) delete o.collections[key];
+    if (o.collectionsPending && key in o.collectionsPending) delete o.collectionsPending[key];
   });
 }
 window.rdmClearCollectionOverride = rdmClearCollectionOverride;
+
+function rdmHasPendingCollection(key) {
+  const o = rdmGetOverrides();
+  return !!(o.collectionsPending?.[key] && Array.isArray(o.collections?.[key]));
+}
+
+function rdmProfileTime(pr) {
+  if (typeof pr?.updatedMs === 'number') return pr.updatedMs;
+  if (typeof pr?.updatedAt?.toMillis === 'function') return pr.updatedAt.toMillis();
+  if (typeof pr?.updatedAt?.seconds === 'number') return pr.updatedAt.seconds * 1000;
+  return 0;
+}
+
+function rdmApplyProfileRecord(p, pr) {
+  if (!p || !pr) return;
+  if ('jersey' in pr && pr.jersey !== undefined && pr.jersey !== null) p.jersey = String(pr.jersey);
+  if ('nick' in pr && pr.nick !== undefined && pr.nick !== null) {
+    p.nick = String(pr.nick);
+    p._nickCustom = true;
+  }
+  if ('bio' in pr && pr.bio !== undefined && pr.bio !== null) {
+    p.bio = String(pr.bio);
+    p._bioCustom = true;
+  }
+  if ('image' in pr && pr.image !== undefined && pr.image !== null) {
+    p.image = rdmStaticPlayerImage(pr.image) ? '' : String(pr.image);
+    p._imageCustom = true;
+  }
+  if (Array.isArray(pr.socials)) p.socials = pr.socials.slice(0, 3);
+  if (pr._docId || pr.id) p._profileUid = pr._docId || pr.id;
+}
 
 function rdmApplyOverridesToData() {
   const o = rdmGetOverrides();
@@ -156,6 +191,12 @@ function rdmApplyOverridesToData() {
   if (Array.isArray(o.extraPlayers)) {
     o.extraPlayers.forEach(ep => {
       if (ep && ep.id && !D.players.some(p => p.id === ep.id)) D.players.push(ep);
+    });
+  }
+  if (o.playerProfiles && typeof o.playerProfiles === 'object') {
+    Object.values(o.playerProfiles).forEach(pr => {
+      const p = D.players.find(x => x.id === pr?.playerId);
+      if (p) rdmApplyProfileRecord(p, pr);
     });
   }
 }
@@ -182,37 +223,38 @@ function rdmMergePlayersAndProfiles(teamDocs, profileDocs) {
   }
   if (typeof rdmRepairRoster2026 === 'function') rdmRepairRoster2026();
 
-  const profileTime = pr => {
-    if (typeof pr?.updatedMs === 'number') return pr.updatedMs;
-    if (typeof pr?.updatedAt?.toMillis === 'function') return pr.updatedAt.toMillis();
-    if (typeof pr?.updatedAt?.seconds === 'number') return pr.updatedAt.seconds * 1000;
-    return 0;
-  };
   const sortedProfiles = [...(profileDocs || [])].sort((a, b) => {
-    const dt = profileTime(a) - profileTime(b);
+    const dt = rdmProfileTime(a) - rdmProfileTime(b);
     if (dt !== 0) return dt;
     const uid = rdmAuth?.currentUser?.uid || '';
     return ((a._docId || a.id) === uid ? 1 : 0) - ((b._docId || b.id) === uid ? 1 : 0);
   });
 
+  const remoteLatestById = {};
   sortedProfiles.forEach(pr => {
     const p = D.players.find(x => x.id === pr.playerId);
     if (!p) return;
-    ['jersey', 'nick', 'bio'].forEach(k => {
-      if (pr[k] !== undefined && pr[k] !== null && pr[k] !== '') p[k] = String(pr[k]);
-    });
-    if ('image' in pr && pr.image !== undefined && pr.image !== null) {
-      p.image = rdmStaticPlayerImage(pr.image) ? '' : String(pr.image);
+    rdmApplyProfileRecord(p, pr);
+    const t = rdmProfileTime(pr);
+    if (t >= (remoteLatestById[p.id] || 0)) remoteLatestById[p.id] = t;
+  });
+
+  const localProfiles = rdmGetOverrides()?.playerProfiles || {};
+  Object.entries(localProfiles).forEach(([pid, localPr]) => {
+    const p = D.players.find(x => x.id === (localPr?.playerId || pid));
+    if (!p || !localPr) return;
+    const localMs = Number(localPr.updatedMs || 0);
+    const remoteMs = Number(remoteLatestById[p.id] || 0);
+    if (localPr._pending || localMs >= remoteMs) {
+      rdmApplyProfileRecord(p, localPr);
     }
-    if (Array.isArray(pr.socials)) p.socials = pr.socials.slice(0, 3);
-    p._profileUid = pr._docId || pr.id;
   });
 
   D.players.forEach(p => {
     const d = (typeof playerDefaults !== 'undefined' && playerDefaults[p.id]) || null;
     if (d) {
-      if (!p.nick) p.nick = d.nick;
-      if (!p.bio) p.bio = d.bio;
+      if (!p._nickCustom && !p.nick) p.nick = d.nick;
+      if (!p._bioCustom && !p.bio) p.bio = d.bio;
     }
   });
   window.rdmCleanStaticPlayerImages?.();
@@ -272,14 +314,22 @@ async function rdmLoadAll() {
     rdmProfileDocsCache = profiles.docs.map(rdmDocData);
     rdmMergePlayersAndProfiles(rdmTeamDocsCache, rdmProfileDocsCache);
 
-    D.matches = ms.docs.map(rdmDocData).sort((a, b) => (b.createdMs || 0) - (a.createdMs || 0));
-    D.news = ns.docs.map(rdmDocData).sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.createdMs || 0) - (a.createdMs || 0));
-    if (!hs.empty) D.honours = hs.docs.map(rdmDocData).sort((a, b) => (a.order || 999) - (b.order || 999));
-    D.gallery = gs.docs.map(rdmDocData).sort((a, b) => (b.createdMs || 0) - (a.createdMs || 0));
-    if (!ss.empty) D.socials = ss.docs.map(rdmDocData).sort((a, b) => (a.order || 999) - (b.order || 999));
+    const ov = rdmGetOverrides();
+    if (rdmHasPendingCollection('matches')) D.matches = ov.collections.matches;
+    else { D.matches = ms.docs.map(rdmDocData).sort((a, b) => (b.createdMs || 0) - (a.createdMs || 0)); rdmClearCollectionOverride('matches'); }
 
-    // Firestore is authoritative — clear stale local collection overrides once remote responds
-    ['matches', 'news', 'honours', 'gallery', 'socials'].forEach(rdmClearCollectionOverride);
+    if (rdmHasPendingCollection('news')) D.news = ov.collections.news;
+    else { D.news = ns.docs.map(rdmDocData).sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.createdMs || 0) - (a.createdMs || 0)); rdmClearCollectionOverride('news'); }
+
+    if (rdmHasPendingCollection('honours')) D.honours = ov.collections.honours;
+    else { if (!hs.empty) D.honours = hs.docs.map(rdmDocData).sort((a, b) => (a.order || 999) - (b.order || 999)); rdmClearCollectionOverride('honours'); }
+
+    if (rdmHasPendingCollection('gallery')) D.gallery = ov.collections.gallery;
+    else { D.gallery = gs.docs.map(rdmDocData).sort((a, b) => (b.createdMs || 0) - (a.createdMs || 0)); rdmClearCollectionOverride('gallery'); }
+
+    if (rdmHasPendingCollection('socials')) D.socials = ov.collections.socials;
+    else { if (!ss.empty) D.socials = ss.docs.map(rdmDocData).sort((a, b) => (a.order || 999) - (b.order || 999)); rdmClearCollectionOverride('socials'); }
+
     if (typeof save === 'function') save();
     rdmRemoteReady = true;
     rdmScheduleRefresh();
@@ -320,22 +370,27 @@ function rdmStartRealtimeSync() {
     rdmMergePlayersAndProfiles(rdmTeamDocsCache, rdmProfileDocsCache);
   });
   watch(RCOL.matches, docs => {
+    if (rdmHasPendingCollection('matches')) return;
     D.matches = docs.sort((a, b) => (b.createdMs || 0) - (a.createdMs || 0));
     rdmClearCollectionOverride('matches');
   });
   watch(RCOL.news, docs => {
+    if (rdmHasPendingCollection('news')) return;
     D.news = docs.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.createdMs || 0) - (a.createdMs || 0));
     rdmClearCollectionOverride('news');
   });
   watch(RCOL.honours, docs => {
+    if (rdmHasPendingCollection('honours')) return;
     if (docs.length) D.honours = docs.sort((a, b) => (a.order || 999) - (b.order || 999));
     rdmClearCollectionOverride('honours');
   });
   watch(RCOL.gallery, docs => {
+    if (rdmHasPendingCollection('gallery')) return;
     D.gallery = docs.sort((a, b) => (b.createdMs || 0) - (a.createdMs || 0));
     rdmClearCollectionOverride('gallery');
   });
   watch(RCOL.socials, docs => {
+    if (rdmHasPendingCollection('socials')) return;
     if (docs.length) D.socials = docs.sort((a, b) => (a.order || 999) - (b.order || 999));
     rdmClearCollectionOverride('socials');
   });
@@ -387,25 +442,42 @@ async function rdmProfileUid(playerId) {
 async function rdmProfileWrite(p, extra = {}) {
   const isPlayerSelf = session?.mode === 'player' && session?.playerId === p.id && rdmPlayerUnlockedNow(p.id);
   if (!rdmAdmin() && !isPlayerSelf) throw new Error('NOT_ALLOWED');
-  if (typeof save === 'function') save();
-  const uid = await rdmProfileUid(p.id);
   const nowMs = Date.now();
-  const data = {
+  const uid = await rdmProfileUid(p.id);
+  const localSnap = {
     playerId: p.id,
     jersey: p.jersey || '',
     nick: p.nick || '',
     bio: p.bio || '',
     socials: Array.isArray(p.socials) ? p.socials.slice(0, 3) : [],
     updatedMs: nowMs,
-    updatedAt: rdmStamp(),
+    _docId: uid,
     ...extra
   };
+  if ('nick' in localSnap) p._nickCustom = true;
+  if ('bio' in localSnap) p._bioCustom = true;
+  if ('image' in localSnap) p._imageCustom = true;
+  p._profileUid = uid;
+
+  // Persist immediately in local overrides & in-memory cache so snapshots / visibilitychange never revert edits
+  rdmSetOverrides(o => {
+    o.playerProfiles = o.playerProfiles || {};
+    o.playerProfiles[p.id] = { ...(o.playerProfiles[p.id] || {}), ...localSnap, _pending: true };
+  });
+  const cacheIdx = rdmProfileDocsCache.findIndex(x => (x._docId || x.id) === uid || x.playerId === p.id);
+  if (cacheIdx >= 0) rdmProfileDocsCache[cacheIdx] = { ...rdmProfileDocsCache[cacheIdx], ...localSnap };
+  else rdmProfileDocsCache.push({ ...localSnap });
+  if (typeof save === 'function') save();
+
+  const remotePayload = { ...localSnap, updatedAt: rdmStamp() };
+  delete remotePayload._docId;
+
   try {
-    await rdmDB.collection('PlayerProfiles').doc(uid).set(data, { merge: true });
-    if ('jersey' in data || 'image' in extra || 'name' in extra || 'role' in extra || 'detail' in extra) {
+    await rdmDB.collection('PlayerProfiles').doc(uid).set(remotePayload, { merge: true });
+    if ('jersey' in remotePayload || 'image' in extra || 'name' in extra || 'role' in extra || 'detail' in extra) {
       const teamPatch = {
         id: p.id,
-        jersey: data.jersey,
+        jersey: remotePayload.jersey,
         updatedMs: nowMs,
         updatedAt: rdmStamp()
       };
@@ -417,13 +489,15 @@ async function rdmProfileWrite(p, extra = {}) {
         await rdmDB.collection(RCOL.players).doc(p.id).set(teamPatch, { merge: true });
       } catch (_) {}
     }
-    p._profileUid = uid;
-  } catch (err) {
     rdmSetOverrides(o => {
-      o.playerProfiles = o.playerProfiles || {};
-      o.playerProfiles[p.id] = { ...(o.playerProfiles[p.id] || {}), ...data };
+      if (o.playerProfiles?.[p.id]?.updatedMs === nowMs) {
+        o.playerProfiles[p.id]._pending = false;
+      }
     });
+    return true;
+  } catch (err) {
     rdmReportWriteError(err, 'Profile sync');
+    return false;
   }
 }
 
@@ -454,19 +528,27 @@ function profileHtml(p, editable = false) {
       <div class="profileIdentityHead">
         <div class="profileTagLine">
           <span class="simplePlayerId">${esc(miniId(p.id))}</span>
-          ${p.jersey ? `<span class="jerseyTag">#${esc(p.jersey)}</span>` : ''}
+          ${p.jersey ? `<span class="jerseyTag">Jersey #${esc(p.jersey)}</span>` : ''}
         </div>
         <h2>${esc(mini(p.name))}</h2>
         ${p.nick ? `<p class="profileNick">"${esc(mini(p.nick))}"</p>` : ''}
         <div class="profileOfficial"><b>${esc(mini(p.role))}</b><span>${esc(mini(p.detail))}</span></div>
       </div>
     </div>
-    ${p.bio ? `<div class="profileBioBlock"><span>Player Bio</span><p class="profileBio">${esc(mini(p.bio))}</p></div>` : ''}
+    <div class="profileBioBlock">
+      <span>Player Bio</span>
+      <p class="profileBio">${p.bio ? esc(mini(p.bio)) : '<em class="mutedMini">No bio written yet — add a short player note.</em>'}</p>
+    </div>
     <div class="profileSocialsBlock"><span>Official Socials</span>${sh}</div>
     ${editable ? `<div class="profileEditHub">
-      <button type="button" class="primary profileEditMain" onclick="openProfileEditMenu()">Edit Profile</button>
+      <button type="button" class="primary profileEditMain" onclick="openFullProfileEdit()">Edit Profile Details</button>
+      <button type="button" class="secondary" onclick="selfEdit('jersey')">Jersey</button>
+      <button type="button" class="secondary" onclick="selfEdit('nick')">Nickname</button>
+      <button type="button" class="secondary" onclick="selfEdit('bio')">Bio</button>
+      <button type="button" class="secondary" onclick="openOwnSocialManager()">Socials</button>
       <button type="button" class="secondary" onclick="chooseDP()">Change Photo</button>
-      <button type="button" class="secondary profileDownloadMain" onclick="openProfileDownload()">Download Profile Card</button>
+      <button type="button" class="secondary" onclick="resetOwnPhoto()">Use Logo</button>
+      <button type="button" class="secondary profileDownloadMain" onclick="openProfileDownload()">Download Card</button>
       <button type="button" class="secondary" id="playerInstallAppBtn" data-rdm-install-btn>Install My App</button>
       <button type="button" class="secondary" onclick="rdmLockPlayer('${esc(p.id)}')">Lock Profile</button>
     </div>` : ''}
@@ -505,6 +587,78 @@ function renderPlayerPasswordGate(p) {
   </div>`;
 }
 
+function renderAdminPasswordGate() {
+  return `<div class="playerLockGateWrap">
+    <article class="playerLockCard adminLockCard">
+      <div class="playerLockHeader">
+        <img class="playerLockAvatar" src="${RDM_FALLBACK_LOGO}" alt="RDM Official Logo">
+        <div>
+          <span class="sectionKicker">Protected Management Access</span>
+          <h2>Admin Command Workspace</h2>
+          <p>Rehan Dominators Mahuawan · Full Club &amp; Squad Control</p>
+        </div>
+      </div>
+      <p class="playerLockDesc">Enter the Admin Password to unlock fixtures, scorecards, squad profiles, tournaments, honours, gallery, branding, and private access links. Opening Admin Panel from the Portals Hub always requires password verification.</p>
+      <form id="rdmAdminUnlockForm" class="playerLockForm">
+        <label class="playerLockField">
+          <span>Admin Password</span>
+          <div class="playerPwInputRow">
+            <input id="rdmAdminPwInput" type="password" required autocomplete="current-password" placeholder="Enter admin password">
+            <button type="button" class="secondary" id="rdmAdminPwToggle">Show</button>
+          </div>
+        </label>
+        <p id="rdmAdminLockError" class="playerLockError" hidden></p>
+        <div class="playerLockActions">
+          <button type="submit" class="primary" id="rdmAdminUnlockBtn">Unlock Admin Panel</button>
+          <a class="secondary" href="./">Public Website</a>
+          <a class="secondary" href="./portals.html">Portals Directory</a>
+        </div>
+      </form>
+    </article>
+  </div>`;
+}
+window.renderAdminPasswordGate = renderAdminPasswordGate;
+
+const _baseAdminRenderForGate = window.renderAdmin;
+window.renderAdmin = function () {
+  const body = q('#adminBody');
+  if (!body) return;
+  if (window.__rdmUrlKeyRole === 'admin' && typeof window.rdmIsAdminUnlocked === 'function' && !window.rdmIsAdminUnlocked()) {
+    delete body.dataset.v61Ready;
+    body.innerHTML = renderAdminPasswordGate();
+    const form = document.getElementById('rdmAdminUnlockForm');
+    const pwInput = document.getElementById('rdmAdminPwInput');
+    const toggleBtn = document.getElementById('rdmAdminPwToggle');
+    const errEl = document.getElementById('rdmAdminLockError');
+    const submitBtn = document.getElementById('rdmAdminUnlockBtn');
+    toggleBtn?.addEventListener('click', () => {
+      if (!pwInput) return;
+      const show = pwInput.type === 'password';
+      pwInput.type = show ? 'text' : 'password';
+      toggleBtn.textContent = show ? 'Hide' : 'Show';
+    });
+    form?.addEventListener('submit', async e => {
+      e.preventDefault();
+      const val = pwInput?.value || '';
+      if (submitBtn) submitBtn.disabled = true;
+      if (errEl) errEl.hidden = true;
+      const ok = await window.rdmVerifyAdminPassword?.(val);
+      if (ok) {
+        toast?.('Admin Panel unlocked');
+      } else {
+        if (errEl) {
+          errEl.textContent = 'Incorrect Admin Password. Please try again.';
+          errEl.hidden = false;
+        }
+        if (submitBtn) submitBtn.disabled = false;
+        pwInput?.focus();
+      }
+    });
+    return;
+  }
+  _baseAdminRenderForGate?.();
+};
+
 render = function () {
   q('#players').innerHTML = D.players.map(p => {
     const n = (p.name || '').toUpperCase();
@@ -514,7 +668,7 @@ render = function () {
       <div class="photo"><img src="${esc(playerPhotoUrl(p.image))}" alt="${esc(mini(p.name))}" onerror="this.onerror=null;this.src='${RDM_FALLBACK_LOGO}'"></div>
       <div class="pbody">
         ${lead ? `<div class="leadershipBadge ${lead === 'VICE-CAPTAIN' ? 'vice' : lead === 'WICKET-KEEPER' ? 'keeper' : ''}">${esc(mini(lead))}</div>` : ''}
-        <span class="simplePlayerId">${esc(miniId(p.id))}${p.jersey ? ' <em>#' + esc(p.jersey) + '</em>' : ''}</span>
+        <span class="simplePlayerId">${esc(miniId(p.id))}${p.jersey ? ' · #' + esc(p.jersey) : ''}</span>
         <h3>${esc(mini(p.name))}</h3>
         <b>${esc(mini(p.role))}</b>
         <p>${esc(mini(p.detail))}</p>
@@ -621,6 +775,7 @@ renderProfile = function () {
   const st = (typeof XD !== 'undefined' && Array.isArray(XD.stats)) ? (XD.stats.find(z => z.playerId === p.id) || {}) : {};
   const status = av?.status || 'NOT SET';
   const n = v => Number(v || 0) || 0;
+  const hasPending = !!rdmGetOverrides()?.playerProfiles?.[p.id]?._pending;
   const extras = `<div class="playerPortalExtras">
     <section class="playerPortalCard">
       <div class="playerPortalAvailRow">
@@ -648,7 +803,7 @@ renderProfile = function () {
       ${st.last5 ? `<p class="squadStatLines">Last 5 Form: ${esc(st.last5)} · Season: ${esc(st.season || '2027')}</p>` : ''}
     </section>
   </div>`;
-  body.innerHTML = `<div class="playerSyncStatusBanner"><span>Cloud Sync Connected · Changes update Website &amp; Android APK live</span><button type="button" class="tinyBtn" onclick="rdmLockPlayer('${esc(p.id)}')">Lock Profile</button></div>` + profileHtml(p, true) + extras;
+  body.innerHTML = `<div class="playerSyncStatusBanner"><span>${hasPending ? 'Saved Locally · Waiting for Cloud Sync Permissions' : 'Cloud Sync Connected · Changes update Website & Android APK'}</span><button type="button" class="tinyBtn" onclick="rdmLockPlayer('${esc(p.id)}')">Lock Profile</button></div>` + profileHtml(p, true) + extras;
   window.rdmSyncInstallButtons?.();
 };
 
@@ -676,12 +831,13 @@ function rdmOpenSimpleModal(title, fields, onSave) {
 function closeProfileEditMenu() { document.getElementById('profileEditModal')?.remove(); }
 function profileEditRows() {
   return `<div class="profileEditMenu show profileEditMenuModal">
-    <button class="profileEditRow" type="button" onclick="runProfileEditAction('photo')"><span>📷</span><b>Change Profile Photo</b><i>›</i></button>
-    <button class="profileEditRow" type="button" onclick="runProfileEditAction('resetPhoto')"><span>↺</span><b>Use RDM Logo as Photo</b><i>›</i></button>
-    <button class="profileEditRow" type="button" onclick="runProfileEditAction('jersey')"><span>🏏</span><b>Jersey Number</b><i>›</i></button>
-    <button class="profileEditRow" type="button" onclick="runProfileEditAction('nick')"><span>✦</span><b>Nickname</b><i>›</i></button>
-    <button class="profileEditRow" type="button" onclick="runProfileEditAction('bio')"><span>✎</span><b>Bio</b><i>›</i></button>
-    <button class="profileEditRow" type="button" onclick="runProfileEditAction('socials')"><span>🔗</span><b>Socials</b><i>›</i></button>
+    <button class="profileEditRow" type="button" onclick="runProfileEditAction('all')"><span>All</span><b>Edit Jersey, Nickname &amp; Bio</b><i>›</i></button>
+    <button class="profileEditRow" type="button" onclick="runProfileEditAction('photo')"><span>Photo</span><b>Change Profile Photo</b><i>›</i></button>
+    <button class="profileEditRow" type="button" onclick="runProfileEditAction('resetPhoto')"><span>Reset</span><b>Use RDM Logo as Photo</b><i>›</i></button>
+    <button class="profileEditRow" type="button" onclick="runProfileEditAction('jersey')"><span>#</span><b>Jersey Number</b><i>›</i></button>
+    <button class="profileEditRow" type="button" onclick="runProfileEditAction('nick')"><span>Tag</span><b>Nickname</b><i>›</i></button>
+    <button class="profileEditRow" type="button" onclick="runProfileEditAction('bio')"><span>Bio</span><b>Player Bio</b><i>›</i></button>
+    <button class="profileEditRow" type="button" onclick="runProfileEditAction('socials')"><span>Links</span><b>Official Socials</b><i>›</i></button>
   </div>`;
 }
 window.openProfileEditMenu = function () {
@@ -702,19 +858,36 @@ window.openProfileEditMenu = function () {
 window.runProfileEditAction = function (action) {
   closeProfileEditMenu();
   setTimeout(() => {
+    if (action === 'all') return window.openFullProfileEdit();
     if (action === 'photo') return chooseDP();
     if (action === 'resetPhoto') return window.resetOwnPhoto?.();
     if (action === 'socials') return openOwnSocialManager();
     return selfEdit(action);
   }, 40);
 };
+window.openFullProfileEdit = async function () {
+  const p = rdmPlayer();
+  if (!p || !rdmPlayerUnlockedNow(p.id)) return toast?.('Unlock profile first');
+  return rdmOpenSimpleModal('Edit Profile Details', [
+    { name: 'jersey', label: 'Jersey Number', value: p.jersey || '', placeholder: 'e.g. 08' },
+    { name: 'nick', label: 'Nickname', value: p.nick || '', placeholder: 'Your nickname' },
+    { name: 'bio', label: 'Bio', type: 'textarea', value: p.bio || '', rows: 5, placeholder: 'Short bio & playing style' }
+  ], async d => {
+    p.jersey = String(d.jersey || '').trim();
+    p.nick = String(d.nick || '').trim();
+    p.bio = String(d.bio || '').trim();
+    const synced = await rdmProfileWrite(p);
+    rdmRefresh();
+    if (synced) toast('Profile saved & synced');
+  });
+};
 window.resetOwnPhoto = async function () {
   const p = rdmPlayer();
   if (!p || !rdmPlayerUnlockedNow(p.id)) return;
   p.image = '';
-  await rdmProfileWrite(p, { image: '' });
+  const synced = await rdmProfileWrite(p, { image: '' });
   rdmRefresh();
-  toast('Photo reset to RDM logo');
+  if (synced) toast('Photo reset to RDM logo');
 };
 window.selfEdit = async k => {
   const p = rdmPlayer();
@@ -727,9 +900,9 @@ window.selfEdit = async k => {
   if (!config) return;
   return rdmOpenSimpleModal(config.title, [config.field], async d => {
     p[k] = String(d.value || '').trim();
-    await rdmProfileWrite(p);
+    const synced = await rdmProfileWrite(p);
     rdmRefresh();
-    toast('Profile saved & synced');
+    if (synced) toast('Profile saved & synced');
   });
 };
 window.openOwnSocialManager = function () {
@@ -759,9 +932,9 @@ window.addOwnSocial = async () => {
   ], async d => {
     if (!safeUrl(d.url)) { toast('Valid https:// link required'); throw new Error('VALIDATION'); }
     p.socials = [...(p.socials || []), { name: String(d.name).trim() || ('Social ' + ((p.socials || []).length + 1)), url: String(d.url).trim() }].slice(0, 3);
-    await rdmProfileWrite(p);
+    const synced = await rdmProfileWrite(p);
     rdmRefresh();
-    toast('Social link added & synced');
+    if (synced) toast('Social link added & synced');
   });
 };
 window.editOwnSocial = async i => {
@@ -773,18 +946,18 @@ window.editOwnSocial = async i => {
   ], async d => {
     if (!safeUrl(d.url)) { toast('Valid https:// link required'); throw new Error('VALIDATION'); }
     p.socials[i] = { name: String(d.name || '').trim() || ('Social ' + (i + 1)), url: String(d.url).trim() };
-    await rdmProfileWrite(p);
+    const synced = await rdmProfileWrite(p);
     rdmRefresh();
-    toast('Social link updated & synced');
+    if (synced) toast('Social link updated & synced');
   });
 };
 window.deleteOwnSocial = async i => {
   const p = rdmPlayer();
   if (!p || !rdmPlayerUnlockedNow(p.id)) return;
   p.socials.splice(i, 1);
-  await rdmProfileWrite(p);
+  const synced = await rdmProfileWrite(p);
   rdmRefresh();
-  toast('Social link deleted');
+  if (synced) toast('Social link deleted');
 };
 
 const originalChooseDP = window.chooseDP;
@@ -824,14 +997,14 @@ q('#cropSave').onclick = async () => {
   out.getContext('2d').drawImage(src, 0, 0, 320, 320);
   p.image = out.toDataURL('image/jpeg', 0.72);
   try {
-    await rdmProfileWrite(p, { image: p.image });
+    const synced = await rdmProfileWrite(p, { image: p.image });
     q('#cropModal').classList.remove('show');
     const editedId = p.id;
     rdmCropTarget = null;
     rdmRefresh();
     window.refreshAdminSectionManager?.();
     if (document.getElementById('adminPlayerProfileModal')?.classList.contains('show')) window.adminOpenPlayerProfile?.(editedId);
-    toast('Photo saved & synced');
+    if (synced) toast('Photo saved & synced');
   } catch (e) {
     console.error(e);
     toast('Photo save failed');
@@ -843,14 +1016,17 @@ window.removeItem = async (k, i) => {
   const item = D[k]?.[i], col = RCOL[k];
   if (!item || !col) return;
   const run = async () => {
+    let failed = false;
     if (item._docId && !String(item._docId).startsWith('loc_')) {
       try {
         await rdmDB.collection(col).doc(item._docId).delete();
       } catch (err) {
+        failed = true;
         rdmReportWriteError(err, 'Delete ' + col);
       }
     }
     D[k].splice(i, 1);
+    if (failed) rdmSaveCollectionOverride(k, D[k]);
     rdmRefresh();
     window.refreshAdminSectionManager?.();
     toast('Deleted');
@@ -1021,7 +1197,7 @@ function rdmExportMini(v) {
   return typeof mini === 'function' ? mini(String(v ?? '')) : String(v ?? '');
 }
 function rdmCanvasFont(ctx, weight, size) {
-  ctx.font = `${weight} ${size}px "Plus Jakarta Sans", Arial, sans-serif`;
+  ctx.font = `${weight} ${size}px "DM Sans", Arial, sans-serif`;
 }
 async function rdmDrawProfileImage(format = 'png') {
   const p = rdmPlayer();
@@ -1030,16 +1206,16 @@ async function rdmDrawProfileImage(format = 'png') {
   c.width = W; c.height = H;
   const ctx = c.getContext('2d');
   const bg = ctx.createLinearGradient(0, 0, W, H);
-  bg.addColorStop(0, '#f4f6f9');
-  bg.addColorStop(0.5, '#ffffff');
-  bg.addColorStop(1, '#fff8f6');
+  bg.addColorStop(0, '#eef3ef');
+  bg.addColorStop(0.5, '#f8faf8');
+  bg.addColorStop(1, '#e6efe9');
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
-  rdmCanvasRoundRect(ctx, 36, 36, W - 72, H - 72, 32, '#ffffff', '#e2e8f0');
+  rdmCanvasRoundRect(ctx, 36, 36, W - 72, H - 72, 24, '#ffffff', '#cddad0');
   const band = ctx.createLinearGradient(72, 0, W - 72, 0);
-  band.addColorStop(0, '#c81e2b');
+  band.addColorStop(0, '#047857');
   band.addColorStop(0.6, '#b45309');
-  band.addColorStop(1, '#0b1520');
+  band.addColorStop(1, '#0b1a13');
   rdmCanvasRoundRect(ctx, 72, 72, W - 144, 10, 5, band, null);
 
   let logo = null;
@@ -1051,17 +1227,17 @@ async function rdmDrawProfileImage(format = 'png') {
     ctx.clip();
     ctx.drawImage(logo, 74, 96, 76, 76);
     ctx.restore();
-    ctx.strokeStyle = '#c81e2b';
+    ctx.strokeStyle = '#047857';
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(112, 134, 40, 0, Math.PI * 2);
     ctx.stroke();
   }
   ctx.textAlign = 'left';
-  ctx.fillStyle = '#0b1520';
+  ctx.fillStyle = '#0b1a13';
   rdmCanvasFont(ctx, 800, 26);
   ctx.fillText('REHAN DOMINATORS MAHUAWAN', 170, 128);
-  ctx.fillStyle = '#64748b';
+  ctx.fillStyle = '#475a50';
   rdmCanvasFont(ctx, 600, 15);
   ctx.fillText('MAHUAWAN · GOPALGANJ · BIHAR', 170, 155);
 
@@ -1075,26 +1251,26 @@ async function rdmDrawProfileImage(format = 'png') {
     const s = Math.max(264 / avatar.width, 264 / avatar.height), dw = avatar.width * s, dh = avatar.height * s;
     ctx.drawImage(avatar, W / 2 - dw / 2, 315 - dh / 2, dw, dh);
     ctx.restore();
-    ctx.strokeStyle = '#c81e2b';
+    ctx.strokeStyle = '#047857';
     ctx.lineWidth = 8;
     ctx.beginPath();
     ctx.arc(W / 2, 315, 136, 0, Math.PI * 2);
     ctx.stroke();
   }
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#0b1520';
+  ctx.fillStyle = '#0b1a13';
   rdmCanvasFont(ctx, 800, 44);
   ctx.fillText(rdmExportMini(p.name || 'PLAYER'), W / 2, 505);
-  rdmCanvasRoundRect(ctx, 120, 545, 840, 120, 20, '#f8fafc', '#e2e8f0');
+  rdmCanvasRoundRect(ctx, 120, 545, 840, 120, 16, '#f3f6f3', '#cddad0');
   ctx.fillStyle = '#b45309';
   rdmCanvasFont(ctx, 700, 15);
   ctx.fillText('PLAYER ID', 330, 583);
   ctx.fillText('JERSEY NUMBER', 750, 583);
-  ctx.fillStyle = '#0b1520';
+  ctx.fillStyle = '#0b1a13';
   rdmCanvasFont(ctx, 800, 28);
   ctx.fillText(rdmExportMini(p.id || '—'), 330, 628);
   ctx.fillText(p.jersey ? '#' + p.jersey : '—', 750, 628);
-  ctx.strokeStyle = '#cbd5e1';
+  ctx.strokeStyle = '#cddad0';
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(540, 564);
@@ -1103,22 +1279,22 @@ async function rdmDrawProfileImage(format = 'png') {
 
   let y = 712;
   if (p.nick) {
-    ctx.fillStyle = '#c81e2b';
+    ctx.fillStyle = '#047857';
     rdmCanvasFont(ctx, 700, 20);
     ctx.fillText(rdmExportMini(p.nick), W / 2, y);
     y += 48;
   }
   const roleH = 140;
-  rdmCanvasRoundRect(ctx, 120, y, 840, roleH, 20, '#f8fafc', '#e2e8f0');
-  ctx.fillStyle = '#0b1520';
+  rdmCanvasRoundRect(ctx, 120, y, 840, roleH, 16, '#f3f6f3', '#cddad0');
+  ctx.fillStyle = '#0b1a13';
   rdmCanvasFont(ctx, 800, 22);
   ctx.fillText(rdmExportMini(p.role || ''), W / 2, y + 44);
-  ctx.fillStyle = '#475569';
+  ctx.fillStyle = '#475a50';
   rdmCanvasFont(ctx, 600, 18);
   rdmWrapCanvasText(ctx, rdmExportMini(p.detail || ''), W / 2, y + 84, 740, 28, 2);
   y += roleH + 48;
   if (p.bio) {
-    ctx.fillStyle = '#334155';
+    ctx.fillStyle = '#2d4036';
     rdmCanvasFont(ctx, 500, 18);
     const used = rdmWrapCanvasText(ctx, rdmExportMini(p.bio), W / 2, y, 780, 28, 4);
     y += used + 28;
@@ -1126,20 +1302,20 @@ async function rdmDrawProfileImage(format = 'png') {
   const socials = (p.socials || []).map(socialObj).filter(s => s.name || s.url).slice(0, 3);
   if (socials.length) {
     const sh = 56 + socials.length * 32;
-    rdmCanvasRoundRect(ctx, 135, y, 810, sh, 16, '#f8fafc', '#e2e8f0');
+    rdmCanvasRoundRect(ctx, 135, y, 810, sh, 16, '#f3f6f3', '#cddad0');
     ctx.fillStyle = '#b45309';
     rdmCanvasFont(ctx, 700, 15);
     ctx.fillText('OFFICIAL SOCIALS', W / 2, y + 30);
-    ctx.fillStyle = '#1e293b';
+    ctx.fillStyle = '#0b1a13';
     rdmCanvasFont(ctx, 600, 16);
     socials.forEach((s, i) => ctx.fillText(rdmExportMini(s.name || ('Social ' + (i + 1))), W / 2, y + 62 + i * 30));
     y += sh + 18;
   }
   const footerY = Math.min(1272, Math.max(1220, y + 32));
-  ctx.fillStyle = '#c81e2b';
+  ctx.fillStyle = '#047857';
   rdmCanvasFont(ctx, 800, 15);
   ctx.fillText('ONE TEAM · ONE DREAM · ONE DOMINATION', W / 2, footerY);
-  ctx.fillStyle = '#64748b';
+  ctx.fillStyle = '#475a50';
   rdmCanvasFont(ctx, 600, 13);
   ctx.fillText('OFFICIAL PLAYER PROFILE · RDM', W / 2, footerY + 30);
 
@@ -1375,9 +1551,9 @@ window.openSquadEditMenu = function (id) {
     <button class="close" type="button" aria-label="Close">×</button>
     <h2>Edit ${esc(mini(p.name))}</h2>
     <div class="squadEditChoices">
-      <button class="squadEditChoice" type="button">📷 <span><b>Change Player Photo</b><small>Upload &amp; crop circular portrait</small></span></button>
-      <button class="squadEditChoice" type="button">👤 <span><b>Player Details</b><small>Name · Role · Jersey · Bio</small></span></button>
-      <button class="squadEditChoice" type="button">📊 <span><b>Player Stats</b><small>Matches · Runs · Wickets · Career</small></span></button>
+      <button class="squadEditChoice" type="button"><span><b>Change Player Photo</b><small>Upload &amp; crop circular portrait</small></span></button>
+      <button class="squadEditChoice" type="button"><span><b>Player Details</b><small>Name · Role · Jersey · Bio</small></span></button>
+      <button class="squadEditChoice" type="button"><span><b>Player Stats</b><small>Matches · Runs · Wickets · Career</small></span></button>
     </div>
   </div>`;
   document.body.appendChild(m);

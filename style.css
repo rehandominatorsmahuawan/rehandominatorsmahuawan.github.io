@@ -1,34 +1,30 @@
 /* ==========================================================================
-   Rehan Dominators Mahuawan (RDM) — Championship Club Design System
-   Fonts: Barlow Condensed (Display) + Plus Jakarta Sans (UI/Body) + JetBrains Mono (Stats/IDs)
+   Rehan Dominators Mahuawan (RDM) — Emerald Pavilion & Nocturnal Turf System
+   Display: Bricolage Grotesque | Body: DM Sans | Stats & IDs: IBM Plex Mono
    ========================================================================== */
 
 :root,
 html[data-rdm-theme="light"] {
-  --font-display: 'Barlow Condensed', system-ui, -apple-system, sans-serif;
-  --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-display: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+  --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
-  /* 60% Neutral Canvas */
-  --bg: #F6F8FA;
-  /* 30% Structural Surfaces */
+  --bg: #F3F6F3;
   --surface: #FFFFFF;
-  --surface-subtle: #EDF1F5;
-  --surface-hover: #E3E9F0;
-  --border: #D9E2EA;
-  --border-strong: #BDC9D5;
+  --surface-subtle: #E8EFEA;
+  --surface-hover: #DCE6DF;
+  --border: #D3DDD6;
+  --border-strong: #B6C5BB;
 
-  /* Typography */
-  --text: #0B1520;
-  --text-secondary: #3E5263;
-  --text-muted: #5C7082;
+  --text: #0B1A13;
+  --text-secondary: #2E4237;
+  --text-muted: #475A50;
   --letter-comp: 0em;
 
-  /* 10% Crimson Red & Metallic Gold Accent Budget (matched to RDM emblem) */
-  --accent: #C81E2B;
-  --accent-hover: #A31621;
+  --accent: #047857;
+  --accent-hover: #065F46;
   --accent-ink: #FFFFFF;
-  --accent-soft: rgba(200, 30, 43, 0.10);
+  --accent-soft: rgba(4, 120, 87, 0.11);
 
   --gold: #B45309;
   --gold-soft: rgba(180, 83, 9, 0.11);
@@ -37,53 +33,53 @@ html[data-rdm-theme="light"] {
   --danger-soft: rgba(185, 28, 28, 0.09);
   --danger-border: rgba(185, 28, 28, 0.25);
 
-  --success: #0F766E;
-  --success-soft: rgba(15, 118, 110, 0.10);
+  --success: #047857;
+  --success-soft: rgba(4, 120, 87, 0.10);
 
-  --header-bg: rgba(255, 255, 255, 0.92);
-  --nav-bg: rgba(246, 248, 250, 0.94);
+  --header-bg: rgba(243, 246, 243, 0.92);
+  --nav-bg: rgba(255, 255, 255, 0.96);
 
-  --shadow-card: 0 1px 2px rgba(11, 21, 32, 0.04), 0 8px 24px rgba(11, 21, 32, 0.05);
-  --shadow-modal: 0 24px 64px rgba(11, 21, 32, 0.22);
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 22px;
+  --shadow-card: 0 1px 2px rgba(11, 26, 19, 0.04), 0 6px 20px rgba(11, 26, 19, 0.04);
+  --shadow-modal: 0 24px 64px rgba(11, 26, 19, 0.20);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html[data-rdm-theme="dark"] {
-  --bg: #07090D;
-  --surface: #10131A;
-  --surface-subtle: #171B24;
-  --surface-hover: #202532;
-  --border: rgba(236, 240, 246, 0.11);
-  --border-strong: rgba(236, 240, 246, 0.22);
+  --bg: #070D0A;
+  --surface: #0F1A14;
+  --surface-subtle: #15231C;
+  --surface-hover: #1D2F26;
+  --border: rgba(220, 238, 228, 0.12);
+  --border-strong: rgba(220, 238, 228, 0.24);
 
-  --text: #F4F6F9;
-  --text-secondary: #C4CBD6;
-  --text-muted: #8E99AA;
+  --text: #ECF3EF;
+  --text-secondary: #C1D1C7;
+  --text-muted: #96ACA0;
   --letter-comp: 0.01em;
 
-  --accent: #EF4444;
-  --accent-hover: #DC2626;
-  --accent-ink: #FFFFFF;
-  --accent-soft: rgba(239, 68, 68, 0.15);
+  --accent: #10B981;
+  --accent-hover: #059669;
+  --accent-ink: #031A12;
+  --accent-soft: rgba(16, 185, 129, 0.16);
 
   --gold: #F59E0B;
-  --gold-soft: rgba(245, 158, 11, 0.14);
+  --gold-soft: rgba(245, 158, 11, 0.15);
 
   --danger: #F87171;
   --danger-soft: rgba(248, 113, 113, 0.14);
   --danger-border: rgba(248, 113, 113, 0.28);
 
   --success: #34D399;
-  --success-soft: rgba(52, 211, 153, 0.14);
+  --success-soft: rgba(52, 211, 153, 0.15);
 
-  --header-bg: rgba(7, 9, 13, 0.92);
-  --nav-bg: rgba(12, 15, 22, 0.94);
+  --header-bg: rgba(7, 13, 10, 0.92);
+  --nav-bg: rgba(15, 26, 20, 0.96);
 
-  --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.28), 0 12px 32px rgba(0, 0, 0, 0.30);
-  --shadow-modal: 0 28px 80px rgba(0, 0, 0, 0.68);
+  --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.30), 0 12px 28px rgba(0, 0, 0, 0.28);
+  --shadow-modal: 0 28px 80px rgba(0, 0, 0, 0.72);
 }
 
 *,
@@ -137,72 +133,156 @@ img {
 }
 
 /* ==========================================================================
-   Top Bar & Single-Line Navigation
+   Single-Row 3-Zone Top Navigation Bar (<= 68px Desktop / 56px Mobile)
    ========================================================================== */
 
 .top {
   flex-shrink: 0;
   height: 64px;
-  padding: 0 clamp(16px, 4vw, 48px);
+  padding: 0 clamp(14px, 3vw, 40px);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 18px;
   background: var(--header-bg);
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   position: sticky;
   top: 0;
-  z-index: 30;
+  z-index: 40;
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
+  flex-shrink: 0;
   text-decoration: none;
   color: var(--text);
 }
 
 .brand img {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   object-fit: cover;
   object-position: center;
   border: 2px solid var(--accent);
-  background: #9E9E9E;
-  box-shadow: 0 2px 12px rgba(200, 30, 43, 0.25);
+  background: #8B9B91;
   flex-shrink: 0;
-}
-
-.brandTextGroup {
-  display: grid;
-  gap: 2px;
-  min-width: 0;
 }
 
 .brandTitle {
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 1.18rem;
   font-weight: 800;
-  letter-spacing: 0.025em;
+  letter-spacing: -0.02em;
   line-height: 1;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.brandSub {
-  font-size: 11px;
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.nav > button,
+.nav > a.navLink,
+.navMoreBtn {
+  position: relative;
+  height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13.5px;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--text-muted);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: color 150ms var(--ease), background 150ms var(--ease);
+}
+
+.nav > button:hover,
+.nav > a.navLink:hover,
+.navMoreBtn:hover {
+  color: var(--text);
+  background: var(--surface-subtle);
+}
+
+.nav > button.active,
+.nav > a.navLink.active,
+.navMoreBtn.is-child-active {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.nav button[hidden] {
+  display: none !important;
+}
+
+.navMoreControl {
+  position: relative;
+}
+
+.navMoreMenu {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+  min-width: 196px;
+  padding: 6px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-modal);
+  display: grid;
+  gap: 3px;
+  z-index: 60;
+}
+
+.navMoreMenu[hidden] {
+  display: none !important;
+}
+
+.navMoreMenu button,
+.navMoreMenu a {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: background 140ms var(--ease), color 140ms var(--ease);
+}
+
+.navMoreMenu button:hover,
+.navMoreMenu a:hover {
+  background: var(--surface-subtle);
+  color: var(--text);
+}
+
+.navMoreMenu button.active {
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 
 .headActions {
@@ -212,31 +292,13 @@ img {
   flex-shrink: 0;
 }
 
-.authHeaderControls {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.authLoginBtn,
-.authStatusBtn,
-.authLogoutBtn {
+.headPortalsLink {
   min-height: 38px;
-  padding: 6px 14px;
+  padding: 7px 14px;
   font-size: 13px;
-  font-weight: 600;
-  white-space: nowrap;
 }
 
-.authStatusBtn {
-  background: var(--accent-soft);
-  color: var(--accent);
-  border: 1px solid transparent;
-}
-
-.authLoginBtn[hidden],
-.authStatusBtn[hidden],
-.authLogoutBtn[hidden] {
+.mobileMenuBtn {
   display: none !important;
 }
 
@@ -245,8 +307,8 @@ img {
 }
 
 .themeToggle {
-  min-height: 40px;
-  padding: 8px 16px;
+  min-height: 38px;
+  padding: 7px 14px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   background: var(--surface);
@@ -269,13 +331,13 @@ img {
   top: calc(100% + 8px);
   min-width: 136px;
   padding: 6px;
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--surface);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-modal);
   display: grid;
   gap: 4px;
-  z-index: 40;
+  z-index: 60;
 }
 
 .themeMenu[hidden] {
@@ -283,17 +345,16 @@ img {
 }
 
 .themeMenu button {
-  min-height: 40px;
-  padding: 8px 14px;
+  min-height: 38px;
+  padding: 8px 12px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--text-secondary);
   font-size: 13px;
   font-weight: 600;
   text-align: left;
   cursor: pointer;
-  transition: background 150ms var(--ease), color 150ms var(--ease);
 }
 
 .themeMenu button:hover {
@@ -306,69 +367,8 @@ img {
   color: var(--accent);
 }
 
-/* Primary Nav — Clean unboxed typography with crisp active underline */
-.nav {
-  flex-shrink: 0;
-  height: 44px;
-  padding: 0 clamp(16px, 4vw, 48px);
-  display: flex;
-  align-items: stretch;
-  gap: 6px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  background: var(--nav-bg);
-  border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  position: sticky;
-  top: 64px;
-  z-index: 29;
-  scrollbar-width: none;
-}
-
-.nav::-webkit-scrollbar {
-  display: none;
-}
-
-.nav button {
-  flex: 0 0 auto;
-  position: relative;
-  border: 0;
-  background: transparent;
-  color: var(--text-secondary);
-  padding: 0 12px;
-  font-size: 13px;
-  font-weight: 600;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: color 160ms var(--ease);
-}
-
-.nav button:hover {
-  color: var(--text);
-}
-
-.nav button.active {
-  color: var(--accent);
-}
-
-.nav button.active::after {
-  content: '';
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  bottom: 0;
-  height: 2px;
-  background: var(--accent);
-  border-radius: 2px 2px 0 0;
-}
-
-.nav button[hidden] {
-  display: none !important;
-}
-
 /* ==========================================================================
-   Main Container & Page Transitions + Dedicated Portal Isolation
+   Main Container & Portal Isolation
    ========================================================================== */
 
 main {
@@ -377,7 +377,7 @@ main {
   min-width: 0;
   max-width: 1280px;
   margin: 0 auto;
-  padding: clamp(18px, 2.4vw, 30px) clamp(14px, 3vw, 36px) 64px;
+  padding: clamp(20px, 2.5vw, 32px) clamp(14px, 3vw, 40px) 64px;
 }
 
 .page {
@@ -390,7 +390,9 @@ main {
 }
 
 html[data-rdm-portal="admin"] #nav,
-html[data-rdm-portal="player"] #nav {
+html[data-rdm-portal="player"] #nav,
+html[data-rdm-portal="admin"] .mobileMenuBtn,
+html[data-rdm-portal="player"] .mobileMenuBtn {
   display: none !important;
 }
 
@@ -413,7 +415,7 @@ html[data-rdm-portal="public"] #profile {
 }
 
 /* ==========================================================================
-   Buttons & Interactive Controls (Horizontal ≈ 2× Vertical, >=40px)
+   Buttons & Interactive Controls
    ========================================================================== */
 
 .primary,
@@ -429,7 +431,7 @@ html[data-rdm-portal="public"] #profile {
   justify-content: center;
   gap: 8px;
   min-height: 42px;
-  padding: 10px 20px;
+  padding: 9px 18px;
   border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 600;
@@ -437,7 +439,7 @@ html[data-rdm-portal="public"] #profile {
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
-  transition: transform 150ms var(--ease), background 160ms var(--ease), border-color 160ms var(--ease), opacity 160ms var(--ease);
+  transition: transform 140ms var(--ease), background 150ms var(--ease), border-color 150ms var(--ease), opacity 150ms var(--ease);
 }
 
 .primary,
@@ -466,11 +468,12 @@ html[data-rdm-portal="public"] #profile {
 .profileDownloadMain:hover,
 .homeUpdateOpen:hover {
   background: var(--surface-subtle);
+  border-color: var(--accent);
 }
 
 .tinyBtn {
-  min-height: 40px;
-  padding: 8px 16px;
+  min-height: 38px;
+  padding: 7px 14px;
   font-size: 13px;
   background: var(--surface-subtle);
   color: var(--text);
@@ -485,7 +488,7 @@ html[data-rdm-portal="public"] #profile {
 .primary:active,
 .secondary:active,
 .tinyBtn:active {
-  transform: scale(0.98);
+  transform: scale(0.985);
 }
 
 button:disabled {
@@ -495,6 +498,7 @@ button:disabled {
 
 .deleteBtn,
 .danger,
+.dangerBtn,
 .rdmDeleteAction,
 .rdmDeleteBtn,
 .updateDeleteBtn {
@@ -505,6 +509,7 @@ button:disabled {
 
 .deleteBtn:hover,
 .danger:hover,
+.dangerBtn:hover,
 .rdmDeleteAction:hover,
 .rdmDeleteBtn:hover,
 .updateDeleteBtn:hover {
@@ -550,8 +555,8 @@ body.admin .adminOnly {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 16px;
-  padding-bottom: 16px;
-  margin-bottom: 24px;
+  padding-bottom: 14px;
+  margin-bottom: 22px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -563,22 +568,23 @@ body.admin .adminOnly {
 .leadTitle span,
 .sectionKicker {
   display: block;
-  font-size: 12px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 4px;
+  color: var(--accent);
+  margin-bottom: 5px;
 }
 
 .sectionHead h2,
 .leadTitle h2 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(1.75rem, 3vw, 2.35rem);
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: 0.01em;
+  font-size: clamp(1.65rem, 2.8vw, 2.2rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
   color: var(--text);
   text-wrap: balance;
 }
@@ -590,65 +596,26 @@ body.admin .adminOnly {
 }
 
 .subHead {
-  margin-top: 40px;
+  margin-top: 38px;
 }
 
 /* ==========================================================================
-   Home Page: Stadium Hero, Metrics, Leadership, Heritage
+   Asymmetric Split Broadcast Hero, Metrics, Matchday & Leadership
    ========================================================================== */
 
 .hero {
-  position: relative;
-  min-height: clamp(460px, 66vh, 680px);
-  border-radius: clamp(18px, 2vw, 26px);
-  overflow: hidden;
-  border: 1px solid rgba(239, 68, 68, 0.28);
-  background: #08090D;
-  display: flex;
-  align-items: center;
-  padding: clamp(36px, 5.5vw, 68px) clamp(22px, 4.5vw, 56px);
-  box-shadow: 0 24px 64px rgba(6, 8, 12, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
-
-.heroBackdrop {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-
-.heroBackdrop img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  display: block;
-}
-
-.heroScrim {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(
-    102deg,
-    rgba(7, 8, 12, 0.95) 0%,
-    rgba(16, 10, 14, 0.84) 54%,
-    rgba(9, 10, 15, 0.72) 100%
-  );
-}
-
-.heroInner {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: clamp(22px, 3.2vw, 38px);
+  box-shadow: var(--shadow-card);
 }
 
 .heroInner.heroEditorial {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(240px, 0.75fr);
+  grid-template-columns: minmax(0, 1.18fr) minmax(280px, 0.92fr);
   align-items: center;
-  gap: clamp(24px, 4vw, 56px);
-  text-align: left;
+  gap: clamp(24px, 3.6vw, 48px);
 }
 
 .heroCopy {
@@ -659,122 +626,24 @@ body.admin .adminOnly {
   text-align: left;
 }
 
-.heroCrestShowcase {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: clamp(22px, 3vw, 32px) clamp(18px, 2.5vw, 28px);
-  border-radius: 22px;
-  background: rgba(12, 14, 20, 0.58);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.44);
-}
-
-.heroLogo {
-  width: clamp(128px, 13vw, 168px);
-  height: clamp(128px, 13vw, 168px);
-  border-radius: 50%;
-  overflow: hidden;
-  padding: 0;
-  border: 3px solid rgba(239, 68, 68, 0.92);
-  background: #9E9E9E;
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.56), 0 0 0 6px rgba(255, 255, 255, 0.08);
-  margin: 0 auto 16px;
-}
-
-.heroLogo img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  object-position: center;
-  display: block;
-  background: #9E9E9E;
-}
-
-.heroShieldMeta {
-  display: grid;
-  gap: 4px;
-}
-
-.heroShieldMeta strong {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  color: #FFFFFF;
-  line-height: 1.05;
-}
-
-.heroShieldMeta span {
-  font-size: 12.5px;
-  font-weight: 500;
-  color: #D1D5DB;
-}
-
-.heroCrestStats {
-  width: 100%;
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.heroCrestStats > div {
-  display: grid;
-  gap: 2px;
-  text-align: center;
-}
-
-.heroCrestStats b {
-  font-family: var(--font-display);
-  font-size: 1.35rem;
-  font-weight: 800;
-  color: #FFFFFF;
-  line-height: 1;
-}
-
-.heroCrestStats span {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: #9CA3AF;
-}
-
 .hero .eyebrow {
-  margin: 0 0 10px;
+  margin: 0 0 12px;
+  font-family: var(--font-mono);
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.09em;
+  font-weight: 600;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: #FCA5A5;
-}
-
-.heroTeam {
-  font-family: var(--font-display);
-  font-size: clamp(1.25rem, 2vw, 1.55rem);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: #E5E7EB;
-  margin-bottom: 8px;
+  color: var(--gold);
 }
 
 .hero h1 {
-  margin: 0 0 14px;
+  margin: 0 0 12px;
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 5.4vw, 4.4rem);
+  font-size: clamp(2.4rem, 4.8vw, 3.9rem);
   font-weight: 800;
   line-height: 0.98;
-  letter-spacing: 0.012em;
-  color: #FFFFFF;
+  letter-spacing: -0.03em;
+  color: var(--text);
   text-wrap: balance;
 }
 
@@ -785,69 +654,148 @@ body.admin .adminOnly {
 }
 
 .hero h1 em {
-  color: #EF4444;
-  margin-top: 4px;
+  color: var(--accent);
+}
+
+.heroTeam {
+  margin: 0 0 10px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 .heroMotto {
   margin: 0;
-  max-width: 56ch;
-  font-size: 15px;
-  line-height: 1.6;
-  font-weight: 400;
-  color: #D1D5DB;
+  max-width: 52ch;
+  font-size: 15.5px;
+  line-height: 1.65;
+  color: var(--text-secondary);
 }
 
 .actions.homeActions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
   align-items: center;
   gap: 12px;
   margin-top: 24px;
 }
 
-.homeActions .secondary {
-  background: rgba(255, 255, 255, 0.10);
-  color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  backdrop-filter: blur(8px);
+.heroTextLink {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 8px 6px;
+  white-space: nowrap;
 }
 
-.homeActions .secondary:hover {
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.45);
+.heroTextLink:hover {
+  color: var(--accent);
+  text-decoration: underline;
 }
 
-/* 4-Column Club Metrics Strip */
+.heroMediaCard {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  background: #070D0A;
+  aspect-ratio: 4 / 3;
+  min-height: 280px;
+  box-shadow: var(--shadow-card);
+}
+
+.heroMediaCard > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.heroMediaOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(7, 13, 10, 0.08) 0%, rgba(7, 13, 10, 0.35) 55%, rgba(7, 13, 10, 0.90) 100%);
+  pointer-events: none;
+}
+
+.heroCrestBadge {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(11, 26, 19, 0.82);
+  border: 1px solid rgba(236, 243, 239, 0.16);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.heroCrestThumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #10B981;
+  background: #8B9B91;
+  flex-shrink: 0;
+}
+
+.heroCrestText {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.heroCrestText strong {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #ECF3EF;
+  line-height: 1.1;
+}
+
+.heroCrestText span {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: #C1D1C7;
+}
+
+/* Metrics Strip */
 .metrics {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-  margin-top: 18px;
+  gap: 12px;
+  margin-top: 16px;
 }
 
 .metrics > div {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 20px 22px;
+  padding: 18px 20px;
   box-shadow: var(--shadow-card);
   display: grid;
-  justify-items: center;
-  text-align: center;
+  justify-items: start;
+  text-align: left;
   gap: 4px;
-  transition: transform 180ms var(--ease), border-color 180ms var(--ease);
+  transition: border-color 150ms var(--ease);
 }
 
 .metrics > div:hover {
-  transform: translateY(-2px);
   border-color: var(--accent);
 }
 
 .metrics strong {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 3vw, 2.5rem);
+  font-size: clamp(1.85rem, 2.8vw, 2.35rem);
   font-weight: 800;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -860,111 +808,18 @@ body.admin .adminOnly {
   color: var(--text-muted);
 }
 
-/* Leadership Section */
-.homeLeadership {
-  margin-top: 34px;
-}
-
-.leadTitle {
-  margin-bottom: 16px;
-  text-align: left;
-}
-
-.leadGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.leadCard {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 20px 22px;
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  box-shadow: var(--shadow-card);
-  transition: transform 180ms var(--ease), border-color 180ms var(--ease);
-}
-
-.leadCard:hover {
-  transform: translateY(-2px);
-  border-color: var(--border-strong);
-}
-
-.leadCard img,
-.leaderInitials {
-  width: 68px;
-  height: 68px;
-  border-radius: 50%;
-  flex: 0 0 68px;
-  object-fit: cover;
-  border: 2px solid var(--accent);
-  background: #9E9E9E;
-}
-
-.leadCard.captain img,
-.leadCard.captain .leaderInitials {
-  border-color: var(--gold);
-}
-
-.leadCard.vice img,
-.leadCard.vice .leaderInitials {
-  border-color: var(--accent);
-}
-
-.leaderInitials {
-  display: grid;
-  place-items: center;
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.leadMeta {
-  min-width: 0;
-}
-
-.leadRole {
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--gold);
-  margin-bottom: 4px;
-}
-
-.leadCard.vice .leadRole {
-  color: var(--accent);
-}
-
-.leadCard h3 {
-  margin: 0 0 4px;
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1.1;
-  color: var(--text);
-}
-
-.leadCard p {
-  margin: 0;
-  font-size: 13px;
-  color: var(--text-secondary);
-}
-
 /* Match Hub & Notice Banner */
 .homeMatchHub {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
-  margin-top: 20px;
+  margin-top: 18px;
 }
 
 .miniMatch {
   background: var(--surface);
   border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
   border-radius: var(--radius-md);
   padding: 20px 22px;
   box-shadow: var(--shadow-card);
@@ -975,8 +830,11 @@ body.admin .adminOnly {
 }
 
 .miniMatch span {
-  font-size: 12px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--accent);
 }
 
@@ -984,7 +842,7 @@ body.admin .adminOnly {
 .miniMatch b {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 1.45rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--text);
 }
@@ -1010,7 +868,7 @@ body.admin .adminOnly {
 }
 
 .cdUnit {
-  min-width: 64px;
+  min-width: 62px;
   padding: 8px 10px;
   border-radius: var(--radius-sm);
   background: var(--surface-subtle);
@@ -1022,7 +880,7 @@ body.admin .adminOnly {
 
 .cdUnit strong {
   font-family: var(--font-mono);
-  font-size: 1.35rem;
+  font-size: 1.3rem;
   font-weight: 700;
   line-height: 1.05;
   font-variant-numeric: tabular-nums;
@@ -1039,7 +897,7 @@ body.admin .adminOnly {
 
 .cdSep {
   font-family: var(--font-mono);
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--text-muted);
 }
@@ -1071,9 +929,100 @@ body.admin .adminOnly {
   text-decoration: underline;
 }
 
+/* Leadership Section */
+.homeLeadership {
+  margin-top: 32px;
+}
+
+.leadTitle {
+  margin-bottom: 14px;
+  text-align: left;
+}
+
+.leadGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.leadCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-card);
+  transition: border-color 160ms var(--ease);
+}
+
+.leadCard:hover {
+  border-color: var(--accent);
+}
+
+.leadCard img,
+.leaderInitials {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  flex: 0 0 64px;
+  object-fit: cover;
+  border: 2px solid var(--accent);
+  background: #8B9B91;
+}
+
+.leadCard.captain img,
+.leadCard.captain .leaderInitials {
+  border-color: var(--gold);
+}
+
+.leaderInitials {
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.leadMeta {
+  min-width: 0;
+}
+
+.leadRole {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 3px;
+}
+
+.leadCard.vice .leadRole {
+  color: var(--accent);
+}
+
+.leadCard h3 {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.leadCard p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
 .noticeBanner,
 .homeUpdateHub {
-  margin-top: 20px;
+  margin-top: 18px;
   padding: 18px 22px;
   border-radius: var(--radius-md);
   background: var(--surface);
@@ -1097,7 +1046,7 @@ body.admin .adminOnly {
 .noticeBannerMain b {
   display: block;
   font-family: var(--font-display);
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   color: var(--text);
   margin-bottom: 4px;
 }
@@ -1116,15 +1065,18 @@ body.admin .adminOnly {
 
 .homeUpdateTag,
 .pinTag {
-  font-size: 12px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   color: var(--gold);
 }
 
 .homeUpdateHub h3 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 1.4rem;
+  font-size: 1.35rem;
 }
 
 .homeUpdatePreview,
@@ -1140,12 +1092,12 @@ body.admin .adminOnly {
   margin-top: 6px;
 }
 
-/* Club Heritage 2-Column Editorial Split */
+/* Club Heritage Split */
 .rdmHeritageGrid {
   margin-top: 28px;
   display: grid;
-  grid-template-columns: 0.95fr 1.35fr;
-  gap: 20px;
+  grid-template-columns: 0.9fr 1.35fr;
+  gap: 18px;
   align-items: stretch;
 }
 
@@ -1154,7 +1106,7 @@ body.admin .adminOnly {
   overflow: hidden;
   border: 1px solid var(--border);
   background: var(--surface-subtle);
-  min-height: 280px;
+  min-height: 260px;
 }
 
 .heritageMedia img {
@@ -1168,7 +1120,7 @@ body.admin .adminOnly {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: clamp(22px, 3vw, 32px);
+  padding: clamp(20px, 3vw, 30px);
   box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
@@ -1180,11 +1132,11 @@ body.admin .adminOnly {
 .rdmSeoIntro h2 {
   margin: 0 0 10px;
   font-family: var(--font-display);
-  font-size: clamp(1.65rem, 2.4vw, 2rem);
-  font-weight: 700;
-  line-height: 1.08;
+  font-size: clamp(1.5rem, 2.3vw, 1.9rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
   color: var(--text);
-  text-wrap: balance;
 }
 
 .rdmSeoIntro p {
@@ -1209,7 +1161,7 @@ body.admin .adminOnly {
 }
 
 .clubFactItem {
-  padding: 12px 14px;
+  padding: 11px 14px;
   border-radius: var(--radius-sm);
   background: var(--surface-subtle);
   border: 1px solid var(--border);
@@ -1218,8 +1170,9 @@ body.admin .adminOnly {
 }
 
 .clubFactItem span {
+  font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -1245,7 +1198,7 @@ body.admin .adminOnly {
 }
 
 /* ==========================================================================
-   Squad Grid & Player Cards (Zero-Pill Metadata)
+   Squad Grid & Player Cards
    ========================================================================== */
 
 .squadToolbar {
@@ -1258,7 +1211,7 @@ body.admin .adminOnly {
 
 .squadSearchWrap {
   position: relative;
-  flex: 1 1 300px;
+  flex: 1 1 280px;
   min-width: 0;
   display: flex;
   align-items: center;
@@ -1276,14 +1229,14 @@ body.admin .adminOnly {
 
 .searchPlayer {
   width: 100%;
-  min-height: 46px;
+  min-height: 44px;
   padding: 10px 44px 10px 42px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text);
   font-size: 14px;
-  transition: border-color 160ms var(--ease), box-shadow 160ms var(--ease);
+  transition: border-color 150ms var(--ease), box-shadow 150ms var(--ease);
 }
 
 .searchPlayer:hover {
@@ -1308,10 +1261,10 @@ body.admin .adminOnly {
 .squadSearchClear {
   position: absolute;
   right: 4px;
-  min-width: 38px;
-  min-height: 38px;
+  min-width: 36px;
+  min-height: 36px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--text-muted);
   font-size: 20px;
@@ -1320,7 +1273,6 @@ body.admin .adminOnly {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 150ms var(--ease), color 150ms var(--ease);
 }
 
 .squadSearchClear:hover {
@@ -1344,10 +1296,10 @@ body.admin .adminOnly {
 }
 
 .squadRoleBtn {
-  min-height: 38px;
-  padding: 7px 14px;
+  min-height: 36px;
+  padding: 6px 13px;
   border: 0;
-  border-radius: 7px;
+  border-radius: 4px;
   background: transparent;
   color: var(--text-secondary);
   font-size: 13px;
@@ -1355,27 +1307,23 @@ body.admin .adminOnly {
   white-space: nowrap;
   flex-shrink: 0;
   cursor: pointer;
-  transition: background 160ms var(--ease), color 160ms var(--ease), box-shadow 160ms var(--ease);
+  transition: background 150ms var(--ease), color 150ms var(--ease);
 }
 
 .squadRoleBtn:hover {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.35);
-}
-
-html[data-rdm-theme="dark"] .squadRoleBtn:hover {
-  background: rgba(255, 255, 255, 0.06);
 }
 
 .squadRoleBtn.active {
   background: var(--surface);
   color: var(--accent);
-  box-shadow: 0 1px 2px rgba(13, 27, 38, 0.08);
+  box-shadow: 0 1px 2px rgba(11, 26, 19, 0.08);
 }
 
 .squadFilterStatus {
-  margin: 0 0 16px;
-  font-size: 13px;
+  margin: 0 0 14px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
 }
@@ -1401,7 +1349,7 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 .players {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 16px;
+  gap: 14px;
   align-items: stretch;
 }
 
@@ -1409,15 +1357,15 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 20px 26px;
+  padding: 18px 22px;
   box-shadow: var(--shadow-card);
   display: grid;
-  grid-template-columns: 96px minmax(0, 1fr) auto;
+  grid-template-columns: 88px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 14px 24px;
+  gap: 12px 20px;
   text-align: left;
   position: relative;
-  transition: transform 180ms var(--ease), border-color 180ms var(--ease), box-shadow 180ms var(--ease);
+  transition: border-color 160ms var(--ease), transform 160ms var(--ease);
 }
 
 .clickablePlayer {
@@ -1425,20 +1373,18 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 }
 
 .player:hover {
-  transform: translateY(-2px);
-  border-color: var(--gold);
-  box-shadow: 0 10px 28px rgba(10, 30, 22, 0.12);
+  transform: translateY(-1px);
+  border-color: var(--accent);
 }
 
 .player .photo,
 .squadFullProfile .photo {
-  width: 96px;
-  height: 96px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
   overflow: hidden;
   border: 2px solid var(--accent);
-  background: #9E9E9E;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
+  background: #8B9B91;
   margin: 0;
 }
 
@@ -1452,9 +1398,10 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 }
 
 .leadershipBadge {
+  font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--gold);
   margin-bottom: 2px;
@@ -1476,12 +1423,17 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 }
 
 .simplePlayerId,
-.badge {
+.badge,
+.jerseyTag {
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 600;
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
+}
+
+.jerseyTag {
+  color: var(--accent);
 }
 
 .simplePlayerId em {
@@ -1491,20 +1443,21 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 }
 
 .pbody h3 {
-  margin: 2px 0 0;
+  margin: 1px 0 0;
   font-family: var(--font-display);
-  font-size: 1.55rem;
-  font-weight: 700;
+  font-size: 1.45rem;
+  font-weight: 800;
   line-height: 1.1;
+  letter-spacing: -0.015em;
   color: var(--text);
 }
 
 .captainBadge {
   display: inline-block;
   margin-left: 8px;
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   color: var(--gold);
 }
@@ -1518,7 +1471,7 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 .pbody p {
   margin: 2px 0;
   font-size: 13.5px;
-  line-height: 1.55;
+  line-height: 1.5;
   color: var(--text-secondary);
 }
 
@@ -1533,29 +1486,12 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   width: 100%;
 }
 
-/* Squad Full Profile & Expandable Stats Panel */
 .squadFullProfile {
   text-align: left;
-  transition: transform 180ms var(--ease), border-color 180ms var(--ease), box-shadow 180ms var(--ease);
 }
 
 .squadFullProfile.is-stats-open {
   border-color: var(--accent);
-}
-
-.squadEditFab {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--surface-subtle);
-  color: var(--text);
-  cursor: pointer;
-  display: grid;
-  place-items: center;
 }
 
 .squadIdentity {
@@ -1604,8 +1540,8 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   background: var(--accent-soft);
   color: var(--accent);
   border: 1px solid transparent;
-  min-height: 40px;
-  padding: 8px 16px;
+  min-height: 38px;
+  padding: 7px 14px;
 }
 
 .squadStatsToggleBtn:hover,
@@ -1637,8 +1573,9 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 }
 
 .squadStatsGroupTitle {
+  font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--gold);
@@ -1657,6 +1594,7 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 
 .squadStatsGrid b {
   background: var(--surface-subtle);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 9px 8px;
   font-family: var(--font-mono);
@@ -1694,15 +1632,15 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   align-items: stretch;
   justify-content: center;
   gap: 8px;
-  min-width: 152px;
+  min-width: 136px;
 }
 
 .squadShareBtn {
   background: var(--surface);
   color: var(--text);
   border: 1px solid var(--border-strong);
-  min-height: 40px;
-  padding: 8px 16px;
+  min-height: 38px;
+  padding: 7px 14px;
 }
 
 .squadShareBtn:hover {
@@ -1728,11 +1666,10 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 }
 
 .sharePlayerPreview img {
-  width: 58px;
-  height: 58px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   object-fit: cover;
-  object-position: center;
   border: 1px solid var(--border-strong);
   background: var(--surface);
   flex-shrink: 0;
@@ -1740,8 +1677,9 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 
 .shareKicker {
   display: block;
+  font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--gold);
@@ -1751,7 +1689,7 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 .sharePlayerPreview h2 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 1.45rem;
   line-height: 1.1;
   color: var(--text);
 }
@@ -1784,7 +1722,6 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
-  transition: background 160ms var(--ease), border-color 160ms var(--ease), color 160ms var(--ease);
 }
 
 .shareChannelBtn .socialBrandSvg {
@@ -1828,12 +1765,12 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 }
 
 /* ==========================================================================
-   Generic Cards, Lists, Match Centre & Tournaments
+   Generic Cards, Match Centre & Tournaments
    ========================================================================== */
 
 .list {
   display: grid;
-  gap: 16px;
+  gap: 14px;
 }
 
 .card,
@@ -1848,7 +1785,7 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 22px;
+  padding: 20px 22px;
   box-shadow: var(--shadow-card);
 }
 
@@ -1859,7 +1796,7 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 .proCardHead h3 {
   margin: 0 0 8px;
   font-family: var(--font-display);
-  font-size: 1.45rem;
+  font-size: 1.38rem;
   font-weight: 700;
   line-height: 1.15;
   color: var(--text);
@@ -1900,6 +1837,7 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--text-muted);
 }
 
@@ -2043,7 +1981,6 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   text-align: left;
 }
 
-/* Match Centre Summary Strip, Status Filters & Expandable Scorecards */
 .matchSummaryStrip {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -2068,7 +2005,7 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 
 .matchSummaryItem strong {
   font-family: var(--font-display);
-  font-size: 1.75rem;
+  font-size: 1.7rem;
   font-weight: 800;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -2084,10 +2021,10 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 .matchFilterBar {
   display: inline-flex;
   flex-wrap: wrap;
-  gap: 6px;
-  padding: 5px;
+  gap: 5px;
+  padding: 4px;
   margin-bottom: 18px;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   background: var(--surface-subtle);
   border: 1px solid var(--border);
   max-width: 100%;
@@ -2099,9 +2036,9 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 
 .matchFilterBtn {
   min-height: 36px;
-  padding: 7px 14px;
+  padding: 6px 14px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 4px;
   background: transparent;
   color: var(--text-secondary);
   font-size: 13px;
@@ -2109,7 +2046,6 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   white-space: nowrap;
   cursor: pointer;
   font-variant-numeric: tabular-nums;
-  transition: background 150ms var(--ease), color 150ms var(--ease), box-shadow 150ms var(--ease);
 }
 
 .matchFilterBtn:hover {
@@ -2119,7 +2055,7 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 .matchFilterBtn.on {
   background: var(--surface);
   color: var(--accent);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.10);
+  box-shadow: 0 1px 2px rgba(11, 26, 19, 0.08);
 }
 
 .proStatus[data-status="COMPLETED"],
@@ -2165,7 +2101,6 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   content: '▾';
   font-size: 14px;
   color: var(--text-muted);
-  transition: transform 160ms var(--ease);
 }
 
 .matchScorecardAccordion[open] summary::after {
@@ -2181,7 +2116,7 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 .matchScorecardBlock {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 12px 14px;
   font-size: 13px;
   color: var(--text-secondary);
@@ -2189,8 +2124,9 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 
 .matchScorecardBlock b {
   display: block;
+  font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--gold);
@@ -2213,16 +2149,16 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 16px;
+  margin-top: 14px;
 }
 
 /* ==========================================================================
-   Records, Filters & Stats (Segmented Control + Tabular Numbers)
+   Records, Leaderboard Tables & Stats
    ========================================================================== */
 
 .v62Help {
   margin: 0 0 18px;
-  padding: 14px 16px;
+  padding: 13px 16px;
   border-radius: var(--radius-sm);
   background: var(--surface-subtle);
   border: 1px solid var(--border);
@@ -2243,9 +2179,9 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 .albumFilters {
   display: inline-flex;
   flex-wrap: wrap;
-  gap: 6px;
-  padding: 5px;
-  border-radius: 12px;
+  gap: 5px;
+  padding: 4px;
+  border-radius: var(--radius-sm);
   background: var(--surface-subtle);
   border: 1px solid var(--border);
   max-width: 100%;
@@ -2268,8 +2204,8 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 
 .seasonFilterBtn {
   min-height: 36px;
-  padding: 6px 14px;
-  border-radius: 8px;
+  padding: 6px 13px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text-secondary);
@@ -2278,7 +2214,6 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   white-space: nowrap;
   cursor: pointer;
   font-variant-numeric: tabular-nums;
-  transition: background 150ms var(--ease), color 150ms var(--ease), border-color 150ms var(--ease);
 }
 
 .seasonFilterBtn:hover {
@@ -2295,16 +2230,15 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 .recordTypeBtn,
 .albumTab {
   min-height: 36px;
-  padding: 7px 16px;
+  padding: 6px 14px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 4px;
   background: transparent;
   color: var(--text-secondary);
   font-size: 13px;
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
-  transition: background 150ms var(--ease), color 150ms var(--ease), box-shadow 150ms var(--ease);
 }
 
 .recordTypeBtn:hover,
@@ -2316,7 +2250,7 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 .albumTab.on {
   background: var(--surface);
   color: var(--accent);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.10);
+  box-shadow: 0 1px 2px rgba(11, 26, 19, 0.08);
 }
 
 .recordTypeSection[hidden] {
@@ -2361,7 +2295,7 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 .squadLeaderboardTitleRow h3 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 1.45rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--text);
 }
@@ -2392,8 +2326,9 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   padding: 12px 14px;
   background: var(--surface-subtle);
   border-bottom: 1px solid var(--border);
-  font-size: 11.5px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -2422,7 +2357,6 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 
 .statsLeaderboardTable tbody tr {
   cursor: pointer;
-  transition: background 140ms var(--ease);
 }
 
 .statsLeaderboardTable tbody tr:hover {
@@ -2466,7 +2400,7 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  gap: 14px;
 }
 
 .statCard {
@@ -2474,8 +2408,8 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 }
 
 .statCard img {
-  width: 76px;
-  height: 76px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   object-fit: cover;
   margin: 0 auto 10px;
@@ -2551,7 +2485,7 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   flex: 0 0 auto;
   width: 28px;
   height: 28px;
-  border-radius: 7px;
+  border-radius: var(--radius-sm);
   background: var(--accent-soft);
   color: var(--accent);
   font-style: normal;
@@ -2617,7 +2551,7 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 
 .availSummaryStat strong {
   font-family: var(--font-display);
-  font-size: 1.55rem;
+  font-size: 1.5rem;
   font-weight: 800;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -2674,6 +2608,7 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 }
 
 .availabilityRow b {
+  font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -2695,7 +2630,7 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 .honours {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
+  gap: 16px;
 }
 
 .honour {
@@ -2727,7 +2662,7 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 .honour h3 {
   margin: 0 0 6px;
   font-family: var(--font-display);
-  font-size: 1.4rem;
+  font-size: 1.35rem;
 }
 
 .honour p {
@@ -2750,15 +2685,15 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 }
 
 .socialIcon {
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
+  width: 54px;
+  height: 54px;
+  border-radius: var(--radius-md);
   background: var(--surface-subtle);
   border: 1px solid var(--border);
   display: grid;
   place-items: center;
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 1.45rem;
   font-weight: 700;
   overflow: hidden;
   margin-bottom: 12px;
@@ -2771,15 +2706,15 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 }
 
 .socialIcon .socialBrandSvg {
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   display: block;
 }
 
 .socialCard h3 {
   margin: 0 0 4px;
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 1.3rem;
 }
 
 .socialPlatform {
@@ -2833,8 +2768,9 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 }
 
 .galleryAlbumName {
+  font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--accent);
 }
 
@@ -2873,26 +2809,28 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   border: 1px solid var(--border);
   box-shadow: var(--shadow-card);
   display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 26px;
+  grid-template-columns: 132px 1fr;
+  gap: 24px;
   align-items: center;
 }
 
 .downloadAppCard > img {
-  width: 140px;
-  height: 140px;
+  width: 132px;
+  height: 132px;
   border-radius: 50%;
   object-fit: cover;
   object-position: center;
-  background: #9E9E9E;
+  background: #8B9B91;
   border: 2px solid var(--accent);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22);
 }
 
 .downloadBadge {
   display: block;
-  font-size: 12px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   color: var(--gold);
   margin-bottom: 4px;
 }
@@ -2900,18 +2838,13 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 .downloadAppCopy h2 {
   margin: 0 0 8px;
   font-family: var(--font-display);
-  font-size: 1.85rem;
+  font-size: 1.75rem;
 }
 
 .downloadAppCopy p {
   margin: 0 0 10px;
   font-size: 14px;
   color: var(--text-secondary);
-}
-
-.downloadMeta {
-  font-size: 13px !important;
-  color: var(--text-muted) !important;
 }
 
 .downloadBtnRow {
@@ -2929,7 +2862,7 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 
 .empty {
   text-align: center;
-  padding: 48px 20px;
+  padding: 44px 20px;
   border-radius: var(--radius-md);
   border: 1px dashed var(--border-strong);
   color: var(--text-muted);
@@ -2937,141 +2870,149 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 }
 
 /* ==========================================================================
-   Profile & Admin Panels
+   Player Profile Portal & Password Gate
    ========================================================================== */
 
 .profileCard {
-  max-width: 720px;
+  max-width: 760px;
   margin: 0 auto;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 28px;
-  text-align: center;
   box-shadow: var(--shadow-card);
+  text-align: left;
 }
 
-.publicProfileCard {
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-  padding: 6px 0;
+.profileHeroBanner {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.profileAvatarFrame {
+  flex-shrink: 0;
 }
 
 .profileAvatar {
-  width: 132px;
-  height: 132px;
+  width: 112px;
+  height: 112px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid var(--accent);
-  background: #9E9E9E;
-  margin: 0 auto 14px;
+  border: 2px solid var(--accent);
+  background: #8B9B91;
   display: block;
 }
 
-.profileCard h2 {
-  margin: 0 0 12px;
-  font-family: var(--font-display);
-  font-size: 2rem;
+.profileIdentityHead {
+  min-width: 0;
+  flex: 1;
 }
 
-.profileIdentity {
-  max-width: 460px;
-  margin: 14px auto;
-  display: grid;
-  grid-template-columns: 1fr 1px 1fr;
+.profileTagLine {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 14px;
-  padding: 14px 16px;
-  border-radius: var(--radius-sm);
-  background: var(--surface-subtle);
-  border: 1px solid var(--border);
+  gap: 10px;
+  margin-bottom: 4px;
 }
 
-.identityItem {
-  display: grid;
-  gap: 4px;
-}
-
-.identityItem span {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-muted);
-}
-
-.identityItem strong {
-  font-family: var(--font-mono);
-  font-size: 16px;
+.profileCard h2 {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: clamp(1.65rem, 3vw, 2.15rem);
+  font-weight: 800;
+  line-height: 1.05;
   color: var(--text);
 }
 
-.identityDivider {
-  height: 36px;
-  background: var(--border-strong);
-}
-
 .profileNick {
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 600;
   color: var(--gold);
-  margin: 8px 0;
+  margin: 0 0 8px;
 }
 
 .profileOfficial {
-  max-width: 540px;
-  margin: 14px auto;
-  padding: 14px 18px;
-  border-radius: var(--radius-sm);
-  background: var(--surface-subtle);
-  font-size: 14px;
+  display: grid;
+  gap: 2px;
+  font-size: 13.5px;
   color: var(--text-secondary);
 }
 
-.officialLock {
-  margin-top: 6px;
-  font-size: 12px;
+.profileOfficial b {
+  color: var(--accent);
+  font-size: 13.5px;
+}
+
+.profileBioBlock,
+.profileSocialsBlock {
+  margin-top: 18px;
+}
+
+.profileBioBlock > span,
+.profileSocialsBlock > span {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--text-muted);
+  margin-bottom: 6px;
 }
 
 .profileBio {
-  max-width: 540px;
-  margin: 12px auto;
-  font-size: 14px;
+  margin: 0;
+  font-size: 14.5px;
   line-height: 1.65;
   color: var(--text-secondary);
 }
 
+.mutedMini {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin: 0;
+}
+
 .profileSocialList,
 .ownSocials {
-  max-width: 540px;
-  margin: 16px auto;
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
 .profileSocialRow a,
 .ownSocials a {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  min-height: 42px;
-  padding: 10px 18px;
+  min-height: 38px;
+  padding: 6px 14px;
   border-radius: var(--radius-sm);
   background: var(--surface-subtle);
   border: 1px solid var(--border);
   color: var(--text);
   text-decoration: none;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
+}
+
+.profileSocialRow a:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .profileEditHub,
 .profileActions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 20px;
+  justify-content: flex-start;
+  gap: 8px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
 }
 
 .profileEditMenu {
@@ -3085,16 +3026,21 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   align-items: center;
   gap: 12px;
   width: 100%;
-  min-height: 48px;
+  min-height: 52px;
   padding: 12px 16px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
-  background: var(--surface-subtle);
+  background: var(--surface);
   color: var(--text);
   font-size: 14px;
   font-weight: 600;
   text-align: left;
   cursor: pointer;
+}
+
+.profileEditRow:hover {
+  border-color: var(--accent);
+  background: var(--surface-subtle);
 }
 
 .profileEditRow b {
@@ -3128,33 +3074,449 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   gap: 8px;
 }
 
-.adminGrid,
-.dashGrid {
+.playerPortalExtras {
+  max-width: 760px;
+  margin: 18px auto 0;
+  display: grid;
+  gap: 16px;
+}
+
+.playerPortalCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: clamp(18px, 3vw, 26px);
+  box-shadow: var(--shadow-card);
+}
+
+.playerPortalCard .subHead {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.playerPortalCard h3 {
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+}
+
+.playerPortalAvailRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.availBadge {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-subtle);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.availBadge.available {
+  color: var(--success);
+  background: var(--success-soft);
+  border-color: transparent;
+}
+
+.availBadge.unavailable {
+  color: var(--danger);
+  background: var(--danger-soft);
+  border-color: var(--danger-border);
+}
+
+.playerPortalStatsGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: 10px;
 }
 
-.adminGrid button,
-.dashGrid button {
-  width: 100%;
-  min-height: 50px;
-  justify-content: flex-start;
-  text-align: left;
+.playerPortalStatsGrid b {
+  display: grid;
+  gap: 4px;
+  padding: 12px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
 }
 
-.adminHint {
+.playerPortalStatsGrid b small {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.playerSyncStatusBanner {
+  max-width: 760px;
+  margin: 0 auto 16px;
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.playerSyncStatusBanner span {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.publicProfileFooterActions {
+  display: flex;
+  justify-content: center;
   margin-top: 18px;
+}
+
+/* Password Lock Card (Admin & Player Portals) */
+.playerLockGateWrap {
+  max-width: 520px;
+  margin: 24px auto;
+}
+
+.playerLockCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  border-radius: var(--radius-lg);
+  padding: clamp(22px, 4vw, 30px);
+  box-shadow: var(--shadow-card);
+  display: grid;
+  gap: 18px;
+}
+
+.playerLockHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.playerLockAvatar {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent);
+  background: #8B9B91;
+  flex-shrink: 0;
+}
+
+.playerLockHeader h2 {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 800;
+  line-height: 1.05;
+  color: var(--text);
+}
+
+.playerLockHeader p {
+  margin: 0;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.playerLockDesc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.playerLockForm {
+  display: grid;
+  gap: 14px;
+}
+
+.playerLockField {
+  display: grid;
+  gap: 6px;
+}
+
+.playerLockField span {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.playerPwInputRow {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.playerPwInputRow input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-subtle);
+  color: var(--text);
+  font-size: 15px;
+}
+
+.playerPwInputRow input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.playerLockError {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--danger-soft);
+  border: 1px solid var(--danger-border);
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.playerLockError[hidden] {
+  display: none !important;
+}
+
+.playerLockActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.playerLockActions .primary {
+  flex: 1 1 180px;
+}
+
+/* ==========================================================================
+   2-Column Sidebar + Main Workspace Admin Console (.adminShell)
+   ========================================================================== */
+
+.adminShell {
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.adminSidebar {
+  position: sticky;
+  top: 84px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  box-shadow: var(--shadow-card);
+  display: grid;
+  gap: 16px;
+}
+
+.adminSideBrand {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  gap: 3px;
+}
+
+.adminSideBrand strong {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.adminSideBrand small {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.adminSideNav {
+  display: grid;
+  gap: 4px;
+}
+
+.adminSideNav button {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.adminSideNav button:hover {
+  background: var(--surface-subtle);
+  color: var(--accent);
+}
+
+.adminSideFooter {
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: 8px;
+}
+
+.adminSideFooter a,
+.adminSideFooter button {
+  width: 100%;
+}
+
+.adminWorkspaceMain {
+  min-width: 0;
+  display: grid;
+  gap: 20px;
+}
+
+.adminGateCard,
+.adminSessionBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 18px 20px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+}
+
+.adminSessionBar strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--text);
+}
+
+.adminSessionBar span {
   font-size: 13px;
   color: var(--text-muted);
 }
 
-.adminPlayerManager {
-  margin-bottom: 24px;
+.adminSessionActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.adminKpiGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.adminKpiCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-card);
+  display: grid;
+  gap: 3px;
+}
+
+.adminKpiCard span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.adminKpiCard strong {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.adminKpiCard small {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.adminCategoryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.adminModuleCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.adminModuleHead h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.adminModuleActions {
+  display: grid;
+  gap: 7px;
+}
+
+.adminModuleActions .primary,
+.adminModuleActions .secondary {
+  width: 100%;
+  justify-content: flex-start;
+  min-height: 40px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+.adminPlayerManager,
+.brandAdminBox,
+.adminLinksBox {
+  margin-top: 0;
   padding: 20px;
   border-radius: var(--radius-md);
   background: var(--surface);
   border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
 }
 
 .adminPlayerGrid {
@@ -3175,12 +3537,16 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   cursor: pointer;
 }
 
+.adminPlayerGrid button:hover {
+  border-color: var(--accent);
+}
+
 .adminPlayerGrid img {
   width: 44px;
   height: 44px;
   border-radius: 50%;
   object-fit: cover;
-  background: #9E9E9E;
+  background: #8B9B91;
   border: 1.5px solid var(--accent);
   flex-shrink: 0;
 }
@@ -3212,14 +3578,6 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   margin-top: 14px;
 }
 
-.brandAdminBox {
-  margin-top: 24px;
-  padding: 22px;
-  border-radius: var(--radius-md);
-  background: var(--surface);
-  border: 1px solid var(--border);
-}
-
 .brandLogoPreviewRow {
   display: flex;
   align-items: center;
@@ -3233,26 +3591,13 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
 }
 
 .brandLogoPreviewRow img {
-  width: 68px;
-  height: 68px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   object-fit: cover;
-  object-position: center;
-  background: #9E9E9E;
+  background: #8B9B91;
   border: 1.5px solid var(--accent);
   flex-shrink: 0;
-}
-
-.brandLogoPreviewRow strong {
-  display: block;
-  font-size: 14px;
-  color: var(--text);
-}
-
-.brandLogoPreviewRow p {
-  margin: 2px 0 10px;
-  font-size: 13px;
-  color: var(--text-muted);
 }
 
 .brandAdminGrid {
@@ -3272,64 +3617,72 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   font-weight: 600;
 }
 
-.brandAdminGrid input[type="file"] {
-  width: 100%;
-  font-size: 12px;
+.pwProtectedTag {
+  display: inline-block;
+  margin-left: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gold);
 }
 
-.adminGateCard,
-.adminSessionBar {
+.accessLinkList {
+  display: grid;
+  gap: 10px;
+}
+
+.accessLinkRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 16px;
-  padding: 20px 22px;
-  margin-bottom: 20px;
-  border-radius: var(--radius-md);
-  background: var(--surface);
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-card);
+  background: var(--surface-subtle);
 }
 
-.adminGateCopy {
-  max-width: 620px;
+.accessLinkRowHighlight {
+  border-color: var(--gold);
+  background: var(--surface);
 }
 
-.adminGateCopy h3 {
-  margin: 0 0 6px;
-  font-family: var(--font-display);
-  font-size: 1.65rem;
-  line-height: 1.1;
+.accessLinkMeta {
+  flex: 1 1 260px;
+  min-width: 0;
+  display: grid;
+  gap: 4px;
 }
 
-.adminGateCopy p {
-  margin: 0;
+.accessLinkMeta strong {
   font-size: 14px;
-  color: var(--text-secondary);
-}
-
-.adminGateActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.adminSessionBar strong {
-  display: block;
-  font-size: 15px;
   color: var(--text);
 }
 
-.adminSessionBar span {
-  font-size: 13px;
+.accessLinkMeta small {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
   color: var(--text-muted);
 }
 
-.adminSessionActions {
+.accessLinkMeta input {
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.accessLinkBtns {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .adminManagerHead {
@@ -3393,1351 +3746,6 @@ html[data-rdm-theme="dark"] .squadRoleBtn:hover {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-}
-
-.playerPortalExtras {
-  max-width: 720px;
-  margin: 20px auto 0;
-  display: grid;
-  gap: 16px;
-}
-
-.playerPortalCard {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: clamp(18px, 3vw, 26px);
-  box-shadow: var(--shadow-card);
-}
-
-.playerPortalCard .subHead {
-  margin-top: 0;
-  margin-bottom: 16px;
-}
-
-.playerPortalCard h3 {
-  margin: 4px 0 0;
-  font-family: var(--font-display);
-  font-size: 1.45rem;
-}
-
-.playerPortalAvailRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 14px;
-}
-
-.availBadge {
-  display: inline-block;
-  margin-top: 8px;
-  padding: 5px 12px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  background: var(--surface-subtle);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-}
-
-.availBadge.available {
-  color: var(--success);
-  background: var(--success-soft);
-  border-color: transparent;
-}
-
-.availBadge.unavailable {
-  color: var(--danger);
-  background: var(--danger-soft);
-  border-color: var(--danger-border);
-}
-
-.playerPortalStatsGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.playerPortalStatsGrid b {
-  display: grid;
-  gap: 4px;
-  padding: 12px 10px;
-  border-radius: var(--radius-sm);
-  background: var(--surface-subtle);
-  border: 1px solid var(--border);
-  text-align: center;
-  font-family: var(--font-display);
-  font-size: 1.35rem;
-  font-weight: 800;
-  color: var(--text);
-}
-
-.playerPortalStatsGrid b small {
-  font-family: var(--font-body);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-/* Admin Private Access Links */
-.adminLinksBox {
-  margin-top: 24px;
-  margin-bottom: 0;
-}
-
-.accessLinkList {
-  display: grid;
-  gap: 10px;
-}
-
-.accessLinkRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  background: var(--surface-subtle);
-}
-
-.accessLinkRowHighlight {
-  border-color: var(--gold);
-  background: var(--surface);
-}
-
-.accessLinkMeta {
-  flex: 1 1 280px;
-  min-width: 0;
-  display: grid;
-  gap: 4px;
-}
-
-.accessLinkMeta strong {
-  font-size: 14px;
-  color: var(--text);
-}
-
-.accessLinkMeta small {
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  color: var(--text-muted);
-}
-
-.accessLinkMeta input {
-  width: 100%;
-  min-height: 36px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text-secondary);
-  font-family: var(--font-mono);
-  font-size: 12px;
-}
-
-.accessLinkBtns {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-/* PWA Install Fallback Guide & Match Poster Modal */
-.installGuideHead {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 14px;
-}
-
-.installGuideHead img {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  object-fit: cover;
-  object-position: center;
-  border: 1.5px solid var(--accent);
-  background: #9E9E9E;
-  flex-shrink: 0;
-}
-
-.installGuideHead h2 {
-  margin: 0;
-  padding-right: 0;
-}
-
-.installGuideSteps {
-  display: grid;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.installGuideSteps > div {
-  padding: 12px 14px;
-  border-radius: var(--radius-sm);
-  background: var(--surface-subtle);
-  border: 1px solid var(--border);
-  font-size: 13.5px;
-  color: var(--text-secondary);
-}
-
-.installGuideActions {
-  display: grid;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.installGuideActions a.primary {
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.matchPosterCard {
-  text-align: center;
-  padding: clamp(28px, 4vw, 44px) clamp(20px, 4vw, 36px);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--accent);
-  background: radial-gradient(ellipse at top, var(--accent-soft), transparent 72%), var(--surface);
-  box-shadow: var(--shadow-card);
-}
-
-.matchPosterCard h2 {
-  padding-right: 0;
-  margin: 6px 0 8px;
-}
-
-.matchPosterCard .posterScore {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--accent);
-  margin: 12px 0;
-}
-
-.matchPosterCard small {
-  display: block;
-  margin-top: 14px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: var(--gold);
-}
-
-.authLoginDialog {
-  width: min(440px, 100%);
-}
-
-.authRoleTabs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4px;
-  padding: 4px;
-  margin-bottom: 16px;
-  margin-right: 36px;
-  border-radius: var(--radius-sm);
-  background: var(--surface-subtle);
-  border: 1px solid var(--border);
-}
-
-.authRoleTab {
-  min-height: 38px;
-  padding: 6px 12px;
-  border: 0;
-  border-radius: 7px;
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.authRoleTab.active {
-  background: var(--surface);
-  color: var(--accent);
-  box-shadow: 0 1px 2px rgba(13, 27, 38, 0.08);
-}
-
-.authModalSub {
-  margin: -6px 0 14px;
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
-.authGoogleBtn {
-  width: 100%;
-  min-height: 44px;
-  padding: 10px 16px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-strong);
-  background: var(--surface);
-  color: var(--text);
-  font-size: 14px;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  cursor: pointer;
-  transition: background 160ms var(--ease), border-color 160ms var(--ease);
-}
-
-.authGoogleBtn:hover {
-  background: var(--surface-subtle);
-  border-color: var(--accent);
-}
-
-.authGoogleBtn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.authDivider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 14px 0;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-.authDivider::before,
-.authDivider::after {
-  content: '';
-  flex: 1 1 auto;
-  height: 1px;
-  background: var(--border);
-}
-
-.authForm {
-  display: grid;
-  gap: 12px;
-}
-
-.authField {
-  margin: 0 !important;
-}
-
-.authPassWrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.authPassWrap input {
-  flex: 1 1 auto;
-}
-
-.authPassToggle {
-  flex-shrink: 0;
-  min-height: 44px;
-  padding: 8px 12px;
-}
-
-.authErrorBox {
-  margin: 0;
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
-  background: var(--danger-soft);
-  border: 1px solid var(--danger-border);
-  color: var(--danger);
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.authErrorBox[hidden] {
-  display: none !important;
-}
-
-.authResetLink {
-  border: 0;
-  background: transparent;
-  color: var(--accent);
-  font-size: 13px;
-  font-weight: 600;
-  padding: 6px 4px;
-  cursor: pointer;
-  justify-self: center;
-}
-
-.authResetLink:hover {
-  text-decoration: underline;
-}
-
-/* ==========================================================================
-   Full-Screen Premium Modals, Forms, Cropper, Lightbox & Toast
-   ========================================================================== */
-
-body:has(.modal.show) {
-  overflow: hidden;
-}
-
-@keyframes modalEnter {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.99);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 80;
-  display: none;
-  padding: 0;
-  background: var(--bg);
-  overflow: hidden;
-}
-
-.modal.show {
-  display: flex;
-  align-items: stretch;
-  justify-content: stretch;
-}
-
-.modal::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--accent), var(--gold), var(--accent));
-  z-index: 95;
-  pointer-events: none;
-}
-
-.dialog {
-  position: relative;
-  width: 100%;
-  height: 100dvh;
-  max-height: 100dvh;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  background:
-    radial-gradient(ellipse 88% 42% at 50% 0%, var(--accent-soft), transparent 64%),
-    var(--bg);
-  color: var(--text);
-  border: 0;
-  border-radius: 0;
-  padding: clamp(20px, 3.5vw, 44px) clamp(16px, 5vw, 56px) 72px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0;
-  box-shadow: none;
-  animation: modalEnter 200ms var(--ease);
-}
-
-.dialog > *:not(.close) {
-  width: min(860px, 100%);
-}
-
-.publicDialog > *:not(.close),
-.proDialog > *:not(.close),
-.adminPlayerDialog > *:not(.close) {
-  width: min(1040px, 100%);
-}
-
-.rdmConfirmDialog > *:not(.close),
-.profileDownloadDialog > *:not(.close),
-.galleryMoveDialog > *:not(.close),
-.squadEditDialog > *:not(.close),
-.profileEditDialog > *:not(.close),
-.playerShareDialog > *:not(.close),
-.installGuideDialog > *:not(.close),
-.matchPosterDialog > *:not(.close),
-#cropModal .dialog > *:not(.close) {
-  width: min(580px, 100%);
-}
-
-.publicProfileCard {
-  max-width: 720px;
-  margin: 8px auto 0;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: clamp(24px, 4vw, 38px);
-  box-shadow: var(--shadow-card);
-}
-
-#cropModal .dialog,
-#rdmConfirmModal .dialog,
-#profileDownloadModal .dialog,
-#squadEditModal .dialog,
-#profileEditModal .dialog,
-#galleryMoveModal .dialog,
-#playerShareModal .dialog,
-#rdmInstallGuideModal .dialog,
-#v6PosterModal .dialog {
-  justify-content: safe center;
-}
-
-.dialog h2 {
-  margin: 8px 0 18px;
-  padding-right: 52px;
-  font-family: var(--font-display);
-  font-size: clamp(1.85rem, 3.4vw, 2.5rem);
-  font-weight: 800;
-  letter-spacing: 0.015em;
-  line-height: 1.06;
-  color: var(--text);
-}
-
-.dialog .publicProfileCard h2,
-.dialog .sharePlayerPreview h2,
-.dialog .installGuideHead h2,
-.dialog .matchPosterCard h2 {
-  padding-right: 0;
-}
-
-.close {
-  position: sticky;
-  top: 0;
-  align-self: flex-end;
-  margin-bottom: -44px;
-  z-index: 30;
-  width: 44px;
-  height: 44px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  border: 1px solid var(--border-strong);
-  background: var(--surface);
-  color: var(--text);
-  font-size: 22px;
-  line-height: 1;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  box-shadow: var(--shadow-card);
-  transition: background 160ms var(--ease), color 160ms var(--ease), border-color 160ms var(--ease), transform 160ms var(--ease);
-}
-
-.close:hover {
-  background: var(--accent);
-  color: var(--accent-ink);
-  border-color: var(--accent);
-  transform: scale(1.04);
-}
-
-.dialog label,
-.proField {
-  display: grid;
-  gap: 7px;
-  margin: 12px 0;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: var(--text-secondary);
-}
-
-.dialog input,
-.dialog textarea,
-.dialog select {
-  width: 100%;
-  min-height: 46px;
-  padding: 11px 15px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-strong);
-  background: var(--surface);
-  color: var(--text);
-  font-size: 14.5px;
-  letter-spacing: normal;
-  transition: border-color 160ms var(--ease), box-shadow 160ms var(--ease), background 160ms var(--ease);
-}
-
-.dialog textarea {
-  min-height: 110px;
-  resize: vertical;
-}
-
-.dialog input:focus,
-.dialog textarea:focus,
-.dialog select:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-soft);
-}
-
-.rdmUnifiedFields {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px 18px;
-  margin: 8px 0 20px;
-}
-
-.rdmUnifiedFields label {
-  margin: 0;
-}
-
-.rdmUnifiedFields label:has(textarea) {
-  grid-column: 1 / -1;
-}
-
-.rdmConfirmText,
-.profileDownloadNote {
-  margin: -6px 0 22px;
-  font-size: 15px;
-  color: var(--text-secondary);
-}
-
-.profileDownloadChoices {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.profileDownloadChoices button {
-  min-height: 52px;
-}
-
-.squadEditChoices {
-  display: grid;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.squadEditChoice {
-  width: 100%;
-  min-height: 68px;
-  padding: 16px 20px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  text-align: left;
-  cursor: pointer;
-  box-shadow: var(--shadow-card);
-  font-size: 22px;
-  transition: transform 160ms var(--ease), border-color 160ms var(--ease), background 160ms var(--ease);
-}
-
-.squadEditChoice span {
-  display: grid;
-  gap: 3px;
-  min-width: 0;
-  flex: 1;
-}
-
-.squadEditChoice b {
-  font-size: 15.5px;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.squadEditChoice small {
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
-.squadEditChoice::after {
-  content: '›';
-  font-size: 22px;
-  color: var(--text-muted);
-  margin-left: auto;
-}
-
-.squadEditChoice:hover {
-  transform: translateY(-1px);
-  border-color: var(--accent);
-  background: var(--surface-subtle);
-}
-
-.profileEditRow {
-  background: var(--surface);
-  min-height: 58px;
-  padding: 14px 20px;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card);
-  transition: transform 160ms var(--ease), border-color 160ms var(--ease), background 160ms var(--ease);
-}
-
-.profileEditRow:hover {
-  transform: translateY(-1px);
-  border-color: var(--accent);
-  background: var(--surface-subtle);
-}
-
-.remember {
-  display: flex !important;
-  align-items: center;
-  gap: 10px;
-}
-
-.remember input {
-  width: auto;
-  min-height: auto;
-}
-
-.v62Grid,
-.proGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px 18px;
-}
-
-.v62Grid .full,
-.proFull {
-  grid-column: 1 / -1;
-}
-
-.proTitle {
-  margin-bottom: 18px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--border);
-}
-
-.proTitle h2 {
-  margin-bottom: 6px;
-}
-
-.proTitle p {
-  margin: 0;
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
-.proGroup {
-  margin: 14px 0;
-  padding: 20px 22px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--surface);
-  box-shadow: var(--shadow-card);
-}
-
-.proGroup h3 {
-  margin: 0 0 14px;
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  color: var(--accent);
-}
-
-.proLocationActions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  margin-top: 14px;
-}
-
-.proLocStatus {
-  font-size: 12.5px;
-  color: var(--text-muted);
-}
-
-.proMapWrap {
-  margin-top: 14px;
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  border: 1px solid var(--border);
-}
-
-.proMap {
-  width: 100%;
-  height: 240px;
-  border: 0;
-  display: block;
-}
-
-.proMapOpen {
-  display: block;
-  text-align: center;
-  padding: 12px;
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
-  background: var(--surface-subtle);
-}
-
-.proBottom,
-.rdmConfirmActions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 22px;
-}
-
-.cropHelp {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin: 0 0 18px;
-}
-
-.cropStage {
-  width: min(360px, 78vw);
-  aspect-ratio: 1;
-  margin: 0 auto 18px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 3px solid var(--accent);
-  background: #090A0D;
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
-  touch-action: none;
-}
-
-.cropStage canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-#cropZoom {
-  accent-color: var(--accent);
-  padding: 0;
-  min-height: 36px;
-}
-
-.light {
-  position: relative;
-  width: 100%;
-  height: 100dvh;
-  padding: clamp(18px, 4vw, 48px);
-  background: rgba(6, 8, 12, 0.96);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.light .close {
-  position: fixed;
-  top: clamp(14px, 3vw, 24px);
-  right: clamp(14px, 3vw, 28px);
-  margin-bottom: 0;
-  background: rgba(20, 22, 28, 0.88);
-  color: #FFFFFF;
-  border-color: rgba(255, 255, 255, 0.24);
-}
-
-.light img {
-  max-width: 96vw;
-  max-height: 90dvh;
-  border-radius: var(--radius-md);
-  object-fit: contain;
-  box-shadow: 0 24px 72px rgba(0, 0, 0, 0.68);
-}
-
-#toast {
-  position: fixed;
-  left: 50%;
-  bottom: 24px;
-  transform: translate(-50%, 20px);
-  opacity: 0;
-  pointer-events: none;
-  background: var(--text);
-  color: var(--bg);
-  padding: 11px 20px;
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  font-weight: 600;
-  box-shadow: var(--shadow-modal);
-  z-index: 100;
-  transition: transform 200ms var(--ease), opacity 200ms var(--ease);
-}
-
-#toast.show {
-  opacity: 1;
-  transform: translate(-50%, 0);
-}
-
-.backToTop {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  font-size: 18px;
-  font-weight: 700;
-  box-shadow: var(--shadow-card);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 25;
-}
-
-.backToTop.show {
-  display: flex;
-}
-
-footer {
-  margin-top: auto;
-  flex-shrink: 0;
-  width: 100%;
-  background: var(--bg);
-  border-top: 1px solid var(--border);
-  padding: 28px 20px calc(32px + env(safe-area-inset-bottom, 0px));
-  display: grid;
-  justify-items: center;
-  gap: 8px;
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 13px;
-}
-
-footer img {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  object-fit: cover;
-  object-position: center;
-  background: #9E9E9E;
-  border: 1.5px solid var(--accent);
-}
-
-footer b {
-  font-family: var(--font-display);
-  font-size: 1.2rem;
-  color: var(--text);
-}
-
-.footerLinks {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px 14px;
-  max-width: 780px;
-  margin-top: 8px;
-}
-
-.footerLinks button,
-.footerLinks a {
-  border: 0;
-  background: transparent;
-  padding: 4px 6px;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-decoration: none;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: color 150ms var(--ease);
-}
-
-.footerLinks button:hover,
-.footerLinks a:hover {
-  color: var(--accent);
-}
-
-html[data-rdm-portal="admin"] .footerLinks,
-html[data-rdm-portal="player"] .footerLinks {
-  display: none !important;
-}
-
-/* ==========================================================================
-   Responsive Breakpoints (Mobile Touch Ergonomics <=15% Sticky Cap)
-   ========================================================================== */
-
-@media (min-width: 1180px) {
-  .honours,
-  .socialGrid,
-  .gallery,
-  .statsGrid,
-  .leaderGrid,
-  .adminGrid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .adminPlayerGrid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 900px) {
-  .heroInner.heroEditorial {
-    grid-template-columns: 1fr;
-    text-align: center;
-    gap: 22px;
-  }
-
-  .heroCrestShowcase {
-    order: -1;
-    width: min(320px, 100%);
-    margin: 0 auto;
-    padding: 20px 18px;
-  }
-
-  .heroLogo {
-    width: 112px;
-    height: 112px;
-    margin-bottom: 12px;
-  }
-
-  .heroCopy {
-    align-items: center;
-    text-align: center;
-  }
-
-  .actions.homeActions {
-    justify-content: center;
-  }
-
-  .honours,
-  .socialGrid,
-  .gallery,
-  .statsGrid,
-  .leaderGrid,
-  .adminGrid,
-  .dashGrid,
-  .xiGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .rdmHeritageGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .metrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 720px) {
-  .player,
-  .player.squadFullProfile {
-    grid-template-columns: minmax(0, 1fr);
-    justify-items: center;
-    text-align: center;
-    padding: 20px 18px;
-    gap: 12px;
-  }
-
-  .player .photo,
-  .squadFullProfile .photo {
-    margin: 0 auto 2px;
-  }
-
-  .pbody {
-    align-items: center;
-    text-align: center;
-  }
-
-  .squadIdentity,
-  .squadSocials {
-    justify-content: center;
-  }
-
-  .squadFullProfile .profileBio,
-  .squadStatLines {
-    text-align: center;
-  }
-
-  .squadCardActions {
-    width: 100%;
-    min-width: 0;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 6px;
-  }
-
-  .squadStatsGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 640px) {
-  .top {
-    height: 54px;
-    padding: 0 12px;
-    gap: 8px;
-  }
-
-  .brand img {
-    width: 32px;
-    height: 32px;
-  }
-
-  .brandTitle {
-    font-size: 0.98rem;
-  }
-
-  .headActions {
-    gap: 6px;
-  }
-
-  .authHeaderControls {
-    gap: 5px;
-  }
-
-  .authLoginBtn,
-  .authStatusBtn,
-  .authLogoutBtn,
-  .themeToggle {
-    min-height: 34px;
-    padding: 5px 10px;
-    font-size: 11.5px;
-  }
-
-  .nav {
-    top: 54px;
-    height: 42px;
-    padding: 0 12px;
-  }
-
-  .countdownTimer {
-    gap: 5px;
-    flex-wrap: nowrap;
-    max-width: 100%;
-  }
-
-  .cdUnit {
-    min-width: 52px;
-    padding: 6px 6px;
-  }
-
-  .cdUnit strong {
-    font-size: 1.1rem;
-  }
-
-  .cdUnit span {
-    font-size: 9.5px;
-  }
-
-  .hero {
-    min-height: clamp(460px, 74vh, 640px);
-    padding: 32px 20px;
-  }
-
-  .heroScrim {
-    background: linear-gradient(
-      180deg,
-      rgba(10, 8, 10, 0.72) 0%,
-      rgba(10, 10, 14, 0.88) 55%,
-      rgba(8, 9, 12, 0.97) 100%
-    );
-  }
-
-  .leadGrid,
-  .homeMatchHub,
-  .players,
-  .honours,
-  .socialGrid,
-  .gallery,
-  .statsGrid,
-  .leaderGrid,
-  .adminGrid,
-  .dashGrid,
-  .xiGrid,
-  .proInfoGrid,
-  .proGrid,
-  .v62Grid,
-  .rdmUnifiedFields,
-  .profileDownloadChoices,
-  .adminPlayerGrid,
-  .brandAdminGrid,
-  .adminPlayerActions,
-  .downloadAppCard,
-  .clubFactsGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .matchSummaryStrip {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .scoreLine {
-    grid-template-columns: 1fr;
-  }
-
-  .downloadAppCard {
-    text-align: center;
-    padding: 22px 18px;
-  }
-
-  .downloadAppCard > img {
-    margin: 0 auto;
-  }
-
-  .downloadBtnRow {
-    justify-content: center;
-  }
-
-  .squadToolbar {
-    gap: 10px;
-  }
-
-  .squadRoleFilters {
-    width: 100%;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .squadRoleFilters::-webkit-scrollbar {
-    display: none;
-  }
-
-  .squadRoleBtn {
-    flex: 1 0 auto;
-    min-height: 40px;
-    padding: 8px 12px;
-  }
-
-  .actions.homeActions .primary,
-  .actions.homeActions .secondary {
-    width: 100%;
-    min-height: 46px;
-  }
-
-  .statNums,
-  .playerPortalStatsGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .proWide,
-  .v62Grid .full,
-  .proFull,
-  .rdmUnifiedFields label:has(textarea) {
-    grid-column: auto;
-  }
-}
-
-@media (max-width: 420px) {
-  .metrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  .metrics > div {
-    padding: 14px 12px;
-  }
-
-  .availSummaryBar {
-    gap: 6px;
-  }
-
-  .availSummaryStat {
-    padding: 10px 8px;
-  }
-
-  .footerLinks {
-    gap: 4px 10px;
-  }
-}
-
-/* ==========================================================================
-   V8.0.0 Admin Command Workspace, Player Lock Gate & Portals Directory
-   ========================================================================== */
-
-.adminKpiGrid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 12px;
-  margin-bottom: 22px;
-}
-
-.adminKpiCard {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-top: 3px solid var(--accent);
-  border-radius: var(--radius-md);
-  padding: 16px 18px;
-  box-shadow: var(--shadow-card);
-  display: grid;
-  gap: 4px;
-}
-
-.adminKpiCard span {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--gold);
-}
-
-.adminKpiCard strong {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 800;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  color: var(--text);
-}
-
-.adminKpiCard small {
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-.adminCategoryGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.adminModuleCard {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 20px;
-  box-shadow: var(--shadow-card);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.adminModuleHead span {
-  display: block;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 3px;
-}
-
-.adminModuleHead h3 {
-  margin: 0 0 4px;
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.adminModuleHead p {
-  margin: 0;
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
-.adminModuleActions {
-  display: grid;
-  gap: 8px;
-}
-
-.adminModuleActions .primary,
-.adminModuleActions .secondary {
-  width: 100%;
-  justify-content: flex-start;
-  min-height: 44px;
-  padding: 10px 14px;
-}
-
-.pwProtectedTag {
-  display: inline-block;
-  margin-left: 6px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--gold);
 }
 
 /* Admin Firebase Auth User Email Updater */
@@ -4859,173 +3867,25 @@ html[data-rdm-portal="player"] .footerLinks {
   color: var(--text-secondary);
 }
 
-/* Player Portal Password Gate & Live Cloud Sync Banner */
-.playerLockGateWrap {
-  max-width: 540px;
-  margin: 24px auto;
+/* ==========================================================================
+   Portals Directory Page (/portals.html)
+   ========================================================================== */
+
+.portalsMain {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: clamp(20px, 3vw, 36px) clamp(14px, 3vw, 36px) 64px;
+  display: grid;
+  gap: 30px;
 }
 
-.playerLockCard {
+.portalsHero {
   background: var(--surface);
   border: 1px solid var(--border);
   border-top: 3px solid var(--accent);
   border-radius: var(--radius-lg);
-  padding: clamp(22px, 4vw, 32px);
+  padding: clamp(22px, 3.6vw, 38px);
   box-shadow: var(--shadow-card);
-  display: grid;
-  gap: 18px;
-}
-
-.playerLockHeader {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.playerLockAvatar {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--accent);
-  background: #9E9E9E;
-  flex-shrink: 0;
-}
-
-.playerLockHeader h2 {
-  margin: 0 0 4px;
-  font-family: var(--font-display);
-  font-size: 1.75rem;
-  font-weight: 800;
-  line-height: 1.05;
-  color: var(--text);
-}
-
-.playerLockHeader p {
-  margin: 0;
-  font-size: 12.5px;
-  font-family: var(--font-mono);
-  color: var(--text-muted);
-}
-
-.playerLockDesc {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--text-secondary);
-}
-
-.playerLockForm {
-  display: grid;
-  gap: 14px;
-}
-
-.playerLockField {
-  display: grid;
-  gap: 6px;
-}
-
-.playerLockField span {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-}
-
-.playerPwInputRow {
-  display: flex;
-  align-items: stretch;
-  gap: 8px;
-}
-
-.playerPwInputRow input {
-  flex: 1 1 auto;
-  min-width: 0;
-  min-height: 46px;
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-strong);
-  background: var(--surface-subtle);
-  color: var(--text);
-  font-size: 15px;
-}
-
-.playerPwInputRow input:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-soft);
-}
-
-.playerLockError {
-  margin: 0;
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
-  background: var(--danger-soft);
-  border: 1px solid var(--danger-border);
-  color: var(--danger);
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.playerLockError[hidden] {
-  display: none !important;
-}
-
-.playerLockActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.playerLockActions .primary {
-  flex: 1 1 180px;
-}
-
-.playerSyncStatusBanner {
-  max-width: 720px;
-  margin: 0 auto 18px;
-  padding: 12px 18px;
-  border-radius: var(--radius-md);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--success);
-  box-shadow: var(--shadow-card);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.playerSyncStatusBanner span {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--success);
-}
-
-.publicProfileFooterActions {
-  display: flex;
-  justify-content: center;
-  margin-top: 18px;
-}
-
-/* Portals Hub Directory Page (/portals.html) */
-.portalsMain {
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: clamp(20px, 3vw, 36px) clamp(14px, 3vw, 32px) 64px;
-  display: grid;
-  gap: 32px;
-}
-
-.portalsHero {
-  background: linear-gradient(125deg, #0D1119 0%, #190D12 58%, #0E131E 100%);
-  border: 1px solid rgba(239, 68, 68, 0.30);
-  border-radius: var(--radius-lg);
-  padding: clamp(24px, 4vw, 42px);
-  color: #FFFFFF;
-  box-shadow: 0 20px 54px rgba(6, 8, 12, 0.34);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -5034,23 +3894,24 @@ html[data-rdm-portal="player"] .footerLinks {
 }
 
 .portalsHeroCopy {
-  max-width: 66ch;
+  max-width: 64ch;
 }
 
 .portalsHeroCopy h1 {
   margin: 4px 0 10px;
   font-family: var(--font-display);
-  font-size: clamp(2.1rem, 4.2vw, 3.2rem);
+  font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 800;
-  line-height: 1;
-  color: #FFFFFF;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  color: var(--text);
 }
 
 .portalsHeroCopy p {
   margin: 0;
   font-size: 14.5px;
-  line-height: 1.6;
-  color: #D1D5DB;
+  line-height: 1.65;
+  color: var(--text-secondary);
 }
 
 .portalsHeroMeta {
@@ -5060,11 +3921,11 @@ html[data-rdm-portal="player"] .footerLinks {
 }
 
 .portalsStatBox {
-  min-width: 120px;
+  min-width: 122px;
   padding: 14px 18px;
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
   text-align: center;
   display: grid;
   gap: 2px;
@@ -5075,13 +3936,15 @@ html[data-rdm-portal="player"] .footerLinks {
   font-size: 2rem;
   font-weight: 800;
   line-height: 1;
-  color: #FFFFFF;
+  color: var(--text);
 }
 
 .portalsStatBox span {
-  font-size: 11.5px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   font-weight: 600;
-  color: #FCA5A5;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
 .portalsFeaturedGrid {
@@ -5116,11 +3979,11 @@ html[data-rdm-portal="player"] .footerLinks {
 }
 
 .portalCardFeatured.is-admin {
-  border-top: 3px solid var(--accent);
+  border-top: 2px solid var(--accent);
 }
 
 .portalCardFeatured.is-public {
-  border-top: 3px solid var(--gold);
+  border-top: 2px solid var(--gold);
 }
 
 .portalCardHead {
@@ -5131,8 +3994,9 @@ html[data-rdm-portal="player"] .footerLinks {
 }
 
 .portalBadge {
+  font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--gold);
@@ -5152,7 +4016,7 @@ html[data-rdm-portal="player"] .footerLinks {
 .portalCard h3 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 1.45rem;
   font-weight: 700;
   line-height: 1.1;
   color: var(--text);
@@ -5177,7 +4041,7 @@ html[data-rdm-portal="player"] .footerLinks {
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--accent);
-  background: #9E9E9E;
+  background: #8B9B91;
   flex-shrink: 0;
 }
 
@@ -5194,7 +4058,8 @@ html[data-rdm-portal="player"] .footerLinks {
 }
 
 .portalLockPill {
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
   font-weight: 600;
   color: var(--gold);
 }
@@ -5218,7 +4083,581 @@ html[data-rdm-portal="player"] .footerLinks {
   gap: 8px;
 }
 
-@media (max-width: 1080px) {
+/* ==========================================================================
+   Install Guide, Modals, Cropper, Lightbox & Toast
+   ========================================================================== */
+
+.installGuideHead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.installGuideHead img {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--accent);
+  background: #8B9B91;
+  flex-shrink: 0;
+}
+
+.installGuideHead h2 {
+  margin: 0;
+  padding-right: 0;
+}
+
+.installGuideSteps {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.installGuideSteps > div {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  font-size: 13.5px;
+  color: var(--text-secondary);
+}
+
+.installGuideActions {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.matchPosterCard {
+  text-align: center;
+  padding: clamp(28px, 4vw, 40px) clamp(20px, 4vw, 32px);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--accent);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+.matchPosterCard h2 {
+  padding-right: 0;
+  margin: 6px 0 8px;
+}
+
+.matchPosterCard .posterScore {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin: 12px 0;
+}
+
+.matchPosterCard small {
+  display: block;
+  margin-top: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+}
+
+body:has(.modal.show) {
+  overflow: hidden;
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: none;
+  padding: 0;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.modal.show {
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+.modal::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+  z-index: 95;
+  pointer-events: none;
+}
+
+.dialog {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--bg);
+  color: var(--text);
+  border: 0;
+  padding: clamp(20px, 3.5vw, 44px) clamp(16px, 5vw, 56px) 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: modalEnter 180ms var(--ease);
+}
+
+.dialog > *:not(.close) {
+  width: min(860px, 100%);
+}
+
+.publicDialog > *:not(.close),
+.proDialog > *:not(.close),
+.adminPlayerDialog > *:not(.close) {
+  width: min(1040px, 100%);
+}
+
+.rdmConfirmDialog > *:not(.close),
+.profileDownloadDialog > *:not(.close),
+.galleryMoveDialog > *:not(.close),
+.squadEditDialog > *:not(.close),
+.profileEditDialog > *:not(.close),
+.playerShareDialog > *:not(.close),
+.installGuideDialog > *:not(.close),
+.matchPosterDialog > *:not(.close),
+#cropModal .dialog > *:not(.close) {
+  width: min(580px, 100%);
+}
+
+.publicProfileCard {
+  max-width: 720px;
+  margin: 8px auto 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: clamp(22px, 4vw, 34px);
+  box-shadow: var(--shadow-card);
+}
+
+#cropModal .dialog,
+#rdmConfirmModal .dialog,
+#profileDownloadModal .dialog,
+#squadEditModal .dialog,
+#profileEditModal .dialog,
+#galleryMoveModal .dialog,
+#playerShareModal .dialog,
+#rdmInstallGuideModal .dialog,
+#v6PosterModal .dialog {
+  justify-content: safe center;
+}
+
+.dialog h2 {
+  margin: 8px 0 18px;
+  padding-right: 52px;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3.2vw, 2.35rem);
+  font-weight: 800;
+  line-height: 1.06;
+  color: var(--text);
+}
+
+.dialog .publicProfileCard h2,
+.dialog .sharePlayerPreview h2,
+.dialog .installGuideHead h2,
+.dialog .matchPosterCard h2 {
+  padding-right: 0;
+}
+
+.close {
+  position: sticky;
+  top: 0;
+  align-self: flex-end;
+  margin-bottom: -44px;
+  z-index: 30;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 22px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-card);
+}
+
+.close:hover {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+
+.dialog label,
+.proField {
+  display: grid;
+  gap: 7px;
+  margin: 12px 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+
+.dialog input,
+.dialog textarea,
+.dialog select {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14.5px;
+  letter-spacing: normal;
+}
+
+.dialog textarea {
+  min-height: 108px;
+  resize: vertical;
+}
+
+.dialog input:focus,
+.dialog textarea:focus,
+.dialog select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.rdmUnifiedFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 18px;
+  margin: 8px 0 20px;
+}
+
+.rdmUnifiedFields label {
+  margin: 0;
+}
+
+.rdmUnifiedFields label:has(textarea) {
+  grid-column: 1 / -1;
+}
+
+.rdmConfirmText,
+.profileDownloadNote {
+  margin: -6px 0 22px;
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+
+.profileDownloadChoices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.profileDownloadChoices button {
+  min-height: 50px;
+}
+
+.v62Grid,
+.proGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 18px;
+}
+
+.v62Grid .full,
+.proFull {
+  grid-column: 1 / -1;
+}
+
+.proTitle {
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.proTitle h2 {
+  margin-bottom: 6px;
+}
+
+.proTitle p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.proGroup {
+  margin: 14px 0;
+  padding: 20px 22px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+.proGroup h3 {
+  margin: 0 0 14px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--accent);
+}
+
+.proLocationActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.proLocStatus {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.proMapWrap {
+  margin-top: 14px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.proMap {
+  width: 100%;
+  height: 240px;
+  border: 0;
+  display: block;
+}
+
+.proMapOpen {
+  display: block;
+  text-align: center;
+  padding: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  background: var(--surface-subtle);
+}
+
+.proBottom,
+.rdmConfirmActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.cropHelp {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0 0 18px;
+}
+
+.cropStage {
+  width: min(340px, 76vw);
+  aspect-ratio: 1;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--accent);
+  background: #070D0A;
+  touch-action: none;
+}
+
+.cropStage canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#cropZoom {
+  accent-color: var(--accent);
+  padding: 0;
+  min-height: 36px;
+}
+
+.light {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  padding: clamp(18px, 4vw, 48px);
+  background: rgba(7, 13, 10, 0.96);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.light .close {
+  position: fixed;
+  top: clamp(14px, 3vw, 24px);
+  right: clamp(14px, 3vw, 28px);
+  margin-bottom: 0;
+}
+
+.light img {
+  max-width: 96vw;
+  max-height: 90dvh;
+  border-radius: var(--radius-md);
+  object-fit: contain;
+}
+
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translate(-50%, 20px);
+  opacity: 0;
+  pointer-events: none;
+  background: var(--text);
+  color: var(--bg);
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: var(--shadow-modal);
+  z-index: 100;
+  transition: transform 180ms var(--ease), opacity 180ms var(--ease);
+}
+
+#toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.backToTop {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 700;
+  box-shadow: var(--shadow-card);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 25;
+}
+
+.backToTop.show {
+  display: flex;
+}
+
+footer {
+  margin-top: auto;
+  flex-shrink: 0;
+  width: 100%;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 28px 20px calc(32px + env(safe-area-inset-bottom, 0px));
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+footer img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #8B9B91;
+  border: 1.5px solid var(--accent);
+}
+
+footer b {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--text);
+}
+
+.footerLinks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 14px;
+  max-width: 780px;
+  margin-top: 8px;
+}
+
+.footerLinks button,
+.footerLinks a {
+  border: 0;
+  background: transparent;
+  padding: 4px 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.footerLinks button:hover,
+.footerLinks a:hover {
+  color: var(--accent);
+}
+
+html[data-rdm-portal="admin"] .footerLinks,
+html[data-rdm-portal="player"] .footerLinks {
+  display: none !important;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+@media (min-width: 1180px) {
+  .honours,
+  .socialGrid,
+  .gallery,
+  .statsGrid,
+  .leaderGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .adminPlayerGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1040px) {
+  .adminShell {
+    grid-template-columns: 1fr;
+  }
+  .adminSidebar {
+    position: static;
+  }
+  .adminSideNav {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
   .adminKpiGrid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -5228,17 +4667,154 @@ html[data-rdm-portal="player"] .footerLinks {
   }
 }
 
-@media (max-width: 720px) {
-  .brandSub {
+@media (max-width: 960px) {
+  .mobileMenuBtn {
+    display: inline-flex !important;
+  }
+  .portalsTopNav {
     display: none;
   }
-  .adminKpiGrid {
+  .nav {
+    display: none;
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    padding: 12px 16px;
+    background: var(--nav-bg);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-modal);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    z-index: 39;
+    max-height: calc(100dvh - 64px);
+    overflow-y: auto;
+  }
+  .nav.is-mobile-open {
+    display: flex;
+  }
+  .nav > button,
+  .navMoreBtn {
+    justify-content: flex-start;
+  }
+  .navMoreMenu {
+    position: static;
+    box-shadow: none;
+    margin-top: 4px;
+  }
+  .heroInner.heroEditorial,
+  .rdmHeritageGrid {
+    grid-template-columns: 1fr;
+  }
+  .honours,
+  .socialGrid,
+  .gallery,
+  .statsGrid,
+  .leaderGrid,
+  .xiGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .top {
+    height: 56px;
+    padding: 0 12px;
+    gap: 8px;
+  }
+  .nav {
+    top: 56px;
+  }
+  .brand img {
+    width: 32px;
+    height: 32px;
+  }
+  .brandTitle {
+    font-size: 1rem;
+  }
+  .headPortalsLink {
+    display: none !important;
+  }
+  .player,
+  .player.squadFullProfile {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    text-align: center;
+    padding: 18px 16px;
+  }
+  .pbody,
+  .squadIdentity,
+  .squadSocials,
+  .squadFullProfile .profileBio,
+  .squadStatLines {
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+  }
+  .squadCardActions {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .profileHeroBanner {
+    flex-direction: column;
+    text-align: center;
+  }
+  .profileTagLine,
+  .profileEditHub,
+  .profileActions,
+  .profileSocialList {
+    justify-content: center;
+  }
+  .squadStatsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .adminKpiGrid,
+  .matchSummaryStrip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .adminCategoryGrid,
   .portalsFeaturedGrid,
-  .portalsPlayerGrid {
+  .portalsPlayerGrid,
+  .leadGrid,
+  .homeMatchHub,
+  .honours,
+  .socialGrid,
+  .gallery,
+  .statsGrid,
+  .leaderGrid,
+  .xiGrid,
+  .proInfoGrid,
+  .proGrid,
+  .v62Grid,
+  .rdmUnifiedFields,
+  .profileDownloadChoices,
+  .adminPlayerGrid,
+  .brandAdminGrid,
+  .downloadAppCard,
+  .clubFactsGrid,
+  .scoreLine {
     grid-template-columns: 1fr;
+  }
+  .downloadAppCard {
+    text-align: center;
+  }
+  .downloadAppCard > img {
+    margin: 0 auto;
+  }
+  .downloadBtnRow {
+    justify-content: center;
+  }
+  .proWide,
+  .v62Grid .full,
+  .proFull,
+  .rdmUnifiedFields label:has(textarea) {
+    grid-column: auto;
   }
 }
 

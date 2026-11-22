@@ -141,15 +141,15 @@
 
   window.rdmSaveBrandAsset = async function (key, inputId) {
     try {
-      if (!window.session || session.mode !== 'admin' || window.__rdmUrlKeyRole !== 'admin') return;
+      if (!window.rdmAdmin?.()) return;
       const f = document.getElementById(inputId)?.files?.[0];
       if (!f) return window.toast?.('Select an image');
       const val = await compress(f, key === 'favicon' ? 256 : key === 'appIcon' ? 512 : 800);
       brand[key] = val;
-      brand.brandVersion = 'v8.0';
+      brand.brandVersion = 'v9.0';
       try { localStorage.setItem(BRAND_LOCAL_KEY, JSON.stringify(brand)); } catch {}
       try {
-        await BRAND_DOC().set({ [key]: val, brandVersion: 'v8.0', updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+        await BRAND_DOC().set({ [key]: val, brandVersion: 'v9.0', updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
       } catch (err) {
         window.rdmReportWriteError?.(err, 'Branding sync');
       }
@@ -163,12 +163,12 @@
 
   window.rdmResetBrandAsset = async function (key) {
     try {
-      if (!window.session || session.mode !== 'admin' || window.__rdmUrlKeyRole !== 'admin') return;
+      if (!window.rdmAdmin?.()) return;
       brand[key] = '';
-      brand.brandVersion = 'v8.0';
+      brand.brandVersion = 'v9.0';
       try { localStorage.setItem(BRAND_LOCAL_KEY, JSON.stringify(brand)); } catch {}
       try {
-        await BRAND_DOC().set({ [key]: '', brandVersion: 'v8.0', updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+        await BRAND_DOC().set({ [key]: '', brandVersion: 'v9.0', updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
       } catch (err) {
         window.rdmReportWriteError?.(err, 'Reset branding');
       }
@@ -181,8 +181,8 @@
   };
 
   function injectAdmin() {
-    const b = document.getElementById('adminBody');
-    if (!b || b.querySelector('.brandAdminBox') || window.session?.mode !== 'admin' || window.__rdmUrlKeyRole !== 'admin') return;
+    const b = document.getElementById('adminWorkspaceMain') || document.getElementById('adminBody');
+    if (!b || b.querySelector('.brandAdminBox') || !window.rdmAdmin?.()) return;
     b.insertAdjacentHTML('beforeend', brandingBox());
   }
   window.rdmInjectBrandAdmin = injectAdmin;
@@ -199,13 +199,20 @@
       try {
         window.render?.();
         if (session?.mode === 'player' && window.__rdmUrlKeyRole === 'player') window.renderProfile?.();
-        if (session?.mode === 'admin' && window.__rdmUrlKeyRole === 'admin') window.renderAdmin?.();
+        if (window.rdmAdmin?.()) window.renderAdmin?.();
       } catch {}
       applyBrand();
     };
   }
 
-  new MutationObserver(() => applyBrand()).observe(document.documentElement, { childList: true, subtree: true });
+  let brandRaf = 0;
+  new MutationObserver(() => {
+    if (brandRaf) return;
+    brandRaf = requestAnimationFrame(() => {
+      brandRaf = 0;
+      applyBrand();
+    });
+  }).observe(document.documentElement, { childList: true, subtree: true });
   document.addEventListener('DOMContentLoaded', () => {
     cleanPlayers();
     loadBrand();

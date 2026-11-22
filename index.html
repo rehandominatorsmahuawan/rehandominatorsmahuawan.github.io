@@ -9,7 +9,7 @@
   <meta name="author" content="Rehan Dominators Mahuawan">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <meta name="googlebot" content="index, follow, max-image-preview:large">
-  <meta name="theme-color" content="#C81E2B">
+  <meta name="theme-color" content="#047857">
 
   <link rel="canonical" href="https://rehandominatorsmahuawan.github.io/">
   <link rel="icon" type="image/png" sizes="192x192" href="pwa-192x192.png?v=7400">
@@ -18,7 +18,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="RDM" id="rdmAppleTitle">
-  <link rel="manifest" href="site.webmanifest?v=8000" id="rdmManifestLink">
+  <link rel="manifest" href="site.webmanifest?v=9000" id="rdmManifestLink">
   <script>(function(){try{
     var ADMIN='0AqlZ35wF8lcXYiAkgz04KjzGeiSfnHs';
     var PLAYERS={
@@ -55,7 +55,7 @@
     var link=document.getElementById('rdmManifestLink');
     if(link){
       if(navigator.serviceWorker&&navigator.serviceWorker.controller){
-        link.href=new URL('rdm-portal.webmanifest?key='+encodeURIComponent(key)+'&v=8000',location.href).href;
+        link.href=new URL('rdm-portal.webmanifest?key='+encodeURIComponent(key)+'&v=9000',location.href).href;
       }else{
         var startUrl=location.origin+location.pathname+'?key='+encodeURIComponent(key);
         var scopeUrl=new URL('./',location.href).href;
@@ -68,8 +68,8 @@
           scope:scopeUrl,
           display:'standalone',
           orientation:'any',
-          background_color:'#090A0D',
-          theme_color:'#C81E2B',
+          background_color:'#070D0A',
+          theme_color:'#047857',
           prefer_related_applications:false,
           categories:['sports'],
           icons:[
@@ -85,10 +85,10 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,700&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=8.0.0">
-  <link rel="stylesheet" href="rdm-v6890-fix.css?v=8.0.0">
+  <link rel="stylesheet" href="style.css?v=9.0.0">
+  <link rel="stylesheet" href="rdm-v6890-fix.css?v=9.0.0">
   <script>(function(){try{if(window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true)document.documentElement.classList.add('rdm-standalone');}catch(e){}})();</script>
 
   <meta property="og:type" content="website">
@@ -129,13 +129,35 @@
 <body>
   <header class="top">
     <a class="brand" href="#home" onclick="if(typeof go==='function'){go(window.__rdmUrlKeyRole==='admin'?'admin':(window.__rdmUrlKeyRole==='player'?'profile':'home'));return false}">
-      <img src="assets/rdm-logo.png?v=7400" alt="Rehan Dominators Mahuawan Logo" width="44" height="44" decoding="async" referrerPolicy="no-referrer">
-      <span class="brandTextGroup">
-        <span class="brandTitle">Rehan Dominators Mahuawan</span>
-        <span class="brandSub">Official Cricket Club · Gopalganj, Bihar</span>
-      </span>
+      <img src="assets/rdm-logo.png?v=7400" alt="Rehan Dominators Mahuawan Logo" width="40" height="40" decoding="async" referrerPolicy="no-referrer">
+      <span class="brandTitle">Rehan Dominators</span>
     </a>
+
+    <nav class="nav" id="nav" aria-label="Primary navigation">
+      <button class="active" data-page="home">Home</button>
+      <button data-page="squad">Squad</button>
+      <button data-page="matches">Matches</button>
+      <button data-page="records">Records</button>
+      <button data-page="tournaments">Tournaments</button>
+      <div class="navMoreControl" id="navMoreControl">
+        <button type="button" class="navMoreBtn" id="navMoreBtn" aria-haspopup="true" aria-expanded="false">More ▾</button>
+        <div class="navMoreMenu" id="navMoreMenu" hidden>
+          <button data-page="lineup">Playing XI</button>
+          <button data-page="honours">Honours</button>
+          <button data-page="gallery">Gallery</button>
+          <button data-page="news">News</button>
+          <button data-page="updates">Updates</button>
+          <button data-page="socials">Socials</button>
+          <button data-page="download">Download App</button>
+          <a class="navMoreLink" href="portals.html">Portals Hub ↗</a>
+        </div>
+      </div>
+      <button id="profileNav" data-page="profile" hidden>My Profile</button>
+      <button id="adminNav" data-page="admin" hidden>Admin Panel</button>
+    </nav>
+
     <div class="headActions">
+      <a class="tinyBtn headPortalsLink" href="portals.html">Portals</a>
       <div class="themeControl" id="themeControl">
         <button type="button" class="themeToggle" id="themeToggle" aria-label="Theme" aria-expanded="false">Theme</button>
         <div class="themeMenu" id="themeMenu" hidden>
@@ -144,60 +166,38 @@
           <button type="button" data-theme-mode="dark">Dark</button>
         </div>
       </div>
+      <button type="button" class="tinyBtn mobileMenuBtn" id="mobileMenuBtn" aria-label="Toggle Menu" aria-expanded="false">Menu</button>
     </div>
   </header>
-
-  <nav class="nav" id="nav" aria-label="Primary navigation">
-    <button class="active" data-page="home">Home</button>
-    <button data-page="squad">Squad</button>
-    <button data-page="matches">Matches</button>
-    <button data-page="records">Records</button>
-    <button data-page="tournaments">Tournaments</button>
-    <button data-page="lineup">Playing XI</button>
-    <button data-page="honours">Honours</button>
-    <button data-page="socials">Socials</button>
-    <button data-page="gallery">Gallery</button>
-    <button data-page="news">News</button>
-    <button data-page="updates">Updates</button>
-    <button data-page="download">Download App</button>
-    <button id="profileNav" data-page="profile" hidden>My Profile</button>
-    <button id="adminNav" data-page="admin" hidden>Admin Panel</button>
-  </nav>
 
   <main>
     <section class="page active" id="home">
       <div class="hero">
-        <div class="heroBackdrop" aria-hidden="true">
-          <img src="src/assets/images/hero_cricket_stadium_1794890926411.jpg" alt="" fetchpriority="high" decoding="async" referrerPolicy="no-referrer">
-        </div>
-        <div class="heroScrim" aria-hidden="true"></div>
         <div class="heroInner heroEditorial">
           <div class="heroCopy">
-            <p class="eyebrow">Official Cricket Club · Mahuawan, Gopalganj, Bihar · Est. 2024</p>
-            <div class="heroTeam">Rehan Dominators Mahuawan</div>
+            <p class="eyebrow">Mahuawan · Gopalganj, Bihar · Est. 2024</p>
             <h1>
-              <span>ONE TEAM • ONE DREAM</span>
-              <em>ONE DOMINATION</em>
+              <span>Rehan Dominators</span>
+              <em>Mahuawan</em>
             </h1>
-            <p class="heroMotto">2× Mahuawan Premier League Champions competing with discipline, unity, and fearless limited-overs cricket across Gopalganj.</p>
+            <p class="heroTeam">One Team · One Dream · One Domination</p>
+            <p class="heroMotto">2× Mahuawan Premier League Champions competing with discipline, teamwork, and fearless limited-overs cricket across Gopalganj district.</p>
             <div class="actions homeActions">
               <button class="primary" data-go="squad">View Official Squad</button>
               <button class="secondary" data-go="matches">Match Centre</button>
-              <a class="secondary" href="https://wa.me/918521254605" target="_blank" rel="noopener">Contact Captain</a>
+              <a class="heroTextLink" href="https://wa.me/918521254605" target="_blank" rel="noopener">Contact Captain ↗</a>
             </div>
           </div>
-          <div class="heroCrestShowcase">
-            <div class="heroLogo">
-              <img src="assets/rdm-logo.png?v=7400" alt="Rehan Dominators Mahuawan official logo" width="172" height="172" fetchpriority="high" decoding="async" referrerPolicy="no-referrer">
-            </div>
-            <div class="heroShieldMeta">
-              <strong>RDM Official</strong>
-              <span>Play Hard · Stay Humble · Play As One</span>
-            </div>
-            <div class="heroCrestStats">
-              <div><b>2024</b><span>Est.</span></div>
-              <div><b>2×</b><span>MPL Title</span></div>
-              <div><b>17</b><span>Squad</span></div>
+
+          <div class="heroMediaCard">
+            <img src="src/assets/images/hero_cricket_stadium_1794890926411.jpg" alt="Floodlit cricket stadium pitch" fetchpriority="high" decoding="async" referrerPolicy="no-referrer">
+            <div class="heroMediaOverlay" aria-hidden="true"></div>
+            <div class="heroCrestBadge">
+              <img class="heroCrestThumb" src="assets/rdm-logo.png?v=7400" alt="RDM Official Crest" width="56" height="56" fetchpriority="high" decoding="async" referrerPolicy="no-referrer">
+              <div class="heroCrestText">
+                <strong>RDM · Est. 2024</strong>
+                <span>2× MPL Champions · 17 Squad</span>
+              </div>
             </div>
           </div>
         </div>
@@ -219,6 +219,23 @@
         <div class="metricItem">
           <strong id="metricHonoursCount">3</strong>
           <span>Club Honours</span>
+        </div>
+      </div>
+
+      <div id="homeMatchHub" class="homeMatchHub">
+        <div class="miniMatch miniMatchNext">
+          <span>Next Match</span>
+          <b id="homeNextMatch">Loading schedule...</b>
+          <div class="countdownTimer" id="homeCountdown" hidden>
+            <div class="cdUnit"><strong id="cdDays">00</strong><span>Days</span></div>
+            <span class="cdSep" aria-hidden="true">:</span>
+            <div class="cdUnit"><strong id="cdHours">00</strong><span>Hours</span></div>
+            <span class="cdSep" aria-hidden="true">:</span>
+            <div class="cdUnit"><strong id="cdMinutes">00</strong><span>Minutes</span></div>
+            <span class="cdSep" aria-hidden="true">:</span>
+            <div class="cdUnit"><strong id="cdSeconds">00</strong><span>Seconds</span></div>
+          </div>
+          <span class="countdown" id="homeCountdownNote" hidden></span>
         </div>
       </div>
 
@@ -247,23 +264,6 @@
         </div>
       </section>
 
-      <div id="homeMatchHub" class="homeMatchHub">
-        <div class="miniMatch miniMatchNext">
-          <span>Next Match</span>
-          <b id="homeNextMatch">Loading schedule...</b>
-          <div class="countdownTimer" id="homeCountdown" hidden>
-            <div class="cdUnit"><strong id="cdDays">00</strong><span>Days</span></div>
-            <span class="cdSep" aria-hidden="true">:</span>
-            <div class="cdUnit"><strong id="cdHours">00</strong><span>Hours</span></div>
-            <span class="cdSep" aria-hidden="true">:</span>
-            <div class="cdUnit"><strong id="cdMinutes">00</strong><span>Minutes</span></div>
-            <span class="cdSep" aria-hidden="true">:</span>
-            <div class="cdUnit"><strong id="cdSeconds">00</strong><span>Seconds</span></div>
-          </div>
-          <span class="countdown" id="homeCountdownNote" hidden></span>
-        </div>
-      </div>
-
       <section class="rdmHeritageGrid" aria-label="About Rehan Dominators Mahuawan">
         <div class="heritageMedia">
           <img src="src/assets/images/club_heritage_banner_1794890926814.jpg" alt="Cricket ball and wooden stumps on turf" loading="lazy" decoding="async" referrerPolicy="no-referrer">
@@ -274,7 +274,7 @@
           <p>Founded in 2024 in Mahuawan, Gopalganj, Bihar, Rehan Dominators Mahuawan (RDM) is a competitive village and regional cricket club built around discipline, teamwork, and fearless limited-overs cricket. Champions of Mahuawan Premier League Seasons 1 &amp; 2, RDM continues to compete across Gopalganj district tournaments.</p>
           <div class="clubFactsGrid" aria-label="Club details">
             <div class="clubFactItem"><span>Home Ground</span><strong>Mahuawan, Gopalganj</strong></div>
-            <div class="clubFactItem"><span>Club Colours</span><strong>Crimson &amp; Gold</strong></div>
+            <div class="clubFactItem"><span>Club Colours</span><strong>Emerald &amp; Floodlight Gold</strong></div>
             <div class="clubFactItem"><span>Formats</span><strong>Limited Overs &amp; T20</strong></div>
             <div class="clubFactItem"><span>Captaincy</span><strong>Rehan Akhtar &amp; Saif Ali</strong></div>
           </div>
@@ -501,7 +501,7 @@
         </div>
       </div>
       <div class="downloadAppCard">
-        <img src="assets/rdm-logo.png?v=7400" alt="RDM Application Logo" width="140" height="140" loading="lazy" decoding="async" referrerPolicy="no-referrer">
+        <img src="assets/rdm-logo.png?v=7400" alt="RDM Application Logo" width="132" height="132" loading="lazy" decoding="async" referrerPolicy="no-referrer">
         <div class="downloadAppCopy">
           <span class="downloadBadge">Android APK v1.2.1 &amp; Installable Web App</span>
           <h2>Rehan Dominators Mahuawan App</h2>
@@ -539,7 +539,7 @@
   </main>
 
   <footer>
-    <img src="assets/rdm-logo.png?v=7400" alt="RDM Logo" width="56" height="56" loading="lazy" decoding="async" referrerPolicy="no-referrer">
+    <img src="assets/rdm-logo.png?v=7400" alt="RDM Logo" width="52" height="52" loading="lazy" decoding="async" referrerPolicy="no-referrer">
     <b>Rehan Dominators Mahuawan</b>
     <span>One Team • One Dream • One Domination · Mahuawan, Gopalganj, Bihar</span>
     <nav class="footerLinks" aria-label="Footer quick links">
@@ -591,48 +591,118 @@
   <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-  <script defer src="firebase-config.js?v=8.0.0"></script>
-  <script defer src="app.js?v=8.0.0"></script>
-  <script defer src="firebase-login.js?v=8.0.0"></script>
-  <script defer src="access-links.js?v=8.0.0"></script>
-  <script defer src="firebase-backend.js?v=8.0.0"></script>
-  <script defer src="enhancements.js?v=8.0.0"></script>
-  <script defer src="admin-player-manager.js?v=8.0.0"></script>
-  <script defer src="admin-auth-email.js?v=8.0.0"></script>
-  <script defer src="v6.js?v=8.0.0"></script>
-  <script defer src="gallery-v686.js?v=8.0.0"></script>
-  <script defer src="updates.js?v=8.0.0"></script>
-  <script defer src="forms-v6821.js?v=8.0.0"></script>
+  <script defer src="firebase-config.js?v=9.0.0"></script>
+  <script defer src="app.js?v=9.0.0"></script>
+  <script defer src="firebase-login.js?v=9.0.0"></script>
+  <script defer src="access-links.js?v=9.0.0"></script>
+  <script defer src="firebase-backend.js?v=9.0.0"></script>
+  <script defer src="enhancements.js?v=9.0.0"></script>
+  <script defer src="admin-player-manager.js?v=9.0.0"></script>
+  <script defer src="admin-auth-email.js?v=9.0.0"></script>
+  <script defer src="v6.js?v=9.0.0"></script>
+  <script defer src="gallery-v686.js?v=9.0.0"></script>
+  <script defer src="updates.js?v=9.0.0"></script>
+  <script defer src="forms-v6821.js?v=9.0.0"></script>
 
   <script>(function(){
     var control=document.getElementById('themeControl'),toggle=document.getElementById('themeToggle'),menu=document.getElementById('themeMenu');
-    if(!control||!toggle||!menu)return;
-    var mq=window.matchMedia('(prefers-color-scheme: dark)');
-    var labels={auto:'Auto',light:'Light',dark:'Dark'};
-    function mode(){var m=localStorage.getItem('rdm-theme')||'auto';return /^(auto|light|dark)$/.test(m)?m:'auto'}
-    function resolved(m){return m==='auto'?(mq.matches?'dark':'light'):m}
-    function paint(m){
-      var d=resolved(m);
-      document.documentElement.dataset.rdmThemeMode=m;
-      document.documentElement.dataset.rdmTheme=d;
-      toggle.textContent=labels[m]||'Theme';
-      toggle.setAttribute('aria-label','Theme: '+m);
-      menu.querySelectorAll('[data-theme-mode]').forEach(function(b){b.classList.toggle('active',b.dataset.themeMode===m)});
+    if(control&&toggle&&menu){
+      var mq=window.matchMedia('(prefers-color-scheme: dark)');
+      var labels={auto:'Auto',light:'Light',dark:'Dark'};
+      function mode(){var m=localStorage.getItem('rdm-theme')||'auto';return /^(auto|light|dark)$/.test(m)?m:'auto'}
+      function resolved(m){return m==='auto'?(mq.matches?'dark':'light'):m}
+      function paint(m){
+        var d=resolved(m);
+        document.documentElement.dataset.rdmThemeMode=m;
+        document.documentElement.dataset.rdmTheme=d;
+        toggle.textContent=labels[m]||'Theme';
+        toggle.setAttribute('aria-label','Theme: '+m);
+        menu.querySelectorAll('[data-theme-mode]').forEach(function(b){b.classList.toggle('active',b.dataset.themeMode===m)});
+      }
+      function choose(m){localStorage.setItem('rdm-theme',m);paint(m);menu.hidden=true;toggle.setAttribute('aria-expanded','false')}
+      paint(mode());
+      toggle.addEventListener('click',function(e){e.stopPropagation();menu.hidden=!menu.hidden;toggle.setAttribute('aria-expanded',String(!menu.hidden));});
+      menu.addEventListener('click',function(e){var b=e.target.closest('[data-theme-mode]');if(b)choose(b.dataset.themeMode)});
+      document.addEventListener('click',function(e){if(!control.contains(e.target)){menu.hidden=true;toggle.setAttribute('aria-expanded','false')}});
+      document.addEventListener('keydown',function(e){if(e.key==='Escape'){menu.hidden=true;toggle.setAttribute('aria-expanded','false')}});
+      var onSystem=function(){if(mode()==='auto')paint('auto')};
+      if(mq.addEventListener)mq.addEventListener('change',onSystem);else if(mq.addListener)mq.addListener(onSystem);
     }
-    function choose(m){localStorage.setItem('rdm-theme',m);paint(m);menu.hidden=true;toggle.setAttribute('aria-expanded','false')}
-    paint(mode());
-    toggle.addEventListener('click',function(e){e.stopPropagation();menu.hidden=!menu.hidden;toggle.setAttribute('aria-expanded',String(!menu.hidden));});
-    menu.addEventListener('click',function(e){var b=e.target.closest('[data-theme-mode]');if(b)choose(b.dataset.themeMode)});
-    document.addEventListener('click',function(e){if(!control.contains(e.target)){menu.hidden=true;toggle.setAttribute('aria-expanded','false')}});
-    document.addEventListener('keydown',function(e){if(e.key==='Escape'){menu.hidden=true;toggle.setAttribute('aria-expanded','false')}});
-    var onSystem=function(){if(mode()==='auto')paint('auto')};
-    if(mq.addEventListener)mq.addEventListener('change',onSystem);else if(mq.addListener)mq.addListener(onSystem);
+
+    var nav=document.getElementById('nav'),
+        moreCtrl=document.getElementById('navMoreControl'),
+        moreBtn=document.getElementById('navMoreBtn'),
+        moreMenu=document.getElementById('navMoreMenu'),
+        mobBtn=document.getElementById('mobileMenuBtn');
+
+    function syncMoreActive(){
+      if(!moreMenu||!moreBtn)return;
+      var hasActive=!!moreMenu.querySelector('button.active');
+      moreBtn.classList.toggle('is-child-active',hasActive);
+    }
+
+    if(moreCtrl&&moreBtn&&moreMenu){
+      moreBtn.addEventListener('click',function(e){
+        e.stopPropagation();
+        moreMenu.hidden=!moreMenu.hidden;
+        moreBtn.setAttribute('aria-expanded',String(!moreMenu.hidden));
+      });
+      moreMenu.addEventListener('click',function(e){
+        if(e.target.closest('[data-page], a')){
+          moreMenu.hidden=true;
+          moreBtn.setAttribute('aria-expanded','false');
+          if(nav)nav.classList.remove('is-mobile-open');
+          if(mobBtn)mobBtn.setAttribute('aria-expanded','false');
+          setTimeout(syncMoreActive,20);
+        }
+      });
+      document.addEventListener('click',function(e){
+        if(!moreCtrl.contains(e.target)){
+          moreMenu.hidden=true;
+          moreBtn.setAttribute('aria-expanded','false');
+        }
+      });
+      document.addEventListener('keydown',function(e){
+        if(e.key==='Escape'){
+          moreMenu.hidden=true;
+          moreBtn.setAttribute('aria-expanded','false');
+        }
+      });
+    }
+
+    if(mobBtn&&nav){
+      mobBtn.addEventListener('click',function(e){
+        e.stopPropagation();
+        var open=nav.classList.toggle('is-mobile-open');
+        mobBtn.setAttribute('aria-expanded',String(open));
+      });
+      nav.addEventListener('click',function(e){
+        if(e.target.closest('button[data-page]')){
+          nav.classList.remove('is-mobile-open');
+          mobBtn.setAttribute('aria-expanded','false');
+          setTimeout(syncMoreActive,20);
+        }
+      });
+      document.addEventListener('click',function(e){
+        if(!nav.contains(e.target)&&!mobBtn.contains(e.target)){
+          nav.classList.remove('is-mobile-open');
+          mobBtn.setAttribute('aria-expanded','false');
+        }
+      });
+    }
+
+    document.addEventListener('click',function(e){
+      if(e.target.closest('[data-go], [data-page]')){
+        setTimeout(syncMoreActive,40);
+      }
+    });
+    document.addEventListener('DOMContentLoaded',syncMoreActive);
   })();</script>
 
-  <script defer src="rdm-v6900.js?v=8.0.0"></script>
-  <script defer src="rdm-v6901.js?v=8.0.0"></script>
-  <script defer src="rdm-v6902.js?v=8.0.0"></script>
-  <script defer src="rdm-global-mini.js?v=8.0.0"></script>
-  <script defer src="rdm-pwa.js?v=8.0.0"></script>
+  <script defer src="rdm-v6900.js?v=9.0.0"></script>
+  <script defer src="rdm-v6901.js?v=9.0.0"></script>
+  <script defer src="rdm-v6902.js?v=9.0.0"></script>
+  <script defer src="rdm-global-mini.js?v=9.0.0"></script>
+  <script defer src="rdm-pwa.js?v=9.0.0"></script>
 </body>
 </html>

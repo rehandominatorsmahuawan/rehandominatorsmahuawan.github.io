@@ -52,7 +52,7 @@
 
   function renderEmailToolCard() {
     if (!window.rdmAdmin?.() || !document.getElementById('adminBody')) return;
-    const adminBody = document.getElementById('adminBody');
+    const adminBody = document.getElementById('adminWorkspaceMain') || document.getElementById('adminBody');
 
     let card = document.getElementById('adminFirebaseEmailCard');
     const activeInside = card && card.contains(document.activeElement) && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || '');

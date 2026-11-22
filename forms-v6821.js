@@ -97,16 +97,19 @@
       const idx = XD.stats.findIndex(z => z.playerId === id);
       if (idx >= 0) XD.stats[idx] = rec;
       else XD.stats.push(rec);
+      window.xSaveOverride?.('stats', XD.stats, true);
+      let synced = true;
       try {
         await rdmDB.collection('PlayerStats').doc(id).set({ ...strip(payload), updatedAt: rdmStamp() }, { merge: true });
+        window.xClearOverride?.('stats', true);
       } catch (err) {
-        window.xSaveOverride?.('stats', XD.stats);
+        synced = false;
         reportErr(err, 'Player stats sync');
       }
       xrender?.();
       v6render?.();
       window.refreshAdminSectionManager?.();
-      toast?.('Stats saved & synced');
+      if (synced) toast?.('Stats saved & synced');
     });
   };
 
@@ -119,17 +122,21 @@
     ], async d => {
       const payload = { title: String(d.title || '').trim(), playerName: String(d.playerName || 'TEAM').trim(), detail: String(d.detail || '').trim(), createdMs: Date.now() };
       const rec = { ...payload, _docId: 'loc_' + Date.now() };
+      XD.achievements.unshift(rec);
+      window.xSaveOverride?.('achievements', XD.achievements, true);
+      let synced = true;
       try {
         const ref = await rdmDB.collection('Achievements').add({ ...strip(payload), updatedAt: rdmStamp() });
         rec._docId = ref.id;
+        window.xClearOverride?.('achievements', true);
       } catch (err) {
+        synced = false;
         reportErr(err, 'Add achievement sync');
       }
-      XD.achievements.unshift(rec);
       xrender?.();
       v6render?.();
       window.refreshAdminSectionManager?.();
-      toast?.('Achievement saved & synced');
+      if (synced) toast?.('Achievement saved & synced');
     });
   };
 
@@ -141,24 +148,27 @@
       { name: 'playerName', label: 'Player Name', value: a.playerName || 'TEAM' },
       { name: 'detail', label: 'Details', type: 'textarea', value: a.detail || '' }
     ], async d => {
-      const clean = { title: String(d.title || '').trim(), playerName: String(d.playerName || 'TEAM').trim(), detail: String(d.detail || '').trim() };
-      Object.assign(a, clean);
+      const cleanObj = { title: String(d.title || '').trim(), playerName: String(d.playerName || 'TEAM').trim(), detail: String(d.detail || '').trim() };
+      Object.assign(a, cleanObj);
+      window.xSaveOverride?.('achievements', XD.achievements, true);
+      let synced = true;
       try {
-        const clean = { ...strip(clean), updatedAt: rdmStamp() };
+        const clean = { ...strip(cleanObj), updatedAt: rdmStamp() };
         if (id && !String(id).startsWith('loc_')) {
           await rdmDB.collection('Achievements').doc(id).set(clean, { merge: true });
         } else {
           const ref = await rdmDB.collection('Achievements').add({ ...clean, createdMs: a.createdMs || Date.now() });
           a._docId = ref.id;
         }
+        window.xClearOverride?.('achievements', true);
       } catch (err) {
-        window.xSaveOverride?.('achievements', XD.achievements);
+        synced = false;
         reportErr(err, 'Edit achievement sync');
       }
       xrender?.();
       v6render?.();
       window.refreshAdminSectionManager?.();
-      toast?.('Achievement updated & synced');
+      if (synced) toast?.('Achievement updated & synced');
     });
   };
 
@@ -169,21 +179,24 @@
     modal('Player Availability', [
       { name: 'status', label: 'Matchday Status', type: 'select', value: a.status || 'AVAILABLE', options: ['AVAILABLE', 'UNAVAILABLE'] }
     ], async d => {
-      const payload = { playerId: id, status: String(d.status || 'AVAILABLE').toUpperCase() };
+      const payload = { playerId: id, status: String(d.status || 'AVAILABLE').toUpperCase(), updatedMs: Date.now() };
       const rec = { ...payload, _docId: id };
       const idx = XD.availability.findIndex(z => z.playerId === id);
       if (idx >= 0) XD.availability[idx] = rec;
       else XD.availability.push(rec);
+      window.xSaveOverride?.('availability', XD.availability, true);
+      let synced = true;
       try {
         await rdmDB.collection('Availability').doc(id).set({ ...strip(payload), updatedAt: rdmStamp() }, { merge: true });
+        window.xClearOverride?.('availability', true);
       } catch (err) {
-        window.xSaveOverride?.('availability', XD.availability);
+        synced = false;
         reportErr(err, 'Availability sync');
       }
       xrender?.();
       if (session?.mode === 'player') window.renderProfile?.();
       window.refreshAdminSectionManager?.();
-      toast?.('Availability updated & synced');
+      if (synced) toast?.('Availability updated & synced');
     });
   };
 
@@ -391,7 +404,7 @@ window.rdmConfirmModal = function (title, message, onConfirm) {
   const directionsUrl = (lat, lng) => lat && lng ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(lat + ',' + lng)}&travelmode=driving` : '';
   function proMapCard(lat, lng, label = 'Open Full Map & Directions') {
     if (!lat || !lng) return '';
-    return `<div class="proMapCardBlock"><div class="proMiniMap"><iframe loading="lazy" src="${H(mapUrl(lat, lng))}"></iframe></div><a class="proMapBelowBtn" href="${H(directionsUrl(lat, lng))}" target="_blank" rel="noopener">📍 ${label}</a></div>`;
+    return `<div class="proMapCardBlock"><div class="proMiniMap"><iframe loading="lazy" src="${H(mapUrl(lat, lng))}"></iframe></div><a class="proMapBelowBtn" href="${H(directionsUrl(lat, lng))}" target="_blank" rel="noopener">${label} ↗</a></div>`;
   }
   window.proMapCard = proMapCard;
 
@@ -403,7 +416,7 @@ window.rdmConfirmModal = function (title, message, onConfirm) {
   }
   function locBlock(x = {}) {
     return `<section class="proGroup proLocation">
-      <h3>📍 Venue &amp; Location</h3>
+      <h3>Venue &amp; Location</h3>
       <div class="proGrid">
         ${proField('Venue / Ground Name', 'venueName', x.venueName || x.venue || '', 'text', 'required')}
         ${proField('Area / Village', 'area', x.area || '')}
@@ -469,7 +482,7 @@ window.rdmConfirmModal = function (title, message, onConfirm) {
 
   function matchBody(x = {}) {
     return `<section class="proGroup">
-      <h3>🏏 Match Information</h3>
+      <h3>Match Information</h3>
       <div class="proGrid">
         ${proField('Opponent Team', 'opponent', x.opponent || '', 'text', 'required')}
         ${proSelect('Match Type', 'matchType', x.matchType || 'Friendly', ['Friendly', 'League Match', 'Knockout', 'Semi Final', 'Final', 'Practice'])}
@@ -481,7 +494,7 @@ window.rdmConfirmModal = function (title, message, onConfirm) {
         ${proSelect('Toss Decision', 'tossDecision', x.tossDecision || 'NOT DECIDED', ['NOT DECIDED', 'BATTING', 'BOWLING'])}
       </div>
     </section>${locBlock(x)}<section class="proGroup">
-      <h3>ℹ Additional Information</h3>
+      <h3>Additional Information</h3>
       <div class="proGrid">
         ${proSelect('Venue Type', 'venueType', x.venueType || 'Outdoor', ['Outdoor', 'Indoor'])}
         ${proField('Pitch / Surface', 'pitchType', x.pitchType || '')}
@@ -527,7 +540,7 @@ window.rdmConfirmModal = function (title, message, onConfirm) {
     if (!rdmAdmin?.()) return toast?.('Admin only');
     const x = id ? (D.matches || []).find(z => z._docId === id) || {} : {};
     const body = `<section class="proGroup">
-      <h3>🏏 Match &amp; Result</h3>
+      <h3>Match &amp; Result</h3>
       <div class="proGrid">
         ${proField('Opponent Team', 'opponent', x.opponent || '', 'text', 'required')}
         ${proField('Date', 'date', x.date || '', 'date')}
@@ -543,7 +556,7 @@ window.rdmConfirmModal = function (title, message, onConfirm) {
         ${proField('Match Type', 'matchType', x.matchType || '')}
       </div>
     </section>${locBlock(x)}<section class="proGroup">
-      <h3>📊 Score Details</h3>
+      <h3>Score Details</h3>
       <div class="proGrid">
         ${proField('RDM Wickets', 'ourWickets', x.ourWickets || 0, 'number')}
         ${proField('Opponent Wickets', 'oppWickets', x.oppWickets || 0, 'number')}
@@ -579,7 +592,7 @@ window.rdmConfirmModal = function (title, message, onConfirm) {
     if (!rdmAdmin?.()) return toast?.('Admin only');
     const x = id ? (V6.tournaments || []).find(z => z._docId === id) || {} : {};
     const body = `<section class="proGroup">
-      <h3>🏆 Tournament Information</h3>
+      <h3>Tournament Information</h3>
       <div class="proGrid">
         ${proField('Tournament Name', 'name', x.name || '', 'text', 'required')}
         ${proField('Season / Year', 'season', x.season || new Date().getFullYear())}
@@ -595,7 +608,7 @@ window.rdmConfirmModal = function (title, message, onConfirm) {
         ${proField('RDM Draws / NR', 'draws', x.draws || 0, 'number')}
       </div>
     </section>${locBlock(x)}<section class="proGroup">
-      <h3>📝 Fixtures &amp; Notes</h3>
+      <h3>Fixtures &amp; Notes</h3>
       <label class="proField proFull"><span>Fixtures / Points / Description</span><textarea name="fixtures" rows="5">${H(x.fixtures || '')}</textarea></label>
     </section>`;
     proModal(id ? 'Edit Tournament' : 'Add Tournament', body, async d => {
@@ -665,7 +678,7 @@ window.rdmConfirmModal = function (title, message, onConfirm) {
     const arr = V6.tournaments || [];
     box.innerHTML = arr.length
       ? arr.map(x => `<article class="tournamentCard proDataCard rdmHardTournament">
-          <div class="proCardHead"><div><span class="proStatus">${mini(x.status || 'TOURNAMENT')}</span><h3>🏆 ${mini(x.name || 'Tournament')}</h3></div></div>
+          <div class="proCardHead"><div><span class="proStatus">${mini(x.status || 'TOURNAMENT')}</span><h3>${mini(x.name || 'Tournament')}</h3></div></div>
           <div class="proInfoGrid">
             <p><b>Season / Year</b>${mini(x.season || '—')}</p>
             <p><b>Position</b>${mini(x.position || '—')}</p>
