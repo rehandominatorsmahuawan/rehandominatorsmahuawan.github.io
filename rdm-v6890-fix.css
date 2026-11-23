@@ -1,6 +1,6 @@
-/* RDM Squad Responsive Multi-Column Grid & Wrapping Polish (v13.0.0) */
+/* RDM Squad Single-Row Executive Grid & Text Wrapping Guardrails (v17.0.0) */
 #players {
-  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)) !important;
+  grid-template-columns: minmax(0, 1fr) !important;
 }
 #players .player {
   min-width: 0;
@@ -9,19 +9,16 @@
 #players .pbody {
   min-width: 0;
 }
-#players .pbody h3 {
-  overflow-wrap: anywhere;
-  word-break: normal;
-}
-#players .pbody b {
-  display: block;
-  overflow-wrap: anywhere;
-}
+#players .pbody h3,
+#players .pbody b,
 #players .pbody p {
   max-width: 100%;
   overflow-wrap: anywhere;
   word-break: normal;
   white-space: normal;
+}
+#players .pbody b {
+  display: block;
 }
 .rdmInstall {
   display: none !important;

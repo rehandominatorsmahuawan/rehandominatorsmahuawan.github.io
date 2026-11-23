@@ -19,14 +19,98 @@ import {
 
 const APK_ADMIN_PW_HASH = '73442ec47da8d19de47638438c8563bb266e880cf4ce8cafa5579ed20d2b94be';
 const APK_ADMIN_SESSION_KEY = 'rdm_apk_admin_unlocked_v1';
+const APK_PLAYER_SESSION_KEY = 'rdm_apk_player_unlocked_v1';
+
+const APK_PLAYER_PW_HASHES = {
+  RDM001: '6fb67b0874290083bb94886486ada2535de541c56fca8eb91b7134bb5014019a',
+  RDM002: '0df79a87814b5ff72554d539b8d94d6592ae84e8145cda22111ee55ffa8876a0',
+  RDM003: 'c13d891485885373a0c125b510bf6491c3f22e115da1c1b8f0ab95cabdf572d9',
+  RDM004: 'f71cf8dbeb14f2e8c69484f6ff80d20b1402943f084f713e590ea9abb6afe2fc',
+  RDM005: '561ba1e989a02839b4ed929616fb54fb8cb6414cee6b5e43434162151b853c8d',
+  RDM006: '6ce4bb6723456794764b11952958ead6e243848a389cf97ab13040e4d56389b9',
+  RDM007: '1fefa430168b7419ae9b7596b9ae51d25989d81a89f7981afe6bc21f69a22353',
+  RDM008: 'b391f2d79a5827d539596a1005111febf86a0e2324c6265c700a3020188122cb',
+  RDM009: 'd7bb73041868d2bc129b7d7935e28524d5d168f1d6beb1b2c56efef08fb2194d',
+  RDM010: '48ddb3c347f15fc29dd161e6ac9f988827731db86fd78b6a6a9833c977e2aecb',
+  RDM011: '7f88a18f219f70c47ad1ba9f00ab03bcd710d426aa42a43064ac80dd66cd80e9',
+  RDM012: 'd1ff943fd5199f473569af348a31630842b0b935b4da36e94ec47b9a431f2355',
+  RDM013: '23a060a79f69510bee9ad34ed809f96336ad606d5e9f14436253460194569145',
+  RDM014: 'f06575828bd55e8aceaeab8af0b48d93a6d6b9f714f68ea7717de532a7f9073f',
+  RDM015: '41d5c7c2a1bda007fc24ce1fa8f911ce69e457251733b74d12c9c10ae496dc53',
+  RDM016: 'e44b33be11c30c3ec35638ddde517ad1338c88557f80f795f0c5b05e5552a6a0',
+  RDM017: '2b4eff690afa58c019fee95e6bddf75880f48315fc4f83bbb7f9214ca8b25790'
+};
+
+function sha256Fallback(ascii) {
+  function rightRotate(value, amount) { return (value >>> amount) | (value << (32 - amount)); }
+  const mathPow = Math.pow;
+  const maxWord = mathPow(2, 32);
+  let result = '';
+  const words = [];
+  const asciiBitLength = ascii.length * 8;
+  const hash = [];
+  const k = [];
+  let primeCounter = 0;
+  const isComposite = {};
+  for (let candidate = 2; primeCounter < 64; candidate++) {
+    if (!isComposite[candidate]) {
+      for (let i = 0; i < 313; i += candidate) isComposite[i] = candidate;
+      hash[primeCounter] = (mathPow(candidate, 0.5) * maxWord) | 0;
+      k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+    }
+  }
+  ascii += '\x80';
+  while (ascii.length % 64 - 56) ascii += '\x00';
+  for (let i = 0; i < ascii.length; i++) {
+    const j = ascii.charCodeAt(i);
+    words[i >> 2] |= j << ((3 - i) % 4) * 8;
+  }
+  words[words.length] = ((asciiBitLength / maxWord) | 0);
+  words[words.length] = asciiBitLength;
+  for (let j = 0; j < words.length;) {
+    const w = words.slice(j, j += 16);
+    const oldHash = hash.slice(0);
+    for (let i = 0; i < 64; i++) {
+      const w15 = w[i - 15], w2 = w[i - 2];
+      const a = hash[0], e = hash[4];
+      const temp1 = hash[7]
+        + (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25))
+        + ((e & hash[5]) ^ ((~e) & hash[6]))
+        + k[i]
+        + (w[i] = (i < 16) ? w[i] : (
+          w[i - 16]
+          + (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3))
+          + w[i - 7]
+          + (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10))
+        ) | 0);
+      const temp2 = (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22))
+        + ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
+      hash[7] = hash[6]; hash[6] = hash[5]; hash[5] = hash[4];
+      hash[4] = (hash[3] + temp1) | 0;
+      hash[3] = hash[2]; hash[2] = hash[1]; hash[1] = hash[0];
+      hash[0] = (temp1 + temp2) | 0;
+    }
+    for (let i = 0; i < 8; i++) hash[i] = (hash[i] + oldHash[i]) | 0;
+  }
+  for (let i = 0; i < 8; i++) {
+    for (let j = 3; j + 1; j--) {
+      const b = (hash[i] >> (j * 8)) & 255;
+      result += ((b < 16) ? 0 : '') + b.toString(16);
+    }
+  }
+  return result;
+}
 
 async function sha256Hex(str) {
-  const bytes = new TextEncoder().encode(String(str ?? ''));
-  if (globalThis.crypto?.subtle?.digest) {
-    const buf = await globalThis.crypto.subtle.digest('SHA-256', bytes);
-    return Array.from(new Uint8Array(buf), b => b.toString(16).padStart(2, '0')).join('');
-  }
-  return '';
+  const raw = String(str ?? '');
+  try {
+    if (globalThis.crypto?.subtle?.digest) {
+      const buf = await globalThis.crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw));
+      return Array.from(new Uint8Array(buf), b => b.toString(16).padStart(2, '0')).join('');
+    }
+  } catch (_) {}
+  const utf8 = unescape(encodeURIComponent(raw));
+  return sha256Fallback(utf8);
 }
 
 function readApkAdminFlag() {
@@ -41,6 +125,22 @@ function writeApkAdminFlag(active) {
   try {
     if (active) localStorage.setItem(APK_ADMIN_SESSION_KEY, '1');
     else localStorage.removeItem(APK_ADMIN_SESSION_KEY);
+  } catch {}
+}
+
+function readApkPlayerId() {
+  try {
+    const raw = String(localStorage.getItem(APK_PLAYER_SESSION_KEY) || '').trim().toUpperCase();
+    return Object.prototype.hasOwnProperty.call(APK_PLAYER_PW_HASHES, raw) ? raw : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeApkPlayerId(playerId) {
+  try {
+    if (playerId) localStorage.setItem(APK_PLAYER_SESSION_KEY, String(playerId).trim().toUpperCase());
+    else localStorage.removeItem(APK_PLAYER_SESSION_KEY);
   } catch {}
 }
 
@@ -92,6 +192,7 @@ export const state = {
   loadError: '',
   authChecked: false,
   apkAdminUnlocked: readApkAdminFlag(),
+  apkPlayerId: readApkPlayerId(),
   user: null,
   account: null, // Verified Accounts/{uid} doc
   role: 'guest', // 'guest' | 'player' | 'admin'
@@ -139,11 +240,34 @@ export function isVerifiedAdmin() {
   return Boolean(isFirebaseCloudAdmin() || state.apkAdminUnlocked);
 }
 
+export function isFirebaseCloudPlayer(playerId = '') {
+  const ok = Boolean(
+    state.user &&
+    state.account &&
+    state.account.active === true &&
+    state.role === 'player' &&
+    state.playerId
+  );
+  if (!ok) return false;
+  return playerId ? state.playerId === playerId : true;
+}
+
+export function getVerifiedPlayerId() {
+  if (isFirebaseCloudPlayer()) return state.playerId;
+  if (state.apkPlayerId) return state.apkPlayerId;
+  return null;
+}
+
+export function isVerifiedPlayer(playerId = '') {
+  const activeId = getVerifiedPlayerId();
+  if (!activeId) return false;
+  return playerId ? activeId === playerId : true;
+}
+
 export function getVerifiedPlayer() {
-  if (!state.user || !state.account || state.account.active !== true || state.role !== 'player' || !state.playerId) {
-    return null;
-  }
-  return state.players.find(p => p.id === state.playerId) || null;
+  const activeId = getVerifiedPlayerId();
+  if (!activeId) return null;
+  return state.players.find(p => p.id === activeId) || null;
 }
 
 function mergeSeedPlayers(remoteDocs, profileDocs, uid) {
@@ -548,6 +672,63 @@ export async function loginAdminWithPassword(password) {
   return { ok: true, role: 'admin', cloudSynced };
 }
 
+export async function loginPlayerWithPassword(playerId, password) {
+  const targetId = String(playerId || '').trim().toUpperCase();
+  const expected = APK_PLAYER_PW_HASHES[targetId];
+  if (!expected) {
+    const err = new Error('INVALID_PLAYER_ID');
+    err.code = 'INVALID_PLAYER_ID';
+    throw err;
+  }
+
+  const rawPass = String(password || '');
+  const trimmedPass = rawPass.trim();
+  if (!trimmedPass) {
+    const err = new Error('PASSWORD_REQUIRED');
+    err.code = 'PASSWORD_REQUIRED';
+    throw err;
+  }
+
+  const digestExact = await sha256Hex(rawPass);
+  const digestTrim = trimmedPass !== rawPass ? await sha256Hex(trimmedPass) : digestExact;
+  const matched = digestExact === expected || digestTrim === expected;
+  if (!matched) {
+    const err = new Error('INVALID_PLAYER_PASSWORD');
+    err.code = 'INVALID_PLAYER_PASSWORD';
+    throw err;
+  }
+
+  state.apkPlayerId = targetId;
+  writeApkPlayerId(targetId);
+  if (!isVerifiedAdmin()) {
+    state.role = 'player';
+    state.playerId = targetId;
+  }
+
+  try {
+    await loadClubData();
+  } catch (_) {}
+
+  return { ok: true, role: 'player', playerId: targetId, cloudSynced: isFirebaseCloudPlayer(targetId) };
+}
+
+export async function loginPlayerWithFirebase(identifier, password) {
+  const res = await loginWithEmailPassword(identifier, password);
+  if (res.role !== 'player' || !res.playerId) {
+    if (res.role === 'admin') {
+      const err = new Error('This is an Admin account. Use Admin Panel login or choose your Player profile.');
+      err.code = 'NOT_PLAYER_ACCOUNT';
+      throw err;
+    }
+    const err = new Error('This Firebase account is not linked to an active Player profile.');
+    err.code = 'NOT_PLAYER_ACCOUNT';
+    throw err;
+  }
+  state.apkPlayerId = res.playerId;
+  writeApkPlayerId(res.playerId);
+  return { ok: true, role: 'player', playerId: res.playerId, cloudSynced: true };
+}
+
 export async function connectAdminCloudSync(identifier, password) {
   const res = await loginWithEmailPassword(identifier, password);
   if (res.role !== 'admin') {
@@ -570,9 +751,33 @@ export async function sendResetPasswordEmail(identifier) {
   await auth.sendPasswordResetEmail(cleanEmail);
 }
 
+export async function logoutPlayerAccount() {
+  state.apkPlayerId = null;
+  writeApkPlayerId(null);
+  if (state.role === 'player' || (state.account && state.account.role === 'player')) {
+    const auth = getAuth();
+    if (auth) {
+      try {
+        await auth.signOut();
+      } catch (_) {}
+    }
+    state.user = null;
+    state.account = null;
+  }
+  if (state.apkAdminUnlocked) {
+    state.role = 'admin';
+    state.playerId = null;
+  } else {
+    state.role = 'guest';
+    state.playerId = null;
+  }
+}
+
 export async function logoutAccount() {
   state.apkAdminUnlocked = false;
+  state.apkPlayerId = null;
   writeApkAdminFlag(false);
+  writeApkPlayerId(null);
   const auth = getAuth();
   if (auth) {
     try {
@@ -589,8 +794,16 @@ export function subscribeAuthChanges(onChange) {
   const auth = getAuth();
   if (!auth) {
     state.authChecked = true;
-    const unlocked = state.apkAdminUnlocked;
-    onChange({ role: unlocked ? 'admin' : 'guest', verified: unlocked });
+    if (state.apkAdminUnlocked) {
+      state.role = 'admin';
+      onChange({ role: 'admin', verified: true });
+    } else if (state.apkPlayerId) {
+      state.role = 'player';
+      state.playerId = state.apkPlayerId;
+      onChange({ role: 'player', playerId: state.apkPlayerId, verified: true });
+    } else {
+      onChange({ role: 'guest', verified: false });
+    }
     return () => {};
   }
   return auth.onAuthStateChanged(async user => {
@@ -604,6 +817,13 @@ export function subscribeAuthChanges(onChange) {
         onChange({ role: 'admin', verified: true });
         return;
       }
+      if (state.apkPlayerId) {
+        state.role = 'player';
+        state.playerId = state.apkPlayerId;
+        state.authChecked = true;
+        onChange({ role: 'player', playerId: state.apkPlayerId, verified: true });
+        return;
+      }
       state.role = 'guest';
       state.playerId = null;
       state.authChecked = true;
@@ -612,13 +832,24 @@ export function subscribeAuthChanges(onChange) {
     }
     const res = await verifyAccountRole(user);
     state.authChecked = true;
+    if (res.ok && res.role === 'player' && res.playerId) {
+      state.apkPlayerId = res.playerId;
+      writeApkPlayerId(res.playerId);
+    }
     if (!res.ok && state.apkAdminUnlocked) {
       state.role = 'admin';
       onChange({ role: 'admin', verified: true });
       return;
     }
+    if (!res.ok && state.apkPlayerId) {
+      state.role = 'player';
+      state.playerId = state.apkPlayerId;
+      onChange({ role: 'player', playerId: state.apkPlayerId, verified: true });
+      return;
+    }
     onChange({
       role: res.ok ? res.role : 'guest',
+      playerId: res.ok ? res.playerId : null,
       verified: res.ok,
       reason: res.ok ? '' : res.reason
     });
@@ -630,7 +861,7 @@ export function subscribeAuthChanges(onChange) {
 export function canEditPlayerPortal(playerId) {
   if (!playerId) return false;
   if (isVerifiedAdmin()) return true;
-  if (state.role === 'player' && state.playerId === playerId) return true;
+  if (getVerifiedPlayerId() === playerId) return true;
   return Boolean(
     state.user &&
     state.account &&
@@ -728,6 +959,20 @@ export async function adminUpsertDoc(collection, docId, payload) {
   const validId = docId && !String(docId).startsWith('loc_') ? String(docId) : '';
 
   try {
+    if (collection === 'Honours' || collection === 'Socials') {
+      const existingSnap = await db.collection(collection).limit(1).get();
+      if (existingSnap.empty) {
+        const defaults = collection === 'Honours' ? SEED_HONOURS : DEFAULT_SOCIALS;
+        const batch = db.batch();
+        defaults.forEach(item => {
+          if (item._docId && item._docId !== validId) {
+            const { _docId, ...rest } = item;
+            batch.set(db.collection(collection).doc(_docId), sanitizePayload({ ...rest, updatedAt: serverStamp() }), { merge: true });
+          }
+        });
+        await batch.commit();
+      }
+    }
     if (validId) {
       await db.collection(collection).doc(validId).set(data, { merge: true });
     } else {
@@ -953,6 +1198,22 @@ export async function adminDeleteDoc(collection, docId) {
   if (!db || !isVerifiedAdmin() || !docId) throw new Error('ADMIN_REQUIRED');
   if (String(docId).startsWith('loc_')) return;
   try {
+    if (collection === 'Honours' || collection === 'Socials') {
+      const existingSnap = await db.collection(collection).limit(1).get();
+      if (existingSnap.empty) {
+        const defaults = collection === 'Honours' ? SEED_HONOURS : DEFAULT_SOCIALS;
+        const batch = db.batch();
+        defaults.forEach(item => {
+          if (item._docId && item._docId !== String(docId)) {
+            const { _docId, ...rest } = item;
+            batch.set(db.collection(collection).doc(_docId), sanitizePayload({ ...rest, updatedAt: serverStamp() }), { merge: true });
+          }
+        });
+        await batch.commit();
+        await loadClubData();
+        return;
+      }
+    }
     await db.collection(collection).doc(String(docId)).delete();
     await loadClubData();
   } catch (err) {

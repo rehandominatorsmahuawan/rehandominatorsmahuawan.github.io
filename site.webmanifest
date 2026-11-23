@@ -1,14 +1,14 @@
 {
   "id": "./",
-  "name": "Rehan Dominators Mahuawan",
+  "name": "REHAN DOMINATORS MAHUAWAN",
   "short_name": "RDM",
-  "description": "Official Rehan Dominators Mahuawan cricket team website and installable club app.",
+  "description": "Official REHAN DOMINATORS MAHUAWAN cricket club website and installable app.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#070C18",
-  "theme_color": "#1D4ED8",
+  "background_color": "#0C0C0E",
+  "theme_color": "#991B1B",
   "prefer_related_applications": false,
   "categories": [
     "sports"

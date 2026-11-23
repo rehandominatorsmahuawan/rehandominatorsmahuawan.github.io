@@ -1,43 +1,43 @@
 /* ==========================================================================
-   REHAN DOMINATORS MAHUAWAN (RDM) · MIDNIGHT COBALT & STADIUM GOLD v13.0.0
-   Display: Outfit | Body & UI: Plus Jakarta Sans | Data & Clocks: JetBrains Mono
-   Light: Crisp Stadium Mist & Midnight Cobalt
-   Dark:  Floodlight Navy & Electric Cobalt / Gold
+   REHAN DOMINATORS MAHUAWAN · PRO ALMANAC & 1-ROW EXECUTIVE DESIGN SYSTEM v17.0.0
+   Display: Oswald | Body & UI: Manrope | Telemetry & Timers: Space Mono
+   Every inner club section (Squad, Matches, Records, Leaderboard, Tournaments,
+   Opponents, Lineups, Availability, Honours, Gallery, News, Updates, Portals)
+   renders strictly ONE item per horizontal executive row.
    ========================================================================== */
 
 :root,
 [data-rdm-theme="light"] {
   color-scheme: light;
-  --bg: #F5F7FB;
+  --bg: #F6F4EF;
   --surface: #FFFFFF;
-  --subtle: #EAEFF7;
-  --surface-alt: #F0F4FA;
-  --line: #DCE4F0;
-  --line-strong: #BFCBDC;
-  --ink: #0B1324;
-  --ink-2: #27344D;
-  --muted: #576780;
-  --accent: #1D4ED8;
-  --accent-text: #1D4ED8;
-  --accent-hover: #1E40AF;
+  --subtle: #ECE9E2;
+  --surface-alt: #F4F2EC;
+  --line: #DCD8CE;
+  --line-strong: #BEB8AA;
+  --ink: #121214;
+  --ink-2: #2D2C2A;
+  --muted: #605D57;
+  --accent: #991B1B;
+  --accent-text: #991B1B;
+  --accent-hover: #7F1D1D;
   --accent-ink: #FFFFFF;
-  --accent-soft: rgba(29, 78, 216, 0.09);
+  --accent-soft: rgba(153, 27, 27, 0.08);
   --brass: #B45309;
-  --brass-soft: rgba(180, 83, 9, 0.11);
-  --win: #047857;
-  --win-soft: rgba(4, 120, 87, 0.10);
+  --brass-soft: rgba(180, 83, 9, 0.10);
+  --win: #0F766E;
+  --win-soft: rgba(15, 118, 110, 0.10);
   --danger: #B91C1C;
   --danger-soft: rgba(185, 28, 28, 0.09);
-  --header-bg: rgba(245, 247, 251, 0.94);
-  --hero-card-bg: #0B1426;
-  --hero-scrim: linear-gradient(180deg, rgba(7, 12, 24, 0.10) 0%, rgba(7, 12, 24, 0.78) 100%);
-  --trophy-stage: #0B1426;
-  --shadow-sm: 0 1px 2px rgba(11, 19, 36, 0.05);
-  --shadow-md: 0 8px 24px rgba(11, 19, 36, 0.08);
-  --shadow-lg: 0 20px 48px rgba(11, 19, 36, 0.14);
-  --font-display: "Outfit", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-ui: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --header-bg: rgba(246, 244, 239, 0.94);
+  --hero-card-bg: #111114;
+  --trophy-stage: #121215;
+  --shadow-sm: 0 1px 3px rgba(18, 18, 18, 0.04);
+  --shadow-md: 0 10px 26px rgba(18, 18, 18, 0.08);
+  --shadow-lg: 0 24px 52px rgba(18, 18, 18, 0.14);
+  --font-display: "Oswald", "Manrope", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-ui: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "Space Mono", ui-monospace, SFMono-Regular, monospace;
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
@@ -46,33 +46,32 @@
 
 [data-rdm-theme="dark"] {
   color-scheme: dark;
-  --bg: #070C18;
-  --surface: #0F172A;
-  --subtle: #162238;
-  --surface-alt: #131E33;
-  --line: rgba(226, 232, 240, 0.12);
-  --line-strong: rgba(226, 232, 240, 0.24);
-  --ink: #F8FAFC;
-  --ink-2: #CBD5E1;
-  --muted: #94A3B8;
-  --accent: #2563EB;
-  --accent-text: #60A5FA;
-  --accent-hover: #1D4ED8;
+  --bg: #0C0C0E;
+  --surface: #141418;
+  --subtle: #1C1C22;
+  --surface-alt: #18181E;
+  --line: rgba(255, 255, 255, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.24);
+  --ink: #F5F5F7;
+  --ink-2: #D4D4D8;
+  --muted: #9CA3AF;
+  --accent: #DC2626;
+  --accent-text: #F87171;
+  --accent-hover: #B91C1C;
   --accent-ink: #FFFFFF;
-  --accent-soft: rgba(59, 130, 246, 0.16);
-  --brass: #F59E0B;
-  --brass-soft: rgba(245, 158, 11, 0.16);
+  --accent-soft: rgba(248, 113, 113, 0.15);
+  --brass: #FBBF24;
+  --brass-soft: rgba(251, 191, 36, 0.14);
   --win: #34D399;
   --win-soft: rgba(52, 211, 153, 0.14);
   --danger: #FB7185;
   --danger-soft: rgba(251, 113, 133, 0.15);
-  --header-bg: rgba(7, 12, 24, 0.92);
-  --hero-card-bg: #0B1222;
-  --hero-scrim: linear-gradient(180deg, rgba(7, 12, 24, 0.14) 0%, rgba(7, 12, 24, 0.86) 100%);
-  --trophy-stage: #091020;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.36);
-  --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 22px 54px rgba(0, 0, 0, 0.65);
+  --header-bg: rgba(12, 12, 14, 0.92);
+  --hero-card-bg: #0D0D10;
+  --trophy-stage: #111114;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.40);
+  --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.50);
+  --shadow-lg: 0 26px 58px rgba(0, 0, 0, 0.70);
 }
 
 *,
@@ -94,7 +93,7 @@ body {
   flex-direction: column;
   font-family: var(--font-ui);
   font-size: 15px;
-  line-height: 1.56;
+  line-height: 1.6;
   color: var(--ink);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
@@ -142,8 +141,8 @@ h2,
 h3,
 h4 {
   font-family: var(--font-display);
-  letter-spacing: -0.02em;
-  line-height: 1.12;
+  letter-spacing: 0.01em;
+  line-height: 1.06;
   text-wrap: balance;
   margin: 0;
   font-weight: 700;
@@ -160,28 +159,29 @@ h4 {
   word-break: break-word;
 }
 
-/* ==================== TOP BAR CONTRACT (STRICT 3-ZONE DESKTOP SHELL) ==================== */
+/* ==================== TOP BAR CONTRACT (STRICT 3-ZONE ATHLETIC HEADER) ==================== */
 
 .top {
   position: sticky;
   top: 0;
   z-index: 60;
-  height: 60px;
-  padding: 0 28px;
+  height: 62px;
+  padding: 0 24px;
   background: var(--header-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  border-top: 3px solid var(--accent);
   border-bottom: 1px solid var(--line);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 18px;
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
   text-decoration: none;
   color: var(--ink);
   min-width: 0;
@@ -200,9 +200,9 @@ h4 {
 
 .brandTitle {
   font-family: var(--font-display);
-  font-size: 1.14rem;
-  font-weight: 800;
-  letter-spacing: -0.015em;
+  font-size: clamp(0.92rem, 1.15vw, 1.14rem);
+  font-weight: 700;
+  letter-spacing: 0.025em;
   color: var(--ink);
   white-space: nowrap;
   flex-shrink: 0;
@@ -214,19 +214,24 @@ h4 {
   justify-content: center;
   gap: 2px;
   min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.nav::-webkit-scrollbar {
+  display: none;
 }
 
 .nav button,
-.nav .navLink,
-.navMoreBtn {
+.nav .navLink {
   appearance: none;
   background: transparent;
   border: 0;
   border-bottom: 2px solid transparent;
-  padding: 6px 11px;
-  min-height: 38px;
-  font-size: 0.84rem;
-  font-weight: 600;
+  padding: 7px 9px;
+  min-height: 40px;
+  font-size: 0.8rem;
+  font-weight: 700;
   color: var(--muted);
   cursor: pointer;
   text-decoration: none;
@@ -236,70 +241,15 @@ h4 {
 }
 
 .nav button:hover,
-.nav .navLink:hover,
-.navMoreBtn:hover {
+.nav .navLink:hover {
   color: var(--ink);
   border-bottom-color: var(--line-strong);
 }
 
 .nav button.active,
-.nav .navLink.active,
-.navMoreBtn.is-child-active {
+.nav .navLink.active {
   color: var(--accent-text);
   border-bottom-color: var(--accent-text);
-  font-weight: 700;
-}
-
-.navMoreControl {
-  position: relative;
-}
-
-.navMoreMenu {
-  position: absolute;
-  top: calc(100% + 10px);
-  left: 0;
-  min-width: 210px;
-  padding: 6px;
-  background: var(--surface);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  z-index: 80;
-}
-
-.navMoreMenu button,
-.navMoreLink {
-  width: 100%;
-  text-align: left;
-  border: 0;
-  border-radius: var(--radius-sm);
-  padding: 8px 12px;
-  min-height: 36px;
-  font-size: 0.83rem;
-  font-weight: 600;
-  color: var(--ink-2);
-  background: transparent;
-  text-decoration: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.navMoreMenu button:hover,
-.navMoreLink:hover {
-  background: var(--subtle);
-  color: var(--ink);
-  border-bottom-color: transparent;
-}
-
-.navMoreMenu button.active {
-  background: var(--accent-soft);
-  color: var(--accent-text);
-  border-bottom-color: transparent;
 }
 
 .headActions {
@@ -310,87 +260,18 @@ h4 {
   flex-shrink: 0;
 }
 
-.themeControl {
-  position: relative;
-}
-
-.themeToggle,
-.mobileMenuBtn {
-  height: 36px;
-  padding: 0 11px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--line-strong);
-  background: var(--surface);
-  color: var(--ink);
-  font-size: 0.78rem;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  cursor: pointer;
-  text-decoration: none;
-  white-space: nowrap;
-  flex-shrink: 0;
-  transition: background-color 0.16s var(--ease), border-color 0.16s var(--ease);
-}
-
-.themeToggle:hover,
-.mobileMenuBtn:hover {
-  background: var(--subtle);
-}
-
 .headPortalsCta {
-  min-height: 36px !important;
-  height: 36px;
-  padding: 0 14px !important;
-  font-size: 0.78rem !important;
+  min-height: 40px !important;
+  height: 40px;
+  padding: 0 18px !important;
+  font-size: 0.82rem !important;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .mobileMenuBtn {
   display: none;
-}
-
-.themeMenu {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  min-width: 124px;
-  padding: 5px;
-  background: var(--surface);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  z-index: 85;
-}
-
-.themeMenu button {
-  appearance: none;
-  background: transparent;
-  border: 0;
-  border-radius: var(--radius-sm);
-  padding: 7px 10px;
-  text-align: left;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--ink-2);
-  cursor: pointer;
-}
-
-.themeMenu button:hover {
-  background: var(--subtle);
-  color: var(--ink);
-}
-
-.themeMenu button.active {
-  background: var(--accent-soft);
-  color: var(--accent-text);
-  font-weight: 700;
+  min-height: 40px !important;
 }
 
 /* ==================== MAIN CONTAINER & PAGES ==================== */
@@ -398,9 +279,9 @@ h4 {
 main {
   flex: 1 0 auto;
   width: 100%;
-  max-width: 1240px;
+  max-width: 1260px;
   margin: 0 auto;
-  padding: 24px 28px 60px;
+  padding: 18px 32px 72px;
 }
 
 .page {
@@ -433,7 +314,7 @@ a.primary {
   justify-content: center;
   gap: 8px;
   min-height: 42px;
-  padding: 0 20px;
+  padding: 10px 20px;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   background: var(--accent);
@@ -466,7 +347,7 @@ a.secondary {
   justify-content: center;
   gap: 8px;
   min-height: 42px;
-  padding: 0 16px;
+  padding: 10px 18px;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
   background: var(--surface);
@@ -495,24 +376,26 @@ button.wide {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  min-height: 36px;
-  padding: 0 12px;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 14px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
   background: var(--surface);
   color: var(--ink-2);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 700;
   text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
+  flex-shrink: 0;
   transition: background-color 0.15s var(--ease), color 0.15s var(--ease), border-color 0.15s var(--ease);
 }
 
 .tinyBtn:hover {
   background: var(--subtle);
   color: var(--ink);
+  border-color: var(--accent-text);
 }
 
 .tinyBtn.active,
@@ -537,21 +420,82 @@ button.wide {
   background: var(--danger-soft);
 }
 
-/* ==================== SECTION HEADERS & KICKERS (ZERO PILL DISCIPLINE) ==================== */
+/* ==================== MASTHEAD UTILITY & SECTION HEADERS ==================== */
+
+.mastheadBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.mastheadBar .eyebrow {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.mastheadThemeBar {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  background: var(--subtle);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.mastheadThemeBar button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 5px 11px;
+  min-height: 30px;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s var(--ease), color 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+
+.mastheadThemeBar button:hover {
+  color: var(--ink);
+}
+
+.mastheadThemeBar button.active {
+  background: var(--surface);
+  color: var(--accent-text);
+  box-shadow: var(--shadow-sm);
+}
 
 .sectionHead {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 14px;
+  gap: 16px;
   flex-wrap: wrap;
-  padding-bottom: 12px;
-  margin-bottom: 18px;
-  border-bottom: 1px solid var(--line);
+  padding-bottom: 14px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--line);
 }
 
 .sectionHead.subHead {
-  margin-top: 32px;
+  margin-top: 38px;
+}
+
+.sectionActionRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .sectionHead > div > span,
@@ -561,12 +505,12 @@ button.wide {
 .adminModuleHead > span {
   display: inline-block;
   font-family: var(--font-mono);
-  font-size: 0.69rem;
+  font-size: 0.71rem;
   font-weight: 700;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--brass);
-  margin-bottom: 4px;
+  margin-bottom: 5px;
   background: transparent;
   border: 0;
   padding: 0;
@@ -575,109 +519,162 @@ button.wide {
 .sectionHead h2,
 .leadTitle h2,
 .rdmSeoIntro h2 {
-  font-size: clamp(1.28rem, 2.2vw, 1.72rem);
-  font-weight: 800;
+  font-size: clamp(1.7rem, 2.7vw, 2.3rem);
+  font-weight: 700;
   color: var(--ink);
 }
 
 .sectionHead p {
-  margin: 4px 0 0;
-  font-size: 0.88rem;
+  margin: 5px 0 0;
+  font-size: 0.9rem;
   color: var(--muted);
 }
 
 .v62Help {
-  margin: -6px 0 16px;
-  font-size: 0.88rem;
+  margin: -8px 0 18px;
+  font-size: 0.9rem;
   color: var(--muted);
 }
 
-/* ==================== DESKTOP-CALIBER SPLIT STADIUM HERO ==================== */
+/* ==================== WIDESCREEN PANORAMIC STADIUM BILLBOARD ==================== */
 
-.hero {
+.heroPanorama {
   position: relative;
-  background: var(--surface);
-  border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
-}
-
-.heroInner.heroEditorial {
-  display: grid;
-  grid-template-columns: minmax(0, 1.24fr) minmax(290px, 0.96fr);
-  align-items: stretch;
-  gap: 0;
-}
-
-.heroCopy {
-  padding: 34px 36px;
+  border: 1px solid var(--line-strong);
+  background: var(--hero-card-bg);
+  box-shadow: var(--shadow-md);
+  min-height: 465px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
 }
 
-.hero .eyebrow {
-  margin: 0 0 10px;
+.heroPanoramaBg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.heroPanoramaBg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 45%;
+}
+
+.heroPanoramaBg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(10, 10, 14, 0.90) 0%,
+    rgba(10, 10, 14, 0.72) 48%,
+    rgba(10, 10, 14, 0.34) 100%
+  ),
+  linear-gradient(
+    180deg,
+    rgba(10, 10, 14, 0.25) 0%,
+    rgba(10, 10, 14, 0.88) 100%
+  );
+}
+
+.heroPanoramaContent {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 auto;
+  padding: 34px 40px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 28px;
+  color: #FFFFFF;
+}
+
+.heroPanoramaTop {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.heroCrestThumb {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #FFFFFF;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  flex-shrink: 0;
+}
+
+.heroCrestTag {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.74rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--brass);
+  letter-spacing: 0.05em;
+  color: #FBBF24;
 }
 
-.hero h1 {
+.heroPanoramaMain {
+  max-width: 100%;
+}
+
+.heroPanoramaMain h1 {
   font-family: var(--font-display);
-  font-size: clamp(1.85rem, 3.6vw, 3.05rem);
-  font-weight: 800;
-  line-height: 1.04;
-  color: var(--ink);
-  letter-spacing: -0.025em;
-}
-
-.hero h1 span {
-  display: block;
-}
-
-.hero h1 em {
-  display: block;
-  font-style: normal;
+  font-size: clamp(1.22rem, 4.15vw, 3.65rem);
   font-weight: 700;
-  color: var(--accent-text);
-  margin-top: 2px;
+  line-height: 1.02;
+  color: #FFFFFF;
+  letter-spacing: 0.015em;
+  white-space: nowrap;
+  text-wrap: nowrap;
+}
+
+.heroPanoramaMain h1 span {
+  display: inline;
+  color: #FBBF24;
 }
 
 .heroTeam {
-  margin: 14px 0 6px;
+  margin: 14px 0 8px;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--ink-2);
+  color: #E5E7EB;
 }
 
 .heroMotto {
   margin: 0 0 22px;
-  max-width: 56ch;
-  font-size: 0.94rem;
+  max-width: 58ch;
+  font-size: 0.96rem;
   line-height: 1.6;
-  color: var(--muted);
+  color: #D4D4D8;
 }
 
 .actions.homeActions {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
+}
+
+.heroPanorama .secondary {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.36);
+  color: #FFFFFF;
+  backdrop-filter: blur(8px);
+}
+
+.heroPanorama .secondary:hover {
+  background: rgba(255, 255, 255, 0.22);
 }
 
 .heroTextLink {
   margin-left: 4px;
-  font-size: 0.84rem;
+  font-size: 0.86rem;
   font-weight: 700;
-  color: var(--accent-text);
+  color: #FBBF24;
   text-decoration: none;
   border-bottom: 1px solid currentColor;
   padding-bottom: 2px;
@@ -685,235 +682,137 @@ button.wide {
 }
 
 .heroTextLink:hover {
-  color: var(--accent-hover);
+  color: #FDE68A;
 }
 
-/* Right Architectural Pavilion Photo & Almanac Frame */
-.heroPavilionCard {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  min-height: 360px;
-  border-left: 1px solid var(--line);
-  background: var(--hero-card-bg);
-  color: #F8FAFC;
-}
-
-.heroBackdrop {
-  position: relative;
-  flex: 1 1 auto;
-  overflow: hidden;
-  min-height: 205px;
-}
-
-.heroBackdrop img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center center;
-}
-
-.heroBackdrop::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--hero-scrim);
-  pointer-events: none;
-}
-
-.heroPavilionOverlayHead {
-  position: absolute;
-  left: 18px;
-  right: 18px;
-  bottom: 14px;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: 11px;
-}
-
-.heroCrestThumb {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  object-fit: cover;
-  background: #FFFFFF;
-  border: 2px solid rgba(248, 250, 252, 0.8);
-  flex-shrink: 0;
-}
-
-.heroPavilionKicker {
-  display: block;
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #F59E0B;
-  margin-bottom: 2px;
-}
-
-.heroPavilionOverlayHead strong {
-  font-family: var(--font-display);
-  font-size: 1.24rem;
-  font-weight: 700;
-  color: #FFFFFF;
-  line-height: 1.05;
-}
-
-.heroPavilionLedger {
-  background: #0B1426;
-  border-top: 1px solid rgba(226, 232, 240, 0.14);
-  padding: 14px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.heroPavilionStats {
+.heroPanoramaFoot {
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.20);
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  max-width: 820px;
 }
 
-.heroPavStat {
-  padding-bottom: 7px;
-  border-bottom: 1px solid rgba(226, 232, 240, 0.12);
-}
-
-.heroPavStat strong {
+.heroPanoramaFoot span {
   display: block;
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #F8FAFC;
-  line-height: 1.1;
-  font-variant-numeric: tabular-nums;
+  font-size: 0.68rem;
+  color: #A1A1AA;
 }
 
-.heroPavStat span {
+.heroPanoramaFoot strong {
   display: block;
   margin-top: 2px;
-  font-family: var(--font-mono);
-  font-size: 0.64rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: #94A3B8;
-}
-
-.heroPavilionFoot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.heroPavLink {
-  background: none;
-  border: 0;
-  padding: 0;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: #F59E0B;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.heroPavLink:hover {
   color: #FFFFFF;
 }
 
-/* ==================== 4-COLUMN ALMANAC METRICS RIBBON ==================== */
+/* ==================== ASYMMETRIC BENTO COMMAND WORKSPACE ==================== */
+
+.homeCommandBento {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.85fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.homeLeftStage {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.homeRightRail {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
 
 .metrics {
-  margin-top: 18px;
-  background: var(--surface);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
   overflow: hidden;
   box-shadow: var(--shadow-sm);
 }
 
 .metricItem {
-  padding: 16px 20px;
-  border-right: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px 18px;
   display: flex;
   flex-direction: column;
   gap: 3px;
-}
-
-.metricItem:last-child {
-  border-right: 0;
-}
-
-.metricItem strong {
-  font-family: var(--font-display);
-  font-size: 1.85rem;
-  font-weight: 800;
-  line-height: 1.05;
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
 }
 
 .metricItem span {
   font-family: var(--font-mono);
   font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
   color: var(--muted);
 }
 
-/* ==================== HOME MATCH HUB, COUNTDOWN & DISPATCHES ==================== */
+.metricItem strong {
+  font-family: var(--font-display);
+  font-size: 2.15rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--accent-text);
+  font-variant-numeric: tabular-nums;
+}
 
+.metricItem small {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+/* Home Match Hub: Clean 1-per-row Stacked Strips */
 .homeMatchHub {
-  margin-top: 20px;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
 }
 
 .miniMatch {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 20px 22px;
+  padding: 20px 24px;
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
 }
 
 .miniMatch b {
   font-family: var(--font-display);
-  font-size: 1.24rem;
+  font-size: 1.58rem;
   font-weight: 700;
   color: var(--ink);
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
+.miniMatch small,
 .miniMatch span {
-  font-size: 0.86rem;
+  font-size: 0.875rem;
   color: var(--muted);
 }
 
 .miniMatchLink {
   align-self: flex-start;
   margin-top: auto;
-  padding-top: 6px;
+  padding-top: 8px;
   background: none;
   border: 0;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.73rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--accent-text);
   cursor: pointer;
 }
@@ -926,14 +825,14 @@ button.wide {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  gap: 5px;
-  max-width: 340px;
-  margin: 8px 0 4px;
+  gap: 6px;
+  max-width: 360px;
+  margin: 10px 0 6px;
 }
 
 .cdUnit {
   min-width: 0;
-  padding: 8px 4px;
+  padding: 9px 4px;
   background: var(--subtle);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
@@ -943,7 +842,7 @@ button.wide {
 .cdUnit strong {
   display: block;
   font-family: var(--font-mono);
-  font-size: clamp(1.08rem, 2.4vw, 1.34rem);
+  font-size: clamp(1.05rem, 2.2vw, 1.32rem);
   font-weight: 700;
   line-height: 1;
   color: var(--accent-text);
@@ -954,10 +853,8 @@ button.wide {
   display: block;
   margin-top: 4px;
   font-family: var(--font-mono);
-  font-size: 0.58rem;
+  font-size: 0.62rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--muted);
 }
 
@@ -971,17 +868,16 @@ button.wide {
 
 .countdown {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--brass);
 }
 
 #noticeBanner {
-  margin-top: 16px;
   background: var(--surface);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-md);
-  padding: 14px 20px;
+  padding: 16px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -992,136 +888,72 @@ button.wide {
 .noticeBannerMain {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   min-width: 0;
 }
 
+.noticeBannerMain b,
 .noticeBannerMain strong {
-  font-size: 0.92rem;
+  font-size: 0.96rem;
   color: var(--ink);
 }
 
-.noticeBannerMain span {
-  font-size: 0.84rem;
+.noticeBannerMain span,
+.noticeBannerMain div.preserveLines {
+  font-size: 0.86rem;
   color: var(--muted);
 }
 
 #homeUpdateHub {
-  margin-top: 16px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 16px 20px;
+  padding: 20px 22px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .homeUpdateTag {
   font-family: var(--font-mono);
-  font-size: 0.69rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
   color: var(--accent-text);
 }
 
 .homeUpdatePreview {
-  margin: 4px 0;
-  font-size: 0.88rem;
+  margin: 2px 0;
+  font-size: 0.9rem;
   color: var(--ink-2);
 }
 
 .homeUpdateTime {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.73rem;
   color: var(--muted);
 }
 
-/* ==================== LEADERSHIP & HERITAGE ==================== */
-
-.homeLeadership {
-  margin-top: 34px;
-}
-
-.leadTitle {
-  margin-bottom: 14px;
-}
-
-.leadGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.leadCard {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  padding: 18px 20px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  box-shadow: var(--shadow-sm);
-  cursor: pointer;
-  transition: border-color 0.16s var(--ease), transform 0.16s var(--ease);
-}
-
-.leadCard:hover {
-  border-color: var(--accent-text);
-  transform: translateY(-1px);
-}
-
-.leadCard img {
-  width: 62px;
-  height: 62px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--accent-text);
-  background: #FFFFFF;
-  flex-shrink: 0;
-}
-
-.leadRole {
-  display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--brass);
-  margin-bottom: 2px;
-}
-
-.leadMeta h3 {
-  font-size: 1.24rem;
-  color: var(--ink);
-}
-
-.leadMeta p {
-  margin: 3px 0 0;
-  font-size: 0.84rem;
-  color: var(--muted);
+.homeUpdateOpen {
+  align-self: flex-start;
+  margin-top: 4px;
 }
 
 .rdmHeritageGrid {
-  margin-top: 34px;
   display: grid;
-  grid-template-columns: minmax(280px, 0.92fr) minmax(0, 1.35fr);
+  grid-template-columns: minmax(230px, 0.85fr) minmax(0, 1.25fr);
   gap: 0;
   align-items: stretch;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
 }
 
 .heritageMedia {
-  min-height: 270px;
-  background: #0B1426;
+  min-height: 280px;
+  border-right: 1px solid var(--line);
+  background: #121215;
   overflow: hidden;
 }
 
@@ -1132,7 +964,7 @@ button.wide {
 }
 
 .rdmSeoIntro {
-  padding: 28px 32px;
+  padding: 26px 28px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1146,7 +978,7 @@ button.wide {
 }
 
 .clubFactsGrid {
-  margin-top: 18px;
+  margin-top: 16px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px 18px;
@@ -1158,10 +990,8 @@ button.wide {
 .clubFactItem span {
   display: block;
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.66rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--muted);
 }
 
@@ -1175,7 +1005,7 @@ button.wide {
 
 .rdmSeoNames {
   margin-top: 12px !important;
-  font-size: 0.82rem !important;
+  font-size: 0.81rem !important;
   color: var(--muted) !important;
 }
 
@@ -1183,30 +1013,104 @@ button.wide {
   margin-top: 16px;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 7px;
 }
 
-/* ==================== SQUAD DIRECTORY & PLAYER CARDS ==================== */
+.homeLeadership {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.leadTitle {
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.leadGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.leadCard {
+  background: var(--subtle);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: border-color 0.16s var(--ease), transform 0.16s var(--ease);
+}
+
+.leadCard:hover {
+  border-color: var(--accent-text);
+  transform: translateX(2px);
+}
+
+.leadPortrait {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+
+.leadCard img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #FFFFFF;
+}
+
+.leadRole {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.67rem;
+  font-weight: 700;
+  color: var(--brass);
+  margin-bottom: 2px;
+}
+
+.leadMeta h3 {
+  font-size: 1.35rem;
+  color: var(--ink);
+}
+
+.leadMeta p {
+  margin: 2px 0 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+/* ==================== TOOLBARS, SEARCH & FILTER STRIPS ==================== */
 
 .squadToolbar,
 .portalsToolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
   flex-wrap: wrap;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .squadSearchWrap {
   position: relative;
-  flex: 1 1 260px;
-  min-width: 210px;
+  flex: 1 1 280px;
+  min-width: 220px;
 }
 
 .squadSearchIcon {
   position: absolute;
-  left: 13px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
   width: 16px;
@@ -1217,13 +1121,13 @@ button.wide {
 
 .searchPlayer {
   width: 100%;
-  height: 42px;
-  padding: 0 36px 0 38px;
+  height: 44px;
+  padding: 0 38px 0 40px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
   background: var(--surface);
   color: var(--ink);
-  font-size: 0.88rem;
+  font-size: 0.9rem;
 }
 
 .searchPlayer:focus {
@@ -1236,8 +1140,8 @@ button.wide {
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: var(--radius-sm);
   border: 0;
   background: var(--subtle);
@@ -1267,13 +1171,13 @@ button.wide {
 .recordTypeBtn,
 .albumTab {
   appearance: none;
-  min-height: 32px;
-  padding: 0 12px;
+  min-height: 36px;
+  padding: 0 13px;
   border-radius: var(--radius-sm);
   border: 0;
   background: transparent;
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
@@ -1299,65 +1203,14 @@ button.wide {
 }
 
 .squadFilterStatus {
-  margin: 0 0 14px;
+  margin: 0 0 16px;
   font-family: var(--font-mono);
-  font-size: 0.73rem;
+  font-size: 0.74rem;
   font-weight: 700;
   color: var(--muted);
 }
 
-.players {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-  gap: 14px;
-}
-
-.player {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  padding: 16px 18px;
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-  box-shadow: var(--shadow-sm);
-  transition: border-color 0.16s var(--ease), box-shadow 0.16s var(--ease);
-}
-
-.player.clickablePlayer {
-  cursor: pointer;
-}
-
-.player.clickablePlayer:hover {
-  border-color: var(--accent-text);
-  box-shadow: var(--shadow-md);
-}
-
-.player .photo,
-.player img.photo {
-  width: 58px;
-  height: 58px;
-  border-radius: 50%;
-  object-fit: cover;
-  background: #FFFFFF;
-  border: 1.5px solid var(--line-strong);
-  flex-shrink: 0;
-}
-
-.player .pbody {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-.squadIdentity {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 5px 8px;
-  margin-bottom: 4px;
-}
-
-/* ZERO-PILL DISCIPLINE: Static metadata rendered cleanly without bordered pill capsules */
+/* ZERO-PILL DISCIPLINE: Static metadata rendered as crisp unboxed typography */
 .simplePlayerId,
 .jerseyTag,
 .leadershipBadge,
@@ -1374,16 +1227,16 @@ button.wide {
 .downloadBadge {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+  color: var(--muted);
   padding: 0;
   border: 0;
   background: transparent;
-  color: var(--muted);
 }
 
 .jerseyTag,
@@ -1405,30 +1258,117 @@ button.wide {
   color: var(--win);
 }
 
-.player .pbody h3 {
-  font-size: 1.18rem;
-  color: var(--ink);
+/* ==================== SQUAD DIRECTORY — 1 PLAYER DOSSIER PER ROW ==================== */
+
+.players {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
+.player {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 18px 24px;
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr) auto;
+  grid-template-areas:
+    "photo body actions"
+    "stats stats stats";
+  align-items: center;
+  gap: 14px 24px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.16s var(--ease), box-shadow 0.16s var(--ease), transform 0.16s var(--ease);
+}
+
+.player.clickablePlayer,
+.player.squadFullProfile .photo,
+.player.squadFullProfile h3 {
+  cursor: pointer;
+}
+
+.player:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-md);
+}
+
+.player .photo,
+.player img.photo {
+  grid-area: photo;
+  width: 88px;
+  height: 88px;
+  border-radius: 10px;
+  object-fit: cover;
+  overflow: hidden;
+  background: #FFFFFF;
+  border: 1px solid var(--line-strong);
+  flex-shrink: 0;
+}
+
+.player .photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.player .pbody {
+  grid-area: body;
+  min-width: 0;
+}
+
+.squadIdentity {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
   margin-bottom: 2px;
+}
+
+.squadIdentity span:last-child {
+  color: var(--accent-text);
+}
+
+.player .leadershipBadge {
+  margin-right: 10px;
+}
+
+.player .pbody h3 {
+  font-size: 1.56rem;
+  color: var(--ink);
+  margin: 2px 0 3px;
 }
 
 .player .pbody b {
   display: block;
-  font-size: 0.82rem;
+  font-size: 0.86rem;
   font-weight: 700;
   color: var(--accent-text);
-  margin-bottom: 3px;
+  margin-bottom: 4px;
 }
 
 .player .pbody p {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   color: var(--muted);
+  max-width: 70ch;
 }
 
 .squadNick {
   margin-top: 3px !important;
   font-style: italic;
   color: var(--ink-2) !important;
+}
+
+.profileBio {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: var(--ink-2);
+  max-width: 72ch;
 }
 
 .squadStatLines {
@@ -1442,139 +1382,134 @@ button.wide {
 .squadSocials {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 10px;
   margin-top: 8px;
 }
 
+.squadSocials a {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent-text);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
+
 .squadCardActions {
+  grid-area: actions;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 10px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.player:has(.squadEditFab) .squadCardActions {
+  margin-top: 34px;
+}
+
+.squadEditFab {
+  position: absolute;
+  top: 12px;
+  right: 24px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 11px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: var(--subtle);
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.squadEditFab:hover {
+  border-color: var(--accent-text);
+  color: var(--accent-text);
 }
 
 .squadStatsPanel {
-  margin-top: 10px;
-  padding-top: 10px;
+  grid-area: stats;
+  width: 100%;
+  margin-top: 4px;
+  padding-top: 14px;
   border-top: 1px solid var(--line);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
 }
 
 .squadStatsGroupTitle {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.69rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
   text-transform: uppercase;
+  letter-spacing: 0.04em;
   color: var(--muted);
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 }
 
 .squadStatsGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 6px;
+  gap: 8px;
+}
+
+.squadStatsGridBowling {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .squadStatsGrid > div,
-.playerPortalStatsGrid > div {
-  padding: 7px 6px;
+.squadStatsGrid > b,
+.playerPortalStatsGrid > div,
+.playerPortalStatsGrid > b {
+  display: block;
+  padding: 10px 8px;
   border-radius: var(--radius-sm);
-  background: var(--subtle);
+  background: var(--surface-alt);
   border: 1px solid var(--line);
   text-align: center;
-}
-
-.squadStatsGrid strong,
-.playerPortalStatsGrid strong {
-  display: block;
   font-family: var(--font-mono);
-  font-size: 0.92rem;
+  font-size: 0.98rem;
   font-weight: 700;
   color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
 
 .squadStatsGrid span,
-.playerPortalStatsGrid span {
+.squadStatsGrid small,
+.playerPortalStatsGrid span,
+.playerPortalStatsGrid small {
   display: block;
-  font-size: 0.64rem;
-  font-weight: 700;
-  text-transform: uppercase;
+  margin-top: 2px;
+  font-family: var(--font-ui);
+  font-size: 0.69rem;
+  font-weight: 600;
   color: var(--muted);
 }
 
-.squadEditFab {
-  margin-top: 8px;
-  display: inline-flex;
-  align-items: center;
-  min-height: 34px;
-  padding: 0 11px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--line-strong);
-  background: var(--subtle);
-  color: var(--ink);
-  font-size: 0.76rem;
-  font-weight: 700;
-  cursor: pointer;
-}
+/* ==================== GLOBAL 1-PER-ROW EXECUTIVE CONTAINERS ==================== */
 
-/* ==================== MATCHES, RECORDS & TOURNAMENTS ==================== */
-
-.matchSummaryStrip,
-.availSummaryBar {
+.list,
+.leaderboardSection,
+.leaderGrid,
+.honours,
+.socialGrid,
+.gallery,
+.availabilityList,
+.portalsFeaturedGrid,
+.portalsPlayerGrid,
+.adminPlayerGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.matchSummaryItem,
-.availSummaryStat {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  padding: 12px 14px;
-}
-
-.matchSummaryItem strong,
-.availSummaryStat strong {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--ink);
-  line-height: 1.05;
-  font-variant-numeric: tabular-nums;
-}
-
-.matchSummaryItem span,
-.availSummaryStat span {
-  display: block;
-  margin-top: 3px;
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.availSummaryStat.is-available strong {
-  color: var(--win);
-}
-
-.availSummaryStat.is-unavailable strong {
-  color: var(--danger);
-}
-
-.list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 14px;
-  margin-top: 14px;
+}
+
+.list,
+.gallery {
+  margin-top: 16px;
 }
 
 .card,
@@ -1588,20 +1523,41 @@ button.wide {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 18px 20px;
+  padding: 22px 26px;
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 12px;
+  transition: border-color 0.16s var(--ease), box-shadow 0.16s var(--ease);
+}
+
+.card:hover,
+.proDataCard:hover,
+.recordCard:hover,
+.tournamentCard:hover,
+.lineupCard:hover,
+.updateCard:hover,
+.leaderCard:hover,
+.honour:hover,
+.socialCard:hover,
+.galleryCard:hover,
+.availabilityRow:hover,
+.portalCard:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-md);
 }
 
 .card h3,
 .proTitle,
 .recordCard h3,
-.tournamentCard h3 {
-  font-size: 1.18rem;
+.tournamentCard h3,
+.lineupCard h3,
+.updateCard h3 {
+  font-size: 1.56rem;
   color: var(--ink);
 }
+
+/* ==================== MATCHES, TOURNAMENTS, NEWS & UPDATES ROWS ==================== */
 
 .proCardHead,
 .lineupCardHead,
@@ -1610,52 +1566,201 @@ button.wide {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
+.proDataCard .proCardHead,
+.lineupCard .lineupCardHead {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.proDataCard h3 span {
+  color: var(--accent-text);
+  font-size: 0.78em;
+  margin: 0 4px;
+}
+
 .scoreLine {
-  padding: 9px 12px;
+  padding: 12px 16px;
   border-radius: var(--radius-sm);
-  background: var(--subtle);
+  background: var(--surface-alt);
   border: 1px solid var(--line);
   font-family: var(--font-mono);
-  font-size: 0.84rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: var(--ink);
   display: flex;
   justify-content: space-between;
-  gap: 10px;
+  gap: 14px;
+  flex-wrap: wrap;
   font-variant-numeric: tabular-nums;
 }
 
-.v62Grid,
 .proInfoGrid {
   display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.proInfoGrid p {
+  margin: 0;
+  padding: 10px 14px;
+  background: var(--surface-alt);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 0.87rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.proInfoGrid b {
+  display: block;
+  margin-bottom: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.proInfoGrid .proWide {
+  grid-column: 1 / -1;
+}
+
+.v62Grid {
+  display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  gap: 10px 14px;
 }
 
 .v62Meta,
 .proNote,
 .contentTime,
 .v62Note {
-  font-size: 0.83rem;
+  font-size: 0.86rem;
   color: var(--muted);
+}
+
+.v62Meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+
+.proNote,
+.v62Note {
+  margin: 0;
+  padding-top: 8px;
+  border-top: 1px dashed var(--line);
+  color: var(--ink-2);
+  max-width: 78ch;
+}
+
+/* Opponent H2H Single-Row Strip */
+#opponentList .card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 24px;
+  padding: 18px 26px;
+}
+
+#opponentList .card h3 {
+  grid-column: 1;
+  font-size: 1.44rem;
+}
+
+#opponentList .card p {
+  grid-column: 2;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--accent-text);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+#opponentList .card .v62Actions {
+  grid-column: 1 / -1;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+/* News & Official Updates Editorial Dispatch Rows */
+#newsList .card p.preserveLines,
+#updateList .updateCard p.preserveLines {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 0.94rem;
+  line-height: 1.68;
+  max-width: 78ch;
+}
+
+.updateLink {
+  align-self: flex-start;
+}
+
+.matchSummaryStrip,
+.availSummaryBar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.matchSummaryItem,
+.availSummaryStat {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+
+.matchSummaryItem strong,
+.availSummaryStat strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.matchSummaryItem span,
+.availSummaryStat span {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.67rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.availSummaryStat.is-available strong {
+  color: var(--win);
+}
+
+.availSummaryStat.is-unavailable strong {
+  color: var(--danger);
 }
 
 .matchScorecardAccordion {
   margin-top: 4px;
   border-top: 1px solid var(--line);
-  padding-top: 9px;
+  padding-top: 10px;
 }
 
 .matchScorecardAccordion summary {
   cursor: pointer;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.73rem;
   font-weight: 700;
-  text-transform: uppercase;
   color: var(--accent-text);
 }
 
@@ -1663,14 +1768,14 @@ button.wide {
   margin-top: 8px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .matchScorecardBlock {
-  padding: 8px 10px;
+  padding: 10px 12px;
   border-radius: var(--radius-sm);
   background: var(--subtle);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: var(--ink-2);
 }
 
@@ -1682,14 +1787,21 @@ button.wide {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: auto;
-  padding-top: 4px;
+  padding-top: 8px;
 }
 
 .proMiniMap {
   width: 100%;
-  height: 150px;
+  height: 175px;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.proMiniMap iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 .proMapCardBlock {
@@ -1700,40 +1812,103 @@ button.wide {
 
 .proMapBelowBtn {
   align-self: flex-start;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--accent-text);
+  text-decoration: none;
 }
 
-/* Records & Leaderboard Table */
+.proMapBelowBtn:hover {
+  text-decoration: underline;
+}
+
+/* ==================== RECORDS & LEADERBOARD ALMANAC ROWS ==================== */
+
 .recordsControls {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
-.leaderboardSection {
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+.leaderCard {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 28px;
+  padding: 18px 26px;
 }
 
+.leaderCard span {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.leaderCard b,
 .leaderCard strong {
   font-family: var(--font-display);
-  font-size: 1.75rem;
-  font-weight: 800;
+  font-size: clamp(1.45rem, 2.4vw, 1.9rem);
+  font-weight: 700;
   color: var(--accent-text);
   font-variant-numeric: tabular-nums;
+  text-align: right;
 }
 
-.recordValue {
+/* Record Card: Horizontal Wisden Almanac Strip (Title/Holder Left, Tabular Value Right) */
+.recordCard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 32px;
+  row-gap: 4px;
+  align-items: center;
+  padding: 20px 26px;
+}
+
+.recordCard > * {
+  grid-column: 1;
+}
+
+.recordCard > .v62Chip:first-child {
+  justify-self: start;
+}
+
+.recordCard > .recordValue {
+  grid-column: 2;
+  grid-row: 1 / span 6;
+  justify-self: end;
+  align-self: center;
+  text-align: right;
   font-family: var(--font-display);
-  font-size: 1.6rem;
-  font-weight: 800;
+  font-size: clamp(1.9rem, 3.2vw, 2.65rem);
+  font-weight: 700;
+  line-height: 1;
   color: var(--accent-text);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.recordCard p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--ink-2);
+}
+
+.recordCard .v62Actions {
+  margin-top: 6px;
+}
+
+.squadLeaderboardSection {
+  margin-top: 26px;
 }
 
 .statsTableScroll {
-  margin-top: 16px;
+  margin-top: 12px;
   overflow-x: auto;
   background: var(--surface);
   border: 1px solid var(--line);
@@ -1744,17 +1919,16 @@ button.wide {
 .statsLeaderboardTable {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.84rem;
+  font-size: 0.88rem;
   font-variant-numeric: tabular-nums;
 }
 
 .statsLeaderboardTable th {
-  padding: 11px 14px;
+  padding: 13px 16px;
   text-align: left;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.69rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
   background: var(--subtle);
@@ -1763,9 +1937,18 @@ button.wide {
 }
 
 .statsLeaderboardTable td {
-  padding: 10px 14px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--line);
   color: var(--ink-2);
+}
+
+.statsLeaderboardTable tbody tr {
+  cursor: pointer;
+  transition: background-color 0.14s var(--ease);
+}
+
+.statsLeaderboardTable tbody tr:hover {
+  background: var(--subtle);
 }
 
 .statsLeaderboardTable tr:last-child td {
@@ -1775,6 +1958,13 @@ button.wide {
 .statsPlayerCell {
   font-weight: 700;
   color: var(--ink);
+}
+
+.statsPlayerCell small {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: var(--muted);
 }
 
 .statsRankNum {
@@ -1789,208 +1979,305 @@ button.wide {
   color: var(--accent-text);
 }
 
-/* ==================== PLAYING XI & AVAILABILITY ==================== */
+/* ==================== PLAYING XI & AVAILABILITY — 1 ROW PER PLAYER ==================== */
 
 .xiGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
   gap: 8px;
 }
 
-.xiOrder {
-  padding: 8px 10px;
-  border-radius: var(--radius-sm);
-  background: var(--subtle);
-  border: 1px solid var(--line);
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
-}
-
-.xiSubsRow {
-  font-size: 0.8rem;
-  color: var(--muted);
-  padding-top: 8px;
-  border-top: 1px solid var(--line);
-}
-
-.availabilityList {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-  gap: 10px;
-}
-
-.availabilityRow {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  padding: 11px 14px;
+.xiGrid > span {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-alt);
+  border: 1px solid var(--line);
 }
 
-.availabilityPlayerInfo strong {
+.xiGrid > span b {
   display: block;
   font-size: 0.9rem;
   color: var(--ink);
 }
 
-.availabilityPlayerInfo span {
-  font-size: 0.76rem;
+.xiGrid > span small {
+  display: block;
+  font-size: 0.74rem;
   color: var(--muted);
 }
 
+.xiOrder {
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.xiSubsRow {
+  font-size: 0.86rem;
+  color: var(--muted);
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.availabilityRow {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 15px 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.availabilityPlayerInfo span,
+.availabilityPlayerInfo strong {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.availabilityPlayerInfo small {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.availabilityRow b {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.availabilityRow b.available,
 .availBadge.available {
   color: var(--win);
 }
 
+.availabilityRow b.unavailable,
 .availBadge.unavailable {
   color: var(--danger);
 }
 
-/* ==================== TROPHY CABINET (HONOURS) ==================== */
-
-.honours {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
-  gap: 16px;
-}
+/* ==================== TROPHY CABINET (HONOURS) — 1 EXHIBITION ROW EACH ==================== */
 
 .honour {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 290px minmax(0, 1fr);
+  column-gap: 28px;
+  row-gap: 8px;
+  align-content: center;
+  align-items: center;
   box-shadow: var(--shadow-sm);
 }
 
-.honour img {
+.honour > .trophy,
+.honour > img {
+  grid-column: 1;
+  grid-row: 1 / span 4;
   width: 100%;
   aspect-ratio: 4 / 3;
-  object-fit: cover;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
   background: var(--trophy-stage);
-  border-bottom: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
+}
+
+.honour .trophy img,
+.honour > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: zoom-in;
+}
+
+.honour .badge,
+.honour h3,
+.honour p,
+.honour button.tinyBtn {
+  grid-column: 2;
+  margin: 0;
+  justify-self: start;
 }
 
 .honour .badge {
-  align-self: flex-start;
-  margin: 14px 18px 0;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.71rem;
   font-weight: 700;
-  letter-spacing: 0.09em;
   color: var(--brass);
 }
 
 .honour h3 {
-  margin: 3px 18px 4px;
-  font-size: 1.28rem;
+  font-size: clamp(1.48rem, 2.2vw, 1.85rem);
   color: var(--ink);
 }
 
 .honour p {
-  margin: 0 18px 16px;
-  font-size: 0.86rem;
+  font-size: 0.94rem;
   color: var(--muted);
+  max-width: 65ch;
 }
 
-/* ==================== SOCIALS, GALLERY, DOWNLOAD APP ==================== */
-
-.socialGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
-  gap: 14px;
+.honour button.tinyBtn {
+  margin-top: 6px;
 }
+
+/* ==================== SOCIALS, GALLERY & APP DOWNLOAD — 1 ROW EACH ==================== */
 
 .socialCard {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  padding: 18px 24px;
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  column-gap: 18px;
+  row-gap: 2px;
+  align-items: center;
   box-shadow: var(--shadow-sm);
 }
 
 .socialIcon {
-  width: 40px;
-  height: 40px;
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  width: 52px;
+  height: 52px;
   border-radius: var(--radius-sm);
   background: var(--subtle);
+  border: 1px solid var(--line);
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+}
+
+.socialIcon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .socialBrandSvg {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
+}
+
+.socialCard h3 {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: 1.44rem;
+  align-self: end;
+}
+
+.socialCard:not(:has(.socialPlatform)) h3 {
+  grid-row: 1 / span 2;
+  align-self: center;
+}
+
+.socialPlatform {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  color: var(--muted);
+  align-self: start;
 }
 
 .socialActions {
+  grid-column: 3;
+  grid-row: 1 / span 2;
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-top: auto;
+  justify-content: flex-end;
+  align-self: center;
 }
 
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
-  gap: 14px;
-  margin-top: 14px;
-}
-
-.galleryCard {
+.galleryCard,
+.gallery figure {
+  margin: 0;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  grid-template-rows: 1fr auto;
+  column-gap: 24px;
+  row-gap: 10px;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
 }
 
-.galleryCard img {
+.galleryCard img,
+.gallery figure img {
+  grid-column: 1;
+  grid-row: 1 / span 2;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 10;
   object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
   cursor: zoom-in;
 }
 
-.galleryAlbumName {
-  margin: 10px 14px 2px;
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
+.galleryCard figcaption,
+.gallery figure figcaption {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 0;
+  font-size: 1.02rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.galleryAlbumName {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   color: var(--brass);
 }
 
 .galleryNote {
-  margin: 0 14px 6px;
-  font-size: 0.86rem;
+  margin: 2px 0;
+  font-size: 1.06rem;
   font-weight: 700;
   color: var(--ink);
 }
 
 .galleryDateTime {
-  margin: 0 14px 10px;
+  margin: 0;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.73rem;
   color: var(--muted);
 }
 
-.galleryAdminActions {
-  padding: 0 14px 12px;
+.galleryAdminActions,
+.gallery figure > button.tinyBtn {
+  grid-column: 2;
+  justify-self: start;
+  padding: 0;
   display: flex;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
@@ -1998,16 +2285,16 @@ button.wide {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  padding: 28px;
+  padding: 32px;
   display: flex;
   align-items: center;
-  gap: 26px;
+  gap: 28px;
   box-shadow: var(--shadow-sm);
 }
 
 .downloadAppCard img {
-  width: 104px;
-  height: 104px;
+  width: 108px;
+  height: 108px;
   border-radius: 50%;
   object-fit: cover;
   background: #FFFFFF;
@@ -2020,14 +2307,14 @@ button.wide {
 }
 
 .downloadAppCopy h2 {
-  font-size: clamp(1.35rem, 2.5vw, 1.75rem);
-  margin-bottom: 6px;
+  font-size: clamp(1.65rem, 2.8vw, 2.2rem);
+  margin-bottom: 8px;
 }
 
 .downloadAppCopy p {
-  margin: 0 0 14px;
+  margin: 0 0 16px;
   color: var(--ink-2);
-  font-size: 0.9rem;
+  font-size: 0.94rem;
   max-width: 65ch;
 }
 
@@ -2041,21 +2328,21 @@ button.wide {
 .downloadAppCopy small {
   display: block;
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
 }
 
 /* ==================== PLAYER PORTAL & PASSWORD LOCK GATES ==================== */
 
 .playerLockGateWrap {
-  max-width: 460px;
-  margin: 24px auto;
+  max-width: 480px;
+  margin: 28px auto;
 }
 
 .playerLockCard {
   background: var(--surface);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-lg);
-  padding: 26px;
+  padding: 28px;
   box-shadow: var(--shadow-md);
 }
 
@@ -2063,12 +2350,12 @@ button.wide {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .playerLockAvatar {
-  width: 56px;
-  height: 56px;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
   object-fit: cover;
   background: #FFFFFF;
@@ -2078,7 +2365,7 @@ button.wide {
 
 .playerLockDesc {
   margin: 0 0 16px;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   color: var(--muted);
 }
 
@@ -2090,7 +2377,7 @@ button.wide {
 
 .playerLockField span {
   display: block;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 700;
   color: var(--ink-2);
   margin-bottom: 5px;
@@ -2103,7 +2390,7 @@ button.wide {
 
 .playerPwInputRow input {
   flex: 1 1 auto;
-  height: 42px;
+  height: 44px;
   padding: 0 12px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
@@ -2112,11 +2399,11 @@ button.wide {
 }
 
 .playerLockError {
-  padding: 9px 12px;
+  padding: 10px 12px;
   border-radius: var(--radius-sm);
   background: var(--danger-soft);
   color: var(--danger);
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 700;
 }
 
@@ -2131,7 +2418,7 @@ button.wide {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  padding: 24px;
+  padding: 26px;
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
@@ -2156,36 +2443,36 @@ button.wide {
 
 .profileOfficial {
   min-width: 0;
-}
-
-.profileIdentity,
-.identityDivider {
   display: flex;
-  align-items: center;
   flex-wrap: wrap;
-  gap: 6px 10px;
-  margin-bottom: 4px;
-}
-
-.identityItem {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 700;
+  gap: 8px;
+  font-size: 0.88rem;
   color: var(--muted);
 }
 
-.profileTagLine {
-  font-size: 0.86rem;
+.profileOfficial b {
   color: var(--accent-text);
-  font-weight: 700;
+}
+
+.profileIdentityHead h2 {
+  font-size: 1.95rem;
+}
+
+.profileTagLine {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 4px;
 }
 
 .profileNick {
+  margin: 2px 0 4px;
   font-style: italic;
   color: var(--muted);
 }
 
-.profileActions,
+.profileEditHub,
 .playerPortalAvailRow,
 .publicProfileFooterActions {
   display: flex;
@@ -2193,20 +2480,36 @@ button.wide {
   gap: 8px;
 }
 
+.playerPortalExtras {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .playerPortalStatsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: 8px;
 }
 
 .profileSocialsBlock,
 .profileBioBlock,
-.playerPortalCard,
-.ownSocials {
-  padding: 16px;
+.playerPortalCard {
+  padding: 18px;
   background: var(--subtle);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
+}
+
+.profileSocialsBlock > span,
+.profileBioBlock > span {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.71rem;
+  font-weight: 700;
+  color: var(--brass);
+  margin-bottom: 6px;
 }
 
 .profileSocialRow {
@@ -2223,11 +2526,12 @@ button.wide {
 }
 
 .playerSyncStatusBanner {
-  padding: 10px 14px;
+  margin-bottom: 14px;
+  padding: 12px 16px;
   border-radius: var(--radius-sm);
   background: var(--win-soft);
   color: var(--win);
-  font-size: 0.84rem;
+  font-size: 0.86rem;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -2242,13 +2546,19 @@ button.wide {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 12px 18px;
+  padding: 14px 18px;
   margin-bottom: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+.adminSessionBar strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
 }
 
 .adminSessionActions {
@@ -2259,14 +2569,14 @@ button.wide {
 
 .adminShell {
   display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  gap: 18px;
+  grid-template-columns: 245px minmax(0, 1fr);
+  gap: 20px;
   align-items: start;
 }
 
 .adminSidebar {
   position: sticky;
-  top: 76px;
+  top: 78px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
@@ -2285,15 +2595,13 @@ button.wide {
 .adminSideBrand strong {
   display: block;
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: 1.38rem;
   color: var(--ink);
 }
 
-.adminSideBrand span {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  color: var(--brass);
-  text-transform: uppercase;
+.adminSideBrand small {
+  font-size: 0.78rem;
+  color: var(--muted);
 }
 
 .adminSideNav {
@@ -2307,12 +2615,12 @@ button.wide {
   width: 100%;
   text-align: left;
   padding: 8px 11px;
-  min-height: 38px;
+  min-height: 40px;
   border-radius: var(--radius-sm);
   border: 0;
   background: transparent;
   color: var(--ink-2);
-  font-size: 0.84rem;
+  font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
   transition: background-color 0.14s var(--ease), color 0.14s var(--ease);
@@ -2325,73 +2633,133 @@ button.wide {
 }
 
 .adminSideFooter {
-  padding-top: 8px;
+  padding-top: 10px;
   border-top: 1px solid var(--line);
-  font-size: 0.76rem;
-  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .adminWorkspaceMain {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
   min-width: 0;
 }
 
 .adminKpiGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
 }
 
 .adminKpiCard {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 14px 16px;
+  padding: 16px;
 }
 
 .adminKpiCard strong {
   display: block;
   font-family: var(--font-display);
-  font-size: 1.7rem;
-  font-weight: 800;
+  font-size: 2rem;
+  font-weight: 700;
   color: var(--ink);
-  line-height: 1.05;
+  line-height: 1;
   font-variant-numeric: tabular-nums;
+  margin: 4px 0;
 }
 
 .adminKpiCard span {
   display: block;
-  margin-top: 4px;
   font-family: var(--font-mono);
-  font-size: 0.66rem;
+  font-size: 0.67rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  color: var(--brass);
+}
+
+.adminKpiCard small {
+  font-size: 0.78rem;
   color: var(--muted);
 }
 
 .adminCategoryGrid,
-.adminPlayerGrid,
 .adminEmailGrid,
-.adminGrid,
 .brandAdminGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 12px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+
+.adminPlayerGrid {
+  gap: 8px;
+}
+
+.adminPlayerGrid button {
+  appearance: none;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 12px 18px;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 0.15s var(--ease), background-color 0.15s var(--ease);
+}
+
+.adminPlayerGrid button:hover {
+  border-color: var(--accent-text);
+  background: var(--surface-alt);
+}
+
+.adminPlayerGrid button img {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--line-strong);
+  background: #FFFFFF;
+}
+
+.adminPlayerGrid button b {
+  display: block;
+  font-size: 0.96rem;
+  color: var(--ink);
+}
+
+.adminPlayerGrid button small {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.adminPlayerGrid button i {
+  font-style: normal;
+  font-size: 1.2rem;
+  color: var(--accent-text);
 }
 
 .adminModuleCard,
 .brandAdminBox,
 .adminEmailSessionCard,
 .adminEmailForm,
-.accessLinkRow {
+.accessLinkRow,
+.adminPlayerCard {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 16px;
+  padding: 20px 22px;
   box-shadow: var(--shadow-sm);
+}
+
+.adminModuleHead h3 {
+  font-size: 1.42rem;
 }
 
 .accessLinkRowHighlight {
@@ -2401,18 +2769,33 @@ button.wide {
 .brandLogoPreviewRow {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   flex-wrap: wrap;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .brandLogoPreviewRow img {
-  width: 52px;
-  height: 52px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
   object-fit: cover;
   border: 1.5px solid var(--line-strong);
   background: #FFFFFF;
+}
+
+.brandAdminGrid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+
+.adminHint {
+  margin: 12px 0 0;
+  font-size: 0.82rem;
+  color: var(--muted);
 }
 
 .adminModuleActions,
@@ -2423,23 +2806,27 @@ button.wide {
 .adminEmailActions {
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 10px;
+  gap: 8px;
+  margin-top: 12px;
 }
 
 .adminManagerHead {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
 }
 
 .adminManagerMeta,
 .accessLinkMeta,
 .adminEmailSessionStatus {
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   color: var(--muted);
+}
+
+.adminManagerMeta strong {
+  display: block;
+  color: var(--ink);
 }
 
 .adminManagerList,
@@ -2447,14 +2834,14 @@ button.wide {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .adminManagerRow {
   background: var(--subtle);
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  padding: 10px 12px;
+  padding: 11px 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2465,19 +2852,19 @@ button.wide {
 .adminEmailField input,
 .adminEmailInlineForm input {
   width: 100%;
-  height: 38px;
-  padding: 0 11px;
+  height: 40px;
+  padding: 0 12px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
   background: var(--subtle);
 }
 
 .adminEmailStatusBox {
-  padding: 9px 12px;
+  padding: 10px 12px;
   border-radius: var(--radius-sm);
   background: var(--subtle);
   border: 1px solid var(--line);
-  font-size: 0.82rem;
+  font-size: 0.84rem;
 }
 
 .adminEmailStatusBox.is-signed-in {
@@ -2489,143 +2876,132 @@ button.wide {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.84rem;
+  font-size: 0.85rem;
 }
 
 .adminEmailResult {
   margin-top: 8px;
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   color: var(--ink-2);
 }
 
-/* ==================== PORTALS DIRECTORY PAGE (portals.html) ==================== */
+/* ==================== PORTALS DIRECTORY PAGE — STRICT 1 ITEM PER ROW ==================== */
 
 .portalsMain {
   flex: 1 0 auto;
   width: 100%;
-  max-width: 1240px;
+  max-width: 1260px;
   margin: 0 auto;
-  padding: 24px 28px 60px;
+  padding: 18px 32px 72px;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 28px;
 }
 
-.portalsHero {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  display: grid;
-  grid-template-columns: minmax(0, 1.24fr) minmax(290px, 0.96fr);
-  align-items: stretch;
+.portalsBannerHero {
+  min-height: 315px;
 }
 
-.portalsHeroBackdrop {
-  position: relative;
-  min-height: 240px;
-  order: 2;
-  border-left: 1px solid var(--line);
-  background: var(--hero-card-bg);
-  overflow: hidden;
-}
-
-.portalsHeroBackdrop img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.portalsHeroBackdrop::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--hero-scrim);
-}
-
-.portalsHeroContent {
-  order: 1;
-  padding: 32px 36px;
+.portalsBannerRow {
   display: flex;
-  flex-direction: column;
+  align-items: flex-end;
   justify-content: space-between;
-  gap: 18px;
+  gap: 24px;
+  flex-wrap: wrap;
 }
 
 .portalsHeroCopy {
-  max-width: 58ch;
+  max-width: 660px;
 }
 
 .portalsHeroCopy h1 {
-  font-size: clamp(1.7rem, 3.2vw, 2.55rem);
-  font-weight: 800;
-  color: var(--ink);
-  margin: 3px 0 8px;
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 4vw, 3.2rem);
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 0 0 8px;
+}
+
+.portalsHeroCopy h1 span {
+  color: #FBBF24;
 }
 
 .portalsHeroCopy p {
   margin: 0;
-  color: var(--muted);
-  font-size: 0.9rem;
+  color: #D4D4D8;
+  font-size: 0.94rem;
 }
 
 .portalsHeroMeta {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  max-width: 310px;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 12px;
 }
 
 .portalsStatBox {
-  padding: 12px 14px;
-  background: var(--subtle);
-  border: 1px solid var(--line);
+  padding: 14px 18px;
+  background: rgba(12, 12, 14, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: var(--radius-md);
+  backdrop-filter: blur(8px);
 }
 
 .portalsStatBox strong {
   display: block;
   font-family: var(--font-display);
-  font-size: 1.75rem;
-  font-weight: 800;
-  color: var(--accent-text);
-  line-height: 1.05;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #FBBF24;
+  line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 
 .portalsStatBox span {
   display: block;
-  margin-top: 3px;
+  margin-top: 4px;
   font-family: var(--font-mono);
-  font-size: 0.64rem;
+  font-size: 0.67rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-}
-
-.portalsFeaturedGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.portalsPlayerGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(305px, 1fr));
-  gap: 14px;
+  color: #E4E4E7;
 }
 
 .portalCard {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  padding: 20px 24px;
   box-shadow: var(--shadow-sm);
+  transition: border-color 0.16s var(--ease), box-shadow 0.16s var(--ease);
+}
+
+.portalCardFeatured {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(290px, 1fr);
+  column-gap: 28px;
+  row-gap: 8px;
+  align-items: center;
+}
+
+.portalCardFeatured .portalCardHead,
+.portalCardFeatured h3,
+.portalCardFeatured p {
+  grid-column: 1;
+  margin: 0;
+}
+
+.portalCardFeatured .portalUrlRow,
+.portalCardFeatured .portalActions {
+  grid-column: 2;
+}
+
+.portalCardFeatured .portalUrlRow {
+  grid-row: 1 / span 2;
+  align-self: end;
+}
+
+.portalCardFeatured .portalActions {
+  grid-row: 3 / span 2;
+  align-self: start;
 }
 
 .portalCardHead {
@@ -2636,51 +3012,77 @@ button.wide {
 }
 
 .portalCard h3 {
-  font-size: 1.24rem;
+  font-size: 1.44rem;
   color: var(--ink);
 }
 
 .portalCard p {
   margin: 0;
-  font-size: 0.86rem;
+  font-size: 0.88rem;
   color: var(--muted);
 }
 
+.portalPlayerCard {
+  display: grid;
+  grid-template-columns: minmax(250px, 1.15fr) minmax(240px, 1fr) auto;
+  grid-template-areas:
+    "identity url actions"
+    "lock url actions";
+  align-items: center;
+  gap: 4px 22px;
+  padding: 16px 22px;
+}
+
 .portalPlayerTop {
+  grid-area: identity;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .portalPlayerTop img {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
   object-fit: cover;
   background: #FFFFFF;
-  border: 1.5px solid var(--line-strong);
+  border: 1px solid var(--line-strong);
   flex-shrink: 0;
 }
 
 .portalPlayerInfo h3 {
-  font-size: 1.15rem;
-  margin: 2px 0 1px;
+  font-size: 1.38rem;
+  margin: 1px 0;
 }
 
 .portalPlayerInfo b {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: var(--accent-text);
+}
+
+.portalPlayerCard .portalLockPill {
+  grid-area: lock;
+  padding-left: 64px;
+}
+
+.portalPlayerCard .portalUrlRow {
+  grid-area: url;
+}
+
+.portalPlayerCard .portalActions {
+  grid-area: actions;
+  justify-content: flex-end;
 }
 
 .portalUrlRow input {
   width: 100%;
-  height: 36px;
-  padding: 0 10px;
+  height: 38px;
+  padding: 0 11px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line);
   background: var(--subtle);
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.71rem;
   color: var(--ink-2);
 }
 
@@ -2688,13 +3090,12 @@ button.wide {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-top: auto;
 }
 
 /* ==================== MODALS, DIALOGS, LIGHTBOX & EMPTY ==================== */
 
 .empty {
-  padding: 32px 22px;
+  padding: 36px 24px;
   text-align: center;
   background: var(--surface);
   border: 1px dashed var(--line-strong);
@@ -2710,7 +3111,7 @@ button.wide {
   align-items: center;
   justify-content: center;
   padding: 18px;
-  background: rgba(7, 12, 24, 0.76);
+  background: rgba(12, 12, 14, 0.78);
   backdrop-filter: blur(6px);
 }
 
@@ -2721,42 +3122,42 @@ button.wide {
 .dialog {
   position: relative;
   width: 100%;
-  max-width: 540px;
+  max-width: 550px;
   max-height: 90dvh;
   overflow-y: auto;
   background: var(--surface);
   color: var(--ink);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-lg);
-  padding: 22px;
+  padding: 24px;
   box-shadow: var(--shadow-lg);
 }
 
 .dialog .close {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 34px;
-  height: 34px;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line);
   background: var(--subtle);
   color: var(--ink);
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   line-height: 1;
   cursor: pointer;
 }
 
 .dialog h2 {
-  font-size: 1.42rem;
-  margin-bottom: 10px;
+  font-size: 1.6rem;
+  margin-bottom: 12px;
   padding-right: 40px;
 }
 
 .dialog label {
   display: block;
-  margin-bottom: 11px;
-  font-size: 0.8rem;
+  margin-bottom: 12px;
+  font-size: 0.82rem;
   font-weight: 700;
   color: var(--ink-2);
 }
@@ -2766,8 +3167,8 @@ button.wide {
 .dialog textarea {
   display: block;
   width: 100%;
-  margin-top: 4px;
-  padding: 9px 11px;
+  margin-top: 5px;
+  padding: 10px 12px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
   background: var(--subtle);
@@ -2786,9 +3187,14 @@ button.wide {
 }
 
 .proGroup {
-  padding-top: 10px;
-  margin-top: 10px;
+  padding-top: 12px;
+  margin-top: 12px;
   border-top: 1px solid var(--line);
+}
+
+.proGroup h3 {
+  font-size: 1.25rem;
+  margin-bottom: 10px;
 }
 
 .proLocationActions {
@@ -2799,7 +3205,7 @@ button.wide {
 }
 
 .proLocStatus {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: var(--muted);
 }
 
@@ -2809,7 +3215,7 @@ button.wide {
 
 .proMap {
   width: 100%;
-  height: 190px;
+  height: 195px;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
 }
@@ -2818,25 +3224,25 @@ button.wide {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 12px;
+  margin-top: 14px;
 }
 
 .matchPosterCard {
   background: var(--subtle);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 16px;
+  padding: 18px;
   margin-bottom: 12px;
 }
 
 .posterScore {
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 1.6rem;
   color: var(--accent-text);
 }
 
 .posterMeta {
-  font-size: 0.84rem;
+  font-size: 0.86rem;
   color: var(--muted);
 }
 
@@ -2855,13 +3261,13 @@ button.wide {
   position: fixed;
   top: 18px;
   right: 18px;
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  background: rgba(7, 12, 24, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  background: rgba(12, 12, 14, 0.88);
   color: #FFFFFF;
-  font-size: 1.3rem;
+  font-size: 1.35rem;
   cursor: pointer;
 }
 
@@ -2871,12 +3277,12 @@ button.wide {
   bottom: 24px;
   transform: translate(-50%, 16px);
   z-index: 120;
-  padding: 10px 18px;
+  padding: 11px 20px;
   border-radius: var(--radius-sm);
-  background: #0F172A;
-  color: #F8FAFC;
-  border: 1px solid rgba(245, 158, 11, 0.45);
-  font-size: 0.84rem;
+  background: #121215;
+  color: #F5F5F7;
+  border: 1px solid rgba(248, 113, 113, 0.45);
+  font-size: 0.86rem;
   font-weight: 700;
   opacity: 0;
   pointer-events: none;
@@ -2890,11 +3296,11 @@ button.wide {
 
 .backToTop {
   position: fixed;
-  right: 18px;
-  bottom: 20px;
+  right: 20px;
+  bottom: 22px;
   z-index: 70;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
   background: var(--surface);
@@ -2945,13 +3351,13 @@ button.wide {
 
 .squadEditChoice b {
   display: block;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   color: var(--ink);
 }
 
 .squadEditChoice small {
   display: block;
-  font-size: 0.76rem;
+  font-size: 0.78rem;
   color: var(--muted);
 }
 
@@ -2985,8 +3391,8 @@ button.wide {
 }
 
 .sharePlayerPreview img {
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   object-fit: cover;
   background: #FFFFFF;
@@ -3010,13 +3416,13 @@ button.wide {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 38px;
+  min-height: 40px;
   padding: 0 12px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
   background: var(--subtle);
   color: var(--ink);
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 700;
   text-decoration: none;
 }
@@ -3040,14 +3446,14 @@ button.wide {
 
 .cropHelp {
   margin: 0 0 8px;
-  font-size: 0.84rem;
+  font-size: 0.86rem;
   color: var(--muted);
 }
 
 .authModalSub,
 .profileDownloadNote {
   margin: 0 0 12px;
-  font-size: 0.86rem;
+  font-size: 0.88rem;
   color: var(--muted);
 }
 
@@ -3074,7 +3480,7 @@ button.wide {
   padding: 12px;
   border-radius: var(--radius-sm);
   background: var(--subtle);
-  font-size: 0.84rem;
+  font-size: 0.86rem;
 }
 
 .installGuideActions,
@@ -3087,60 +3493,143 @@ button.wide {
 
 .rdmConfirmText {
   margin: 0 0 10px;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   color: var(--ink-2);
 }
 
-/* ==================== FOOTER ==================== */
+/* ==================== BROADSHEET FOOTER ==================== */
 
 footer {
   margin-top: auto;
   background: var(--surface);
   border-top: 1px solid var(--line);
-  padding: 32px 24px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
+  padding: 28px 32px 34px;
 }
 
-footer img {
-  width: 46px;
-  height: 46px;
+.footerMain,
+.footerLinks {
+  max-width: 1260px;
+  margin: 0 auto;
+}
+
+.footerMain {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.footerBrand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footerBrand img {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
   background: #FFFFFF;
   border: 1.5px solid var(--line-strong);
+  flex-shrink: 0;
 }
 
-footer b {
+.footerBrand b {
+  display: block;
   font-family: var(--font-display);
-  font-size: 1.32rem;
+  font-size: 1.36rem;
   color: var(--ink);
 }
 
-footer span {
+.footerBrand span {
+  display: block;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.71rem;
   color: var(--muted);
 }
 
+.themeControl {
+  position: relative;
+}
+
+.themeToggle {
+  height: 40px;
+  padding: 0 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: var(--subtle);
+  color: var(--ink);
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.themeToggle:hover {
+  border-color: var(--accent-text);
+}
+
+.themeMenu {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  min-width: 150px;
+  padding: 5px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 85;
+}
+
+.themeMenu button {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+.themeMenu button:hover {
+  background: var(--subtle);
+  color: var(--ink);
+}
+
+.themeMenu button.active {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  font-weight: 700;
+}
+
 .footerLinks {
-  margin-top: 10px;
+  padding-top: 16px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
+  gap: 10px 18px;
 }
 
 .footerLinks button,
 .footerLinks a {
   background: none;
   border: 0;
-  padding: 2px 4px;
-  font-size: 0.8rem;
-  font-weight: 700;
+  padding: 4px 2px;
+  font-size: 0.84rem;
+  font-weight: 600;
   color: var(--ink-2);
   text-decoration: none;
   cursor: pointer;
@@ -3151,12 +3640,12 @@ footer span {
   color: var(--accent-text);
 }
 
-/* ==================== RESPONSIVE BREAKPOINTS (DESKTOP PARITY) ==================== */
+/* ==================== RESPONSIVE BREAKPOINTS (1-PER-ROW ADAPTIVE ERGONOMICS) ==================== */
 
-@media (max-width: 1040px) {
+@media (max-width: 1120px) {
   .top {
-    padding: 0 16px;
-    gap: 12px;
+    padding: 0 20px;
+    gap: 16px;
   }
 
   .mobileMenuBtn {
@@ -3166,17 +3655,17 @@ footer span {
   .nav:not(.portalsTopNav) {
     display: none;
     position: fixed;
-    top: 60px;
+    top: 62px;
     left: 0;
     right: 0;
-    padding: 12px 16px 18px;
+    padding: 14px 18px 20px;
     background: var(--surface);
     border-bottom: 1px solid var(--line-strong);
     box-shadow: var(--shadow-lg);
     flex-direction: column;
     align-items: stretch;
     gap: 4px;
-    max-height: calc(100dvh - 60px);
+    max-height: calc(100dvh - 62px);
     overflow-y: auto;
     z-index: 65;
   }
@@ -3185,42 +3674,27 @@ footer span {
     display: flex;
   }
 
-  .nav.is-mobile-open button,
-  .nav.is-mobile-open .navMoreBtn {
+  .nav.is-mobile-open button {
     text-align: left;
     border-bottom: 0;
     border-radius: var(--radius-sm);
     padding: 10px 12px;
     min-height: 44px;
+    font-size: 0.9rem;
   }
 
-  .navMoreMenu {
-    position: static;
-    box-shadow: none;
-    border: 1px solid var(--line);
-    margin-top: 4px;
+  .nav.is-mobile-open button.active {
+    background: var(--accent-soft);
+    color: var(--accent-text);
   }
 
-  .heroInner.heroEditorial,
-  .portalsHero {
+  .homeCommandBento {
     grid-template-columns: 1fr;
   }
 
-  .heroPavilionCard,
-  .portalsHeroBackdrop {
-    border-left: 0;
-    border-top: 1px solid var(--line);
-    min-height: 270px;
-  }
-
-  .portalsHeroBackdrop {
-    order: 1;
-    border-top: 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .portalsHeroContent {
-    order: 2;
+  .leadGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .adminShell {
@@ -3230,61 +3704,197 @@ footer span {
   .adminSidebar {
     position: static;
   }
+
+  .proInfoGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .squadStatsPanel {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 880px) {
+  .portalCardFeatured,
+  .portalPlayerCard {
+    grid-template-columns: 1fr;
+    grid-template-areas: none;
+  }
+
+  .portalCardFeatured .portalUrlRow,
+  .portalCardFeatured .portalActions,
+  .portalPlayerCard .portalPlayerTop,
+  .portalPlayerCard .portalLockPill,
+  .portalPlayerCard .portalUrlRow,
+  .portalPlayerCard .portalActions {
+    grid-column: auto;
+    grid-row: auto;
+    grid-area: auto;
+    padding-left: 0;
+    justify-content: flex-start;
+  }
 }
 
 @media (max-width: 820px) {
   main,
   .portalsMain {
-    padding: 18px 14px 44px;
+    padding: 16px 16px 48px;
   }
 
-  .heroCopy,
-  .portalsHeroContent {
-    padding: 24px 20px;
+  footer {
+    padding: 24px 16px 32px;
   }
 
-  .metrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .heroPanorama {
+    min-height: 390px;
   }
 
-  .metricItem {
-    padding: 13px 15px;
+  .heroPanoramaContent {
+    padding: 24px 20px 22px;
+    gap: 20px;
   }
 
-  .metricItem strong {
-    font-size: 1.5rem;
+  .heroPanoramaFoot {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
-  .metricItem:nth-child(2) {
+  .rdmHeritageGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .heritageMedia {
     border-right: 0;
-  }
-
-  .metricItem:nth-child(1),
-  .metricItem:nth-child(2) {
     border-bottom: 1px solid var(--line);
+    min-height: 230px;
   }
 
-  .homeMatchHub,
   .leadGrid,
-  .rdmHeritageGrid,
-  .portalsFeaturedGrid,
   .proGrid,
   .rdmUnifiedFields {
     grid-template-columns: 1fr;
   }
 
-  .heritageMedia {
-    min-height: 200px;
+  .player {
+    grid-template-columns: 72px minmax(0, 1fr);
+    grid-template-areas:
+      "photo body"
+      "actions actions"
+      "stats stats";
+    gap: 12px 16px;
+    padding: 16px 18px;
+  }
+
+  .player .photo,
+  .player img.photo {
+    width: 72px;
+    height: 72px;
+  }
+
+  .squadCardActions {
+    justify-content: flex-start;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+  }
+
+  .player:has(.squadEditFab) .squadCardActions {
+    margin-top: 0;
+  }
+
+  .honour,
+  .galleryCard,
+  .gallery figure {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+
+  .honour > .trophy,
+  .honour > img,
+  .honour .badge,
+  .honour h3,
+  .honour p,
+  .honour button.tinyBtn,
+  .galleryCard img,
+  .gallery figure img,
+  .galleryCard figcaption,
+  .gallery figure figcaption,
+  .galleryAdminActions,
+  .gallery figure > button.tinyBtn {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .socialCard {
+    grid-template-columns: 48px minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    gap: 6px 14px;
+    padding: 16px 18px;
+  }
+
+  .socialIcon {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    width: 48px;
+    height: 48px;
+  }
+
+  .socialActions {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    justify-content: flex-start;
+    margin-top: 6px;
   }
 
   .downloadAppCard {
     flex-direction: column;
     text-align: center;
-    padding: 22px 18px;
+    padding: 24px 18px;
   }
 
   .downloadBtnRow {
     justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .recordCard,
+  #opponentList .card {
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+
+  .recordCard > .recordValue,
+  #opponentList .card p {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+    text-align: left;
+  }
+
+  .recordCard > .recordValue {
+    margin: 4px 0;
+  }
+
+  .leaderCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 16px 18px;
+  }
+
+  .leaderCard b,
+  .leaderCard strong {
+    text-align: left;
+  }
+
+  .availabilityRow {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 14px 16px;
+  }
+
+  .squadStatsGrid,
+  .squadStatsGridBowling {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -3304,47 +3914,46 @@ footer span {
     display: none;
   }
 
+  .brand {
+    gap: 8px;
+    max-width: calc(100vw - 178px);
+  }
+
+  .brand img {
+    width: 30px;
+    height: 30px;
+  }
+
   .brandTitle {
-    font-size: 1.02rem;
+    font-size: clamp(0.76rem, 3.1vw, 0.92rem);
+    letter-spacing: 0.015em;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .headPortalsCta {
-    padding: 0 10px !important;
-    font-size: 0.74rem !important;
+    min-height: 36px !important;
+    height: 36px;
+    padding: 0 11px !important;
+    font-size: 0.76rem !important;
   }
 
-  .heroCopy,
-  .portalsHeroContent,
+  .mobileMenuBtn {
+    min-height: 36px !important;
+    padding: 0 10px;
+  }
+
   .rdmSeoIntro {
-    padding: 20px 16px;
+    padding: 20px 18px;
   }
 
-  .heroBackdrop {
-    min-height: 175px;
-  }
-
-  .heroPavilionCard {
-    min-height: 240px;
-  }
-
-  .players {
+  .proInfoGrid {
     grid-template-columns: 1fr;
   }
 
-  .player {
-    padding: 14px;
-    gap: 12px;
-  }
-
-  .player .photo,
-  .player img.photo {
-    width: 52px;
-    height: 52px;
-  }
-
-  .leadCard img {
-    width: 52px;
-    height: 52px;
+  .leadPortrait {
+    width: 56px;
+    height: 56px;
   }
 }
 

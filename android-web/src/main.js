@@ -2,6 +2,8 @@ import '@fontsource/plus-jakarta-sans/400.css';
 import '@fontsource/plus-jakarta-sans/500.css';
 import '@fontsource/plus-jakarta-sans/600.css';
 import '@fontsource/plus-jakarta-sans/700.css';
+import '@fontsource/oswald/600.css';
+import '@fontsource/oswald/700.css';
 import '@fontsource/outfit/600.css';
 import '@fontsource/outfit/700.css';
 import '@fontsource/outfit/800.css';
@@ -30,16 +32,24 @@ import {
   compressImageFile,
   connectAdminCloudSync,
   evaluateAvailableUpdate,
+  getVerifiedPlayer,
+  getVerifiedPlayerId,
   isFirebaseCloudAdmin,
+  isFirebaseCloudPlayer,
   isPermissionDeniedError,
   isVerifiedAdmin,
+  isVerifiedPlayer,
   loadClubData,
   loginAdminWithPassword,
+  loginPlayerWithFirebase,
+  loginPlayerWithPassword,
   loginWithEmailPassword,
   logoutAccount,
+  logoutPlayerAccount,
   runAutomaticAppUpdates,
   savePlayerAvailability,
   savePlayerPortalProfile,
+  sendResetPasswordEmail,
   state,
   subscribeAuthChanges,
   subscribeClubDataRealtime
@@ -82,7 +92,7 @@ const THEMES = [
 ];
 
 const ui = {
-  screen: 'public', // 'public' | 'playerDetail' | 'subpage' | 'admin' | 'playerPortal' | 'portalAuth'
+  screen: 'public', // 'public' | 'playerDetail' | 'subpage' | 'admin' | 'playerPortal' | 'portalAuth' | 'playerAuth'
   portalMode: 'public', // 'public' | 'admin' | 'player'
   portalPlayerId: null,
   publicTab: 'home', // 'home' | 'squad' | 'matches' | 'gallery' | 'more'
@@ -93,10 +103,14 @@ const ui = {
   detailPlayerId: null,
   morePage: 'news', // 'news' | 'updates' | 'records' | 'tournaments' | 'xi' | 'honours' | 'socials' | 'about' | 'download'
   adminTab: 'overview', // 'overview' | 'squad' | 'matches' | 'content'
+  playerAuthTab: 'password', // 'password' | 'firebase'
+  playerAuthSelectedId: 'RDM001',
   drawerOpen: false,
   theme: loadInitialTheme(),
   loginError: '',
   loginBusy: false,
+  playerLoginError: '',
+  playerLoginBusy: false,
   lastBackPressAt: 0
 };
 
@@ -110,7 +124,8 @@ function snapshotRoute() {
     matchesSubTab: ui.matchesSubTab,
     detailPlayerId: ui.detailPlayerId,
     morePage: ui.morePage,
-    adminTab: ui.adminTab
+    adminTab: ui.adminTab,
+    playerAuthSelectedId: ui.playerAuthSelectedId
   };
 }
 
@@ -121,13 +136,15 @@ function sameRoute(a, b) {
     a.matchesSubTab === b.matchesSubTab &&
     a.detailPlayerId === b.detailPlayerId &&
     a.morePage === b.morePage &&
-    a.adminTab === b.adminTab;
+    a.adminTab === b.adminTab &&
+    a.playerAuthSelectedId === b.playerAuthSelectedId;
 }
 
 function buildRouteHash(r) {
   if (r.screen === 'playerDetail' && r.detailPlayerId) return `#player-${r.detailPlayerId}`;
   if (r.screen === 'subpage') return `#section-${r.morePage}`;
   if (r.screen === 'playerPortal' && ui.portalPlayerId) return `#portal-${ui.portalPlayerId}`;
+  if (r.screen === 'playerAuth') return '#player-login';
   if (r.screen === 'portalAuth') return '#portal-verify';
   if (r.screen === 'admin') return `#admin-${r.adminTab}`;
   return `#${r.publicTab || 'home'}`;
@@ -140,6 +157,7 @@ function applyRouteSnapshot(r) {
   ui.detailPlayerId = r.detailPlayerId || null;
   ui.morePage = r.morePage || 'news';
   ui.adminTab = r.adminTab || 'overview';
+  if (r.playerAuthSelectedId) ui.playerAuthSelectedId = r.playerAuthSelectedId;
   ui.drawerOpen = false;
   renderApp();
   window.scrollTo({ top: 0, behavior: 'auto' });
@@ -153,7 +171,21 @@ function navigateTo(patch, { push = true, replace = false } = {}) {
       patch = { ...patch, screen: 'portalAuth' };
     }
   }
-  if (patch.screen === 'playerPortal' && (!PORTAL_ENABLED || ui.portalMode !== 'player' || !ui.portalPlayerId)) {
+  if (patch.screen === 'playerPortal') {
+    const requestedId = patch.portalPlayerId || ui.portalPlayerId || getVerifiedPlayerId();
+    if (!PORTAL_ENABLED) {
+      patch = { screen: 'public', publicTab: 'home' };
+    } else if (!requestedId || (!isVerifiedPlayer(requestedId) && !isVerifiedAdmin())) {
+      patch = {
+        screen: 'playerAuth',
+        playerAuthSelectedId: requestedId || ui.playerAuthSelectedId || 'RDM001'
+      };
+    } else {
+      ui.portalMode = 'player';
+      ui.portalPlayerId = requestedId;
+    }
+  }
+  if (patch.screen === 'playerAuth' && !PORTAL_ENABLED) {
     patch = { screen: 'public', publicTab: 'home' };
   }
   if (patch.screen === 'portalAuth' && !ADMIN_CONSOLE_ENABLED) {
@@ -358,11 +390,13 @@ function renderSideDrawer() {
     ['download', 'Get Android App']
   ];
 
-  const portalQuickBtn = (PORTAL_ENABLED && ui.portalMode === 'player' && ui.portalPlayerId)
-    ? `<button type="button" class="btnPrimary btnSm btnFull" id="btnReturnPortal">My Profile Control</button>`
-    : (ADMIN_CONSOLE_ENABLED
-      ? `<button type="button" class="btnSecondary btnSm btnFull" id="btnOpenAdminPortal">${isVerifiedAdmin() ? 'Open Admin Console' : 'Admin Panel'}</button>`
-      : '');
+  const activePlayer = PORTAL_ENABLED ? getVerifiedPlayer() : null;
+  const playerPortalBtn = PORTAL_ENABLED
+    ? `<button type="button" class="btnPrimary btnSm btnFull" id="btnOpenPlayerPortal">${activePlayer ? `My Portal · ${escHtml(formatTextCase(activePlayer.name))}` : 'Player Login'}</button>`
+    : '';
+  const adminPortalBtn = ADMIN_CONSOLE_ENABLED
+    ? `<button type="button" class="btnSecondary btnSm btnFull" id="btnOpenAdminPortal">${isVerifiedAdmin() ? 'Open Admin Console' : 'Admin Panel'}</button>`
+    : '';
 
   return `
     <div class="drawerOverlay ${ui.drawerOpen ? 'open' : ''}" id="drawerOverlay" role="dialog" aria-modal="true" aria-hidden="${ui.drawerOpen ? 'false' : 'true'}" aria-label="Team navigation menu">
@@ -392,7 +426,8 @@ function renderSideDrawer() {
 
         <div class="drawerFooter">
           <button type="button" class="btnSecondary btnSm btnFull" id="btnDrawerTheme">Theme · ${escHtml(getThemeLabel(ui.theme))}</button>
-          ${portalQuickBtn}
+          ${playerPortalBtn}
+          ${adminPortalBtn}
         </div>
       </aside>
     </div>
@@ -400,6 +435,7 @@ function renderSideDrawer() {
 }
 
 function renderWebFooter() {
+  const activePlayer = PORTAL_ENABLED ? getVerifiedPlayer() : null;
   return `
     <footer class="webFooter">
       <div class="webFooterInner">
@@ -419,6 +455,7 @@ function renderWebFooter() {
           <button type="button" class="webFooterLink" data-open-subpage="honours">Honours</button>
           <button type="button" class="webFooterLink" data-open-subpage="download">Android App</button>
           <button type="button" class="webFooterLink" data-ext-url="${escHtml(CLUB_INFO.captainContactUrl)}">WhatsApp Captain ↗</button>
+          ${PORTAL_ENABLED ? `<button type="button" class="webFooterLink" id="btnFooterPlayerPortal">${activePlayer ? 'My Player Portal' : 'Player Login'}</button>` : ''}
           ${ADMIN_CONSOLE_ENABLED ? `<button type="button" class="webFooterLink" id="btnFooterAdminPortal">Admin Panel</button>` : ''}
         </div>
       </div>
@@ -472,7 +509,7 @@ function renderHomeTab() {
           <div class="heroBannerTop">
             <img class="heroBannerLogo" src="${escHtml(currentLogo())}" alt="RDM Official Crest" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='${CLUB_INFO.logoPath}'">
             <div class="heroBannerCopy">
-              <span class="heroEyebrow">OFFICIAL CRICKET CLUB · EST. ${escHtml(CLUB_INFO.founded)}</span>
+              <span class="heroEyebrow">OFFICIAL CRICKET TEAM · EST. ${escHtml(CLUB_INFO.founded)}</span>
               <h1 class="heroDisplayTitle">${escHtml(CLUB_INFO.orgName)}</h1>
               <p>${escHtml(CLUB_INFO.motto)}</p>
             </div>
@@ -489,7 +526,7 @@ function renderHomeTab() {
             </div>
           </div>
         </div>
-        <aside class="heroDossierCard" aria-label="Club Almanac">
+        <aside class="heroDossierCard" aria-label="Team Almanac">
           <div class="heroDossierHead">
             <span>Official Almanac</span>
             <strong>RDM · ${escHtml(CLUB_INFO.founded)}</strong>
@@ -844,6 +881,7 @@ function renderGalleryTab() {
 
 function renderMoreTab() {
   const showWebInstall = canInstallWebPwa();
+  const activePlayer = PORTAL_ENABLED ? getVerifiedPlayer() : null;
 
   return `
     <div class="sectionHeader">
@@ -853,6 +891,49 @@ function renderMoreTab() {
         <p class="sectionSub">Use the top-left menu drawer to browse News, Records, Playing XI, and Team History.</p>
       </div>
     </div>
+
+    ${(PORTAL_ENABLED || ADMIN_CONSOLE_ENABLED) ? `
+      <section class="surfaceCard">
+        <div class="sectionHeader" style="margin-bottom:12px;">
+          <div>
+            <span class="sectionKicker">Team Portals</span>
+            <h3 class="sectionTitle" style="font-size:1.25rem;">Account &amp; Profile Login</h3>
+            <p class="sectionSub">Access your personal Player Profile Portal or Management Admin Console inside the app.</p>
+          </div>
+        </div>
+        <div class="portalAccessGrid">
+          ${PORTAL_ENABLED ? `
+            <div class="portalAccessCard">
+              <div>
+                <span class="sectionKicker">${activePlayer ? `Signed In · ${escHtml(PLAYER_CODES[activePlayer.id] || activePlayer.id)}` : 'Squad Member'}</span>
+                <h4>${activePlayer ? escHtml(formatTextCase(activePlayer.name)) : 'Player Profile Login'}</h4>
+                <p>${activePlayer
+                  ? 'Update your profile photo, jersey number, nickname, bio, socials, and match availability.'
+                  : 'Sign in with your player password or Firebase account to edit your own profile live.'}</p>
+              </div>
+              <div class="rowActions">
+                <button type="button" class="btnPrimary btnSm" id="btnMorePlayerPortal">${activePlayer ? 'Open My Portal' : 'Player Login'}</button>
+                ${activePlayer ? `<button type="button" class="btnSecondary btnSm" id="btnMorePlayerLogout">Sign Out</button>` : ''}
+              </div>
+            </div>
+          ` : ''}
+          ${ADMIN_CONSOLE_ENABLED ? `
+            <div class="portalAccessCard">
+              <div>
+                <span class="sectionKicker">${isVerifiedAdmin() ? 'Unlocked · Live Sync' : 'Management'}</span>
+                <h4>Admin Panel</h4>
+                <p>${isVerifiedAdmin()
+                  ? 'Manage squad roster, matches, Playing XI, gallery, honours, and APK updates.'
+                  : 'Unlock the team admin console to publish matches, lineups, and squad changes.'}</p>
+              </div>
+              <div class="rowActions">
+                <button type="button" class="btnSecondary btnSm" id="btnMoreAdminPortal">${isVerifiedAdmin() ? 'Open Admin Console' : 'Admin Login'}</button>
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      </section>
+    ` : ''}
 
     <section class="surfaceCard">
       <div class="sectionHeader" style="margin-bottom:12px;">
@@ -946,8 +1027,9 @@ function renderPlayerDetailPage() {
           ${player.nick ? `<p class="sectionSub" style="margin-top:6px;">Nickname: ${escHtml(formatTextCase(player.nick))}</p>` : ''}
           ${availability?.status ? `<p class="sectionSub" style="margin-top:4px;font-weight:700;color:var(--brand-text);">Match Status: ${escHtml(formatTextCase(availability.status))}</p>` : ''}
         </div>
-        <div>
+        <div class="rowActions" style="justify-content:center;">
           <button type="button" class="btnPrimary btnSm" id="btnDownloadDetailCard">Download Player Card</button>
+          ${PORTAL_ENABLED ? `<button type="button" class="btnSecondary btnSm" id="btnDetailPlayerPortal" data-detail-login-player="${escHtml(player.id)}">${(isVerifiedPlayer(player.id) || isVerifiedAdmin()) ? 'Edit My Profile' : 'Player Login'}</button>` : ''}
         </div>
       </section>
 
@@ -1103,8 +1185,10 @@ function renderTeamSubpage() {
           <span class="metaCode">Latest APK: v${escHtml(upd.latestVersion)}</span>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:10px;">
-          <button type="button" class="btnPrimary btnSm" id="btnDownloadLatestApk">${isNativeAndroid() ? (upd.hasUpdate ? `Update In-Place (v${escHtml(upd.latestVersion)})` : `Reinstall APK (v${escHtml(upd.latestVersion)})`) : `Download Latest APK (v${escHtml(upd.latestVersion)})`}</button>
-          <button type="button" class="btnSecondary btnSm" id="btnCheckAppUpdate">Check for Update</button>
+          ${isNativeAndroid()
+            ? (upd.hasUpdate ? `<button type="button" class="btnPrimary btnSm" id="btnDownloadLatestApk">Update In-Place (v${escHtml(upd.latestVersion)})</button>` : '')
+            : `<button type="button" class="btnPrimary btnSm" id="btnDownloadLatestApk">Download Latest APK (v${escHtml(upd.latestVersion)})</button>`}
+          <button type="button" class="${(isNativeAndroid() && !upd.hasUpdate) ? 'btnPrimary' : 'btnSecondary'} btnSm" id="btnCheckAppUpdate">Check for Update</button>
           ${showWebInstall ? `<button type="button" class="btnSecondary btnSm" id="btnInstallWebApp">Install Web App</button>` : ''}
           <button type="button" class="btnSecondary btnSm" data-public-tab="home">Back to Home</button>
         </div>
@@ -1163,14 +1247,101 @@ function renderAdminPortalAuthScreen() {
   `;
 }
 
+function renderPlayerAuthScreen() {
+  if (!PORTAL_ENABLED) return renderPublicScreen();
+  const playersList = state.players.length ? state.players : [];
+  const selectedPlayer =
+    playersList.find(p => p.id === ui.playerAuthSelectedId) ||
+    playersList[0] ||
+    null;
+  const selectedId = selectedPlayer?.id || ui.playerAuthSelectedId || 'RDM001';
+  const av = avatarAttrs(selectedPlayer?.image);
+  const code = PLAYER_CODES[selectedId] || selectedId;
+  const isPasswordTab = ui.playerAuthTab !== 'firebase';
+
+  return `
+    ${renderTopBar({
+      title: 'Player Profile Login',
+      showBack: true,
+      showPublicNav: false,
+      rightActionHtml: `<button type="button" class="topActionBtn" id="btnPortalPublicView">Public View</button>`
+    })}
+    <div class="loginCardWrap">
+      <div class="surfaceCard">
+        <div class="loginLogoBox">
+          <img id="playerLoginAvatar" class="${av.cls}" src="${escHtml(av.src)}" alt="${escHtml(selectedPlayer?.name || 'RDM Crest')}" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='${CLUB_INFO.logoPath}'">
+        </div>
+        <div class="loginSelectedMeta">
+          <span class="metaCode" id="playerLoginMeta">${escHtml(code)} · ${escHtml(selectedId)}</span>
+          <h2 class="sectionTitle" id="playerLoginTitle" style="text-align:center;">${selectedPlayer ? escHtml(formatTextCase(selectedPlayer.name)) : 'Player Profile Login'}</h2>
+          <p class="sectionSub" id="playerLoginRole" style="text-align:center;margin-top:4px;">${selectedPlayer ? escHtml(formatTextCase(selectedPlayer.role)) : 'Sign in to manage your RDM player profile'}</p>
+        </div>
+
+        <div class="loginModeTabs" role="tablist" aria-label="Player sign in method">
+          <button type="button" class="segTab ${isPasswordTab ? 'active' : ''}" data-player-auth-tab="password" role="tab" aria-selected="${isPasswordTab ? 'true' : 'false'}">Player Password</button>
+          <button type="button" class="segTab ${!isPasswordTab ? 'active' : ''}" data-player-auth-tab="firebase" role="tab" aria-selected="${!isPasswordTab ? 'true' : 'false'}">Firebase Account</button>
+        </div>
+
+        ${ui.playerLoginError ? `<div class="errorBanner" style="margin-bottom:12px;">${escHtml(ui.playerLoginError)}</div>` : ''}
+
+        ${isPasswordTab ? `
+          <form id="rdmPlayerPasswordForm" class="formStack">
+            <label class="fieldBlock">
+              <span>Select Your Player Profile</span>
+              <select id="playerLoginSelect" name="playerId" required>
+                ${playersList.map(p => {
+                  const pCode = PLAYER_CODES[p.id] || p.id;
+                  return `<option value="${escHtml(p.id)}" ${p.id === selectedId ? 'selected' : ''}>${escHtml(formatTextCase(p.name))} · ${escHtml(p.id)} (${escHtml(pCode)})</option>`;
+                }).join('')}
+              </select>
+            </label>
+            <label class="fieldBlock">
+              <span>Player Password</span>
+              <div class="passwordWrap">
+                <input id="playerLoginPassword" name="password" type="password" autocomplete="current-password" placeholder="Enter your player password" required>
+                <button type="button" class="togglePwBtn" id="btnTogglePlayerPw">Show</button>
+              </div>
+            </label>
+            <button type="submit" class="btnPrimary btnFull" id="btnPlayerLoginSubmit" ${ui.playerLoginBusy ? 'disabled' : ''}>
+              ${ui.playerLoginBusy ? 'Unlocking Player Portal…' : 'Open My Player Profile'}
+            </button>
+          </form>
+        ` : `
+          <form id="rdmPlayerFirebaseForm" class="formStack">
+            <label class="fieldBlock">
+              <span>Assigned Email</span>
+              <input id="playerFbEmail" name="email" type="email" autocomplete="username" placeholder="player@rdm-official.in" required>
+            </label>
+            <label class="fieldBlock">
+              <span>Account Password</span>
+              <div class="passwordWrap">
+                <input id="playerFbPassword" name="password" type="password" autocomplete="current-password" placeholder="Enter Firebase account password" required>
+                <button type="button" class="togglePwBtn" id="btnTogglePlayerFbPw">Show</button>
+              </div>
+            </label>
+            <button type="button" class="textLinkBtn" id="btnPlayerForgotPw">Forgot Password?</button>
+            <button type="submit" class="btnPrimary btnFull" id="btnPlayerFbSubmit" ${ui.playerLoginBusy ? 'disabled' : ''}>
+              ${ui.playerLoginBusy ? 'Signing In…' : 'Sign In & Open Portal'}
+            </button>
+          </form>
+        `}
+      </div>
+    </div>
+  `;
+}
+
 function renderPlayerPortalScreen() {
-  if (!PORTAL_ENABLED || ui.portalMode !== 'player' || !ui.portalPlayerId) return renderPublicScreen();
-  const player = state.players.find(p => p.id === ui.portalPlayerId);
+  const targetId = ui.portalPlayerId || getVerifiedPlayerId();
+  if (!PORTAL_ENABLED) return renderPublicScreen();
+  if (!targetId || (!isVerifiedPlayer(targetId) && !isVerifiedAdmin())) {
+    return renderPlayerAuthScreen();
+  }
+  const player = state.players.find(p => p.id === targetId);
   if (!player) {
     return `
       ${renderTopBar({
         title: 'Player Portal',
-        showBack: false,
+        showBack: true,
         showPublicNav: false,
         rightActionHtml: `<button type="button" class="topActionBtn" id="btnPortalPublicView">Public View</button>`
       })}
@@ -1189,7 +1360,7 @@ function renderPlayerPortalScreen() {
       ? { name: `Social ${idx + 1}`, url: s }
       : { name: s?.name || `Social ${idx + 1}`, url: s?.url || '' }
   )).filter(s => safeExternalUrl(s.url));
-  const cloudVerified = canEditPlayerPortal(player.id);
+  const firebaseSynced = isFirebaseCloudPlayer(player.id) || isFirebaseCloudAdmin();
 
   const hasStats = stat && (
     Number(stat.matches) > 0 ||
@@ -1201,22 +1372,20 @@ function renderPlayerPortalScreen() {
   return `
     ${renderTopBar({
       title: `${formatTextCase(player.name)} · Portal`,
-      showBack: false,
+      showBack: true,
       showPublicNav: false,
-      rightActionHtml: `<button type="button" class="topActionBtn" id="btnPortalPublicView">Public View</button>`
+      rightActionHtml: `<button type="button" class="topActionBtn" id="btnPlayerLogout">Logout</button>`
     })}
     <div class="tabContent fullPageContent">
-      ${cloudVerified ? `
-        <div class="infoBanner">
-          <span>Cloud Sync Active (${escHtml(state.user?.email || 'Verified')}) — Edits update Website &amp; Android App live.</span>
-          <button type="button" class="btnSecondary btnSm" id="btnLogout">Sign Out</button>
+      <div class="infoBanner">
+        <span>${firebaseSynced
+          ? `Cloud Sync Active (${escHtml(state.user?.email || 'Verified')}) — Edits update Website &amp; Android App live.`
+          : `Player Session Unlocked (${escHtml(code)}) — Edits sync live to Website &amp; Android App.`}</span>
+        <div class="rowActions">
+          ${!firebaseSynced ? `<button type="button" class="btnSecondary btnSm" id="btnPlayerPortalVerify">Connect Sync</button>` : ''}
+          <button type="button" class="btnSecondary btnSm" id="btnPortalPublicView">Public View</button>
         </div>
-      ` : `
-        <div class="infoBanner">
-          <span>Verify your Firebase sync account once to publish edits live to Website &amp; Android App.</span>
-          <button type="button" class="btnPrimary btnSm" id="btnPlayerPortalVerify">Connect Sync</button>
-        </div>
-      `}
+      </div>
 
       <section class="fullProfileHero">
         <img class="fullProfileAvatar ${av.cls}" src="${escHtml(av.src)}" alt="${escHtml(player.name)}" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='${CLUB_INFO.logoPath}'">
@@ -1408,11 +1577,14 @@ function renderAdminDashboard() {
         </div>
         ${state.lineups.length ? state.lineups.map(l => `
           <div class="listRowItem">
-            <div>
+            <div style="min-width:0;">
               <strong style="display:block;font-size:0.9rem;">${escHtml(formatTextCase(l.title || 'Playing XI'))}</strong>
               <span style="font-size:0.76rem;color:var(--ink-muted);">${escHtml(formatTextCase(l.match || ''))}</span>
             </div>
-            <button type="button" class="btnDanger btnSm" data-admin-del="PlayingXI:${escHtml(l._docId)}">Delete</button>
+            <div class="rowActions">
+              <button type="button" class="btnSecondary btnSm" data-admin-edit-lineup="${escHtml(l._docId)}">Edit</button>
+              <button type="button" class="btnDanger btnSm" data-admin-del="PlayingXI:${escHtml(l._docId)}">Delete</button>
+            </div>
           </div>
         `).join('') : '<p class="sectionSub">No lineups yet.</p>'}
       </div>
@@ -1434,7 +1606,10 @@ function renderAdminDashboard() {
               <strong style="display:block;font-size:0.9rem;">${escHtml(formatTextCase(item.title))}</strong>
               <span style="font-size:0.75rem;color:var(--ink-muted);">${escHtml(item._col)}${item.sub ? ' · ' + escHtml(formatTextCase(item.sub)) : ''}</span>
             </div>
-            <button type="button" class="btnDanger btnSm" data-admin-del="${escHtml(item._col)}:${escHtml(item._docId)}">Delete</button>
+            <div class="rowActions">
+              <button type="button" class="btnSecondary btnSm" data-admin-edit-item="${escHtml(item._col)}:${escHtml(item._docId)}">Edit</button>
+              <button type="button" class="btnDanger btnSm" data-admin-del="${escHtml(item._col)}:${escHtml(item._docId)}">Delete</button>
+            </div>
           </div>
         `).join('') || '<p class="sectionSub">No tournaments or records added yet.</p>'}
       </div>
@@ -1456,6 +1631,7 @@ function renderAdminDashboard() {
               <span style="font-size:0.75rem;color:var(--ink-muted);">${escHtml(item._col)}</span>
             </div>
             <div class="rowActions">
+              <button type="button" class="btnSecondary btnSm" data-admin-edit-post="${escHtml(item._col)}:${escHtml(item._docId)}">Edit</button>
               <button type="button" class="btnSecondary btnSm" data-admin-pin="${escHtml(item._col)}:${escHtml(item._docId)}:${item.pinned ? '0' : '1'}">${item.pinned ? 'Unpin' : 'Pin'}</button>
               <button type="button" class="btnDanger btnSm" data-admin-del="${escHtml(item._col)}:${escHtml(item._docId)}">Delete</button>
             </div>
@@ -1470,11 +1646,17 @@ function renderAdminDashboard() {
         </div>
         ${state.honours.length ? state.honours.map(h => `
           <div class="listRowItem">
-            <div style="min-width:0;">
-              <strong style="display:block;font-size:0.9rem;">${escHtml(h.year || '')} · ${escHtml(formatTextCase(h.title || 'Honour'))}</strong>
-              <span style="font-size:0.75rem;color:var(--ink-muted);">${escHtml(formatTextCase(h.sub || ''))}</span>
+            <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+              <img src="${escHtml(h.image || currentLogo())}" alt="${escHtml(h.title || 'Honour')}" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='${CLUB_INFO.logoPath}'" style="width:44px;height:44px;border-radius:10px;object-fit:contain;background:var(--bg-subtle);border:1px solid var(--border-hairline);padding:3px;flex-shrink:0;">
+              <div style="min-width:0;">
+                <strong style="display:block;font-size:0.9rem;">${escHtml(h.year || '')} · ${escHtml(formatTextCase(h.title || 'Honour'))}</strong>
+                <span style="font-size:0.75rem;color:var(--ink-muted);">${escHtml(formatTextCase(h.sub || ''))}</span>
+              </div>
             </div>
-            <button type="button" class="btnDanger btnSm" data-admin-del="Honours:${escHtml(h._docId)}">Delete</button>
+            <div class="rowActions">
+              <button type="button" class="btnSecondary btnSm" data-admin-edit-honour="${escHtml(h._docId)}">Edit</button>
+              <button type="button" class="btnDanger btnSm" data-admin-del="Honours:${escHtml(h._docId)}">Delete</button>
+            </div>
           </div>
         `).join('') : '<p class="sectionSub">No honours yet.</p>'}
       </div>
@@ -1493,7 +1675,10 @@ function renderAdminDashboard() {
                 <span style="font-size:0.75rem;color:var(--ink-muted);">${escHtml(formatTextCase(g.album || 'MEMORIES'))}</span>
               </div>
             </div>
-            <button type="button" class="btnDanger btnSm" data-admin-del="Gallery:${escHtml(g._docId)}">Delete</button>
+            <div class="rowActions">
+              <button type="button" class="btnSecondary btnSm" data-admin-edit-gallery="${escHtml(g._docId)}">Edit</button>
+              <button type="button" class="btnDanger btnSm" data-admin-del="Gallery:${escHtml(g._docId)}">Delete</button>
+            </div>
           </div>
         `).join('') : '<p class="sectionSub">No gallery photos yet.</p>'}
       </div>
@@ -1545,7 +1730,7 @@ function renderAdminDashboard() {
           <button type="button" class="btnPrimary btnSm" id="btnAdminConnectFirebaseBanner">Connect Sync</button>
         </div>
       ` : ''}
-      <div class="filterRow">
+      <div class="filterRow adminTabsRow">
         ${[
           ['overview', 'Overview'],
           ['squad', 'Squad & Stats'],
@@ -1585,6 +1770,7 @@ function renderApp() {
   if (ui.screen === 'playerDetail') html = renderPlayerDetailPage();
   else if (ui.screen === 'subpage') html = renderTeamSubpage();
   else if (ui.screen === 'playerPortal') html = renderPlayerPortalScreen();
+  else if (ui.screen === 'playerAuth') html = renderPlayerAuthScreen();
   else if (ui.screen === 'portalAuth') html = renderAdminPortalAuthScreen();
   else if (ui.screen === 'admin') html = renderAdminDashboard();
   else html = renderPublicScreen();
@@ -1657,10 +1843,32 @@ function bindScreenEvents() {
     navigateTo({ screen: 'public', publicTab: 'home' });
   });
 
-  q('btnReturnPortal')?.addEventListener('click', () => {
+  const openPlayerPortalFlow = (preferredPlayerId = null) => {
     setDrawerOpen(false);
-    if (ui.portalMode === 'admin') navigateTo({ screen: 'admin', adminTab: 'overview' });
-    else if (ui.portalMode === 'player' && ui.portalPlayerId) navigateTo({ screen: 'playerPortal' });
+    const activePlayerId = getVerifiedPlayerId();
+    if (preferredPlayerId && (isVerifiedPlayer(preferredPlayerId) || isVerifiedAdmin())) {
+      ui.portalMode = 'player';
+      ui.portalPlayerId = preferredPlayerId;
+      navigateTo({ screen: 'playerPortal' });
+      return;
+    }
+    if (!preferredPlayerId && activePlayerId) {
+      ui.portalMode = 'player';
+      ui.portalPlayerId = activePlayerId;
+      navigateTo({ screen: 'playerPortal' });
+      return;
+    }
+    ui.playerLoginError = '';
+    ui.playerAuthSelectedId = preferredPlayerId || ui.playerAuthSelectedId || state.players[0]?.id || 'RDM001';
+    navigateTo({ screen: 'playerAuth', playerAuthSelectedId: ui.playerAuthSelectedId });
+  };
+
+  q('btnOpenPlayerPortal')?.addEventListener('click', () => openPlayerPortalFlow());
+  q('btnFooterPlayerPortal')?.addEventListener('click', () => openPlayerPortalFlow());
+  q('btnMorePlayerPortal')?.addEventListener('click', () => openPlayerPortalFlow());
+  q('btnDetailPlayerPortal')?.addEventListener('click', () => {
+    const pid = q('btnDetailPlayerPortal')?.dataset.detailLoginPlayer || ui.detailPlayerId;
+    openPlayerPortalFlow(pid);
   });
 
   const openAdminConsoleFromApp = () => {
@@ -1669,6 +1877,7 @@ function bindScreenEvents() {
   };
   q('btnOpenAdminPortal')?.addEventListener('click', openAdminConsoleFromApp);
   q('btnFooterAdminPortal')?.addEventListener('click', openAdminConsoleFromApp);
+  q('btnMoreAdminPortal')?.addEventListener('click', openAdminConsoleFromApp);
 
   q('btnDownloadLatestApk')?.addEventListener('click', () => {
     const upd = evaluateAvailableUpdate();
@@ -1709,6 +1918,29 @@ function bindScreenEvents() {
     }
   });
 
+  const handlePlayerLogoutConfirm = () => {
+    openConfirmSheet({
+      title: 'Confirm Player Sign Out',
+      message: 'Lock and sign out of your Player Profile on this device?',
+      confirmLabel: 'Sign Out',
+      danger: true,
+      onConfirm: async () => {
+        await logoutPlayerAccount();
+        ui.drawerOpen = false;
+        ui.portalMode = 'public';
+        ui.portalPlayerId = null;
+        if (ui.screen === 'playerPortal') {
+          navigateTo({ screen: 'playerAuth' }, { replace: true });
+        } else {
+          renderApp();
+        }
+        showToast('Player profile locked');
+      }
+    });
+  };
+  q('btnPlayerLogout')?.addEventListener('click', handlePlayerLogoutConfirm);
+  q('btnMorePlayerLogout')?.addEventListener('click', handlePlayerLogoutConfirm);
+
   q('btnLogout')?.addEventListener('click', () => {
     openConfirmSheet({
       title: 'Confirm Sign Out',
@@ -1716,9 +1948,12 @@ function bindScreenEvents() {
       confirmLabel: 'Sign Out',
       danger: true,
       onConfirm: async () => {
+        const wasAdminMode = ui.portalMode === 'admin';
         await logoutAccount();
         ui.drawerOpen = false;
-        if (ui.portalMode === 'admin') navigateTo({ screen: 'portalAuth' }, { replace: true });
+        ui.portalMode = 'public';
+        ui.portalPlayerId = null;
+        if (wasAdminMode) navigateTo({ screen: 'portalAuth' }, { replace: true });
         else if (ui.screen === 'admin') navigateTo({ screen: 'public', publicTab: 'home' }, { replace: true });
         else renderApp();
         showToast('Signed out');
@@ -1754,6 +1989,126 @@ function bindScreenEvents() {
         ui.loginError = 'Incorrect Admin password. Please enter the correct password.';
       } else {
         ui.loginError = 'Unable to unlock Admin Panel. Please try again.';
+      }
+      renderApp();
+    }
+  });
+
+  document.querySelectorAll('[data-player-auth-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      ui.playerAuthTab = btn.dataset.playerAuthTab === 'firebase' ? 'firebase' : 'password';
+      ui.playerLoginError = '';
+      renderApp();
+    });
+  });
+
+  q('playerLoginSelect')?.addEventListener('change', e => {
+    const nextId = String(e.target.value || 'RDM001').toUpperCase();
+    ui.playerAuthSelectedId = nextId;
+    ui.playerLoginError = '';
+    const p = state.players.find(x => x.id === nextId);
+    if (p) {
+      const av = avatarAttrs(p.image);
+      const avatarEl = q('playerLoginAvatar');
+      if (avatarEl) {
+        avatarEl.src = av.src;
+        avatarEl.className = av.cls;
+        avatarEl.alt = p.name;
+      }
+      const metaEl = q('playerLoginMeta');
+      if (metaEl) metaEl.textContent = `${PLAYER_CODES[p.id] || p.id} · ${p.id}`;
+      const titleEl = q('playerLoginTitle');
+      if (titleEl) titleEl.textContent = formatTextCase(p.name);
+      const roleEl = q('playerLoginRole');
+      if (roleEl) roleEl.textContent = formatTextCase(p.role);
+    }
+  });
+
+  q('btnTogglePlayerPw')?.addEventListener('click', () => {
+    const pw = q('playerLoginPassword');
+    const btn = q('btnTogglePlayerPw');
+    if (!pw || !btn) return;
+    const hidden = pw.type === 'password';
+    pw.type = hidden ? 'text' : 'password';
+    btn.textContent = hidden ? 'Hide' : 'Show';
+  });
+
+  q('btnTogglePlayerFbPw')?.addEventListener('click', () => {
+    const pw = q('playerFbPassword');
+    const btn = q('btnTogglePlayerFbPw');
+    if (!pw || !btn) return;
+    const hidden = pw.type === 'password';
+    pw.type = hidden ? 'text' : 'password';
+    btn.textContent = hidden ? 'Hide' : 'Show';
+  });
+
+  q('btnPlayerForgotPw')?.addEventListener('click', () => {
+    const prefill = q('playerFbEmail')?.value?.trim() || '';
+    openFormSheet({
+      title: 'Reset Player Password',
+      subtitle: 'Enter your assigned Firebase email to receive a password reset link.',
+      fields: [{ name: 'email', label: 'Assigned Email', type: 'email', value: prefill, required: true }],
+      submitLabel: 'Send Reset Link',
+      onSubmit: async d => {
+        await sendResetPasswordEmail(d.email);
+        showToast('Password reset email sent');
+      }
+    });
+  });
+
+  q('rdmPlayerPasswordForm')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const playerId = q('playerLoginSelect')?.value || ui.playerAuthSelectedId || 'RDM001';
+    const password = q('playerLoginPassword')?.value || '';
+    ui.playerAuthSelectedId = playerId;
+    ui.playerLoginBusy = true;
+    ui.playerLoginError = '';
+    renderApp();
+
+    try {
+      const res = await loginPlayerWithPassword(playerId, password);
+      ui.playerLoginBusy = false;
+      ui.portalMode = 'player';
+      ui.portalPlayerId = res.playerId;
+      const p = state.players.find(x => x.id === res.playerId);
+      showToast(`${formatTextCase(p?.name || res.playerId)} profile unlocked`);
+      navigateTo({ screen: 'playerPortal' }, { replace: true });
+    } catch (err) {
+      ui.playerLoginBusy = false;
+      const code = String(err?.code || err?.message || '');
+      if (code === 'INVALID_PLAYER_PASSWORD' || code === 'PASSWORD_REQUIRED') {
+        const p = state.players.find(x => x.id === playerId);
+        ui.playerLoginError = `Incorrect password for ${formatTextCase(p?.name || playerId)}. Please try again.`;
+      } else {
+        ui.playerLoginError = 'Unable to unlock player profile. Please try again.';
+      }
+      renderApp();
+    }
+  });
+
+  q('rdmPlayerFirebaseForm')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = q('playerFbEmail')?.value?.trim() || '';
+    const password = q('playerFbPassword')?.value || '';
+    ui.playerLoginBusy = true;
+    ui.playerLoginError = '';
+    renderApp();
+
+    try {
+      const res = await loginPlayerWithFirebase(email, password);
+      ui.playerLoginBusy = false;
+      ui.portalMode = 'player';
+      ui.portalPlayerId = res.playerId;
+      const p = state.players.find(x => x.id === res.playerId);
+      showToast(`Signed in as ${formatTextCase(p?.name || res.playerId)}`);
+      navigateTo({ screen: 'playerPortal' }, { replace: true });
+    } catch (err) {
+      ui.playerLoginBusy = false;
+      const msg = String(err?.message || err?.code || '');
+      if (/wrong-password|invalid-credential|user-not-found|invalid-email/i.test(msg)) {
+        ui.playerLoginError = 'Invalid email or password. Please check your credentials.';
+      } else {
+        ui.playerLoginError = msg || 'Unable to sign in with Firebase account.';
       }
       renderApp();
     }
@@ -1853,7 +2208,7 @@ function openPlayerPortalAuthPrompt(player) {
     onSubmit: async d => {
       const res = await loginWithEmailPassword(d.email, d.password);
       if (res.role !== 'admin' && res.playerId !== player.id) {
-        await logoutAccount();
+        await logoutPlayerAccount();
         throw new Error(`This account belongs to ${res.playerId || 'another user'}, not ${player.id}`);
       }
       renderApp();
@@ -1863,8 +2218,10 @@ function openPlayerPortalAuthPrompt(player) {
 }
 
 function bindPlayerPortalEvents() {
-  if (!PORTAL_ENABLED || ui.portalMode !== 'player' || !ui.portalPlayerId || ui.screen !== 'playerPortal') return;
-  const player = state.players.find(p => p.id === ui.portalPlayerId);
+  const targetId = ui.portalPlayerId || getVerifiedPlayerId();
+  if (!PORTAL_ENABLED || ui.screen !== 'playerPortal' || !targetId) return;
+  if (!isVerifiedPlayer(targetId) && !isVerifiedAdmin()) return;
+  const player = state.players.find(p => p.id === targetId);
   if (!player) return;
 
   const q = id => document.getElementById(id);
@@ -1888,29 +2245,40 @@ function bindPlayerPortalEvents() {
     if (!ensureCloudSync()) return;
     openAvatarCropper({
       onSaveDataUrl: async dataUrl => {
-        await savePlayerPortalProfile(player.id, { image: dataUrl });
-        renderApp();
-        showToast('Profile photo updated live');
+        try {
+          await savePlayerPortalProfile(player.id, { image: dataUrl });
+          renderApp();
+          showToast('Profile photo updated live');
+        } catch (err) {
+          if (isPermissionDeniedError(err)) {
+            openPlayerPortalAuthPrompt(player);
+            return;
+          }
+          throw err;
+        }
       }
     });
   });
 
   q('btnPortalResetPhoto')?.addEventListener('click', () => {
     if (!ensureCloudSync()) return;
+    const runReset = async () => {
+      await savePlayerPortalProfile(player.id, { image: '' });
+      renderApp();
+      showToast('Photo reset to RDM logo');
+    };
     openConfirmSheet({
       title: 'Use RDM Crest',
       message: 'Reset your profile photo to the official RDM logo?',
       confirmLabel: 'Reset Photo',
-      onConfirm: async () => {
-        await savePlayerPortalProfile(player.id, { image: '' });
-        renderApp();
-        showToast('Photo reset to RDM logo');
-      }
+      onConfirm: runReset,
+      onPermissionDenied: () => openPlayerPortalAuthPrompt(player)
     });
   });
 
   q('btnPortalEditProfile')?.addEventListener('click', () => {
     if (!ensureCloudSync()) return;
+    let lastPayload = null;
     openFormSheet({
       title: `Edit ${formatTextCase(player.name)}`,
       fields: [
@@ -1919,10 +2287,12 @@ function bindPlayerPortalEvents() {
         { name: 'bio', label: 'Bio', type: 'textarea', value: player.bio || '', placeholder: 'Write your cricket bio (spaces & Enter preserved)', rows: 4 }
       ],
       onSubmit: async d => {
-        await savePlayerPortalProfile(player.id, { jersey: d.jersey, nick: d.nick, bio: d.bio });
+        lastPayload = { jersey: d.jersey, nick: d.nick, bio: d.bio };
+        await savePlayerPortalProfile(player.id, lastPayload);
         renderApp();
         showToast('Profile updated live');
-      }
+      },
+      onPermissionDenied: () => openPlayerPortalAuthPrompt(player)
     });
   });
 
@@ -1933,6 +2303,10 @@ function bindPlayerPortalEvents() {
       renderApp();
       showToast(`Availability: ${status}`);
     } catch (err) {
+      if (isPermissionDeniedError(err)) {
+        openPlayerPortalAuthPrompt(player);
+        return;
+      }
       showToast(err?.message || 'Failed to save availability');
     }
   };
@@ -1956,7 +2330,8 @@ function bindPlayerPortalEvents() {
         await savePlayerPortalProfile(player.id, { socials: nextSocials });
         renderApp();
         showToast('Social link added live');
-      }
+      },
+      onPermissionDenied: () => openPlayerPortalAuthPrompt(player)
     });
   });
 
@@ -1979,7 +2354,8 @@ function bindPlayerPortalEvents() {
           await savePlayerPortalProfile(player.id, { socials: existing });
           renderApp();
           showToast('Social link removed');
-        }
+        },
+        onPermissionDenied: () => openPlayerPortalAuthPrompt(player)
       });
     });
   });
@@ -2116,6 +2492,196 @@ function bindAdminDashboardEvents() {
     btn.addEventListener('click', () => {
       const m = state.matches.find(x => x._docId === btn.dataset.adminEditMatch);
       if (m) handleAdminMatchModal(m);
+    });
+  });
+
+  document.querySelectorAll('[data-admin-edit-lineup]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const l = state.lineups.find(x => x._docId === btn.dataset.adminEditLineup);
+      if (!l) return;
+      openAdminFormSheet({
+        title: 'Edit Playing XI',
+        fields: [
+          { name: 'title', label: 'Title', value: l.title || 'Playing XI', required: true },
+          { name: 'match', label: 'Match / Opponent', value: l.match || '' },
+          { name: 'players', label: '11 Player IDs (comma separated)', type: 'textarea', value: (l.players || []).join(','), rows: 3 },
+          { name: 'subs', label: 'Substitutes (comma separated)', value: (l.subs || []).join(',') }
+        ],
+        onSubmit: async d => {
+          const cleanIds = str => [...new Set(String(str || '').split(',').map(x => x.trim().toUpperCase()).filter(id => /^RDM\d{3}$/.test(id)))];
+          const players = cleanIds(d.players).slice(0, 11);
+          const subs = cleanIds(d.subs).filter(id => !players.includes(id));
+          if (players.length !== 11) throw new Error('Playing XI requires 11 valid Player IDs');
+          await adminUpsertDoc('PlayingXI', l._docId, { title: d.title, match: d.match, players, subs, createdMs: l.createdMs || Date.now() });
+          renderApp();
+          showToast('Playing XI updated');
+        }
+      });
+    });
+  });
+
+  document.querySelectorAll('[data-admin-edit-item]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const raw = String(btn.dataset.adminEditItem || '');
+      const sep = raw.indexOf(':');
+      const col = sep > 0 ? raw.slice(0, sep) : '';
+      const docId = sep > 0 ? raw.slice(sep + 1) : '';
+      if (col === 'Tournaments') {
+        const t = state.tournaments.find(x => x._docId === docId);
+        if (!t) return;
+        openAdminFormSheet({
+          title: 'Edit Tournament',
+          fields: [
+            { name: 'name', label: 'Tournament Name', value: t.name || '', required: true },
+            { name: 'season', label: 'Season / Year', value: t.season || '' },
+            { name: 'status', label: 'Status', type: 'select', value: t.status || 'UPCOMING', options: ['UPCOMING', 'ONGOING', 'COMPLETED'] },
+            { name: 'position', label: 'Final Position', value: t.position || '' },
+            { name: 'venueName', label: 'Venue', value: t.venueName || t.venue || '' }
+          ],
+          onSubmit: async d => {
+            await adminUpsertDoc('Tournaments', t._docId, {
+              name: String(d.name || '').trim(),
+              season: String(d.season || '').trim(),
+              status: String(d.status || 'UPCOMING').trim(),
+              position: String(d.position || '').trim(),
+              venueName: String(d.venueName || '').trim(),
+              venue: String(d.venueName || '').trim(),
+              createdMs: t.createdMs || Date.now()
+            });
+            renderApp();
+            showToast('Tournament updated');
+          }
+        });
+      } else if (col === 'TeamRecords') {
+        const r = state.records.find(x => x._docId === docId);
+        if (!r) return;
+        openAdminFormSheet({
+          title: 'Edit Team Record',
+          fields: [
+            { name: 'title', label: 'Record Title', value: r.title || '', required: true },
+            { name: 'value', label: 'Record Value', value: r.value || '', required: true },
+            { name: 'player', label: 'Player Name (Optional)', value: r.player || '' },
+            { name: 'season', label: 'Season / Year', value: r.season || '' }
+          ],
+          onSubmit: async d => {
+            await adminUpsertDoc('TeamRecords', r._docId, {
+              title: String(d.title || '').trim(),
+              value: String(d.value || '').trim(),
+              player: String(d.player || '').trim(),
+              season: String(d.season || '').trim(),
+              createdMs: r.createdMs || Date.now()
+            });
+            renderApp();
+            showToast('Record updated');
+          }
+        });
+      }
+    });
+  });
+
+  document.querySelectorAll('[data-admin-edit-post]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const raw = String(btn.dataset.adminEditPost || '');
+      const sep = raw.indexOf(':');
+      const col = sep > 0 ? raw.slice(0, sep) : '';
+      const docId = sep > 0 ? raw.slice(sep + 1) : '';
+      if (col === 'News') {
+        const n = state.news.find(x => x._docId === docId);
+        if (!n) return;
+        openAdminFormSheet({
+          title: 'Edit Team News',
+          fields: [
+            { name: 'title', label: 'Title', value: n.title || '', required: true },
+            { name: 'text', label: 'Announcement', type: 'textarea', value: n.text || '', rows: 5, required: true },
+            { name: 'pinned', label: 'Pin announcement', type: 'checkbox', checked: Boolean(n.pinned) }
+          ],
+          onSubmit: async d => {
+            await adminUpsertDoc('News', n._docId, { title: d.title, text: d.text, pinned: !!d.pinned, createdMs: n.createdMs || Date.now() });
+            renderApp();
+            showToast('News updated');
+          }
+        });
+      } else if (col === 'Updates') {
+        const u = state.updates.find(x => x._docId === docId);
+        if (!u) return;
+        openAdminFormSheet({
+          title: 'Edit Official Update',
+          fields: [
+            { name: 'category', label: 'Category', type: 'select', value: u.category || 'WEBSITE', options: ['WEBSITE', 'SOCIAL MEDIA', 'PLATFORM', 'ACCOUNT', 'FEATURE', 'OTHER'] },
+            { name: 'title', label: 'Title', value: u.title || '', required: true },
+            { name: 'text', label: 'Description', type: 'textarea', value: u.text || '', rows: 5, required: true },
+            { name: 'url', label: 'Optional Link', value: u.url || '', placeholder: 'https://...' },
+            { name: 'pinned', label: 'Pin to Home', type: 'checkbox', checked: Boolean(u.pinned) }
+          ],
+          onSubmit: async d => {
+            await adminUpsertDoc('Updates', u._docId, {
+              category: d.category,
+              title: d.title,
+              text: d.text,
+              url: d.url,
+              pinned: !!d.pinned,
+              date: u.date || new Date().toISOString().slice(0, 10),
+              createdMs: u.createdMs || Date.now()
+            });
+            renderApp();
+            showToast('Update saved');
+          }
+        });
+      }
+    });
+  });
+
+  document.querySelectorAll('[data-admin-edit-honour]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const h = state.honours.find(x => x._docId === btn.dataset.adminEditHonour);
+      if (!h) return;
+      openAdminFormSheet({
+        title: 'Edit Team Honour',
+        fields: [
+          { name: 'year', label: 'Year', value: h.year || '', required: true },
+          { name: 'title', label: 'Result (e.g. Winner)', value: h.title || '', required: true },
+          { name: 'sub', label: 'Tournament Name', value: h.sub || '', required: true },
+          { name: 'photo', label: 'Trophy / Honour Photo (Optional)', type: 'file' }
+        ],
+        onSubmit: async d => {
+          const image = d.photo ? await compressImageFile(d.photo, 900, 0.78) : (h.image || CLUB_INFO.logoPath);
+          await adminUpsertDoc('Honours', h._docId, {
+            year: String(d.year || '').trim(),
+            title: String(d.title || '').trim(),
+            sub: String(d.sub || '').trim(),
+            image,
+            order: h.order || 99
+          });
+          renderApp();
+          showToast('Honour updated');
+        }
+      });
+    });
+  });
+
+  document.querySelectorAll('[data-admin-edit-gallery]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const g = state.gallery.find(x => x._docId === btn.dataset.adminEditGallery);
+      if (!g) return;
+      openAdminFormSheet({
+        title: 'Edit Gallery Photo',
+        fields: [
+          { name: 'caption', label: 'Caption', value: g.caption || 'RDM Memory' },
+          { name: 'album', label: 'Album', type: 'select', value: String(g.album || 'MEMORIES').toUpperCase(), options: ['TEAM PHOTOS', 'MEMORIES', 'UPDATES'] },
+          { name: 'photo', label: 'Replace Image (Optional)', type: 'file' }
+        ],
+        onSubmit: async d => {
+          const image = d.photo ? await compressImageFile(d.photo, 960, 0.72) : g.image;
+          await adminUpsertDoc('Gallery', g._docId, {
+            image,
+            caption: d.caption,
+            album: d.album,
+            createdMs: g.createdMs || Date.now()
+          });
+          renderApp();
+          showToast('Gallery photo updated');
+        }
+      });
     });
   });
 
@@ -2381,10 +2947,18 @@ function handleAdminCreateAction(action) {
       fields: [
         { name: 'year', label: 'Year', value: String(new Date().getFullYear()), required: true },
         { name: 'title', label: 'Result (e.g. Winner)', required: true },
-        { name: 'sub', label: 'Tournament Name', required: true }
+        { name: 'sub', label: 'Tournament Name', required: true },
+        { name: 'photo', label: 'Trophy / Honour Photo (Optional)', type: 'file' }
       ],
       onSubmit: async d => {
-        await adminUpsertDoc('Honours', null, { year: d.year, title: d.title, sub: d.sub, image: CLUB_INFO.logoPath, order: state.honours.length + 1 });
+        const image = d.photo ? await compressImageFile(d.photo, 900, 0.78) : CLUB_INFO.logoPath;
+        await adminUpsertDoc('Honours', null, {
+          year: String(d.year || '').trim(),
+          title: String(d.title || '').trim(),
+          sub: String(d.sub || '').trim(),
+          image,
+          order: state.honours.length + 1
+        });
         renderApp();
         showToast('Honour saved');
       }
@@ -2620,21 +3194,28 @@ async function bootstrap() {
     }
   });
 
-  subscribeAuthChanges(({ role, verified }) => {
+  subscribeAuthChanges(({ role, playerId, verified }) => {
+    if (verified && role === 'player' && playerId) {
+      ui.portalPlayerId = playerId;
+      if (ui.screen === 'playerAuth') {
+        ui.portalMode = 'player';
+        navigateTo({ screen: 'playerPortal' }, { replace: true });
+        hideNativeSplash();
+        return;
+      }
+    }
     if (ui.portalMode === 'admin') {
       if (verified && role === 'admin') {
         navigateTo({ screen: 'admin', adminTab: 'overview' }, { replace: true });
       } else {
         navigateTo({ screen: 'portalAuth' }, { replace: true });
       }
-    } else if (ui.portalMode === 'player' && ui.portalPlayerId) {
-      renderApp();
     } else if (ui.screen === 'portalAuth' && verified && role === 'admin') {
       navigateTo({ screen: 'admin', adminTab: 'overview' }, { replace: true });
     } else if (ui.screen === 'admin' && !(verified && role === 'admin')) {
       navigateTo({ screen: 'portalAuth' }, { replace: true });
-    } else if (ui.screen === 'playerPortal') {
-      navigateTo({ screen: 'public', publicTab: 'home' }, { replace: true });
+    } else if (ui.screen === 'playerPortal' && !(isVerifiedPlayer(ui.portalPlayerId || getVerifiedPlayerId()) || isVerifiedAdmin())) {
+      navigateTo({ screen: 'playerAuth' }, { replace: true });
     } else {
       renderApp();
     }
