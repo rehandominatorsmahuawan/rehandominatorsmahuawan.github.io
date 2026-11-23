@@ -18,7 +18,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="RDM" id="rdmAppleTitle">
-  <link rel="manifest" href="site.webmanifest?v=17000" id="rdmManifestLink">
+  <link rel="manifest" href="site.webmanifest?v=17200" id="rdmManifestLink">
   <script>(function(){try{
     var ADMIN='0AqlZ35wF8lcXYiAkgz04KjzGeiSfnHs';
     var PLAYERS={
@@ -55,7 +55,7 @@
     var link=document.getElementById('rdmManifestLink');
     if(link){
       if(navigator.serviceWorker&&navigator.serviceWorker.controller){
-        link.href=new URL('rdm-portal.webmanifest?key='+encodeURIComponent(key)+'&v=17000',location.href).href;
+        link.href=new URL('rdm-portal.webmanifest?key='+encodeURIComponent(key)+'&v=17200',location.href).href;
       }else{
         var startUrl=location.origin+location.pathname+'?key='+encodeURIComponent(key);
         var scopeUrl=new URL('./',location.href).href;
@@ -87,8 +87,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Oswald:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=17.0.0">
-  <link rel="stylesheet" href="rdm-v6890-fix.css?v=17.0.0">
+  <link rel="stylesheet" href="style.css?v=17.2.0">
+  <link rel="stylesheet" href="rdm-v6890-fix.css?v=17.2.0">
   <script>(function(){try{if(window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true)document.documentElement.classList.add('rdm-standalone');}catch(e){}})();</script>
 
   <meta property="og:type" content="website">
@@ -629,18 +629,18 @@
   <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-  <script defer src="firebase-config.js?v=17.0.0"></script>
-  <script defer src="app.js?v=17.0.0"></script>
-  <script defer src="firebase-login.js?v=17.0.0"></script>
-  <script defer src="access-links.js?v=17.0.0"></script>
-  <script defer src="firebase-backend.js?v=17.0.0"></script>
-  <script defer src="enhancements.js?v=17.0.0"></script>
-  <script defer src="admin-player-manager.js?v=17.0.0"></script>
-  <script defer src="admin-auth-email.js?v=17.0.0"></script>
-  <script defer src="v6.js?v=17.0.0"></script>
-  <script defer src="gallery-v686.js?v=17.0.0"></script>
-  <script defer src="updates.js?v=17.0.0"></script>
-  <script defer src="forms-v6821.js?v=17.0.0"></script>
+  <script defer src="firebase-config.js?v=17.2.0"></script>
+  <script defer src="app.js?v=17.2.0"></script>
+  <script defer src="firebase-login.js?v=17.2.0"></script>
+  <script defer src="access-links.js?v=17.2.0"></script>
+  <script defer src="firebase-backend.js?v=17.2.0"></script>
+  <script defer src="enhancements.js?v=17.2.0"></script>
+  <script defer src="admin-player-manager.js?v=17.2.0"></script>
+  <script defer src="admin-auth-email.js?v=17.2.0"></script>
+  <script defer src="v6.js?v=17.2.0"></script>
+  <script defer src="gallery-v686.js?v=17.2.0"></script>
+  <script defer src="updates.js?v=17.2.0"></script>
+  <script defer src="forms-v6821.js?v=17.2.0"></script>
 
   <script>(function(){
     var control=document.getElementById('themeControl'),toggle=document.getElementById('themeToggle'),menu=document.getElementById('themeMenu');
@@ -724,10 +724,10 @@
     }
   })();</script>
 
-  <script defer src="rdm-v6900.js?v=17.0.0"></script>
-  <script defer src="rdm-v6901.js?v=17.0.0"></script>
-  <script defer src="rdm-v6902.js?v=17.0.0"></script>
-  <script defer src="rdm-global-mini.js?v=17.0.0"></script>
-  <script defer src="rdm-pwa.js?v=17.0.0"></script>
+  <script defer src="rdm-v6900.js?v=17.2.0"></script>
+  <script defer src="rdm-v6901.js?v=17.2.0"></script>
+  <script defer src="rdm-v6902.js?v=17.2.0"></script>
+  <script defer src="rdm-global-mini.js?v=17.2.0"></script>
+  <script defer src="rdm-pwa.js?v=17.2.0"></script>
 </body>
 </html>

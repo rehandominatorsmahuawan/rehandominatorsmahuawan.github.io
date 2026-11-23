@@ -768,14 +768,20 @@ button:disabled {
 .heroBannerInner {
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: space-between;
+  text-align: center;
   gap: 14px;
 }
 
 .heroBannerTop {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 14px;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+  width: 100%;
 }
 
 .heroBannerLogo {
@@ -802,22 +808,25 @@ button:disabled {
   text-transform: uppercase;
   color: #FCD34D;
   margin-bottom: 4px;
+  text-align: center;
 }
 
 .heroBannerCopy {
-  flex: 1;
+  width: 100%;
   min-width: 0;
+  text-align: center;
 }
 
 .heroDisplayTitle {
-  margin: 0;
+  margin: 0 auto;
   font-family: 'Oswald', 'Outfit', sans-serif;
-  font-size: clamp(1.06rem, 4.35vw, 2.52rem);
+  font-size: clamp(1.16rem, 4.6vw, 2.25rem);
   font-weight: 700;
   letter-spacing: 0.015em;
   line-height: 1.04;
   color: #FFFFFF;
   white-space: nowrap;
+  text-align: center;
 }
 
 @media (max-width: 520px) {
@@ -826,12 +835,12 @@ button:disabled {
   }
 
   .heroBannerTop {
-    gap: 10px;
+    gap: 8px;
   }
 
   .heroBannerLogo {
-    width: 46px;
-    height: 46px;
+    width: 50px;
+    height: 50px;
   }
 }
 
@@ -840,15 +849,18 @@ button:disabled {
   font-size: 0.84rem;
   color: rgba(248, 250, 252, 0.9);
   font-weight: 600;
+  text-align: center;
 }
 
 .heroBannerBottom {
+  width: 100%;
   padding-top: 12px;
   border-top: 1px solid rgba(255, 255, 255, 0.16);
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  text-align: center;
   gap: 12px;
 }
 
@@ -856,6 +868,7 @@ button:disabled {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 6px 10px;
   font-size: 0.8rem;
   font-weight: 600;
@@ -867,6 +880,8 @@ button:disabled {
   grid-template-columns: 1fr 1fr;
   gap: 8px;
   width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
 }
 
 .heroDossierCard {
@@ -878,6 +893,7 @@ button:disabled {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  text-align: center;
   gap: 12px;
 }
 
@@ -908,6 +924,7 @@ button:disabled {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px 14px;
+  text-align: center;
 }
 
 .heroDossierStats div strong {
