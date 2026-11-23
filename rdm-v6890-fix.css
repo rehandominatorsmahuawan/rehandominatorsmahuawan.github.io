@@ -53,3 +53,12 @@
   display: inline !important;
 }
 
+#players .photo,
+#players .photo img,
+.leadPortrait,
+.leadPortrait img,
+.portalPlayerTop img {
+  border-radius: 50% !important;
+  object-fit: cover;
+  object-position: center top;
+}

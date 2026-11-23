@@ -500,6 +500,7 @@ window.rdmConfirmModal = function (title, message, onConfirm) {
         ${proField('Pitch / Surface', 'pitchType', x.pitchType || '')}
         ${proField('Umpire / Official', 'official', x.official || '')}
         ${proField('Tournament', 'tournament', x.tournament || '')}
+        ${proSelect('Highlight Best Match', 'isBestMatch', (x.isBestMatch || x.bestMatch) ? 'YES' : 'NO', ['NO', 'YES'])}
       </div>
       <label class="proField proFull"><span>Notes / Match Details</span><textarea name="note" rows="3">${H(x.note || '')}</textarea></label>
     </section>`;
@@ -512,6 +513,8 @@ window.rdmConfirmModal = function (title, message, onConfirm) {
       d.venue = d.venueName;
       d.createdMs = x.createdMs || Date.now();
       d.overs = num(d.overs);
+      d.isBestMatch = d.isBestMatch === 'YES';
+      d.bestMatch = d.isBestMatch;
       const rec = { ...x, ...d, _docId: id || 'loc_' + Date.now() };
       if (id) Object.assign(x, rec);
       else D.matches.unshift(rec);
@@ -554,6 +557,7 @@ window.rdmConfirmModal = function (title, message, onConfirm) {
         ${proField('Toss Winner', 'tossWinner', x.tossWinner || '')}
         ${proField('Toss Decision', 'tossDecision', x.tossDecision || '')}
         ${proField('Match Type', 'matchType', x.matchType || '')}
+        ${proSelect('Highlight Best Match', 'isBestMatch', (x.isBestMatch || x.bestMatch) ? 'YES' : 'NO', ['NO', 'YES'])}
       </div>
     </section>${locBlock(x)}<section class="proGroup">
       <h3>Score Details</h3>
@@ -569,6 +573,8 @@ window.rdmConfirmModal = function (title, message, onConfirm) {
       d.venue = d.venueName;
       d.status = 'RESULT';
       d.matchStatus = 'COMPLETED';
+      d.isBestMatch = d.isBestMatch === 'YES';
+      d.bestMatch = d.isBestMatch;
       ['ourWickets', 'oppWickets', 'ourExtras', 'oppExtras'].forEach(k => d[k] = num(d[k]));
       d.createdMs = x.createdMs || Date.now();
       const rec = { ...x, ...d, _docId: id || 'loc_' + Date.now() };

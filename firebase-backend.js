@@ -551,7 +551,9 @@ function profileHtml(p, editable = false) {
       <button type="button" class="secondary profileDownloadMain" onclick="openProfileDownload()">Download Card</button>
       <button type="button" class="secondary" id="playerInstallAppBtn" data-rdm-install-btn>Install My App</button>
       <button type="button" class="secondary" onclick="rdmLockPlayer('${esc(p.id)}')">Lock Profile</button>
-    </div>` : ''}
+    </div>` : `<div class="publicProfileFooterActions" style="margin-top:4px;">
+      <button type="button" class="secondary" onclick="document.getElementById('publicProfileModal')?.classList.remove('show');window.openPlayerComparison?.('${esc(p.id)}')">Compare Player</button>
+    </div>`}
   </article>`;
 }
 

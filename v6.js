@@ -2,7 +2,9 @@
 const V6COL = { records: 'TeamRecords', tournaments: 'Tournaments', opponents: 'Opponents' };
 let V6 = { records: [], tournaments: [], opponents: [] };
 let v6Season = 'ALL';
-let v6RecordType = 'PLAYER';
+let v6RecordType = 'BEST';
+let v6CompareA = '';
+let v6CompareB = '';
 let v6RealtimeActive = false;
 
 const v6doc = d => ({ ...d.data(), _docId: d.id });
@@ -276,12 +278,209 @@ window.rdmRenderHomeMatchHub = function () {
     const pinSig = JSON.stringify([pin.title || '', pin.text || '']);
     if (b.dataset.pinSig !== pinSig) {
       b.dataset.pinSig = pinSig;
-      b.innerHTML = `<div class="noticeBannerMain"><span class="pinTag">Pinned Club Notice</span><b>${mini(pin.title || 'Team Update')}</b><div class="preserveLines">${mini(pin.text || '')}</div></div><button type="button" class="tinyBtn" data-go="news">Open News ›</button>`;
+      b.innerHTML = `<div class="noticeBannerMain"><span class="pinTag">Pinned Team Notice</span><b>${mini(pin.title || 'Team Update')}</b><div class="preserveLines">${mini(pin.text || '')}</div></div><button type="button" class="tinyBtn" data-go="news">Open News ›</button>`;
     }
   } else if (b) {
     b.remove();
   }
+  rdmRenderHomeHighlights();
 };
+
+function rdmParseCricketScore(scoreStr) {
+  const s = String(scoreStr || '').trim();
+  if (!s) return null;
+  const m = s.match(/(\d{1,4})(?:\s*[\/\-]\s*(\d{1,2}))?/);
+  if (!m) return null;
+  return { runs: Number(m[1]) || 0, wickets: m[2] !== undefined ? Number(m[2]) : null };
+}
+
+function rdmComputeBestMatch(matches) {
+  const pool = (matches || []).filter(m => {
+    const st = rdmClassifyMatchStatus(m);
+    if (st === 'CANCELLED') return false;
+    return st === 'COMPLETED' || !!(m.result || m.ourScore || m.oppScore || m.potm);
+  });
+  if (!pool.length) return null;
+  const explicitlyFlagged = pool.find(m => m.isBestMatch === true || m.bestMatch === true);
+  if (explicitlyFlagged) {
+    return {
+      match: explicitlyFlagged,
+      reason: 'Featured Best Match · Selected by Team Management',
+      completedCount: pool.length
+    };
+  }
+  const scored = pool.map((m, idx) => {
+    const ourP = rdmParseCricketScore(m.ourScore);
+    const oppP = rdmParseCricketScore(m.oppScore);
+    const resBlob = [m.result, m.note, m.margin].filter(Boolean).join(' ').toUpperCase();
+    const isWin = /\bRDM\s*WON\b|\bWON\b/.test(resBlob) && !/\bLOST\b/.test(resBlob);
+    const ourRuns = ourP?.runs || 0;
+    const oppRuns = oppP?.runs || 0;
+    const totalRuns = ourRuns + oppRuns;
+    const diff = (ourP && oppP) ? Math.abs(ourRuns - oppRuns) : null;
+    const isClose = diff !== null && diff <= 15;
+    const isDominant = isWin && diff !== null && diff >= 40;
+    let pts = 0;
+    if (isWin) pts += 1000;
+    pts += totalRuns;
+    if (isClose) pts += 120;
+    if (isDominant) pts += 80;
+    if (m.potm) pts += 60;
+    if (m.batting) pts += 40;
+    if (m.bowling) pts += 40;
+    let reason = 'Top Logged Match Result';
+    if (isWin && isClose) reason = 'Thriller Victory · Narrow Margin Contest';
+    else if (isWin && isDominant) reason = 'Commanding RDM Victory';
+    else if (isWin && ourRuns > 0) reason = `RDM Victory · ${ourRuns} Runs Scored`;
+    else if (m.potm) reason = `Standout Performance · POTM ${mini(m.potm)}`;
+    else if (totalRuns > 0) reason = `High-Scoring Match · ${totalRuns} Combined Runs`;
+    return { match: m, pts, reason, idx };
+  }).sort((a, b) => (b.pts - a.pts) || (a.idx - b.idx));
+  const best = scored[0];
+  return { match: best.match, reason: best.reason, completedCount: pool.length };
+}
+
+function rdmComputePlayerAnalytics(players, statsList, matches, achievements) {
+  const norm = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const list = (players || []).map(p => {
+    const agg = (statsList || []).filter(s => s.playerId === p.id).reduce((a, z) => {
+      ['matches', 'runs', 'wickets', 'fours', 'sixes', 'fifties', 'hundreds', 'runOuts'].forEach(k => {
+        a[k] = xnum(a[k]) + xnum(z[k]);
+      });
+      a.highScore = Math.max(xnum(a.highScore), xnum(z.highScore));
+      a.strikeRate = Math.max(xnum(a.strikeRate), xnum(z.strikeRate));
+      const econ = xnum(z.economy);
+      if (econ > 0) a.economy = a.economy > 0 ? Math.min(a.economy, econ) : econ;
+      if (z.bestBowling) a.bestBowling = z.bestBowling;
+      return a;
+    }, { matches: 0, runs: 0, wickets: 0, highScore: 0, fours: 0, sixes: 0, fifties: 0, hundreds: 0, runOuts: 0, strikeRate: 0, economy: 0, bestBowling: '' });
+
+    const pKey = norm(p.name);
+    const idKey = norm(p.id);
+    const matchPotm = (matches || []).filter(m => {
+      const potm = norm(m.potm);
+      return potm && ((pKey && potm.includes(pKey)) || (idKey && potm.includes(idKey)));
+    }).length;
+    const achPotm = (achievements || []).filter(a => {
+      if (!/player of the match|potm/i.test(`${a.title || ''} ${a.detail || ''}`)) return false;
+      const pn = norm(a.playerName);
+      return pn && ((pKey && pn.includes(pKey)) || (idKey && pn.includes(idKey)));
+    }).length;
+    const potmCount = Math.max(matchPotm, achPotm);
+    const mvpPoints =
+      agg.runs * 1 +
+      agg.fours * 1 +
+      agg.sixes * 2 +
+      agg.fifties * 15 +
+      agg.hundreds * 35 +
+      agg.wickets * 22 +
+      agg.runOuts * 8 +
+      potmCount * 30;
+    const hasPerformance =
+      agg.matches > 0 || agg.runs > 0 || agg.wickets > 0 || agg.highScore > 0 ||
+      agg.fours > 0 || agg.sixes > 0 || agg.runOuts > 0 || potmCount > 0;
+    return { p, s: agg, potmCount, mvpPoints, hasPerformance };
+  });
+
+  const ranked = [...list].sort((a, b) =>
+    (b.mvpPoints - a.mvpPoints) ||
+    (b.s.runs - a.s.runs) ||
+    (b.s.wickets - a.s.wickets) ||
+    (b.potmCount - a.potmCount) ||
+    (b.s.matches - a.s.matches)
+  );
+  return { ranked, bestPlayer: ranked[0]?.hasPerformance ? ranked[0] : null };
+}
+
+function rdmBestMatchCardHtml(info, compact = false) {
+  if (!info || !info.match) {
+    return `<article class="spotlightCard">
+      <span class="spotlightKicker">Best Match Spotlight</span>
+      <h3 class="spotlightTitle">No Completed Match Logged Yet</h3>
+      <p class="spotlightMeta">Once match scorecards or results are recorded, RDM's standout match will be highlighted here automatically.</p>
+      <div class="spotlightActions">
+        <button type="button" class="secondary" data-go="matches">Open Match Centre</button>
+      </div>
+    </article>`;
+  }
+  const m = info.match;
+  const meta = [m.date, m.matchType, m.venueName || m.venue].filter(Boolean).map(mini).join(' · ');
+  const verdict = [m.result, m.margin].filter(Boolean).map(mini).join(' · ') || mini(m.note || 'Completed Match');
+  return `<article class="spotlightCard">
+    <div class="spotlightHeadRow">
+      <div>
+        <span class="spotlightKicker">Best Match · ${esc(info.reason)}</span>
+        <h3 class="spotlightTitle">RDM vs ${esc(mini(m.opponent || 'Opponent'))}</h3>
+      </div>
+      ${m.potm ? `<span class="spotlightKicker" style="color:var(--accent-text);">POTM · ${esc(mini(m.potm))}</span>` : ''}
+    </div>
+    ${meta ? `<p class="spotlightMeta">${esc(meta)}</p>` : ''}
+    ${(m.ourScore || m.oppScore) ? `<div class="spotlightScoreStrip">
+      <div class="spotlightScoreCell"><span>RDM Score</span><strong>${esc(m.ourScore || '—')}${m.ourOvers ? ` (${esc(m.ourOvers)} ov)` : ''}</strong></div>
+      <div class="spotlightScoreCell"><span>${esc(mini(m.opponent || 'Opponent'))}</span><strong>${esc(m.oppScore || '—')}${m.oppOvers ? ` (${esc(m.oppOvers)} ov)` : ''}</strong></div>
+    </div>` : ''}
+    <p class="spotlightVerdict">${esc(verdict)}</p>
+    <div class="spotlightActions">
+      <button type="button" class="secondary" data-go="matches">View Match Centre</button>
+      ${m._docId ? `<button type="button" class="tinyBtn" onclick="v6Poster('${esc(m._docId)}')">Match Poster</button>` : ''}
+      ${!compact ? `<button type="button" class="tinyBtn" onclick="v6SetRecordType('COMPARE')">Compare Players</button>` : ''}
+    </div>
+  </article>`;
+}
+
+function rdmRenderHomeHighlights() {
+  const box = document.getElementById('homePerformanceHighlights');
+  if (!box || typeof D === 'undefined') return;
+  const bestMatchInfo = rdmComputeBestMatch(D.matches || []);
+  const analytics = rdmComputePlayerAnalytics(D.players || [], (typeof XD !== 'undefined' ? XD.stats : []) || [], D.matches || [], (typeof XD !== 'undefined' ? XD.achievements : []) || []);
+  const mvp = analytics.bestPlayer;
+  const photoFn = typeof window.playerPhotoUrl === 'function' ? window.playerPhotoUrl : (u => u || 'assets/rdm-logo.png?v=7400');
+
+  const mvpHtml = mvp ? `<article class="spotlightCard">
+    <span class="spotlightKicker">All-Time Best Performer · MVP</span>
+    <div class="mvpHeroRow">
+      <img class="mvpAvatar" src="${esc(photoFn(mvp.p.image))}" alt="${esc(mini(mvp.p.name))}" onerror="this.onerror=null;this.src='assets/rdm-logo.png?v=7400'">
+      <div class="mvpIdentity">
+        <small>${esc(miniId(mvp.p.id))}${typeof playerCode === 'function' ? ' · ' + esc(playerCode(mvp.p.id)) : ''} · ${esc(String(mvp.mvpPoints))} MVP Pts</small>
+        <h3 class="spotlightTitle">${esc(mini(mvp.p.name))}</h3>
+        <b>${esc(mini(mvp.p.role))}</b>
+      </div>
+    </div>
+    <div class="mvpStatsStrip">
+      <div class="mvpStatCell"><strong>${mvp.s.matches}</strong><span>Matches</span></div>
+      <div class="mvpStatCell"><strong>${mvp.s.runs}</strong><span>Runs</span></div>
+      <div class="mvpStatCell"><strong>${mvp.s.wickets}</strong><span>Wickets</span></div>
+      <div class="mvpStatCell"><strong>${mvp.potmCount}</strong><span>POTM</span></div>
+    </div>
+    <div class="spotlightActions">
+      <button type="button" class="secondary" onclick="openPlayerProfile?.('${esc(mvp.p.id)}')">View Profile</button>
+      <button type="button" class="primary" onclick="window.openPlayerComparison?.('${esc(mvp.p.id)}')">Compare Players</button>
+    </div>
+  </article>` : `<article class="spotlightCard">
+    <span class="spotlightKicker">All-Time Best Performer · MVP</span>
+    <h3 class="spotlightTitle">Compare Any Two Players</h3>
+    <p class="spotlightMeta">Player impact rankings unlock automatically as match stats and POTM awards are logged. Compare squad members anytime.</p>
+    <div class="spotlightActions">
+      <button type="button" class="primary" onclick="window.openPlayerComparison?.()">Open Player Comparison</button>
+      <button type="button" class="secondary" onclick="v6SetRecordType('BEST');go('records')">Best &amp; MVP Hub</button>
+    </div>
+  </article>`;
+
+  box.innerHTML = rdmBestMatchCardHtml(bestMatchInfo, true) + mvpHtml;
+}
+
+window.openPlayerComparison = function (playerAId, playerBId) {
+  const pool = (typeof D !== 'undefined' && Array.isArray(D.players)) ? D.players : [];
+  if (playerAId && pool.some(p => p.id === playerAId)) v6CompareA = playerAId;
+  if (playerBId && pool.some(p => p.id === playerBId) && playerBId !== v6CompareA) v6CompareB = playerBId;
+  v6RecordType = 'COMPARE';
+  if (typeof go === 'function') go('records');
+  v6Records();
+  setTimeout(() => {
+    document.getElementById('comparePlayersSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 80);
+};
+
 function v6Home() { window.rdmRenderHomeMatchHub(); }
 function statFor(p) { return XD.stats.find(s => s.playerId === p.id) || {}; }
 
@@ -398,6 +597,12 @@ window.rdmEnhanceMatchCentre = function () {
     else counts.UPCOMING++;
     if (/\bRDM WON\b|\bWON\b/i.test([m.result, m.note].filter(Boolean).join(' '))) wins++;
   });
+  const spotEl = document.getElementById('bestMatchSpotlight');
+  if (spotEl) {
+    const bestInfo = rdmComputeBestMatch(matches);
+    spotEl.innerHTML = bestInfo ? rdmBestMatchCardHtml(bestInfo, false) : '';
+    spotEl.style.marginBottom = bestInfo ? '18px' : '0';
+  }
   const sumEl = document.getElementById('matchSummary');
   if (sumEl) {
     if (matches.length) {
@@ -1056,7 +1261,14 @@ function v6SetSeason(season) { v6Season = season || 'ALL'; v6Records(); }
 window.v6SetSeason = v6SetSeason;
 
 function v6Records() {
-  const tabs = [['PLAYER', 'Player Records'], ['TEAM', 'Team Records'], ['PARTNERSHIP', 'Partnerships'], ['LEADERBOARD', 'Leaderboard & Stats']];
+  const tabs = [
+    ['BEST', 'Best Match & MVP'],
+    ['COMPARE', 'Compare Players'],
+    ['LEADERBOARD', 'Leaderboard & Stats'],
+    ['PLAYER', 'Player Records'],
+    ['TEAM', 'Team Records'],
+    ['PARTNERSHIP', 'Partnerships']
+  ];
   const rf = document.getElementById('recordTypeFilters');
   if (rf) rf.innerHTML = tabs.map(([k, lbl]) => `<button type="button" class="tinyBtn recordTypeBtn ${v6RecordType === k ? 'on' : ''}" onclick="v6SetRecordType('${k}')">${lbl}</button>`).join('');
   const seasons = [...new Set([...XD.stats.map(s => s.season), ...V6.records.map(r => r.season)].map(s => String(s || '').trim()).filter(Boolean))].sort((a, b) => b.localeCompare(a));
@@ -1067,28 +1279,196 @@ function v6Records() {
       : '';
   }
   const stats = v6Season === 'ALL' ? XD.stats : XD.stats.filter(s => String(s.season || '') === String(v6Season));
-  const total = p => stats.filter(s => s.playerId === p.id).reduce((a, z) => {
-    ['matches', 'runs', 'wickets', 'highScore', 'fours', 'sixes', 'fifties', 'hundreds', 'runOuts'].forEach(k => a[k] = (k === 'highScore' ? Math.max(xnum(a[k]), xnum(z[k])) : xnum(a[k]) + xnum(z[k])));
-    a.strikeRate = Math.max(xnum(a.strikeRate), xnum(z.strikeRate));
-    a.economy = a.economy ? Math.min(xnum(a.economy), xnum(z.economy)) : xnum(z.economy);
-    a.bestBowling = z.bestBowling || a.bestBowling || '';
-    return a;
-  }, { matches: 0, runs: 0, wickets: 0, highScore: 0, fours: 0, sixes: 0, fifties: 0, hundreds: 0, runOuts: 0, strikeRate: 0, economy: 0, bestBowling: '' });
-  const ranked = D.players.map(p => ({ p, s: total(p) }));
+  const analytics = rdmComputePlayerAnalytics(D.players || [], stats, D.matches || [], XD.achievements || []);
+  const allMatchAnalytics = rdmComputePlayerAnalytics(D.players || [], XD.stats || [], D.matches || [], XD.achievements || []);
+  const ranked = analytics.ranked;
   const best = (k, low = false) => [...ranked].filter(x => x.s[k] > 0).sort((a, b) => low ? a.s[k] - b.s[k] : b.s[k] - a.s[k])[0];
-  const awards = {};
-  XD.achievements.forEach(a => { if (/player of the match|potm/i.test(a.title || '')) awards[a.playerName] = (awards[a.playerName] || 0) + 1; });
-  const potm = Object.entries(awards).sort((a, b) => b[1] - a[1])[0];
+  const potm = [...ranked].filter(x => x.potmCount > 0).sort((a, b) => b.potmCount - a.potmCount)[0];
+  const photoFn = typeof window.playerPhotoUrl === 'function' ? window.playerPhotoUrl : (u => u || 'assets/rdm-logo.png?v=7400');
+
+  // Best Match + All-Match Best Player (MVP) Section
+  const bestMatchRecEl = document.getElementById('bestMatchRecordShowcase');
+  if (bestMatchRecEl) {
+    const bm = rdmComputeBestMatch(D.matches || []);
+    bestMatchRecEl.innerHTML = `<div class="sectionHead subHead"><div><span>Standout Contest</span><h2>Best Match Across All Fixtures</h2></div></div>${rdmBestMatchCardHtml(bm, false)}`;
+  }
+
+  const bestMvpEl = document.getElementById('bestPlayerMvpShowcase');
+  if (bestMvpEl) {
+    const activeSet = v6Season === 'ALL' ? allMatchAnalytics : analytics;
+    const mvp = activeSet.bestPlayer;
+    const performers = activeSet.ranked.filter(r => r.hasPerformance);
+    const scopeLabel = v6Season === 'ALL' ? 'All Matches Combined' : `Season ${mini(v6Season)}`;
+    bestMvpEl.innerHTML = `
+      <div class="sectionHead subHead" style="margin-top:22px;">
+        <div>
+          <span>All-Match Impact Rating · ${esc(scopeLabel)}</span>
+          <h2>Best Player Across All Matches</h2>
+        </div>
+        <button type="button" class="secondary" onclick="v6SetRecordType('COMPARE')">Compare Players</button>
+      </div>
+      ${mvp ? `<article class="spotlightCard" style="margin-bottom:16px;">
+        <div class="spotlightHeadRow">
+          <div class="mvpHeroRow">
+            <img class="mvpAvatar" src="${esc(photoFn(mvp.p.image))}" alt="${esc(mini(mvp.p.name))}" onerror="this.onerror=null;this.src='assets/rdm-logo.png?v=7400'">
+            <div class="mvpIdentity">
+              <small>#1 Overall Performer · ${esc(miniId(mvp.p.id))}${typeof playerCode === 'function' ? ' · ' + esc(playerCode(mvp.p.id)) : ''}</small>
+              <h3 class="spotlightTitle">${esc(mini(mvp.p.name))}</h3>
+              <b>${esc(mini(mvp.p.role))} · ${mvp.mvpPoints} Impact Points</b>
+            </div>
+          </div>
+          <div class="spotlightActions">
+            <button type="button" class="secondary" onclick="openPlayerProfile?.('${esc(mvp.p.id)}')">Open Profile</button>
+            <button type="button" class="primary" onclick="window.openPlayerComparison?.('${esc(mvp.p.id)}')">Compare</button>
+          </div>
+        </div>
+        <div class="mvpStatsStrip">
+          <div class="mvpStatCell"><strong>${mvp.s.matches}</strong><span>Matches</span></div>
+          <div class="mvpStatCell"><strong>${mvp.s.runs}</strong><span>Runs</span></div>
+          <div class="mvpStatCell"><strong>${mvp.s.highScore}</strong><span>High Score</span></div>
+          <div class="mvpStatCell"><strong>${mvp.s.fours}/${mvp.s.sixes}</strong><span>4s / 6s</span></div>
+          <div class="mvpStatCell"><strong>${mvp.s.wickets}</strong><span>Wickets</span></div>
+          <div class="mvpStatCell"><strong>${mvp.potmCount}</strong><span>POTM</span></div>
+        </div>
+      </article>` : `<div class="empty">No match performance stats or POTM awards logged yet for ${esc(scopeLabel)}.</div>`}
+      ${performers.length ? `<div class="sectionHead subHead" style="margin-top:16px;"><div><span>Top Performers Ranking</span><h2>Best Performers Across All Matches</h2></div></div><div class="mvpRankedList">${performers.map((r, idx) => `
+        <article class="mvpRankRow" onclick="openPlayerProfile?.('${esc(r.p.id)}')">
+          <div class="mvpRankPos">#${idx + 1}</div>
+          <img class="mvpRankAvatar" src="${esc(photoFn(r.p.image))}" alt="${esc(mini(r.p.name))}" onerror="this.onerror=null;this.src='assets/rdm-logo.png?v=7400'">
+          <div class="mvpRankMeta">
+            <strong>${esc(mini(r.p.name))}</strong>
+            <span>${r.s.matches} Mat · ${r.s.runs} Runs · ${r.s.wickets} Wkts · ${r.potmCount} POTM</span>
+          </div>
+          <div class="mvpRankPts"><strong>${r.mvpPoints}</strong><small>Impact Pts</small></div>
+        </article>`).join('')}</div>` : ''}
+    `;
+  }
+
+  // Interactive Player Comparison Studio
+  const cmpEl = document.getElementById('comparePlayersSection');
+  if (cmpEl) {
+    const pool = D.players || [];
+    if (!pool.some(p => p.id === v6CompareA)) v6CompareA = (allMatchAnalytics.bestPlayer?.p.id) || pool[0]?.id || 'RDM001';
+    if (!pool.some(p => p.id === v6CompareB) || v6CompareB === v6CompareA) {
+      const alt = allMatchAnalytics.ranked.find(r => r.p.id !== v6CompareA)?.p.id || pool.find(p => p.id !== v6CompareA)?.id || v6CompareA;
+      v6CompareB = alt;
+    }
+    const entryA = allMatchAnalytics.ranked.find(r => r.p.id === v6CompareA) || allMatchAnalytics.ranked[0];
+    const entryB = allMatchAnalytics.ranked.find(r => r.p.id === v6CompareB) || allMatchAnalytics.ranked[1] || allMatchAnalytics.ranked[0];
+    const metrics = [
+      ['Impact Score', entryA?.mvpPoints || 0, entryB?.mvpPoints || 0, false],
+      ['Matches Played', entryA?.s.matches || 0, entryB?.s.matches || 0, false],
+      ['Total Runs', entryA?.s.runs || 0, entryB?.s.runs || 0, false],
+      ['Highest Score', entryA?.s.highScore || 0, entryB?.s.highScore || 0, false],
+      ['Strike Rate', entryA?.s.strikeRate || 0, entryB?.s.strikeRate || 0, false],
+      ['Fours (4s)', entryA?.s.fours || 0, entryB?.s.fours || 0, false],
+      ['Sixes (6s)', entryA?.s.sixes || 0, entryB?.s.sixes || 0, false],
+      ['50s / 100s', (entryA?.s.fifties || 0) + (entryA?.s.hundreds || 0), (entryB?.s.fifties || 0) + (entryB?.s.hundreds || 0), false],
+      ['Wickets Taken', entryA?.s.wickets || 0, entryB?.s.wickets || 0, false],
+      ['Economy Rate', entryA?.s.economy || 0, entryB?.s.economy || 0, true],
+      ['Run Outs', entryA?.s.runOuts || 0, entryB?.s.runOuts || 0, false],
+      ['POTM Awards', entryA?.potmCount || 0, entryB?.potmCount || 0, false]
+    ];
+    let leadsA = 0, leadsB = 0;
+    const rowsHtml = metrics.map(([label, rawA, rawB, lowerBetter]) => {
+      const a = Number(rawA || 0);
+      const b = Number(rawB || 0);
+      let winA = false, winB = false;
+      if (lowerBetter) {
+        if (a > 0 && b > 0) { if (a < b) winA = true; else if (b < a) winB = true; }
+        else if (a > 0) winA = true;
+        else if (b > 0) winB = true;
+      } else {
+        if (a > b) winA = true;
+        else if (b > a) winB = true;
+      }
+      if (winA) leadsA++;
+      if (winB) leadsB++;
+      const maxVal = Math.max(a, b, 1);
+      const wA = lowerBetter ? (a > 0 ? Math.max(15, Math.round((Math.min(a, maxVal) / maxVal) * 100)) : 0) : Math.round((a / maxVal) * 100);
+      const wB = lowerBetter ? (b > 0 ? Math.max(15, Math.round((Math.min(b, maxVal) / maxVal) * 100)) : 0) : Math.round((b / maxVal) * 100);
+      const dispA = (lowerBetter || label === 'Strike Rate') ? (a > 0 ? a : '—') : a;
+      const dispB = (lowerBetter || label === 'Strike Rate') ? (b > 0 ? b : '—') : b;
+      return `<div class="compareMetricRow">
+        <div class="compareMetricValues">
+          <span class="compareValA ${winA ? 'is-lead' : ''}">${dispA}</span>
+          <span class="compareMetricLabel">${label}</span>
+          <span class="compareValB ${winB ? 'is-lead' : ''}">${dispB}</span>
+        </div>
+        <div class="compareDualBar">
+          <div class="compareBarLeft"><i class="${winA ? 'is-lead' : ''}" style="width:${wA}%"></i></div>
+          <div class="compareBarRight"><i class="${winB ? 'is-lead' : ''}" style="width:${wB}%"></i></div>
+        </div>
+      </div>`;
+    }).join('');
+
+    const anyCompareData = (entryA?.hasPerformance || entryB?.hasPerformance);
+    const verdict = !anyCompareData
+      ? 'No match statistics recorded yet for either selected player. Comparison updates live as match stats are logged.'
+      : leadsA > leadsB
+        ? `<strong>${esc(mini(entryA.p.name))}</strong> leads in <strong>${leadsA} of ${metrics.length}</strong> career categories (${entryA.mvpPoints} vs ${entryB.mvpPoints} Impact Points).`
+        : leadsB > leadsA
+          ? `<strong>${esc(mini(entryB.p.name))}</strong> leads in <strong>${leadsB} of ${metrics.length}</strong> career categories (${entryB.mvpPoints} vs ${entryA.mvpPoints} Impact Points).`
+          : `Both players are level across <strong>${metrics.length}</strong> key categories (${entryA.mvpPoints} vs ${entryB.mvpPoints} Impact Points).`;
+
+    cmpEl.innerHTML = `<div class="sectionHead subHead"><div><span>Head-to-Head Analytics</span><h2>Player Comparison</h2></div></div>
+      <div class="compareStudioCard">
+        <div class="compareSelectorGrid">
+          <label class="compareSelectField">
+            <span>Select Player A</span>
+            <select id="compareSelectA">${pool.map(p => `<option value="${esc(p.id)}" ${p.id === entryA?.p.id ? 'selected' : ''}>${esc(mini(p.name))} (${esc(mini(p.role))})</option>`).join('')}</select>
+          </label>
+          <button type="button" class="secondary" id="compareSwapBtn">Swap</button>
+          <label class="compareSelectField">
+            <span>Select Player B</span>
+            <select id="compareSelectB">${pool.map(p => `<option value="${esc(p.id)}" ${p.id === entryB?.p.id ? 'selected' : ''}>${esc(mini(p.name))} (${esc(mini(p.role))})</option>`).join('')}</select>
+          </label>
+        </div>
+        ${entryA && entryB ? `<div class="comparePlayersHeader">
+          <div class="comparePlayerSide">
+            <img src="${esc(photoFn(entryA.p.image))}" alt="${esc(mini(entryA.p.name))}" onerror="this.onerror=null;this.src='assets/rdm-logo.png?v=7400'">
+            <strong>${esc(mini(entryA.p.name))}</strong>
+            <small>${esc(mini(entryA.p.role))}${entryA.p.jersey ? ' · #' + esc(entryA.p.jersey) : ''}</small>
+            <button type="button" class="tinyBtn" onclick="openPlayerProfile?.('${esc(entryA.p.id)}')">View Profile</button>
+          </div>
+          <div class="compareVsTag">VS</div>
+          <div class="comparePlayerSide">
+            <img src="${esc(photoFn(entryB.p.image))}" alt="${esc(mini(entryB.p.name))}" onerror="this.onerror=null;this.src='assets/rdm-logo.png?v=7400'">
+            <strong>${esc(mini(entryB.p.name))}</strong>
+            <small>${esc(mini(entryB.p.role))}${entryB.p.jersey ? ' · #' + esc(entryB.p.jersey) : ''}</small>
+            <button type="button" class="tinyBtn" onclick="openPlayerProfile?.('${esc(entryB.p.id)}')">View Profile</button>
+          </div>
+        </div>` : ''}
+        <div class="compareMetricRows">${rowsHtml}</div>
+        <div class="compareVerdictBox">${verdict}</div>
+      </div>`;
+
+    document.getElementById('compareSelectA')?.addEventListener('change', e => {
+      v6CompareA = e.target.value;
+      v6Records();
+    });
+    document.getElementById('compareSelectB')?.addEventListener('change', e => {
+      v6CompareB = e.target.value;
+      v6Records();
+    });
+    document.getElementById('compareSwapBtn')?.addEventListener('click', () => {
+      const tmp = v6CompareA;
+      v6CompareA = v6CompareB;
+      v6CompareB = tmp;
+      v6Records();
+    });
+  }
+
   const lb = document.getElementById('leaderboard');
   if (lb) {
     const items = [['Top Run Scorer', best('runs'), 'runs'], ['Top Wicket Taker', best('wickets'), 'wickets'], ['Most Sixes', best('sixes'), 'sixes'], ['Most Fours', best('fours'), 'fours']];
-    lb.innerHTML = `<div class="leaderGrid">${items.map(([t, x, k]) => `<div class="leaderCard"><span>${t}</span><b>${x ? mini(x.p.name) + ' · ' + x.s[k] : 'No stats recorded yet'}</b></div>`).join('')}<div class="leaderCard"><span>Most POTM</span><b>${potm ? mini(potm[0]) + ' · ' + potm[1] : 'No POTM awards yet'}</b></div></div>`;
+    lb.innerHTML = `<div class="leaderGrid">${items.map(([t, x, k]) => `<div class="leaderCard"><span>${t}</span><b>${x ? mini(x.p.name) + ' · ' + x.s[k] : 'No stats recorded yet'}</b></div>`).join('')}<div class="leaderCard"><span>Most POTM</span><b>${potm ? mini(potm.p.name) + ' · ' + potm.potmCount : 'No POTM awards yet'}</b></div></div>`;
   }
   const tblWrap = document.getElementById('squadLeaderboardTableWrap');
   if (tblWrap) {
-    const rows = [...ranked].sort((a, b) => (b.s.runs - a.s.runs) || (b.s.wickets - a.s.wickets) || (b.s.matches - a.s.matches));
-    const hasAnyStats = rows.some(r => r.s.matches > 0 || r.s.runs > 0 || r.s.wickets > 0);
-    tblWrap.innerHTML = `<div class="squadLeaderboardTitleRow"><h3>Squad Career Statistics</h3><span>${hasAnyStats ? 'Tap any player row to view full profile' : 'Stats update automatically when player figures are logged'}</span></div><div class="statsTableScroll"><table class="statsLeaderboardTable"><thead><tr><th>#</th><th>Player</th><th>Mat</th><th>Runs</th><th>HS</th><th>SR</th><th>4s/6s</th><th>Wkts</th><th>Econ</th></tr></thead><tbody>${rows.map((r, idx) => `<tr onclick="openPlayerProfile?.('${esc(r.p.id)}')" title="View ${esc(mini(r.p.name))} profile"><td class="statsRankNum">${idx + 1}</td><td class="statsPlayerCell">${mini(r.p.name)}<small>${mini(r.p.role)}</small></td><td>${r.s.matches}</td><td class="statsHighlightVal">${r.s.runs}</td><td>${r.s.highScore}</td><td>${r.s.strikeRate || '—'}</td><td>${r.s.fours}/${r.s.sixes}</td><td class="statsHighlightVal">${r.s.wickets}</td><td>${r.s.economy || '—'}</td></tr>`).join('')}</tbody></table></div>`;
+    const rows = [...ranked];
+    const hasAnyStats = rows.some(r => r.hasPerformance);
+    tblWrap.innerHTML = `<div class="squadLeaderboardTitleRow"><h3>Squad Career Statistics</h3><span>${hasAnyStats ? 'Tap any player row to view full profile' : 'Stats update automatically when player figures are logged'}</span></div><div class="statsTableScroll"><table class="statsLeaderboardTable"><thead><tr><th>#</th><th>Player</th><th>Mat</th><th>Runs</th><th>HS</th><th>SR</th><th>4s/6s</th><th>Wkts</th><th>Econ</th><th>MVP Pts</th></tr></thead><tbody>${rows.map((r, idx) => `<tr onclick="openPlayerProfile?.('${esc(r.p.id)}')" title="View ${esc(mini(r.p.name))} profile"><td class="statsRankNum">${idx + 1}</td><td class="statsPlayerCell">${mini(r.p.name)}<small>${mini(r.p.role)}</small></td><td>${r.s.matches}</td><td class="statsHighlightVal">${r.s.runs}</td><td>${r.s.highScore}</td><td>${r.s.strikeRate || '—'}</td><td>${r.s.fours}/${r.s.sixes}</td><td class="statsHighlightVal">${r.s.wickets}</td><td>${r.s.economy || '—'}</td><td class="statsHighlightVal">${r.mvpPoints}</td></tr>`).join('')}</tbody></table></div>`;
   }
   const autoDefs = [['Highest Individual Score', 'highScore', ' Runs'], ['Most Runs', 'runs', ' Runs'], ['Most Wickets', 'wickets', ' Wickets'], ['Most Sixes', 'sixes', ' Sixes'], ['Most Fours', 'fours', ' Fours'], ['Most 50s', 'fifties', ''], ['Most 100s', 'hundreds', ''], ['Most Run Outs', 'runOuts', ''], ['Best Strike Rate', 'strikeRate', ''], ['Best Economy', 'economy', '', true]];
   const pr = document.getElementById('playerRecordList');
@@ -1096,7 +1476,7 @@ function v6Records() {
   const all = (v6Season === 'ALL' ? V6.records : V6.records.filter(x => String(x.season || '') === String(v6Season))).sort((a, b) => (b.createdMs || 0) - (a.createdMs || 0));
   v63List('teamRecordList', all.filter(x => v63Type(x) === 'TEAM'), 'v63AddTeamRecord', 'No team records added yet');
   v63List('partnershipRecordList', all.filter(x => v63Type(x) === 'PARTNERSHIP'), 'v63AddPartnershipRecord', 'No partnership records added yet');
-  const map = { PLAYER: 'playerRecordSection', TEAM: 'teamRecordSection', PARTNERSHIP: 'partnershipRecordSection', LEADERBOARD: 'leaderboardSection' };
+  const map = { BEST: 'bestPerformanceSection', COMPARE: 'comparePlayersSection', PLAYER: 'playerRecordSection', TEAM: 'teamRecordSection', PARTNERSHIP: 'partnershipRecordSection', LEADERBOARD: 'leaderboardSection' };
   Object.entries(map).forEach(([t, id]) => { const el = document.getElementById(id); if (el) el.hidden = v6RecordType !== t; });
 }
 

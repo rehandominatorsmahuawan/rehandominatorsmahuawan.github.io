@@ -87,8 +87,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Oswald:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=17.2.0">
-  <link rel="stylesheet" href="rdm-v6890-fix.css?v=17.2.0">
+  <link rel="stylesheet" href="style.css?v=17.3.0">
+  <link rel="stylesheet" href="rdm-v6890-fix.css?v=17.3.0">
   <script>(function(){try{if(window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true)document.documentElement.classList.add('rdm-standalone');}catch(e){}})();</script>
 
   <meta property="og:type" content="website">
@@ -224,6 +224,8 @@
             </div>
           </div>
 
+          <div id="homePerformanceHighlights" class="homeHighlightsGrid" aria-label="Best Match and All-Time Best Player"></div>
+
           <section class="rdmHeritageGrid" aria-label="About REHAN DOMINATORS MAHUAWAN">
             <div class="heritageMedia">
               <img src="src/assets/images/crimson_ball_gear_v16_1795427581311.jpg" alt="Crimson stitched leather cricket ball, English willow bat, and wooden bails on ivory chalk linen" loading="lazy" decoding="async" referrerPolicy="no-referrer">
@@ -314,7 +316,10 @@
           <h2>Official Squad — REHAN DOMINATORS MAHUAWAN</h2>
           <p>17 registered players · Tap any player card for complete career stats and profile</p>
         </div>
-        <button class="primary adminOnly" data-add="player">+ Add Player</button>
+        <div class="sectionActionRow">
+          <button type="button" class="secondary" id="squadOpenCompareBtn" onclick="window.openPlayerComparison?.()">Compare Players</button>
+          <button class="primary adminOnly" data-add="player">+ Add Player</button>
+        </div>
       </div>
       <div class="squadToolbar" role="search" aria-label="Search and filter squad players">
         <div class="squadSearchWrap">
@@ -352,6 +357,7 @@
         </div>
       </div>
       <div id="matchSummary" class="matchSummaryStrip" aria-label="Match statistics summary"></div>
+      <div id="bestMatchSpotlight" aria-label="Best match spotlight"></div>
       <div id="matchStatusFilters" class="matchFilterBar" role="tablist" aria-label="Filter matches by status"></div>
       <div id="matchList" class="list"></div>
       <div id="matchFilterEmpty" class="empty" hidden>
@@ -375,6 +381,11 @@
         <div id="recordTypeFilters" class="recordTypeFilters"></div>
         <div id="seasonFilters" class="seasonFilters" role="group" aria-label="Filter records by season"></div>
       </div>
+      <div id="bestPerformanceSection" class="recordTypeSection">
+        <div id="bestMatchRecordShowcase"></div>
+        <div id="bestPlayerMvpShowcase"></div>
+      </div>
+      <div id="comparePlayersSection" class="recordTypeSection"></div>
       <div id="leaderboardSection" class="recordTypeSection">
         <div class="sectionHead subHead leaderboardHead">
           <div>

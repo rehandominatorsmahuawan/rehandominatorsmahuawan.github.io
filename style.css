@@ -1074,9 +1074,9 @@ button.wide {
 .leadPortrait {
   width: 60px;
   height: 60px;
-  border-radius: 8px;
+  border-radius: 50%;
   overflow: hidden;
-  border: 1px solid var(--line-strong);
+  border: 1.5px solid var(--line-strong);
   background: var(--surface);
   flex-shrink: 0;
 }
@@ -1085,6 +1085,7 @@ button.wide {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center top;
   background: #FFFFFF;
 }
 
@@ -1317,11 +1318,12 @@ button.wide {
   grid-area: photo;
   width: 88px;
   height: 88px;
-  border-radius: 10px;
+  border-radius: 50%;
   object-fit: cover;
+  object-position: center top;
   overflow: hidden;
   background: #FFFFFF;
-  border: 1px solid var(--line-strong);
+  border: 1.5px solid var(--line-strong);
   flex-shrink: 0;
 }
 
@@ -1329,6 +1331,7 @@ button.wide {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center top;
 }
 
 .player .pbody {
@@ -2455,6 +2458,7 @@ button.wide {
   height: 84px;
   border-radius: 50%;
   object-fit: cover;
+  object-position: center top;
   background: #FFFFFF;
   border: 2px solid var(--accent-text);
 }
@@ -3061,10 +3065,11 @@ button.wide {
 .portalPlayerTop img {
   width: 50px;
   height: 50px;
-  border-radius: 10px;
+  border-radius: 50%;
   object-fit: cover;
+  object-position: center top;
   background: #FFFFFF;
-  border: 1px solid var(--line-strong);
+  border: 1.5px solid var(--line-strong);
   flex-shrink: 0;
 }
 
@@ -3990,5 +3995,450 @@ footer {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ==================== BEST MATCH, MVP & PLAYER COMPARISON ==================== */
+
+.homeHighlightsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.spotlightCard {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 20px 22px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.spotlightKicker {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--brass);
+}
+
+.spotlightHeadRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.spotlightTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.38rem, 2.4vw, 1.85rem);
+  color: var(--ink);
+  line-height: 1.08;
+  margin: 2px 0 0;
+}
+
+.spotlightMeta {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--muted);
+}
+
+.spotlightScoreStrip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--subtle);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.spotlightScoreCell span {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.spotlightScoreCell strong {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.spotlightVerdict {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--win);
+}
+
+.spotlightActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.mvpHeroRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.mvpAvatar {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  background: #FFFFFF;
+  border: 2px solid var(--accent-text);
+  flex-shrink: 0;
+}
+
+.mvpIdentity {
+  min-width: 0;
+}
+
+.mvpIdentity small {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.mvpIdentity b {
+  display: block;
+  font-size: 0.84rem;
+  color: var(--accent-text);
+}
+
+.mvpStatsStrip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+  gap: 8px;
+}
+
+.mvpStatCell {
+  padding: 10px 12px;
+  background: var(--subtle);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+.mvpStatCell strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.32rem;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.mvpStatCell span {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.mvpRankedList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mvpRankRow {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  display: grid;
+  grid-template-columns: 32px 48px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px 14px;
+  cursor: pointer;
+  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+
+.mvpRankRow:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+.mvpRankPos {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--accent-text);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.mvpRankAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  background: #FFFFFF;
+  border: 1.5px solid var(--line-strong);
+}
+
+.mvpRankMeta {
+  min-width: 0;
+}
+
+.mvpRankMeta strong {
+  display: block;
+  font-size: 0.98rem;
+  color: var(--ink);
+}
+
+.mvpRankMeta span {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.mvpRankPts {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.mvpRankPts strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.38rem;
+  color: var(--accent-text);
+  line-height: 1;
+}
+
+.mvpRankPts small {
+  display: block;
+  font-size: 0.66rem;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.compareStudioCard {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 22px 24px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.compareSelectorGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: end;
+}
+
+.compareSelectField {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+
+.compareSelectField select {
+  height: 42px;
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: var(--subtle);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.comparePlayersHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 16px;
+  background: var(--subtle);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.comparePlayerSide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.comparePlayerSide img {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  background: #FFFFFF;
+  border: 2px solid var(--line-strong);
+}
+
+.comparePlayerSide strong {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--ink);
+  line-height: 1.1;
+}
+
+.comparePlayerSide small {
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+.compareVsTag {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--brass);
+}
+
+.compareMetricRows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.compareMetricRow {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.compareMetricValues {
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr) 74px;
+  align-items: center;
+  gap: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.compareValA,
+.compareValB {
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+
+.compareValA {
+  text-align: left;
+}
+
+.compareValB {
+  text-align: right;
+}
+
+.compareValA.is-lead,
+.compareValB.is-lead {
+  color: var(--accent-text);
+}
+
+.compareMetricLabel {
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.compareDualBar {
+  margin-top: 7px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  height: 6px;
+}
+
+.compareBarLeft,
+.compareBarRight {
+  background: var(--subtle);
+  border-radius: 99px;
+  overflow: hidden;
+  display: flex;
+}
+
+.compareBarLeft {
+  justify-content: flex-end;
+}
+
+.compareBarLeft i,
+.compareBarRight i {
+  display: block;
+  height: 100%;
+  background: var(--line-strong);
+  border-radius: 99px;
+}
+
+.compareBarLeft i.is-lead,
+.compareBarRight i.is-lead {
+  background: var(--accent);
+}
+
+.compareVerdictBox {
+  padding: 14px 16px;
+  background: var(--subtle);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  color: var(--ink-2);
+}
+
+.compareVerdictBox strong {
+  color: var(--ink);
+}
+
+@media (max-width: 760px) {
+  .homeHighlightsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .compareSelectorGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .compareMetricValues {
+    grid-template-columns: 60px minmax(0, 1fr) 60px;
+  }
+
+  .mvpRankRow {
+    grid-template-columns: 26px 42px minmax(0, 1fr) auto;
+    padding: 12px 14px;
+    gap: 10px;
   }
 }
