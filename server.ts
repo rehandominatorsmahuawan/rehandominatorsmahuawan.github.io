@@ -8,7 +8,27 @@ import { getFirestore } from 'firebase-admin/firestore';
 
 const FIREBASE_PROJECT_ID = 'rdm-official-website';
 const LOCKED_TARGET_UID = 'eNgwkyptLJVOk82PFgL5lmovqxp2';
-const PORT = Number(process.env.PORT || 3000);
+function resolvePort(): number {
+  const args = process.argv.slice(2);
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--port' && args[i + 1]) {
+      const p = Number(args[i + 1]);
+      if (Number.isFinite(p) && p > 0) return p;
+    } else if (args[i].startsWith('--port=')) {
+      const p = Number(args[i].slice('--port='.length));
+      if (Number.isFinite(p) && p > 0) return p;
+    }
+  }
+  const envPort = Number(process.env.PORT);
+  const nginxPort = Number(process.env.NGINX_PORT);
+  const defaultAppPort = Number(process.env.DEFAULT_APP_PORT || 3000);
+  if (process.env.NODE_ENV === 'development' && nginxPort && envPort === nginxPort) {
+    return defaultAppPort;
+  }
+  return (Number.isFinite(envPort) && envPort > 0) ? envPort : defaultAppPort;
+}
+
+const PORT = resolvePort();
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const adminApp = getApps().length
@@ -189,15 +209,26 @@ async function startServer(): Promise<void> {
     const vite = await createViteServer({
       server: {
         middlewareMode: true,
-        hmr: false
+        hmr: false,
+        ws: false,
+        watch: {
+          ignored: [
+            '**/android/**',
+            '**/android-web/**',
+            '**/dist/**',
+            '**/dist-android/**',
+            '**/.rdm-backup/**',
+            '**/ota/**'
+          ]
+        }
       },
       appType: 'mpa'
     });
     app.use(vite.middlewares);
   } else {
     app.use(express.static(distDir, { index: 'index.html' }));
-    app.get('*', (req: Request, res: Response, next: NextFunction) => {
-      if (req.path.startsWith('/api/')) return next();
+    app.use((req: Request, res: Response, next: NextFunction) => {
+      if (req.method !== 'GET' || req.path.startsWith('/api/')) return next();
       res.sendFile(distIndex);
     });
   }

@@ -113,7 +113,6 @@ function xStartRealtimeSync() {
 }
 
 const xv = id => (document.getElementById(id)?.value || '').trim();
-const xp = (label, def = '') => null;
 const xnum = v => Number(v || 0) || 0;
 
 function xrender() {
@@ -163,10 +162,11 @@ function renderHomeExtras() {
 function renderStats() {
   const el = document.getElementById('statsList');
   if (!el) return;
+  const photoFn = typeof window.playerPhotoUrl === 'function' ? window.playerPhotoUrl : (u => u || 'assets/rdm-logo.png?v=7400');
   el.innerHTML = D.players.map(p => {
     const s = XD.stats.find(z => z.playerId === p.id) || {};
     return `<article class="statCard">
-      <img src="${esc(p.image || 'assets/rdm-logo.png?v=7400')}" onerror="this.onerror=null;this.src='assets/rdm-logo.png?v=7400'">
+      <img src="${esc(photoFn(p.image))}" onerror="this.onerror=null;this.src='assets/rdm-logo.png?v=7400'" alt="${esc(mini(p.name))}">
       <h3>${mini(p.name)}</h3>
       <div class="statNums">
         <b>${xnum(s.matches)}<small>Matches</small></b>
@@ -185,40 +185,6 @@ function renderStats() {
   }).join('');
 }
 
-async function editStats(id) {
-  if (!rdmAdmin()) return;
-  const s = XD.stats.find(z => z.playerId === id) || {};
-  const ask = (n, v) => xp(n, v ?? 0);
-  const matches = ask('Matches', s.matches);
-  if (matches === null) return;
-  const payload = {
-    playerId: id,
-    matches: xnum(matches),
-    runs: xnum(ask('Runs', s.runs)),
-    wickets: xnum(ask('Wickets', s.wickets)),
-    highScore: xnum(ask('Highest Score', s.highScore)),
-    bestBowling: ask('Best Bowling', s.bestBowling || '') || '',
-    fours: xnum(ask('Fours', s.fours)),
-    sixes: xnum(ask('Sixes', s.sixes)),
-    fifties: xnum(ask('50s', s.fifties)),
-    hundreds: xnum(ask('100s', s.hundreds)),
-    runOuts: xnum(ask('Run Outs', s.runOuts)),
-    strikeRate: xnum(ask('Strike Rate', s.strikeRate)),
-    economy: xnum(ask('Economy', s.economy))
-  };
-  const data = { ...payload, _docId: id };
-  const idx = XD.stats.findIndex(z => z.playerId === id);
-  if (idx >= 0) XD.stats[idx] = data;
-  else XD.stats.push(data);
-  try {
-    await rdmDB.collection(XCOL.stats).doc(id).set({ ...xStrip(payload), updatedAt: rdmStamp() }, { merge: true });
-  } catch (err) {
-    xSaveOverride('stats', XD.stats);
-    xReportErr(err, 'Stats sync');
-  }
-  xrender();
-}
-
 function renderAchievements() {
   const el = document.getElementById('achievementList');
   if (!el) return;
@@ -226,27 +192,9 @@ function renderAchievements() {
     ? XD.achievements.map(a => `<article class="card">
         <h3>${mini(a.title)}</h3>
         <p>${mini(a.playerName || 'TEAM')} · ${mini(a.detail || '')}</p>
-        ${rdmAdmin() ? `<button class="tinyBtn deleteBtn" onclick="xdelete('${XCOL.achievements}','${a._docId}')">Delete</button>` : ''}
+        ${rdmAdmin() ? `<div class="contentActions"><button class="tinyBtn" onclick="v6EditAchievement('${a._docId}')">Edit</button><button class="tinyBtn deleteBtn" onclick="xdelete('${XCOL.achievements}','${a._docId}')">Delete</button></div>` : ''}
       </article>`).join('')
     : '<div class="empty">No achievements added yet</div>';
-}
-
-async function addAchievement() {
-  if (!rdmAdmin()) return;
-  const title = xp('Achievement / Award');
-  if (!title) return;
-  const playerName = xp('Player Name (or TEAM)', 'TEAM');
-  const detail = xp('Details', '');
-  const payload = { title, playerName, detail, createdMs: Date.now() };
-  const rec = { ...payload, _docId: 'loc_' + Date.now() };
-  try {
-    const ref = await rdmDB.collection(XCOL.achievements).add({ ...xStrip(payload), updatedAt: rdmStamp() });
-    rec._docId = ref.id;
-  } catch (err) {
-    xReportErr(err, 'Achievement sync');
-  }
-  XD.achievements.unshift(rec);
-  xrender();
 }
 
 function renderAvailability() {
@@ -283,24 +231,6 @@ function renderAvailability() {
   }).join('');
 }
 
-async function setAvailability(id) {
-  if (!xCanEditPlayer(id)) return;
-  const status = (xp('Type AVAILABLE or UNAVAILABLE', 'AVAILABLE') || '').toUpperCase();
-  if (!['AVAILABLE', 'UNAVAILABLE'].includes(status)) return toast('Use AVAILABLE / UNAVAILABLE');
-  const payload = { playerId: id, status };
-  const rec = { ...payload, _docId: id };
-  const idx = XD.availability.findIndex(z => z.playerId === id);
-  if (idx >= 0) XD.availability[idx] = rec;
-  else XD.availability.push(rec);
-  try {
-    await rdmDB.collection(XCOL.availability).doc(id).set({ ...xStrip(payload), updatedAt: rdmStamp() }, { merge: true });
-  } catch (err) {
-    xSaveOverride('availability', XD.availability);
-    xReportErr(err, 'Availability sync');
-  }
-  xrender();
-}
-
 function renderLineups() {
   const el = document.getElementById('lineupList');
   if (!el) return;
@@ -323,27 +253,6 @@ function renderLineups() {
         ${rdmAdmin() ? `<div class="v62Actions"><button class="tinyBtn rdmEditBtn" onclick="rdmSwapLineupPlayer('${l._docId}')">Swap XI / Sub</button><button class="tinyBtn deleteBtn" onclick="xdelete('${XCOL.lineups}','${l._docId}')">Delete</button></div>` : ''}
       </article>`).join('')
     : '<div class="empty">No Playing XI published yet</div>';
-}
-
-async function addLineup() {
-  if (!rdmAdmin()) return;
-  const title = xp('Title', 'PLAYING XI');
-  if (!title) return;
-  const match = xp('Match / Opponent', '');
-  const ids = xp('Enter 11 Player IDs separated by comma', 'RDM001,RDM002,RDM003,RDM004,RDM005,RDM006,RDM007,RDM008,RDM009,RDM010,RDM011');
-  if (!ids) return;
-  const players = ids.split(',').map(x => x.trim().toUpperCase()).filter(Boolean).slice(0, 11);
-  const subs = (xp('Substitute Player IDs separated by comma', 'RDM012,RDM013,RDM014,RDM015') || '').split(',').map(x => x.trim().toUpperCase()).filter(Boolean);
-  const payload = { title, match, players, subs, createdMs: Date.now() };
-  const rec = { ...payload, _docId: 'loc_' + Date.now() };
-  try {
-    const ref = await rdmDB.collection(XCOL.lineups).add({ ...xStrip(payload), updatedAt: rdmStamp() });
-    rec._docId = ref.id;
-  } catch (err) {
-    xReportErr(err, 'Playing XI sync');
-  }
-  XD.lineups.unshift(rec);
-  xrender();
 }
 
 function renderPinnedNews() {
@@ -482,24 +391,6 @@ window.openPlayerProfile = function (id) {
   }, 50);
 };
 
-window.addScorecard = async function () {
-  if (!rdmAdmin()) return;
-  const opponent = xp('Opponent');
-  if (!opponent) return;
-  const date = xp('Date', '');
-  const venue = xp('Venue', '');
-  const ourScore = xp('RDM Score (example 145/6)', '');
-  const oppScore = xp('Opponent Score', '');
-  const result = xp('Result', '');
-  const potm = xp('Player of the Match', '');
-  try {
-    await rdmDB.collection('Matches').add({ opponent, date, venue, note: result, status: 'RESULT', ourScore, oppScore, potm, createdMs: Date.now(), updatedAt: rdmStamp() });
-  } catch (err) {
-    xReportErr(err, 'Add Scorecard');
-  }
-  await rdmLoadAll();
-};
-
 function enhanceMatchCards() {
   const el = document.getElementById('matchList');
   if (!el) return;
@@ -523,9 +414,9 @@ window.render = function () {
 };
 
 document.addEventListener('click', e => {
-  if (e.target?.id === 'addScorecard') addScorecard();
-  if (e.target?.id === 'addAchievement') addAchievement();
-  if (e.target?.id === 'addLineup') addLineup();
+  if (e.target?.id === 'addScorecard') window.addScorecard?.();
+  if (e.target?.id === 'addAchievement') window.addAchievement?.();
+  if (e.target?.id === 'addLineup') window.addLineup?.();
 });
 
 setTimeout(() => {

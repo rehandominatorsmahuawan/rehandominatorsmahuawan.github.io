@@ -49,19 +49,29 @@ if(!Array.isArray(D.honours)||D.honours.length===0)D.honours=fresh().honours;
 if(!Array.isArray(D.socials)||D.socials.length===0)D.socials=fresh().socials;
 // V6.8.95 — canonical 17-player RDM squad. No permanent PLAYING/SUBSTITUTE labels.
 const rdmRoster2026=Object.fromEntries(seed.map((x,i)=>[x[0],{id:x[0],name:x[1],role:x[2],detail:x[3],image:x[5],jersey:x[6],order:i+1}]));
-function rdmRepairRoster2026(){
+function rdmRepairRoster2026(preserveCustom=true){
  if(!Array.isArray(D.players))D.players=[];
+ const byId=new Map();
+ D.players.forEach(p=>{if(p&&p.id)byId.set(p.id,p);});
  for(const x of seed){
-   let p=D.players.find(v=>v.id===x[0]);
-   if(!p){p={id:x[0],name:x[1],role:x[2],detail:x[3],pass:x[4],image:x[5],jersey:x[6],nick:'',bio:'',socials:[]};D.players.push(p)}
-   const c=rdmRoster2026[x[0]]; p.name=c.name;p.role=c.role;p.detail=c.detail;p.order=c.order;
-   if(c.jersey && !p.jersey)p.jersey=c.jersey;
+   const c=rdmRoster2026[x[0]];
+   let p=byId.get(x[0]);
+   if(!p){
+     p={id:x[0],name:x[1],role:x[2],detail:x[3],pass:x[4],image:x[5],jersey:x[6],nick:'',bio:'',socials:[],order:c.order,active:true};
+     byId.set(x[0],p);
+   }else{
+     if(!preserveCustom||!String(p.name||'').trim())p.name=c.name;
+     if(!preserveCustom||!String(p.role||'').trim())p.role=c.role;
+     if(!preserveCustom||!String(p.detail||'').trim())p.detail=c.detail;
+     if(typeof p.order!=='number')p.order=c.order;
+     if(c.jersey&&!p.jersey)p.jersey=c.jersey;
+   }
    if(/(?:logo\.jpg|CRICKET_YOUR_TAGLINE_HERE|rdm_crest_emblem|^assets\/(?:rehan\.png|players\/))/i.test(String(p.image||'')))p.image='';
    const d=playerDefaults[p.id];if(d){if(!p.nick)p.nick=d.nick;if(!p.bio)p.bio=d.bio}
  }
- const keep=new Set(seed.map(x=>x[0]));D.players=D.players.filter(p=>keep.has(p.id)).sort((a,b)=>(rdmRoster2026[a.id]?.order||999)-(rdmRoster2026[b.id]?.order||999));
+ D.players=[...byId.values()].filter(p=>p&&p.id&&p.active!==false).sort((a,b)=>(Number(a.order)||rdmRoster2026[a.id]?.order||999)-(Number(b.order)||rdmRoster2026[b.id]?.order||999));
 }
-rdmRepairRoster2026();
+rdmRepairRoster2026(true);
 const requiredSocials=fresh().socials;requiredSocials.forEach(def=>{let found=D.socials.find(x=>String((Array.isArray(x)?x[0]:x.name)||'').toUpperCase().includes(def.name));if(!found)D.socials.push({...def});else if(!Array.isArray(found)){if(found.image===undefined)found.image='';if(!found.icon)found.icon=def.icon;}});
 D.players.forEach(p=>{const d=playerDefaults[p.id];if(d){if(!p.nick)p.nick=d.nick;if(!p.bio)p.bio=d.bio;}});if(!Array.isArray(D.matches))D.matches=[];if(!Array.isArray(D.news))D.news=[];if(!Array.isArray(D.gallery))D.gallery=[];let session=null;try{session=JSON.parse(localStorage.getItem(SK))}catch{}let loginMode='player',editMode='',editObj=null;
 const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)],save=()=>localStorage.setItem(K,JSON.stringify(D));
@@ -157,8 +167,8 @@ function openEdit(mode,obj=null){if(!isAdmin())return toast('Admin only');editMo
 const readImage=()=>new Promise(r=>{let f=q('#efile')?.files?.[0];if(!f)return r('');let x=new FileReader;x.onload=()=>r(x.result);x.readAsDataURL(f)});q('#editForm').onsubmit=async e=>{e.preventDefault();if(!isAdmin())return;let img=await readImage(),v=id=>q('#'+id)?.value?.trim()||'';if(editMode==='match')D.matches.unshift({opponent:v('e1'),date:v('e2'),venue:v('e3'),note:v('e4')});if(editMode==='news')D.news.unshift({title:v('e1'),text:v('e2')});if(editMode==='player'){let id='RDM'+String(Math.max(0,...D.players.map(p=>+p.id.replace(/\D/g,'')))+1).padStart(3,'0');D.players.push({id,name:v('e1'),role:v('e2'),detail:v('e3'),pass:'',image:img||'assets/rdm-logo.png?v=7400',jersey:'',nick:'',bio:'',socials:[]})}if(editMode==='honour')D.honours.unshift({year:v('e1'),title:v('e2'),sub:v('e3'),image:img||'assets/rdm-logo.png?v=7400'});if(editMode==='gallery'){if(!img)return toast('Select an image');D.gallery.unshift({image:img,caption:v('e1'),album:v('e2')||'MEMORIES'})}if(editMode==='social')D.socials.push({name:v('e1'),url:v('e2'),icon:v('e3')||'↗'});if(editMode==='editSocial'){editObj.name=v('e1');editObj.url=v('e2');editObj.icon=v('e3')||editObj.icon||'↗';if(img)editObj.image=img}if(editMode==='editPlayer'){editObj.name=v('e1');editObj.role=v('e2');editObj.detail=v('e3');if(img)editObj.image=img}save();q('#editor').classList.remove('show');render();renderAdmin();toast('Saved')};
 // Circular DP cropper
 let crop={img:null,scale:1,x:0,y:0,drag:false,lx:0,ly:0};window.chooseDP=()=>{if(!isAdmin()&&window.__rdmUrlKeyRole!=='player')return;let inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.onchange=()=>{let f=inp.files[0];if(!f)return;let r=new FileReader;r.onload=()=>{let im=new Image;im.onload=()=>{crop={img:im,scale:1,x:0,y:0,drag:false,lx:0,ly:0};q('#cropZoom').value=1;q('#cropModal').classList.add('show');drawCrop()};im.src=r.result};r.readAsDataURL(f)};inp.click()};
-function drawCrop(){let c=q('#cropCanvas'),ctx=c.getContext('2d'),im=crop.img;if(!im)return;ctx.clearRect(0,0,320,320);let base=Math.max(320/im.width,320/im.height),sc=base*crop.scale,w=im.width*sc,h=im.height*sc,x=(320-w)/2+crop.x,y=(320-h)/2+crop.y;ctx.save();ctx.beginPath();ctx.arc(160,160,158,0,Math.PI*2);ctx.clip();ctx.drawImage(im,x,y,w,h);ctx.restore()}
-q('#cropZoom').oninput=e=>{crop.scale=+e.target.value;drawCrop()};let cc=q('#cropCanvas');cc.onpointerdown=e=>{crop.drag=true;crop.lx=e.clientX;crop.ly=e.clientY;cc.setPointerCapture(e.pointerId)};cc.onpointermove=e=>{if(!crop.drag)return;crop.x+=e.clientX-crop.lx;crop.y+=e.clientY-crop.ly;crop.lx=e.clientX;crop.ly=e.clientY;drawCrop()};cc.onpointerup=()=>crop.drag=false;q('#cropSave').onclick=()=>{if(!isAdmin()&&window.__rdmUrlKeyRole!=='player')return;let p=currentPlayer();if(!p||!crop.img)return;let c=q('#cropCanvas'),out=document.createElement('canvas');out.width=512;out.height=512;let ctx=out.getContext('2d');ctx.drawImage(c,0,0,512,512);p.image=out.toDataURL('image/jpeg',.9);save();q('#cropModal').classList.remove('show');render();renderProfile();toast('Photo saved')};
+function drawCrop(){let c=q('#cropCanvas'),ctx=c.getContext('2d'),im=crop.img;if(!im)return;ctx.clearRect(0,0,320,320);let base=Math.max(320/im.width,320/im.height),sc=base*crop.scale,w=im.width*sc,h=im.height*sc,x=(320-w)/2+crop.x,y=(320-h)/2+crop.y;ctx.save();ctx.beginPath();ctx.arc(160,160,158,0,Math.PI*2);ctx.clip();ctx.fillStyle='#FFFFFF';ctx.fillRect(0,0,320,320);ctx.drawImage(im,x,y,w,h);ctx.restore()}
+q('#cropZoom').oninput=e=>{crop.scale=+e.target.value;drawCrop()};let cc=q('#cropCanvas');cc.onpointerdown=e=>{crop.drag=true;crop.lx=e.clientX;crop.ly=e.clientY;cc.setPointerCapture(e.pointerId)};cc.onpointermove=e=>{if(!crop.drag)return;const rect=cc.getBoundingClientRect();const ratio=rect.width?(320/rect.width):1;crop.x+=(e.clientX-crop.lx)*ratio;crop.y+=(e.clientY-crop.ly)*ratio;crop.lx=e.clientX;crop.ly=e.clientY;drawCrop()};cc.onpointerup=()=>{crop.drag=false};cc.onpointercancel=()=>{crop.drag=false};q('#cropSave').onclick=()=>{if(!isAdmin()&&window.__rdmUrlKeyRole!=='player')return;let p=currentPlayer();if(!p||!crop.img)return;let c=q('#cropCanvas'),out=document.createElement('canvas');out.width=512;out.height=512;let ctx=out.getContext('2d');ctx.fillStyle='#FFFFFF';ctx.fillRect(0,0,512,512);ctx.drawImage(c,0,0,512,512);p.image=out.toDataURL('image/jpeg',.9);save();q('#cropModal').classList.remove('show');render();renderProfile();toast('Photo saved')};
 bindAdds();render();if(session){let valid=session.mode==='admin'||D.players.some(p=>p.id===session.playerId);if(!valid){session=null;localStorage.removeItem(SK)}updateAuthUI()}
 
 if(typeof saveLater!=='undefined'&&saveLater)save();

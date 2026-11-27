@@ -31,9 +31,11 @@
 
   function field(f) {
     const v = E(f.value ?? '');
-    if (f.type === 'textarea') return `<label>${E(f.label)}<textarea name="${f.name}" rows="${f.rows || 4}" ${f.required ? 'required' : ''}>${v}</textarea></label>`;
-    if (f.type === 'select') return `<label>${E(f.label)}<select name="${f.name}">${(f.options || []).map(o => `<option value="${E(o)}" ${String(o) === String(f.value) ? 'selected' : ''}>${E(o)}</option>`).join('')}</select></label>`;
-    return `<label>${E(f.label)}<input name="${f.name}" type="${f.type || 'text'}" value="${v}" ${f.required ? 'required' : ''} ${f.placeholder ? `placeholder="${E(f.placeholder)}"` : ''}></label>`;
+    const cls = (f.full || f.type === 'textarea' || f.type === 'checkbox') ? 'rdmFieldFull' : '';
+    if (f.type === 'checkbox') return `<label class="rdmCheckField ${cls}"><input name="${f.name}" type="checkbox" ${f.checked ? 'checked' : ''}><span>${E(f.label)}</span></label>`;
+    if (f.type === 'textarea') return `<label class="${cls}">${E(f.label)}<textarea name="${f.name}" rows="${f.rows || 4}" ${f.required ? 'required' : ''} ${f.placeholder ? `placeholder="${E(f.placeholder)}"` : ''}>${v}</textarea></label>`;
+    if (f.type === 'select') return `<label class="${cls}">${E(f.label)}<select name="${f.name}">${(f.options || []).map(o => `<option value="${E(o)}" ${String(o) === String(f.value) ? 'selected' : ''}>${E(o)}</option>`).join('')}</select></label>`;
+    return `<label class="${cls}">${E(f.label)}<input name="${f.name}" type="${f.type || 'text'}" value="${v}" ${f.required ? 'required' : ''} ${f.placeholder ? `placeholder="${E(f.placeholder)}"` : ''}></label>`;
   }
 
   function modal(title, fields, onSave) {
@@ -55,7 +57,11 @@
       e.preventDefault();
       const b = e.submitter;
       b.disabled = true;
-      const d = Object.fromEntries(new FormData(e.currentTarget).entries());
+      const formEl = e.currentTarget;
+      const d = Object.fromEntries(new FormData(formEl).entries());
+      formEl.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        if (cb.name) d[cb.name] = !!cb.checked;
+      });
       try { await onSave(d); m.remove(); }
       catch (err) { console.error(err); toast?.('Save failed'); b.disabled = false; }
     };
@@ -716,7 +722,7 @@ if (!window.__rdmEscModalBound) {
   window.__rdmEscModalBound = true;
   document.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
-    const open = [...document.querySelectorAll('.modal.show')];
+    const open = [...document.querySelectorAll('.modal.show')].sort((a, b) => (Number(getComputedStyle(a).zIndex) || 0) - (Number(getComputedStyle(b).zIndex) || 0));
     const top = open[open.length - 1];
     if (!top) return;
     const closeBtn = top.querySelector('.close');

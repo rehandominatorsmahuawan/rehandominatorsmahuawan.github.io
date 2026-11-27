@@ -204,14 +204,180 @@ function rdmClassifyMatchStatus(m) {
   if (!m) return 'UPCOMING';
   const explicit = String(m.matchStatus || m.status || '').trim().toUpperCase();
   if (/\bLIVE\b/.test(explicit)) return 'LIVE';
-  if (/^(UPCOMING|SCHEDULED|FIXTURE|NEXT)$/.test(explicit)) return 'UPCOMING';
-  if (/^(COMPLETED|RESULT|FINISHED|WON|LOST|DRAW|TIE|NO RESULT)$/.test(explicit)) return 'COMPLETED';
   if (/CANCEL/.test(explicit)) return 'CANCELLED';
+  if (/^(COMPLETED|RESULT|FINISHED|WON|LOST|DRAW|TIE|NO RESULT)$/.test(explicit)) return 'COMPLETED';
+  if (/^(UPCOMING|SCHEDULED|FIXTURE|NEXT)$/.test(explicit)) {
+    if (m.result && !/CANCEL/i.test(String(m.result))) return 'COMPLETED';
+    return 'UPCOMING';
+  }
   const blob = [explicit, m.result, m.note].filter(Boolean).join(' ').toUpperCase();
-  if (/COMPLETED|RESULT|FINISHED|WON|LOST|DRAW|TIE|NO RESULT/.test(blob)) return 'COMPLETED';
   if (/CANCEL/.test(blob)) return 'CANCELLED';
+  if (/COMPLETED|RESULT|FINISHED|\bRDM\s*WON\b|\bRDM\s*LOST\b|\bLOST\b|\bDRAW\b|\bTIE\b|\bNO\s*RESULT\b/.test(blob)) return 'COMPLETED';
+  if (String(m.ourScore || '').trim() && String(m.oppScore || '').trim()) return 'COMPLETED';
   return 'UPCOMING';
 }
+
+function rdmClassifyMatchOutcome(m) {
+  if (!m) return null;
+  const st = rdmClassifyMatchStatus(m);
+  if (st === 'CANCELLED' || st === 'UPCOMING' || st === 'LIVE') return null;
+
+  const oppUpper = String(m.opponent || '').trim().toUpperCase();
+  const inspectResult = txt => {
+    const s = String(txt || '').trim().toUpperCase();
+    if (!s) return null;
+    if (/\bNO\s*RESULT\b|\bN\/?R\b|\bABANDONED\b/.test(s)) return 'NO_RESULT';
+    if (/\bTIE\b|\bTIED\b|\bDRAW\b|\bDRAWN\b/.test(s)) return 'TIE';
+    if (/\bRDM\s*LOST\b|\bOPPONENT\s*WON\b|\bLOST\b|\bLOSS\b|\bDEFEAT\b/.test(s)) return 'LOSS';
+    if (oppUpper && s.includes(oppUpper) && new RegExp(`\\b(?:WON|WIN|VICTORY)\\b`).test(s) && !/\bRDM\b/.test(s)) return 'LOSS';
+    const wonMatch = s.match(/^(.*?)\b(?:WON|WIN|VICTORY)\b/);
+    if (wonMatch) {
+      const prefix = wonMatch[1].replace(/[^A-Z0-9 ]+/g, ' ').trim();
+      if (!prefix || /\b(?:RDM|WE|OUR|TEAM|HOME)\b/.test(prefix)) return 'WIN';
+      return 'LOSS';
+    }
+    return null;
+  };
+
+  const fromResult = inspectResult(m.result);
+  if (fromResult) return fromResult;
+
+  const fromStatus = inspectResult(m.status || m.matchStatus);
+  if (fromStatus) return fromStatus;
+
+  const noteClean = String(m.note || '')
+    .replace(/\b(?:won|win|lost)\s+(?:the\s+)?toss\b/gi, ' ');
+  const fromNote = inspectResult(noteClean);
+  if (fromNote) return fromNote;
+
+  const ourP = rdmParseCricketScore(m.ourScore);
+  const oppP = rdmParseCricketScore(m.oppScore);
+  if (ourP && oppP) {
+    if (ourP.runs > oppP.runs) return 'WIN';
+    if (ourP.runs < oppP.runs) return 'LOSS';
+    return 'TIE';
+  }
+  return null;
+}
+
+function rdmComputeMatchSummaryStats(matches) {
+  const list = Array.isArray(matches) ? matches : [];
+  const counts = { ALL: list.length, UPCOMING: 0, LIVE: 0, COMPLETED: 0, CANCELLED: 0 };
+  let wins = 0;
+  let losses = 0;
+  let ties = 0;
+  let noResult = 0;
+  let highestScore = null;
+  const decidedItems = [];
+
+  list.forEach((m, idx) => {
+    const st = rdmClassifyMatchStatus(m);
+    if (st === 'LIVE') counts.LIVE++;
+    else if (st === 'COMPLETED') counts.COMPLETED++;
+    else if (st === 'CANCELLED') counts.CANCELLED++;
+    else counts.UPCOMING++;
+
+    const outcome = rdmClassifyMatchOutcome(m);
+    if (outcome === 'WIN') wins++;
+    else if (outcome === 'LOSS') losses++;
+    else if (outcome === 'TIE') ties++;
+    else if (outcome === 'NO_RESULT') noResult++;
+
+    if (outcome === 'WIN' || outcome === 'LOSS' || outcome === 'TIE' || outcome === 'NO_RESULT') {
+      const parsedDt = rdmParseMatchDateTime(m);
+      const ts = parsedDt?.getTime() || Number(m.createdMs || 0) || (list.length - idx);
+      const rawDateStr = String(m.date || m.matchDate || '').trim();
+      let dateLabel = '';
+      if (parsedDt && !isNaN(parsedDt.getTime())) {
+        dateLabel = parsedDt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      } else if (rawDateStr) {
+        dateLabel = rawDateStr;
+      } else if (m.updatedAt && typeof m.updatedAt.toDate === 'function') {
+        const ud = m.updatedAt.toDate();
+        if (!isNaN(ud?.getTime?.())) dateLabel = ud.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      } else if (Number(m.createdMs || 0) > 0) {
+        dateLabel = new Date(Number(m.createdMs)).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      }
+      const code = outcome === 'WIN' ? 'W' : outcome === 'LOSS' ? 'L' : outcome === 'TIE' ? 'T' : 'NR';
+      decidedItems.push({
+        code,
+        outcome,
+        ts,
+        date: rawDateStr,
+        dateLabel: dateLabel || 'Result logged',
+        opponent: String(m.opponent || 'Opponent').trim() || 'Opponent',
+        venue: String(m.venueName || m.venue || '').trim(),
+        potm: String(m.potm || '').trim(),
+        ourScore: String(m.ourScore || '').trim(),
+        oppScore: String(m.oppScore || '').trim(),
+        result: String(m.result || m.margin || m.note || '').trim()
+      });
+    }
+
+    if (st === 'COMPLETED' || st === 'LIVE') {
+      const parsedOur = rdmParseCricketScore(m.ourScore);
+      if (parsedOur && parsedOur.runs >= 0 && String(m.ourScore || '').trim()) {
+        if (
+          !highestScore ||
+          parsedOur.runs > highestScore.runs ||
+          (parsedOur.runs === highestScore.runs && (parsedOur.wickets ?? 99) < (highestScore.wickets ?? 99))
+        ) {
+          highestScore = {
+            runs: parsedOur.runs,
+            wickets: parsedOur.wickets,
+            display: String(m.ourScore).trim(),
+            opponent: m.opponent || 'Opponent'
+          };
+        }
+      }
+    }
+  });
+
+  const played = counts.COMPLETED;
+  const decided = wins + losses + ties;
+  const denom = decided > 0 ? decided : (played > noResult ? played - noResult : 0);
+  const winPctNum = denom > 0 ? Math.round((wins / denom) * 1000) / 10 : null;
+  const winPctText = winPctNum === null
+    ? '—'
+    : (Number.isInteger(winPctNum) ? `${winPctNum}%` : `${winPctNum.toFixed(1)}%`);
+
+  decidedItems.sort((a, b) => b.ts - a.ts);
+  let winStreak = 0;
+  for (const item of decidedItems) {
+    if (item.outcome === 'NO_RESULT') continue;
+    if (item.outcome === 'WIN') winStreak++;
+    else break;
+  }
+  const recentForm = decidedItems.slice(0, 5);
+  let cumWins = 0;
+  let cumDecided = 0;
+  const recentTrend = [...decidedItems.slice(0, 8)].reverse().map((item, i) => {
+    if (item.outcome === 'WIN') { cumWins++; cumDecided++; }
+    else if (item.outcome === 'LOSS' || item.outcome === 'TIE') { cumDecided++; }
+    const runningWinPct = cumDecided > 0 ? Math.round((cumWins / cumDecided) * 1000) / 10 : (cumWins > 0 ? 100 : 50);
+    return { ...item, index: i + 1, runningWinPct };
+  });
+
+  return {
+    totalFixtures: counts.ALL,
+    played,
+    upcoming: counts.UPCOMING,
+    live: counts.LIVE,
+    cancelled: counts.CANCELLED,
+    wins,
+    losses,
+    ties,
+    noResult,
+    decided,
+    winStreak,
+    winPctNum,
+    winPctText,
+    highestScore,
+    recentForm,
+    recentTrend
+  };
+}
+window.rdmComputeMatchSummaryStats = rdmComputeMatchSummaryStats;
 
 function rdmPickNextUpcomingMatch(matches) {
   const upcomingPool = (matches || []).filter(x => rdmClassifyMatchStatus(x) === 'UPCOMING');
@@ -584,34 +750,399 @@ window.v6SetMatchStatusFilter = function (st) {
   window.rdmEnhanceMatchCentre();
 };
 
+function rdmRenderMatchTrendD3(chartWrap, stats) {
+  const d3 = window.d3;
+  if (!chartWrap || !d3) return;
+
+  const trend = Array.isArray(stats?.recentTrend) ? stats.recentTrend : [];
+  const wrapSel = d3.select(chartWrap);
+  wrapSel.selectAll('svg.matchTrendSvg').remove();
+
+  const W = 680;
+  const H = 168;
+  const margin = { top: 20, right: 24, bottom: 32, left: 42 };
+  const iw = W - margin.left - margin.right;
+  const ih = H - margin.top - margin.bottom;
+
+  const svg = wrapSel.insert('svg', '.matchTrendTooltip')
+    .attr('class', 'matchTrendSvg')
+    .attr('viewBox', `0 0 ${W} ${H}`)
+    .attr('preserveAspectRatio', 'xMidYMid meet')
+    .attr('role', 'img')
+    .attr('aria-label', trend.length
+      ? `D3 win/loss trend chart across last ${trend.length} completed matches`
+      : 'Win/loss trend chart awaiting completed matches');
+
+  const defs = svg.append('defs');
+  const gradId = 'rdmTrendAreaGrad';
+  const grad = defs.append('linearGradient')
+    .attr('id', gradId)
+    .attr('x1', '0%').attr('y1', '0%')
+    .attr('x2', '0%').attr('y2', '100%');
+  grad.append('stop').attr('offset', '0%').attr('stop-color', 'var(--win)').attr('stop-opacity', 0.26);
+  grad.append('stop').attr('offset', '55%').attr('stop-color', 'var(--accent)').attr('stop-opacity', 0.08);
+  grad.append('stop').attr('offset', '100%').attr('stop-color', 'var(--accent)').attr('stop-opacity', 0.0);
+
+  const g = svg.append('g')
+    .attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const y = d3.scaleLinear().domain([0, 100]).range([ih, 0]);
+
+  // Horizontal gridlines + 50% break-even baseline
+  g.selectAll('line.rdmD3Grid')
+    .data([0, 50, 100])
+    .join('line')
+    .attr('class', d => d === 50 ? 'rdmD3Grid rdmD3Baseline' : 'rdmD3Grid')
+    .attr('x1', 0)
+    .attr('x2', iw)
+    .attr('y1', d => y(d))
+    .attr('y2', d => y(d));
+
+  const yAxis = d3.axisLeft(y)
+    .tickValues([0, 50, 100])
+    .tickFormat(d => `${d}%`)
+    .tickSize(0)
+    .tickPadding(8);
+
+  const yAxisG = g.append('g')
+    .attr('class', 'rdmD3Axis')
+    .call(yAxis);
+  yAxisG.select('.domain').remove();
+
+  if (!trend.length) {
+    const emptySlots = ['M1', 'M2', 'M3', 'M4', 'M5'];
+    const ex = d3.scalePoint().domain(emptySlots).range([28, iw - 28]);
+    g.selectAll('text.rdmD3XLabel')
+      .data(emptySlots)
+      .join('text')
+      .attr('class', 'rdmD3XLabel')
+      .attr('x', d => ex(d))
+      .attr('y', ih + 20)
+      .attr('text-anchor', 'middle')
+      .text(d => d);
+
+    g.append('text')
+      .attr('class', 'rdmD3Empty')
+      .attr('x', iw / 2)
+      .attr('y', y(50) - 10)
+      .attr('text-anchor', 'middle')
+      .text('No completed matches logged in Firestore yet');
+    return;
+  }
+
+  const xDomain = trend.map((_, i) => i);
+  const x = d3.scalePoint()
+    .domain(xDomain)
+    .range(trend.length === 1 ? [iw / 2, iw / 2] : [30, iw - 30]);
+
+  const stemWidth = Math.min(34, Math.max(18, iw / Math.max(trend.length * 2.2, 6)));
+  const stemHeight = d => {
+    if (d.code === 'W') return ih * 0.86;
+    if (d.code === 'T') return ih * 0.52;
+    if (d.code === 'NR') return ih * 0.36;
+    return ih * 0.24;
+  };
+  const toneClass = d => d.code === 'W' ? 'is-win' : d.code === 'L' ? 'is-loss' : d.code === 'T' ? 'is-tie' : 'is-nr';
+
+  // Outcome backdrop bars (color-coded per match)
+  g.selectAll('rect.rdmD3Stem')
+    .data(trend)
+    .join('rect')
+    .attr('class', d => `rdmD3Stem ${toneClass(d)}`)
+    .attr('x', (_d, i) => x(i) - stemWidth / 2)
+    .attr('y', d => ih - stemHeight(d))
+    .attr('width', stemWidth)
+    .attr('height', d => stemHeight(d))
+    .attr('rx', 5);
+
+  // Running Win % area & smooth trajectory line
+  if (trend.length > 1) {
+    const areaGen = d3.area()
+      .x((_d, i) => x(i))
+      .y0(ih)
+      .y1(d => y(d.runningWinPct))
+      .curve(d3.curveMonotoneX);
+
+    g.append('path')
+      .datum(trend)
+      .attr('class', 'rdmD3Area')
+      .attr('fill', `url(#${gradId})`)
+      .attr('d', areaGen);
+
+    const lineGen = d3.line()
+      .x((_d, i) => x(i))
+      .y(d => y(d.runningWinPct))
+      .curve(d3.curveMonotoneX);
+
+    g.append('path')
+      .datum(trend)
+      .attr('class', 'rdmD3Line')
+      .attr('d', lineGen);
+  }
+
+  // X-axis match labels
+  const shortOpp = name => {
+    const clean = mini(name || 'Opp');
+    return clean.length > 10 ? clean.slice(0, 9) + '…' : clean;
+  };
+
+  g.selectAll('text.rdmD3XLabel')
+    .data(trend)
+    .join('text')
+    .attr('class', (_d, i) => `rdmD3XLabel${i === trend.length - 1 ? ' is-latest' : ''}`)
+    .attr('x', (_d, i) => x(i))
+    .attr('y', ih + 20)
+    .attr('text-anchor', 'middle')
+    .text((d, i) => `M${i + 1} · ${shortOpp(d.opponent)}`);
+
+  // Subtle vertical crosshair guide line synced with active match hover
+  const guideLine = g.append('line')
+    .attr('class', 'rdmD3Guide')
+    .attr('y1', 0)
+    .attr('y2', ih)
+    .style('opacity', 0);
+
+  // Interactive tooltip helpers (explicitly shows Opponent, Date, Venue, Score & Win Rate)
+  const tipEl = chartWrap.querySelector('.matchTrendTooltip');
+  const setHoverIdx = activeIdx => {
+    g.selectAll('rect.rdmD3Stem').classed('is-hovered', (_d, idx) => idx === activeIdx);
+    g.selectAll('g.rdmD3Node').classed('is-hovered', (_d, idx) => idx === activeIdx);
+    if (activeIdx >= 0 && activeIdx < trend.length) {
+      const gx = x(activeIdx);
+      guideLine.attr('x1', gx).attr('x2', gx).style('opacity', 1);
+    } else {
+      guideLine.style('opacity', 0);
+    }
+  };
+  const showTip = (d, i) => {
+    if (!tipEl) return;
+    setHoverIdx(i);
+    const oppName = mini(d.opponent || 'Opponent');
+    const dateStr = d.dateLabel || d.date || 'Result logged';
+    const venueStr = d.venue ? mini(d.venue) : '';
+    const scoreStr = (d.ourScore || d.oppScore)
+      ? `RDM ${d.ourScore || '—'} vs ${d.oppScore || '—'}`
+      : '';
+    const outcomeWord = d.code === 'W' ? 'WIN' : d.code === 'L' ? 'LOSS' : d.code === 'T' ? 'TIE' : 'NR';
+    const resStr = d.result ? mini(d.result) : (d.code === 'W' ? 'RDM Won' : d.code === 'L' ? 'RDM Lost' : d.code === 'T' ? 'Match Tied' : 'No Result');
+    const detailRows = [
+      `<div class="matchTrendTipRow"><span>Opponent</span><strong>${esc(oppName)}</strong></div>`,
+      `<div class="matchTrendTipRow"><span>Date</span><strong>${esc(dateStr)}</strong></div>`
+    ];
+    if (venueStr) {
+      detailRows.push(`<div class="matchTrendTipRow"><span>Venue</span><strong>${esc(venueStr)}</strong></div>`);
+    }
+    if (scoreStr) {
+      detailRows.push(`<div class="matchTrendTipRow"><span>Score</span><strong>${esc(scoreStr)}</strong></div>`);
+    }
+    const potmHtml = d.potm ? `<span>POTM: <b>${esc(mini(d.potm))}</b></span>` : '';
+    tipEl.innerHTML = `<div class="matchTrendTipHead"><b class="matchTrendTipBadge ${toneClass(d)}">${esc(outcomeWord)}</b><span class="matchTrendTipMatchNum">Match ${i + 1} of ${trend.length}</span></div><div class="matchTrendTipDetails">${detailRows.join('')}</div><div class="matchTrendTipMeta">${esc(resStr)}</div><div class="matchTrendTipFoot"><span>Win Rate: <b>${esc(String(d.runningWinPct))}%</b></span>${potmHtml}</div>`;
+    tipEl.hidden = false;
+    const px = ((margin.left + x(i)) / W) * 100;
+    const py = ((margin.top + y(d.runningWinPct)) / H) * 100;
+    const flipBelow = py < 50;
+    tipEl.classList.toggle('is-below', flipBelow);
+    tipEl.style.left = `${Math.min(82, Math.max(18, px))}%`;
+    tipEl.style.top = flipBelow
+      ? `${Math.min(84, py + 11)}%`
+      : `${Math.max(14, py - 9)}%`;
+  };
+  const hideTip = () => {
+    setHoverIdx(-1);
+    if (tipEl) {
+      tipEl.hidden = true;
+      tipEl.classList.remove('is-below');
+    }
+  };
+
+  const colStep = trend.length > 1 ? (iw - 60) / (trend.length - 1) : iw;
+  const colHitW = trend.length > 1 ? Math.max(44, colStep) : iw;
+
+  // Full-height column hover hit areas so hovering anywhere on a match bar reveals tooltip
+  g.selectAll('rect.rdmD3ColHit')
+    .data(trend)
+    .join('rect')
+    .attr('class', 'rdmD3ColHit')
+    .attr('x', (_d, i) => x(i) - colHitW / 2)
+    .attr('y', 0)
+    .attr('width', colHitW)
+    .attr('height', ih)
+    .on('mouseenter', function (_ev, d) {
+      showTip(d, trend.indexOf(d));
+    })
+    .on('click', function (_ev, d) {
+      const i = trend.indexOf(d);
+      if (tipEl && !tipEl.hidden && tipEl.dataset.activeIdx === String(i)) {
+        hideTip();
+        delete tipEl.dataset.activeIdx;
+      } else {
+        if (tipEl) tipEl.dataset.activeIdx = String(i);
+        showTip(d, i);
+      }
+    });
+
+  // Interactive data nodes
+  const nodes = g.selectAll('g.rdmD3Node')
+    .data(trend)
+    .join('g')
+    .attr('class', (d, i) => `rdmD3Node ${toneClass(d)}${i === trend.length - 1 ? ' is-latest' : ''}`)
+    .attr('transform', (d, i) => `translate(${x(i)},${y(d.runningWinPct)})`)
+    .attr('tabindex', '0')
+    .attr('role', 'button')
+    .attr('aria-label', (d, i) => `Match ${i + 1}, Opponent ${mini(d.opponent)}, Date ${d.dateLabel || 'logged date'}, Result ${d.code}, running win rate ${d.runningWinPct}%`);
+
+  nodes.append('circle')
+    .attr('class', 'rdmD3Hit')
+    .attr('r', 16);
+
+  nodes.append('circle')
+    .attr('class', 'rdmD3Dot')
+    .attr('r', (_d, i) => i === trend.length - 1 ? 7 : 5.5);
+
+  nodes.append('text')
+    .attr('class', 'rdmD3NodeCode')
+    .attr('y', -11)
+    .attr('text-anchor', 'middle')
+    .text(d => d.code);
+
+  nodes
+    .on('mouseenter focus', function (_ev, d) {
+      showTip(d, trend.indexOf(d));
+    })
+    .on('click', function (_ev, d) {
+      const i = trend.indexOf(d);
+      if (tipEl && !tipEl.hidden && tipEl.dataset.activeIdx === String(i)) {
+        hideTip();
+        delete tipEl.dataset.activeIdx;
+      } else {
+        if (tipEl) tipEl.dataset.activeIdx = String(i);
+        showTip(d, i);
+      }
+    })
+    .on('blur', () => {
+      if (tipEl) delete tipEl.dataset.activeIdx;
+      hideTip();
+    });
+
+  svg.on('mouseleave', () => {
+    if (tipEl) delete tipEl.dataset.activeIdx;
+    hideTip();
+  });
+}
+
 window.rdmEnhanceMatchCentre = function () {
   const list = document.getElementById('matchList');
   if (!list || typeof D === 'undefined') return;
   const matches = Array.isArray(D.matches) ? D.matches : [];
-  const counts = { ALL: matches.length, UPCOMING: 0, LIVE: 0, COMPLETED: 0 };
-  let wins = 0;
-  matches.forEach(m => {
-    const st = rdmClassifyMatchStatus(m);
-    if (st === 'LIVE') counts.LIVE++;
-    else if (st === 'COMPLETED') counts.COMPLETED++;
-    else counts.UPCOMING++;
-    if (/\bRDM WON\b|\bWON\b/i.test([m.result, m.note].filter(Boolean).join(' '))) wins++;
-  });
+  const stats = rdmComputeMatchSummaryStats(matches);
+  const counts = {
+    ALL: stats.totalFixtures,
+    UPCOMING: stats.upcoming,
+    LIVE: stats.live,
+    COMPLETED: stats.played,
+    CANCELLED: stats.cancelled
+  };
+
   const spotEl = document.getElementById('bestMatchSpotlight');
   if (spotEl) {
     const bestInfo = rdmComputeBestMatch(matches);
     spotEl.innerHTML = bestInfo ? rdmBestMatchCardHtml(bestInfo, false) : '';
     spotEl.style.marginBottom = bestInfo ? '18px' : '0';
   }
+
   const sumEl = document.getElementById('matchSummary');
   if (sumEl) {
-    if (matches.length) {
-      const winRate = counts.COMPLETED > 0 ? Math.round((wins / counts.COMPLETED) * 100) + '%' : '—';
-      sumEl.innerHTML = `<div class="matchSummaryItem"><strong>${matches.length}</strong><span>Total Fixtures</span></div><div class="matchSummaryItem"><strong>${wins}</strong><span>RDM Wins</span></div><div class="matchSummaryItem"><strong>${counts.UPCOMING}</strong><span>Upcoming</span></div><div class="matchSummaryItem"><strong>${winRate}</strong><span>Win Rate</span></div>`;
-    } else {
-      sumEl.innerHTML = '';
+    const hasD3 = typeof window.d3 !== 'undefined';
+    const summarySig = JSON.stringify({
+      t: stats.totalFixtures,
+      p: stats.played,
+      w: stats.wins,
+      l: stats.losses,
+      ti: stats.ties,
+      nr: stats.noResult,
+      u: stats.upcoming,
+      lv: stats.live,
+      c: stats.cancelled,
+      ws: stats.winStreak,
+      wp: stats.winPctText,
+      hs: stats.highestScore ? `${stats.highestScore.display}:${stats.highestScore.opponent}` : '',
+      rf: stats.recentTrend.map(x => `${x.code}:${x.opponent}:${x.dateLabel}:${x.venue}:${x.potm}:${x.ourScore}:${x.oppScore}:${x.runningWinPct}`),
+      d3: hasD3
+    });
+    if (sumEl.dataset.summarySig !== summarySig) {
+      sumEl.dataset.summarySig = summarySig;
+      const winToneClass = stats.winPctNum === null ? '' : (stats.winPctNum >= 50 ? ' is-win' : ' is-loss');
+      const liveToneClass = stats.live > 0 ? ' is-live' : '';
+      const playedSub = stats.totalFixtures > 0
+        ? `${stats.totalFixtures} Total Fixture${stats.totalFixtures === 1 ? '' : 's'}`
+        : 'Synced with Firestore';
+      const wlParts = [`${stats.losses} Lost`];
+      if (stats.ties > 0) wlParts.push(`${stats.ties} Tied`);
+      if (stats.noResult > 0) wlParts.push(`${stats.noResult} NR`);
+      const winRateSub = stats.decided > 0
+        ? `${stats.wins} of ${stats.decided} decided`
+        : (stats.played > 0 ? 'No decided results yet' : 'Awaiting results');
+      const barWidth = stats.winPctNum === null ? 0 : Math.min(100, Math.max(0, stats.winPctNum));
+      const upVal = stats.live > 0 ? `${stats.live} Live` : String(stats.upcoming);
+      const upLabel = stats.live > 0 ? 'Live &amp; Upcoming' : 'Upcoming Fixtures';
+      const upSub = stats.live > 0
+        ? `${stats.upcoming} Scheduled Next`
+        : (stats.cancelled > 0 ? `${stats.cancelled} Cancelled` : 'Scheduled Next');
+      const hiVal = stats.highestScore ? esc(stats.highestScore.display) : '—';
+      const hiSub = stats.highestScore
+        ? `vs ${esc(mini(stats.highestScore.opponent || 'Opponent'))}`
+        : 'Awaiting scorecards';
+
+      const trendList = stats.recentTrend;
+      const tW = trendList.filter(x => x.code === 'W').length;
+      const tL = trendList.filter(x => x.code === 'L').length;
+      const tT = trendList.filter(x => x.code === 'T').length;
+      const trendTitle = trendList.length
+        ? `Win / Loss Trend · Last ${trendList.length} Match${trendList.length === 1 ? '' : 'es'}`
+        : 'Win / Loss Trend · Recent Matches';
+      const trendSummary = trendList.length
+        ? `${tW}W · ${tL}L${tT ? ` · ${tT}T` : ''} · Oldest → Latest`
+        : 'Synced from Firestore Matches';
+      const streakTone = stats.winStreak > 0 ? 'is-hot' : 'is-neutral';
+      const streakValue = stats.winStreak > 0
+        ? `${stats.winStreak}W`
+        : (stats.decided > 0 ? '0' : '—');
+
+      const formRow = `<div class="matchSummaryFormRow">
+          <div class="matchTrendHead">
+            <div class="matchTrendMeta">
+              <span>${esc(trendTitle)}</span>
+              <small class="matchSummarySub">${esc(trendSummary)}</small>
+            </div>
+            <div class="matchTrendAside">
+              <div class="matchWinStreakBadge ${streakTone}" title="Current consecutive RDM wins from latest completed matches">
+                <span>Win Streak</span>
+                <strong>${esc(streakValue)}</strong>
+              </div>
+              <div class="matchTrendLegend" aria-hidden="true">
+                <span class="matchLegendItem is-win"><i></i>Win</span>
+                <span class="matchLegendItem is-loss"><i></i>Loss</span>
+                <span class="matchLegendItem is-tie"><i></i>Tie</span>
+              </div>
+            </div>
+          </div>
+          <div class="matchTrendChartWrap">
+            <div class="matchTrendTooltip" hidden></div>
+          </div>
+        </div>`;
+
+      sumEl.innerHTML = `<div class="matchSummaryItem"><strong>${stats.played}</strong><span>Total Matches Played</span><small class="matchSummarySub">${esc(playedSub)}</small></div>`
+        + `<div class="matchSummaryItem${stats.wins > 0 ? ' is-win' : ''}"><strong>${stats.wins}</strong><span>Matches Won</span><small class="matchSummarySub">${esc(wlParts.join(' · '))}</small></div>`
+        + `<div class="matchSummaryItem${winToneClass}"><strong>${esc(stats.winPctText)}</strong><span>Win Percentage</span><div class="matchSummaryBar" aria-hidden="true"><i style="width:${barWidth}%"></i></div><small class="matchSummarySub">${esc(winRateSub)}</small></div>`
+        + `<div class="matchSummaryItem${liveToneClass}"><strong>${esc(upVal)}</strong><span>${upLabel}</span><small class="matchSummarySub">${esc(upSub)}</small></div>`
+        + `<div class="matchSummaryItem"><strong>${hiVal}</strong><span>Highest Team Score</span><small class="matchSummarySub">${hiSub}</small></div>`
+        + formRow;
+
+      const chartWrap = sumEl.querySelector('.matchTrendChartWrap');
+      if (chartWrap) rdmRenderMatchTrendD3(chartWrap, stats);
     }
   }
+
   const fBar = document.getElementById('matchStatusFilters');
   if (fBar) {
     if (matches.length) {
@@ -670,28 +1201,30 @@ function v6EnhanceMatches() { window.rdmEnhanceMatchCentre(); }
 
 async function v6EditMatch(id) {
   if (!rdmAdmin()) return;
-  const m = D.matches.find(x => x._docId === id);
-  if (!m) return;
-  const tossWinner = xp('Toss winner', m.tossWinner || '');
-  const tossDecision = xp('Toss decision: Bat / Bowl', m.tossDecision || '');
-  const batting = xp('Batting scorecard: Name Runs(Balls), 4s, 6s — one player per line', m.batting || '');
-  const bowling = xp('Bowling: Name Overs-Runs-Wickets — one bowler per line', m.bowling || '');
-  const partnerships = xp('Partnerships', m.partnerships || '');
-  const fow = xp('Fall of wickets', m.fow || '');
-  const potm = xp('Player of the Match', m.potm || '');
-  try {
-    const clean = v6Strip({ tossWinner, tossDecision, batting, bowling, partnerships, fow, potm, updatedAt: rdmStamp() });
-    if (id && !String(id).startsWith('loc_')) {
-      await rdmDB.collection('Matches').doc(id).set(clean, { merge: true });
-    } else {
-      const ref = await rdmDB.collection('Matches').add({ ...clean, opponent: m.opponent || 'Opponent', createdMs: m.createdMs || Date.now() });
-      m._docId = ref.id;
-    }
-  } catch (err) {
-    v6Err(err, 'Match details sync');
+  if (typeof window.v6EditMatch === 'function' && window.v6EditMatch !== v6EditMatch) {
+    return window.v6EditMatch(id);
   }
-  await rdmLoadAll();
-  setTimeout(v6render, 100);
+  const m = D.matches.find(x => x._docId === id);
+  if (!m || typeof window.rdmUnifiedModal !== 'function') return toast?.('Scorecard form loading');
+  return window.rdmUnifiedModal('Edit Match Details', [
+    { name: 'tossWinner', label: 'Toss Winner', value: m.tossWinner || '' },
+    { name: 'tossDecision', label: 'Toss Decision', value: m.tossDecision || '' },
+    { name: 'potm', label: 'Player of the Match', value: m.potm || '' },
+    { name: 'batting', label: 'Batting Scorecard', type: 'textarea', value: m.batting || '', rows: 4, full: true },
+    { name: 'bowling', label: 'Bowling Scorecard', type: 'textarea', value: m.bowling || '', rows: 4, full: true },
+    { name: 'partnerships', label: 'Partnerships', type: 'textarea', value: m.partnerships || '', rows: 2, full: true },
+    { name: 'fow', label: 'Fall of Wickets', type: 'textarea', value: m.fow || '', rows: 2, full: true }
+  ], async d => {
+    Object.assign(m, d);
+    try {
+      const clean = v6Strip({ ...d, updatedAt: rdmStamp() });
+      if (id && !String(id).startsWith('loc_')) await rdmDB.collection('Matches').doc(id).set(clean, { merge: true });
+      else { const ref = await rdmDB.collection('Matches').add({ ...clean, opponent: m.opponent || 'Opponent', createdMs: m.createdMs || Date.now() }); m._docId = ref.id; }
+    } catch (err) { v6Err(err, 'Match details sync'); }
+    await rdmLoadAll();
+    setTimeout(v6render, 100);
+    toast?.('Match scorecard updated');
+  });
 }
 
 function v6Poster(id) {
@@ -709,21 +1242,30 @@ function v6Poster(id) {
 
 async function v6AddOpponent(id) {
   if (!rdmAdmin()) return;
-  const x = V6.opponents.find(z => z._docId === id) || {};
-  const name = xp('Opponent team name', x.name || '');
-  if (!name) return;
-  const played = xnum(xp('Matches played', x.played || 0));
-  const won = xnum(xp('RDM wins', x.won || 0));
-  const lost = xnum(xp('RDM losses', x.lost || 0));
-  const d = { name, played, won, lost, updatedAt: rdmStamp(), createdMs: x.createdMs || Date.now() };
-  try {
-    (id && !String(id).startsWith('loc_'))
-      ? await rdmDB.collection(V6COL.opponents).doc(id).set(v6Strip(d), { merge: true })
-      : await rdmDB.collection(V6COL.opponents).add(v6Strip(d));
-  } catch (err) {
-    v6Err(err, 'Opponent sync');
+  if (typeof window.v6AddOpponent === 'function' && window.v6AddOpponent !== v6AddOpponent) {
+    return window.v6AddOpponent(id);
   }
-  await v6load();
+  const x = V6.opponents.find(z => z._docId === id) || {};
+  if (typeof window.rdmUnifiedModal !== 'function') return toast?.('Opponent form loading');
+  return window.rdmUnifiedModal(id ? 'Edit Opponent' : 'Add Opponent', [
+    { name: 'name', label: 'Opponent Team Name', value: x.name || '', required: true, full: true },
+    { name: 'played', label: 'Matches Played', type: 'number', value: x.played ?? 0 },
+    { name: 'won', label: 'RDM Wins', type: 'number', value: x.won ?? 0 },
+    { name: 'lost', label: 'RDM Losses', type: 'number', value: x.lost ?? 0 }
+  ], async f => {
+    const d = { name: String(f.name || '').trim(), played: xnum(f.played), won: xnum(f.won), lost: xnum(f.lost), updatedAt: rdmStamp(), createdMs: x.createdMs || Date.now() };
+    if (!d.name) { toast?.('Opponent name required'); throw Error('VALIDATION'); }
+    try {
+      (id && !String(id).startsWith('loc_'))
+        ? await rdmDB.collection(V6COL.opponents).doc(id).set(v6Strip(d), { merge: true })
+        : await rdmDB.collection(V6COL.opponents).add(v6Strip(d));
+    } catch (err) {
+      v6Err(err, 'Opponent sync');
+    }
+    await v6load();
+    window.refreshAdminSectionManager?.();
+    toast?.('Opponent saved & synced');
+  });
 }
 
 async function v6Delete(c, id) {
@@ -760,7 +1302,7 @@ window.v6render = v6render;
 document.addEventListener('click', e => {
   if (e.target?.id === 'addRecord') window.v6AddRecord?.();
   if (e.target?.id === 'addTournament') window.v6AddTournament?.();
-  if (e.target?.id === 'addOpponent') v6AddOpponent();
+  if (e.target?.id === 'addOpponent') window.v6AddOpponent?.();
   const mf = e.target.closest?.('[data-match-filter]');
   if (mf) { window.v6SetMatchStatusFilter(mf.dataset.matchFilter); return; }
   if (e.target?.id === 'matchResetFilterBtn') { window.v6SetMatchStatusFilter('ALL'); return; }
@@ -811,6 +1353,7 @@ function admEsc(v) {
 
 function buildAdminManagerHtml(type) {
   const listWrap = (rows, empty) => `<div class="adminManagerList">${rows.length ? rows.join('') : `<div class="empty">${empty}</div>`}</div>`;
+  const searchBox = (ph) => `<div class="adminManagerSearch"><input id="adminManagerSearchInput" type="search" value="${admEsc(window._admMgrFilter || '')}" placeholder="${admEsc(ph)}" oninput="rdmFilterAdminManager(this.value)"></div>`;
   if (type === 'matches') {
     const arr = (typeof D !== 'undefined' && Array.isArray(D.matches)) ? D.matches : [];
     return {
@@ -825,7 +1368,7 @@ function buildAdminManagerHtml(type) {
     return {
       title: 'Manage News & Announcements',
       sub: 'Create, edit, pin to Home notice banner, or remove announcements',
-      top: `<div class="adminManagerTopBtns"><button type="button" class="primary" onclick="openEdit('news')">+ Add News</button></div>`,
+      top: `<div class="adminManagerTopBtns"><button type="button" class="primary" onclick="addNewsModal()">+ Add News</button></div>`,
       body: listWrap(arr.map(n => `<div class="adminManagerRow"><div class="adminManagerMeta"><strong>${n.pinned ? '[Pinned] ' : ''}${mini(n.title || 'Announcement')}</strong><small>${admEsc(String(n.text || '').slice(0, 110))}</small></div><div class="adminManagerBtns"><button type="button" class="tinyBtn" onclick="editNews('${admEsc(n._docId)}')">Edit</button><button type="button" class="tinyBtn" onclick="togglePin('${admEsc(n._docId)}',${!n.pinned})">${n.pinned ? 'Unpin' : 'Pin to Home'}</button><button type="button" class="tinyBtn deleteBtn" onclick="xdelete('News','${admEsc(n._docId)}')">Delete</button></div></div>`), 'No news added yet')
     };
   }
@@ -844,10 +1387,10 @@ function buildAdminManagerHtml(type) {
     return {
       title: 'Player Stats & Ranking',
       sub: 'Update individual career stats for every squad member',
-      top: '',
+      top: searchBox('Filter player stats by name or RDM ID...'),
       body: listWrap(players.map(p => {
         const s = stats.find(z => z.playerId === p.id) || {};
-        return `<div class="adminManagerRow"><div class="adminManagerMeta"><strong>${mini(p.name)}</strong><small>${admEsc(p.id)} · Matches: ${Number(s.matches || 0)} · Runs: ${Number(s.runs || 0)} · Wickets: ${Number(s.wickets || 0)}</small></div><div class="adminManagerBtns"><button type="button" class="tinyBtn" onclick="editStats('${admEsc(p.id)}')">Edit Stats</button></div></div>`;
+        return `<div class="adminManagerRow" data-search="${admEsc((p.name + ' ' + p.id + ' ' + p.role).toLowerCase())}"><div class="adminManagerMeta"><strong>${mini(p.name)}</strong><small>${admEsc(p.id)} · Matches: ${Number(s.matches || 0)} · Runs: ${Number(s.runs || 0)} · Wickets: ${Number(s.wickets || 0)}</small></div><div class="adminManagerBtns"><button type="button" class="tinyBtn" onclick="editStats('${admEsc(p.id)}')">Edit Stats</button><button type="button" class="tinyBtn" onclick="adminOpenPlayerProfile('${admEsc(p.id)}')">Profile</button></div></div>`;
       }), 'No players found')
     };
   }
@@ -905,11 +1448,11 @@ function buildAdminManagerHtml(type) {
     return {
       title: 'Manage Player Availability',
       sub: 'Update matchday availability for each squad player',
-      top: '',
+      top: searchBox('Filter availability by player name or RDM ID...'),
       body: listWrap(players.map(p => {
         const a = av.find(z => z.playerId === p.id);
         const st = a?.status || 'NOT SET';
-        return `<div class="adminManagerRow"><div class="adminManagerMeta"><strong>${mini(p.name)}</strong><small>${admEsc(p.id)} · Status: ${admEsc(st)}</small></div><div class="adminManagerBtns"><button type="button" class="tinyBtn" onclick="setAvailability('${admEsc(p.id)}')">Change Status</button></div></div>`;
+        return `<div class="adminManagerRow" data-search="${admEsc((p.name + ' ' + p.id + ' ' + p.role).toLowerCase())}"><div class="adminManagerMeta"><strong>${mini(p.name)}</strong><small>${admEsc(p.id)} · Status: ${admEsc(st)}</small></div><div class="adminManagerBtns"><button type="button" class="tinyBtn" onclick="setAvailability('${admEsc(p.id)}')">Change Status</button></div></div>`;
       }), 'No players found')
     };
   }
@@ -917,18 +1460,18 @@ function buildAdminManagerHtml(type) {
     const arr = (typeof D !== 'undefined' && Array.isArray(D.honours)) ? D.honours : [];
     return {
       title: 'Manage Club Honours & Trophies',
-      sub: 'Add or remove club silverware',
+      sub: 'Add, edit, upload trophy photo, or remove club silverware',
       top: `<div class="adminManagerTopBtns"><button type="button" class="primary" onclick="openEdit('honour')">+ Add Honour</button></div>`,
-      body: listWrap(arr.map((h, i) => `<div class="adminManagerRow"><div class="adminManagerMeta"><strong>${admEsc(h.year)} · ${mini(h.title || 'Honour')}</strong><small>${admEsc(h.sub || '')}</small></div><div class="adminManagerBtns"><button type="button" class="tinyBtn deleteBtn" onclick="removeItem('honours',${i})">Delete</button></div></div>`), 'No honours added yet')
+      body: listWrap(arr.map((h, i) => `<div class="adminManagerRow"><div class="adminManagerMeta"><strong>${admEsc(h.year)} · ${mini(h.title || 'Honour')}</strong><small>${admEsc(h.sub || '')}</small></div><div class="adminManagerBtns"><button type="button" class="tinyBtn" onclick="editHonour(${i})">Edit</button><button type="button" class="tinyBtn deleteBtn" onclick="removeItem('honours',${i})">Delete</button></div></div>`), 'No honours added yet')
     };
   }
   if (type === 'gallery') {
     const arr = (typeof D !== 'undefined' && Array.isArray(D.gallery)) ? D.gallery : [];
     return {
       title: 'Manage Club Gallery',
-      sub: 'Upload new photos, change albums, or delete items',
+      sub: 'Upload new photos, edit captions/images, change albums, or delete items',
       top: `<div class="adminManagerTopBtns"><button type="button" class="primary" onclick="openEdit('gallery')">+ Add Gallery Photo</button></div>`,
-      body: listWrap(arr.map(g => `<div class="adminManagerRow"><div class="adminManagerMeta"><strong>${mini(g.caption || 'RDM Memory')}</strong><small>${admEsc(g.album || 'MEMORIES')}</small></div><div class="adminManagerBtns"><button type="button" class="tinyBtn" onclick="moveGalleryPhoto?.('${admEsc(g._docId)}','${admEsc((g.album || 'MEMORIES').toUpperCase())}')">Move</button><button type="button" class="tinyBtn deleteBtn" onclick="xdelete('Gallery','${admEsc(g._docId)}')">Delete</button></div></div>`), 'No gallery photos yet')
+      body: listWrap(arr.map(g => `<div class="adminManagerRow"><div class="adminManagerMeta"><strong>${mini(g.caption || 'RDM Memory')}</strong><small>${admEsc(g.album || 'MEMORIES')}</small></div><div class="adminManagerBtns"><button type="button" class="tinyBtn" onclick="editGallery('${admEsc(g._docId)}')">Edit</button><button type="button" class="tinyBtn" onclick="moveGalleryPhoto?.('${admEsc(g._docId)}','${admEsc((g.album || 'MEMORIES').toUpperCase())}')">Move</button><button type="button" class="tinyBtn deleteBtn" onclick="xdelete('Gallery','${admEsc(g._docId)}')">Delete</button></div></div>`), 'No gallery photos yet')
     };
   }
   if (type === 'socials') {
@@ -943,8 +1486,35 @@ function buildAdminManagerHtml(type) {
   return null;
 }
 
+window.rdmFilterAdminManager = function (query) {
+  window._admMgrFilter = String(query || '');
+  const qNorm = window._admMgrFilter.trim().toLowerCase();
+  const list = document.querySelector('#rdmAdminManagerModal .adminManagerList');
+  if (!list) return;
+  let shown = 0;
+  list.querySelectorAll('.adminManagerRow').forEach(row => {
+    const hay = row.dataset.search || row.textContent.toLowerCase();
+    const match = !qNorm || hay.includes(qNorm);
+    row.hidden = !match;
+    row.style.display = match ? '' : 'none';
+    if (match) shown++;
+  });
+  let emptyEl = list.querySelector('.adminManagerFilterEmpty');
+  if (qNorm && shown === 0) {
+    if (!emptyEl) {
+      emptyEl = document.createElement('div');
+      emptyEl.className = 'empty adminManagerFilterEmpty';
+      emptyEl.textContent = 'No matching players';
+      list.appendChild(emptyEl);
+    }
+  } else if (emptyEl) {
+    emptyEl.remove();
+  }
+};
+
 window.openAdminSectionManager = function (type) {
   if (!rdmAdmin()) return toast?.('Admin only');
+  if (_rdmCurrentAdminManager !== type) window._admMgrFilter = '';
   const spec = buildAdminManagerHtml(type);
   if (!spec) return;
   _rdmCurrentAdminManager = type;
@@ -957,15 +1527,59 @@ window.openAdminSectionManager = function (type) {
   }
   m.className = 'modal show rdmUnifiedModal';
   m.innerHTML = `<div class="dialog publicDialog rdmAdminManagerDialog" role="dialog" aria-modal="true"><button class="close" type="button" aria-label="Close">×</button><div class="adminManagerHead"><span class="sectionKicker">Command Console</span><h2>${spec.title}</h2><p>${spec.sub}</p></div>${spec.top}${spec.body}</div>`;
-  const close = () => { _rdmCurrentAdminManager = null; m.remove(); };
+  const close = () => { _rdmCurrentAdminManager = null; window._admMgrFilter = ''; m.remove(); };
   m.querySelector('.close').onclick = close;
   m.onclick = e => { if (e.target === m) close(); };
+  if (window._admMgrFilter) window.rdmFilterAdminManager(window._admMgrFilter);
 };
 
 window.refreshAdminSectionManager = function () {
   if (!_rdmCurrentAdminManager) return;
-  if (!document.getElementById('rdmAdminManagerModal')?.classList.contains('show')) { _rdmCurrentAdminManager = null; return; }
+  const modal = document.getElementById('rdmAdminManagerModal');
+  if (!modal?.classList.contains('show')) { _rdmCurrentAdminManager = null; return; }
+  const searchInp = modal.querySelector('#adminManagerSearchInput');
+  if (searchInp && document.activeElement === searchInp) {
+    const spec = buildAdminManagerHtml(_rdmCurrentAdminManager);
+    const list = modal.querySelector('.adminManagerList');
+    if (spec && list) {
+      const tmp = document.createElement('div');
+      tmp.innerHTML = spec.body;
+      const nextList = tmp.querySelector('.adminManagerList');
+      if (nextList) list.innerHTML = nextList.innerHTML;
+      window.rdmFilterAdminManager(searchInp.value);
+    }
+    return;
+  }
   window.openAdminSectionManager(_rdmCurrentAdminManager);
+};
+
+window.refreshAdminWorkspaceKpis = function () {
+  const a = document.getElementById('adminBody');
+  if (!a || a.dataset.v61Ready !== '1' || !rdmAdmin()) return;
+  const nPlayers = Array.isArray(window.D?.players) ? D.players.length : 17;
+  const nMatches = Array.isArray(window.D?.matches) ? D.matches.length : 0;
+  const nTourn = Array.isArray(V6?.tournaments) ? V6.tournaments.length : 0;
+  const nNews = Array.isArray(window.D?.news) ? D.news.length : 0;
+  const nUpdates = Array.isArray(window.RDM_UPDATES) ? RDM_UPDATES.length : 0;
+  const nGallery = Array.isArray(window.D?.gallery) ? D.gallery.length : 0;
+  const setKpi = (key, val) => {
+    const el = a.querySelector(`[data-kpi="${key}"]`);
+    if (el) el.textContent = String(val);
+  };
+  setKpi('players', nPlayers);
+  setKpi('matches', nMatches);
+  setKpi('tournaments', nTourn);
+  setKpi('dispatches', nNews + nUpdates);
+  setKpi('gallery', nGallery);
+  const sideBtn = document.getElementById('adminSideNavSquadBtn');
+  if (sideBtn) sideBtn.textContent = `Squad Profiles (${nPlayers})`;
+  const authSlot = document.getElementById('adminSessionAuthSlot');
+  if (authSlot) {
+    const fbUser = typeof rdmAuth !== 'undefined' ? rdmAuth?.currentUser : null;
+    authSlot.innerHTML = fbUser
+      ? `<span class="adminSessionAuthChip is-ok">Firebase Auth: ${admEsc(fbUser.email || 'Authenticated')}</span>`
+      : `<button type="button" class="tinyBtn adminSessionAuthChip is-warn" onclick="document.getElementById('adminFirebaseEmailCard')?.scrollIntoView({behavior:'smooth',block:'start'})">Firebase Auth: Sign In</button>`;
+  }
 };
 
 /* Redesigned Sidebar + Main Workspace Admin Console */
@@ -973,7 +1587,10 @@ function v61Admin(force = false) {
   if (!rdmAdmin()) return;
   const a = document.getElementById('adminBody');
   if (!a) return;
-  if (!force && a.dataset.v61Ready === '1') return;
+  if (!force && a.dataset.v61Ready === '1') {
+    window.refreshAdminWorkspaceKpis?.();
+    return;
+  }
   a.dataset.v61Ready = '1';
 
   const nPlayers = Array.isArray(window.D?.players) ? D.players.length : 17;
@@ -982,6 +1599,10 @@ function v61Admin(force = false) {
   const nNews = Array.isArray(window.D?.news) ? D.news.length : 0;
   const nUpdates = Array.isArray(window.RDM_UPDATES) ? RDM_UPDATES.length : 0;
   const nGallery = Array.isArray(window.D?.gallery) ? D.gallery.length : 0;
+  const fbUser = typeof rdmAuth !== 'undefined' ? rdmAuth?.currentUser : null;
+  const authChipHtml = fbUser
+    ? `<span class="adminSessionAuthChip is-ok">Firebase Auth: ${admEsc(fbUser.email || 'Authenticated')}</span>`
+    : `<button type="button" class="tinyBtn adminSessionAuthChip is-warn" onclick="document.getElementById('adminFirebaseEmailCard')?.scrollIntoView({behavior:'smooth',block:'start'})">Firebase Auth: Sign In</button>`;
 
   const jump = id => `document.getElementById('${id}')?.scrollIntoView({behavior:'smooth',block:'start'})`;
 
@@ -995,7 +1616,7 @@ function v61Admin(force = false) {
       <nav class="adminSideNav">
         <button type="button" onclick="${jump('adminKpiOverview')}">Overview &amp; KPIs</button>
         <button type="button" onclick="${jump('adminModulesGrid')}">Operations Console</button>
-        <button type="button" onclick="${jump('adminPlayerManager')}">Squad Profiles (${nPlayers})</button>
+        <button type="button" id="adminSideNavSquadBtn" onclick="${jump('adminPlayerManager')}">Squad Profiles (${nPlayers})</button>
         <button type="button" onclick="${jump('adminAccessLinksBox')}">Portals &amp; Keys</button>
         <button type="button" onclick="document.querySelector('.brandAdminBox')?.scrollIntoView({behavior:'smooth',block:'start'})">Club Branding</button>
         <button type="button" onclick="${jump('adminFirebaseEmailCard')}">Auth Email SDK</button>
@@ -1016,16 +1637,17 @@ function v61Admin(force = false) {
           <span>Changes published here persist to Firestore and update Website &amp; Android APK live.</span>
         </div>
         <div class="adminSessionActions">
+          <div id="adminSessionAuthSlot">${authChipHtml}</div>
           <button type="button" class="secondary dangerBtn" onclick="rdmLockAdmin()">Lock Admin</button>
         </div>
       </div>
 
       <div class="adminKpiGrid" id="adminKpiOverview" aria-label="Club overview counts">
-        <div class="adminKpiCard"><span>Squad</span><strong>${nPlayers}</strong><small>Registered Players</small></div>
-        <div class="adminKpiCard"><span>Fixtures</span><strong>${nMatches}</strong><small>Matches &amp; Results</small></div>
-        <div class="adminKpiCard"><span>Competitions</span><strong>${nTourn}</strong><small>Tournaments</small></div>
-        <div class="adminKpiCard"><span>Dispatches</span><strong>${nNews + nUpdates}</strong><small>News &amp; Updates</small></div>
-        <div class="adminKpiCard"><span>Archive</span><strong>${nGallery}</strong><small>Gallery Photos</small></div>
+        <div class="adminKpiCard"><span>Squad</span><strong data-kpi="players">${nPlayers}</strong><small>Registered Players</small></div>
+        <div class="adminKpiCard"><span>Fixtures</span><strong data-kpi="matches">${nMatches}</strong><small>Matches &amp; Results</small></div>
+        <div class="adminKpiCard"><span>Competitions</span><strong data-kpi="tournaments">${nTourn}</strong><small>Tournaments</small></div>
+        <div class="adminKpiCard"><span>Dispatches</span><strong data-kpi="dispatches">${nNews + nUpdates}</strong><small>News &amp; Updates</small></div>
+        <div class="adminKpiCard"><span>Archive</span><strong data-kpi="gallery">${nGallery}</strong><small>Gallery Photos</small></div>
       </div>
 
       <div class="adminCategoryGrid" id="adminModulesGrid">
@@ -1094,12 +1716,23 @@ function v61Admin(force = false) {
 }
 
 const v61OldRenderAdmin = window.renderAdmin;
-window.renderAdmin = function () {
+window.renderAdmin = function (force = false) {
   const a = document.getElementById('adminBody');
+  const unlocked = !!rdmAdmin();
+  if (!force && unlocked && a?.dataset.v61Ready === '1') {
+    window.refreshAdminWorkspaceKpis?.();
+    window.rdmInjectPlayerManager?.();
+    window.rdmInjectBrandAdmin?.();
+    window.rdmInjectEmailToolCard?.();
+    return;
+  }
   if (a) delete a.dataset.v61Ready;
   if (v61OldRenderAdmin) v61OldRenderAdmin();
-  if (rdmAdmin()) setTimeout(() => v61Admin(true), 0);
+  if (unlocked) setTimeout(() => v61Admin(true), 0);
 };
+if (typeof rdmAuth !== 'undefined' && rdmAuth?.onAuthStateChanged) {
+  rdmAuth.onAuthStateChanged(() => window.refreshAdminWorkspaceKpis?.());
+}
 setInterval(() => {
   window.rdmRenderHomeMatchHub?.();
   window.rdmEnhanceMatchCentre?.();

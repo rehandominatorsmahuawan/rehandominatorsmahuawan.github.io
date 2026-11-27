@@ -197,9 +197,16 @@
       await oldLoad.apply(this, arguments);
       cleanPlayers();
       try {
-        window.render?.();
-        if (session?.mode === 'player' && window.__rdmUrlKeyRole === 'player') window.renderProfile?.();
-        if (window.rdmAdmin?.()) window.renderAdmin?.();
+        if (!window.rdmHasOpenModalOrTyping?.()) {
+          window.render?.();
+          if (session?.mode === 'player' && window.__rdmUrlKeyRole === 'player') window.renderProfile?.();
+          if (window.rdmAdmin?.()) {
+            window.refreshAdminWorkspaceKpis?.();
+            window.rdmInjectPlayerManager?.();
+            injectAdmin();
+            window.rdmInjectEmailToolCard?.();
+          }
+        }
       } catch {}
       applyBrand();
     };

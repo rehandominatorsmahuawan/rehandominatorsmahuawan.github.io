@@ -59,7 +59,7 @@ function rdmReportWriteError(err, label = 'Cloud sync') {
 window.rdmReportWriteError = rdmReportWriteError;
 
 function rdmHasOpenModalOrTyping() {
-  if (document.querySelector('#editor.show, #cropModal.show, #rdmUnifiedForm, #rdmProForm, #updateEditor, #v62Modal, #profileEditModal, #ownSocialManager, #rdmConfirmModal')) {
+  if (document.querySelector('#editor.show, #cropModal.show, #rdmUnifiedForm, #rdmProForm, #updateEditor, #v62Modal, #profileEditModal, #ownSocialManager, #rdmConfirmModal, #rdmAdminManagerModal.show, #adminPlayerProfileModal.show, #squadEditModal.show, #galleryMoveModal.show, #profileDownloadModal.show, #playerShareModal.show, #v6PosterModal.show')) {
     return true;
   }
   const ae = document.activeElement;
@@ -164,6 +164,9 @@ function rdmProfileTime(pr) {
 
 function rdmApplyProfileRecord(p, pr) {
   if (!p || !pr) return;
+  if ('name' in pr && pr.name) p.name = String(pr.name);
+  if ('role' in pr && pr.role) p.role = String(pr.role);
+  if ('detail' in pr && pr.detail !== undefined && pr.detail !== null && String(pr.detail).trim()) p.detail = String(pr.detail);
   if ('jersey' in pr && pr.jersey !== undefined && pr.jersey !== null) p.jersey = String(pr.jersey);
   if ('nick' in pr && pr.nick !== undefined && pr.nick !== null) {
     p.nick = String(pr.nick);
@@ -190,21 +193,31 @@ function rdmApplyOverridesToData() {
   }
   if (Array.isArray(o.extraPlayers)) {
     o.extraPlayers.forEach(ep => {
-      if (ep && ep.id && !D.players.some(p => p.id === ep.id)) D.players.push(ep);
+      if (ep && ep.id && ep.active !== false) {
+        const idx = D.players.findIndex(p => p.id === ep.id);
+        if (idx >= 0) D.players[idx] = { ...D.players[idx], ...ep };
+        else D.players.push({ ...ep });
+      }
     });
+  }
+  if (Array.isArray(o.removedPlayerIds) && o.removedPlayerIds.length) {
+    const removed = new Set(o.removedPlayerIds);
+    D.players = D.players.filter(p => !removed.has(p.id));
   }
   if (o.playerProfiles && typeof o.playerProfiles === 'object') {
     Object.values(o.playerProfiles).forEach(pr => {
-      const p = D.players.find(x => x.id === pr?.playerId);
+      const p = D.players.find(x => x.id === (pr?.playerId || pr?.id));
       if (p) rdmApplyProfileRecord(p, pr);
     });
   }
 }
 
 function rdmMergePlayersAndProfiles(teamDocs, profileDocs) {
+  const o = rdmGetOverrides();
+  const removedSet = new Set(Array.isArray(o.removedPlayerIds) ? o.removedPlayerIds : []);
   if (Array.isArray(teamDocs) && teamDocs.length > 0) {
     const mapped = teamDocs
-      .filter(p => p.active !== false)
+      .filter(p => p.active !== false && !removedSet.has(p.id || p._docId))
       .sort((a, b) => (a.order || 999) - (b.order || 999))
       .map(p => ({
         id: p.id || p._docId,
@@ -217,11 +230,24 @@ function rdmMergePlayersAndProfiles(teamDocs, profileDocs) {
         bio: p.bio || '',
         socials: Array.isArray(p.socials) ? p.socials : [],
         order: p.order || 999,
+        active: p.active !== false,
+        updatedMs: Number(p.updatedMs || 0),
         _docId: p._docId
       }));
     D.players = mapped;
   }
-  if (typeof rdmRepairRoster2026 === 'function') rdmRepairRoster2026();
+  if (Array.isArray(o.extraPlayers)) {
+    o.extraPlayers.forEach(ep => {
+      if (!ep || !ep.id || ep.active === false || removedSet.has(ep.id)) return;
+      const idx = D.players.findIndex(p => p.id === ep.id);
+      if (idx >= 0) D.players[idx] = { ...D.players[idx], ...ep };
+      else D.players.push({ ...ep });
+    });
+  }
+  if (typeof rdmRepairRoster2026 === 'function') rdmRepairRoster2026(true);
+  if (removedSet.size) {
+    D.players = D.players.filter(p => !removedSet.has(p.id));
+  }
 
   const sortedProfiles = [...(profileDocs || [])].sort((a, b) => {
     const dt = rdmProfileTime(a) - rdmProfileTime(b);
@@ -239,7 +265,7 @@ function rdmMergePlayersAndProfiles(teamDocs, profileDocs) {
     if (t >= (remoteLatestById[p.id] || 0)) remoteLatestById[p.id] = t;
   });
 
-  const localProfiles = rdmGetOverrides()?.playerProfiles || {};
+  const localProfiles = o?.playerProfiles || {};
   Object.entries(localProfiles).forEach(([pid, localPr]) => {
     const p = D.players.find(x => x.id === (localPr?.playerId || pid));
     if (!p || !localPr) return;
@@ -398,17 +424,23 @@ function rdmStartRealtimeSync() {
 
 async function rdmSyncRoster2026() {
   if (!rdmAdmin() || typeof rdmRoster2026 === 'undefined') return;
-  const b = rdmDB.batch();
-  Object.values(rdmRoster2026).forEach(c => {
-    const photoIds = ['RDM007', 'RDM012', 'RDM015', 'RDM016', 'RDM017'];
-    const data = {
-      id: c.id, name: c.name, role: c.role, detail: c.detail,
-      jersey: c.jersey || '', order: c.order, active: true, updatedAt: rdmStamp(),
-      ...(photoIds.includes(c.id) ? { image: c.image } : {})
-    };
-    b.set(rdmDB.collection(RCOL.players).doc(c.id), data, { merge: true });
-  });
-  await b.commit();
+  try {
+    const existing = await rdmDB.collection(RCOL.players).get();
+    const existingIds = new Set(existing.docs.map(d => d.id));
+    const b = rdmDB.batch();
+    let writes = 0;
+    Object.values(rdmRoster2026).forEach(c => {
+      if (existingIds.has(c.id)) return;
+      b.set(rdmDB.collection(RCOL.players).doc(c.id), {
+        id: c.id, name: c.name, role: c.role, detail: c.detail,
+        jersey: c.jersey || '', order: c.order, active: true, updatedAt: rdmStamp()
+      });
+      writes++;
+    });
+    if (writes > 0) await b.commit();
+  } catch (e) {
+    console.warn('Roster seed check skipped', e);
+  }
 }
 
 window.rdmBackendAuthReady = async (user, account) => {
@@ -516,8 +548,18 @@ window.playerPhotoUrl = playerPhotoUrl;
 
 function profileHtml(p, editable = false) {
   const socials = (p.socials || []).map(socialObj).filter(s => s.url || s.name);
+  const code = typeof playerCode === 'function' ? playerCode(p.id) : p.id;
   const sh = socials.length
-    ? `<div class="profileSocialList">${socials.map((s, i) => `<div class="profileSocialRow"><a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener">${esc(mini(s.name || ('Social ' + (i + 1))))} ↗</a></div>`).join('')}</div>`
+    ? `<div class="profileSocialList">${socials.map((s, i) => {
+        const href = safeUrl(s.url);
+        return `<div class="profileSocialRow">
+          <div>
+            <strong>${esc(mini(s.name || ('Social ' + (i + 1))))}</strong>
+            ${href ? `<small>${esc(href.replace(/^https?:\/\/(www\.)?/i, '').slice(0, 42))}</small>` : ''}
+          </div>
+          ${href ? `<a class="tinyBtn" href="${esc(href)}" target="_blank" rel="noopener">Open ↗</a>` : ''}
+        </div>`;
+      }).join('')}</div>`
     : '<p class="mutedMini">No social links added yet</p>';
 
   return `<article class="profileCard publicProfileCard">
@@ -527,30 +569,33 @@ function profileHtml(p, editable = false) {
       </div>
       <div class="profileIdentityHead">
         <div class="profileTagLine">
-          <span class="simplePlayerId">${esc(miniId(p.id))}</span>
+          <span class="simplePlayerId">${esc(miniId(p.id))} · ${esc(code)}</span>
           ${p.jersey ? `<span class="jerseyTag">Jersey #${esc(p.jersey)}</span>` : ''}
         </div>
         <h2>${esc(mini(p.name))}</h2>
         ${p.nick ? `<p class="profileNick">"${esc(mini(p.nick))}"</p>` : ''}
-        <div class="profileOfficial"><b>${esc(mini(p.role))}</b><span>${esc(mini(p.detail))}</span></div>
+        <div class="profileOfficial"><b>${esc(mini(p.role))}</b>${p.detail ? `<span>${esc(mini(p.detail))}</span>` : ''}</div>
       </div>
     </div>
     <div class="profileBioBlock">
       <span>Player Bio</span>
       <p class="profileBio">${p.bio ? esc(mini(p.bio)) : '<em class="mutedMini">No bio written yet — add a short player note.</em>'}</p>
     </div>
-    <div class="profileSocialsBlock"><span>Official Socials</span>${sh}</div>
-    ${editable ? `<div class="profileEditHub">
-      <button type="button" class="primary profileEditMain" onclick="openFullProfileEdit()">Edit Profile Details</button>
-      <button type="button" class="secondary" onclick="selfEdit('jersey')">Jersey</button>
-      <button type="button" class="secondary" onclick="selfEdit('nick')">Nickname</button>
-      <button type="button" class="secondary" onclick="selfEdit('bio')">Bio</button>
-      <button type="button" class="secondary" onclick="openOwnSocialManager()">Socials</button>
-      <button type="button" class="secondary" onclick="chooseDP()">Change Photo</button>
-      <button type="button" class="secondary" onclick="resetOwnPhoto()">Use Logo</button>
-      <button type="button" class="secondary profileDownloadMain" onclick="openProfileDownload()">Download Card</button>
-      <button type="button" class="secondary" id="playerInstallAppBtn" data-rdm-install-btn>Install My App</button>
-      <button type="button" class="secondary" onclick="rdmLockPlayer('${esc(p.id)}')">Lock Profile</button>
+    <div class="profileSocialsBlock">
+      <div class="profileBlockHead">
+        <span>Official Socials (${socials.length}/3)</span>
+        ${editable ? `<button type="button" class="tinyBtn" onclick="openOwnSocialManager()">Manage Socials</button>` : ''}
+      </div>
+      ${sh}
+    </div>
+    ${editable ? `<div class="profileEditorActionGroup">
+      <div class="profileEditHub">
+        <button type="button" class="primary profileEditMain" onclick="openFullProfileEdit()">Edit Profile Details</button>
+        <button type="button" class="secondary" onclick="chooseDP()">Change Photo</button>
+        <button type="button" class="secondary" onclick="resetOwnPhoto()">Use RDM Logo</button>
+        <button type="button" class="secondary profileDownloadMain" onclick="openProfileDownload()">Download Card</button>
+        <button type="button" class="secondary" id="playerInstallAppBtn" data-rdm-install-btn>Install My App</button>
+      </div>
     </div>` : `<div class="publicProfileFooterActions" style="margin-top:4px;">
       <button type="button" class="secondary" onclick="document.getElementById('publicProfileModal')?.classList.remove('show');window.openPlayerComparison?.('${esc(p.id)}')">Compare Player</button>
     </div>`}
@@ -690,10 +735,10 @@ render = function () {
   }).join('');
 
   q('#honourList').innerHTML = D.honours.map((h, i) => `<article class="honour">
-    <div class="trophy"><img src="${esc(h.image)}" alt="${esc(mini(h.title))}" onclick="zoom('${esc(h.image)}')"></div>
+    <div class="trophy"><img src="${esc(h.image || RDM_FALLBACK_LOGO)}" alt="${esc(mini(h.title))}" onclick="zoom('${esc(h.image || RDM_FALLBACK_LOGO)}')"></div>
     <h3>${esc(h.year)} · ${esc(mini(h.title))}</h3>
     <p>${esc(mini(h.sub))}</p>
-    ${rdmAdmin() ? `<button class="tinyBtn deleteBtn" onclick="removeItem('honours',${i})">Delete</button>` : ''}
+    ${rdmAdmin() ? `<div class="honourAdminActions"><button type="button" class="tinyBtn" onclick="editHonour(${i})">Edit</button><button type="button" class="tinyBtn deleteBtn" onclick="removeItem('honours',${i})">Delete</button></div>` : ''}
   </article>`).join('');
 
   q('#matchList').innerHTML = D.matches.length
@@ -775,8 +820,15 @@ renderProfile = function () {
 
   const av = (typeof XD !== 'undefined' && Array.isArray(XD.availability)) ? XD.availability.find(z => z.playerId === p.id) : null;
   const st = (typeof XD !== 'undefined' && Array.isArray(XD.stats)) ? (XD.stats.find(z => z.playerId === p.id) || {}) : {};
-  const status = av?.status || 'NOT SET';
+  const status = (av?.status || 'NOT SET').toUpperCase();
   const n = v => Number(v || 0) || 0;
+  const norm = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const pKey = norm(p.name), idKey = norm(p.id);
+  const potmCount = Math.max(
+    (D.matches || []).filter(m => { const pm = norm(m.potm); return pm && ((pKey && pm.includes(pKey)) || (idKey && pm.includes(idKey))); }).length,
+    ((typeof XD !== 'undefined' ? XD.achievements : []) || []).filter(a => /player of the match|potm/i.test(`${a.title || ''} ${a.detail || ''}`) && ((pKey && norm(a.playerName).includes(pKey)) || (idKey && norm(a.playerName).includes(idKey)))).length
+  );
+  const mvpPts = n(st.runs) + n(st.fours) + n(st.sixes) * 2 + n(st.fifties) * 15 + n(st.hundreds) * 35 + n(st.wickets) * 22 + n(st.runOuts) * 8 + potmCount * 30;
   const hasPending = !!rdmGetOverrides()?.playerProfiles?.[p.id]?._pending;
   const extras = `<div class="playerPortalExtras">
     <section class="playerPortalCard">
@@ -786,27 +838,67 @@ renderProfile = function () {
           <h3>My Match Availability</h3>
           <b class="availBadge ${status === 'AVAILABLE' ? 'available' : status === 'UNAVAILABLE' ? 'unavailable' : ''}">${esc(mini(status))}</b>
         </div>
-        <button type="button" class="primary" onclick="setAvailability('${esc(p.id)}')">Change Availability</button>
+        <div class="playerAvailSegmented" role="group" aria-label="Set matchday availability">
+          <button type="button" class="tinyBtn ${status === 'AVAILABLE' ? 'active' : ''}" onclick="rdmSetPlayerAvailability('${esc(p.id)}','AVAILABLE')">Available</button>
+          <button type="button" class="tinyBtn ${status === 'UNAVAILABLE' ? 'active' : ''}" onclick="rdmSetPlayerAvailability('${esc(p.id)}','UNAVAILABLE')">Unavailable</button>
+        </div>
       </div>
     </section>
     <section class="playerPortalCard">
-      <div class="sectionHead subHead"><div><span>Performance</span><h3>My Career Statistics</h3></div></div>
+      <div class="sectionHead subHead" style="margin-top:0;">
+        <div><span>Performance</span><h3>My Career Statistics</h3></div>
+        <button type="button" class="secondary" onclick="window.openPlayerComparison?.('${esc(p.id)}')">Compare Stats</button>
+      </div>
       <div class="playerPortalStatsGrid">
         <b>${n(st.matches)}<small>Matches</small></b>
         <b>${n(st.runs)}<small>Runs</small></b>
         <b>${n(st.highScore)}<small>High Score</small></b>
         <b>${n(st.wickets)}<small>Wickets</small></b>
+        <b>${mvpPts}<small>MVP Points</small></b>
         <b>${n(st.fours)} / ${n(st.sixes)}<small>4s / 6s</small></b>
         <b>${n(st.fifties)} / ${n(st.hundreds)}<small>50s / 100s</small></b>
         <b>${n(st.strikeRate)}<small>Strike Rate</small></b>
         <b>${esc(st.bestBowling || '—')}<small>Best Bowling</small></b>
         <b>${n(st.economy)}<small>Economy</small></b>
       </div>
-      ${st.last5 ? `<p class="squadStatLines">Last 5 Form: ${esc(st.last5)} · Season: ${esc(st.season || '2027')}</p>` : ''}
+      ${st.last5 || st.season ? `<p class="squadStatLines">${st.last5 ? `Last 5 Form: ${esc(st.last5)} · ` : ''}Season: ${esc(st.season || '2027')}${potmCount ? ` · ${potmCount} POTM` : ''}</p>` : ''}
     </section>
   </div>`;
-  body.innerHTML = `<div class="playerSyncStatusBanner"><span>${hasPending ? 'Saved Locally · Waiting for Cloud Sync Permissions' : 'Cloud Sync Connected · Changes update Website & Android APK'}</span><button type="button" class="tinyBtn" onclick="rdmLockPlayer('${esc(p.id)}')">Lock Profile</button></div>` + profileHtml(p, true) + extras;
+  body.innerHTML = `<div class="playerSyncStatusBanner">
+    <span>${hasPending ? 'Saved Locally · Waiting for Cloud Sync Permissions' : 'Cloud Sync Connected · Changes update Website & Android APK'}</span>
+    <div class="playerSyncStatusBtns">
+      <a class="tinyBtn" href="./">Public Website</a>
+      <button type="button" class="tinyBtn" onclick="rdmLockPlayer('${esc(p.id)}')">Lock Profile</button>
+    </div>
+  </div>` + profileHtml(p, true) + extras;
   window.rdmSyncInstallButtons?.();
+};
+
+window.rdmSetPlayerAvailability = async function (id, nextStatus) {
+  const canSelf = window.__rdmUrlKeyRole === 'player' && session?.mode === 'player' && session.playerId === id && rdmPlayerUnlockedNow(id);
+  if (!rdmAdmin() && !canSelf) return toast?.('Unlock profile first');
+  const status = String(nextStatus || 'AVAILABLE').toUpperCase();
+  if (!['AVAILABLE', 'UNAVAILABLE'].includes(status)) return;
+  const payload = { playerId: id, status, updatedMs: Date.now() };
+  const rec = { ...payload, _docId: id };
+  if (typeof XD !== 'undefined' && Array.isArray(XD.availability)) {
+    const idx = XD.availability.findIndex(z => z.playerId === id);
+    if (idx >= 0) XD.availability[idx] = rec;
+    else XD.availability.push(rec);
+  }
+  window.xSaveOverride?.('availability', XD?.availability || [rec], true);
+  let synced = true;
+  try {
+    await rdmDB.collection('Availability').doc(id).set({ ...rdmStripDocMeta(payload), updatedAt: rdmStamp() }, { merge: true });
+    window.xClearOverride?.('availability', true);
+  } catch (err) {
+    synced = false;
+    rdmReportWriteError(err, 'Availability sync');
+  }
+  window.xrender?.();
+  if (session?.mode === 'player') window.renderProfile?.();
+  window.refreshAdminSectionManager?.();
+  if (synced) toast?.('Availability set to ' + mini(status));
 };
 
 window.openPlayerProfile = id => {
@@ -915,7 +1007,7 @@ window.openOwnSocialManager = function () {
   const m = document.createElement('div');
   m.id = 'ownSocialManager';
   m.className = 'modal show profileEditOverlay';
-  m.innerHTML = `<div class="dialog rdmUnifiedDialog socialManagerDialog"><button class="close" type="button">×</button><h2>Social Links</h2><div class="socialManagerList">${socials.length ? socials.map((s, i) => `<div class="socialManagerRow"><b>${esc(mini(s.name || ('Social ' + (i + 1))))}</b><div><button type="button" class="tinyBtn" data-edit="${i}">Edit</button><button type="button" class="tinyBtn danger" data-delete="${i}">Delete</button></div></div>`).join('') : '<p class="mutedMini">No social links added yet</p>'}</div>${socials.length < 3 ? '<button type="button" class="primary wide socialManagerAdd">+ Add Social Link</button>' : ''}</div>`;
+  m.innerHTML = `<div class="dialog rdmUnifiedDialog socialManagerDialog"><button class="close" type="button">×</button><h2>Social Links</h2><div class="socialManagerList">${socials.length ? socials.map((s, i) => `<div class="socialManagerRow"><div class="socialManagerInfo"><b>${esc(mini(s.name || ('Social ' + (i + 1))))}</b>${s.url ? `<small>${esc(String(s.url).replace(/^https?:\/\/(www\.)?/i, '').slice(0, 44))}</small>` : ''}</div><div><button type="button" class="tinyBtn" data-edit="${i}">Edit</button><button type="button" class="tinyBtn danger" data-delete="${i}">Delete</button></div></div>`).join('') : '<p class="mutedMini">No social links added yet</p>'}</div>${socials.length < 3 ? '<button type="button" class="primary wide socialManagerAdd">+ Add Social Link</button>' : ''}</div>`;
   document.body.appendChild(m);
   const close = () => m.remove();
   m.querySelector('.close').onclick = close;
@@ -996,8 +1088,16 @@ q('#cropSave').onclick = async () => {
   const src = q('#cropCanvas'), out = document.createElement('canvas');
   out.width = 320;
   out.height = 320;
-  out.getContext('2d').drawImage(src, 0, 0, 320, 320);
-  p.image = out.toDataURL('image/jpeg', 0.72);
+  const octx = out.getContext('2d');
+  octx.fillStyle = '#FFFFFF';
+  octx.fillRect(0, 0, 320, 320);
+  octx.save();
+  octx.beginPath();
+  octx.arc(160, 160, 159, 0, Math.PI * 2);
+  octx.clip();
+  octx.drawImage(src, 0, 0, 320, 320);
+  octx.restore();
+  p.image = out.toDataURL('image/jpeg', 0.80);
   try {
     const synced = await rdmProfileWrite(p, { image: p.image });
     q('#cropModal').classList.remove('show');
@@ -1039,23 +1139,47 @@ window.removeItem = async (k, i) => {
   return run();
 };
 
-window.editPlayer = id => { if (rdmAdmin()) openEdit('editPlayer', D.players.find(x => x.id === id)); };
+window.editPlayer = id => {
+  if (!rdmAdmin()) return;
+  if (typeof window.adminEditPlayerProfile === 'function') return window.adminEditPlayerProfile(id);
+  openEdit('editPlayer', D.players.find(x => x.id === id));
+};
 window.editSocial = i => { if (rdmAdmin()) openEdit('editSocial', D.socials[i]); };
+window.editHonour = i => {
+  if (!rdmAdmin()) return;
+  const h = typeof i === 'number' ? D.honours?.[i] : D.honours?.find(x => x._docId === i);
+  if (h) openEdit('editHonour', h);
+};
+window.editGallery = id => {
+  if (!rdmAdmin()) return;
+  const g = D.gallery?.find(x => x._docId === id);
+  if (g) openEdit('editGallery', g);
+};
+window.addNewsModal = () => {
+  if (!rdmAdmin()) return toast('Admin only');
+  openEdit('news');
+};
 
 openEdit = function (mode, obj = null) {
   if (!rdmAdmin()) return toast('Admin only');
   editMode = mode;
   editObj = obj;
   let h = '', f = '';
-  const fi = '<label>Image<input id="efile" type="file" accept="image/*"></label>';
-  if (mode === 'match') { h = 'Add Match'; f = '<label>Opponent<input id="e1"></label><label>Date / Time<input id="e2"></label><label>Venue<input id="e3"></label><label>Detail / Result / POTM<textarea id="e4"></textarea></label>'; }
-  if (mode === 'news') { h = 'Add News'; f = '<label>Title<input id="e1"></label><label>Announcement<textarea id="e2" rows="5"></textarea></label>'; }
-  if (mode === 'player') { h = 'Add Player'; f = '<label>Name<input id="e1"></label><label>Role<input id="e2"></label><label>Playing Detail<textarea id="e3"></textarea></label>' + fi; }
-  if (mode === 'honour') { h = 'Add Honour'; f = '<label>Year<input id="e1"></label><label>Result<input id="e2"></label><label>Tournament<input id="e3"></label>' + fi; }
-  if (mode === 'gallery') { h = 'Add Photo'; f = fi + '<label>Caption<input id="e1"></label><label>Album<select id="e2"><option>TEAM PHOTOS</option><option selected>MEMORIES</option><option>UPDATES</option></select></label>'; }
-  if (mode === 'social') { h = 'Add Social'; f = '<label>Platform<input id="e1" placeholder="Instagram"></label><label>Display Name<input id="e4" placeholder="RDM Instagram"></label><label>Link<input id="e2" placeholder="https://..."></label><label>Icon<input id="e3" placeholder="IG"></label>' + fi; }
-  if (mode === 'editSocial') { h = 'Edit Social'; f = `<label>Platform<input id="e1" value="${esc(obj.name || '')}"></label><label>Display Name<input id="e4" value="${esc(obj.displayName || obj.name || '')}"></label><label>Link<input id="e2" value="${esc(obj.url || '')}"></label><label>Icon<input id="e3" value="${esc(obj.icon || '')}"></label>${fi}`; }
-  if (mode === 'editPlayer') { h = 'Edit Player'; f = `<label>Name<input id="e1" value="${esc(obj.name)}"></label><label>Role<input id="e2" value="${esc(obj.role)}"></label><label>Playing Detail<textarea id="e3">${esc(obj.detail)}</textarea></label><label>Jersey<input id="e4" value="${esc(obj.jersey || '')}"></label><label>Nickname<input id="e5" value="${esc(obj.nick || '')}"></label><label>Bio<textarea id="e6">${esc(obj.bio || '')}</textarea></label>${fi}`; }
+  const fi = (lbl = 'Image') => `<label>${lbl}<input id="efile" type="file" accept="image/*"></label>`;
+  if (mode === 'match') { h = 'Add Match'; f = '<label>Opponent<input id="e1" required></label><label>Date / Time<input id="e2"></label><label>Venue<input id="e3"></label><label>Detail / Result / POTM<textarea id="e4"></textarea></label>'; }
+  if (mode === 'news') { h = 'Add Team News'; f = '<label>Title<input id="e1" required placeholder="Matchday announcement title"></label><label>Announcement<textarea id="e2" rows="5" required placeholder="Write team news or notice..."></textarea></label><label class="rdmCheckField"><input id="epin" type="checkbox"><span>Pin this news banner on Home</span></label>'; }
+  if (mode === 'player') { h = 'Add Squad Player'; f = '<label>Player Name<input id="e1" required placeholder="Full name"></label><label>Playing Role<input id="e2" required placeholder="BATSMAN / ALL-ROUNDER / BOWLER"></label><label>Playing Style & Detail<textarea id="e3" rows="3" placeholder="Right-handed · Middle Order"></textarea></label><label>Jersey Number<input id="e4" placeholder="Optional e.g. 18"></label><label>Nickname<input id="e5" placeholder="Optional nickname"></label><label>Bio<textarea id="e6" rows="3" placeholder="Short player intro"></textarea></label>' + fi('Player Photo (optional)'); }
+  if (mode === 'honour') { h = 'Add Honour / Trophy'; f = '<label>Year<input id="e1" required placeholder="2026"></label><label>Result / Title<input id="e2" required placeholder="WINNER / RUNNER-UP"></label><label>Tournament Name<input id="e3" required placeholder="Tournament name"></label>' + fi('Trophy Photo (optional)'); }
+  if (mode === 'editHonour') { h = 'Edit Honour / Trophy'; f = `<label>Year<input id="e1" required value="${esc(obj?.year || '')}"></label><label>Result / Title<input id="e2" required value="${esc(obj?.title || '')}"></label><label>Tournament Name<input id="e3" required value="${esc(obj?.sub || '')}"></label>` + fi('Replace Trophy Photo (optional)'); }
+  if (mode === 'gallery') { h = 'Add Gallery Photo'; f = fi('Select Photo *') + '<label>Caption<input id="e1" placeholder="Match memory or title"></label><label>Album<select id="e2"><option>TEAM PHOTOS</option><option selected>MEMORIES</option><option>UPDATES</option></select></label>'; }
+  if (mode === 'editGallery') {
+    const alb = String(obj?.album || 'MEMORIES').toUpperCase();
+    h = 'Edit Gallery Photo';
+    f = `<label>Caption<input id="e1" value="${esc(obj?.caption || '')}"></label><label>Album<select id="e2"><option ${alb === 'TEAM PHOTOS' ? 'selected' : ''}>TEAM PHOTOS</option><option ${alb === 'MEMORIES' ? 'selected' : ''}>MEMORIES</option><option ${alb === 'UPDATES' ? 'selected' : ''}>UPDATES</option></select></label>` + fi('Replace Photo (optional)');
+  }
+  if (mode === 'social') { h = 'Add Social'; f = '<label>Platform<input id="e1" required placeholder="Instagram"></label><label>Display Name<input id="e4" placeholder="RDM Instagram"></label><label>Link<input id="e2" placeholder="https://..."></label><label>Icon<input id="e3" placeholder="IG"></label>' + fi('Custom Icon (optional)'); }
+  if (mode === 'editSocial') { h = 'Edit Social'; f = `<label>Platform<input id="e1" required value="${esc(obj.name || '')}"></label><label>Display Name<input id="e4" value="${esc(obj.displayName || obj.name || '')}"></label><label>Link<input id="e2" value="${esc(obj.url || '')}"></label><label>Icon<input id="e3" value="${esc(obj.icon || '')}"></label>${fi('Replace Icon (optional)')}`; }
+  if (mode === 'editPlayer') { h = 'Edit Player'; f = `<label>Name<input id="e1" required value="${esc(obj.name)}"></label><label>Role<input id="e2" required value="${esc(obj.role)}"></label><label>Playing Detail<textarea id="e3" rows="3">${esc(obj.detail)}</textarea></label><label>Jersey<input id="e4" value="${esc(obj.jersey || '')}"></label><label>Nickname<input id="e5" value="${esc(obj.nick || '')}"></label><label>Bio<textarea id="e6" rows="4">${esc(obj.bio || '')}</textarea></label>${fi('Replace Photo (optional)')}`; }
   q('#editTitle').textContent = h;
   q('#editFields').innerHTML = f;
   q('#editor').classList.add('show');
@@ -1072,40 +1196,102 @@ q('#editForm').onsubmit = async e => {
     if (editMode === 'match') {
       const payload = { opponent: v('e1'), date: v('e2'), venue: v('e3'), note: v('e4'), createdMs: now };
       const rec = { ...payload, _docId: 'loc_' + now };
-      try { const ref = await rdmDB.collection(RCOL.matches).add({ ...payload, updatedAt: rdmStamp() }); rec._docId = ref.id; } catch (err) { rdmReportWriteError(err, 'Add Match'); }
+      try { const ref = await rdmDB.collection(RCOL.matches).add({ ...payload, updatedAt: rdmStamp() }); rec._docId = ref.id; } catch (err) { rdmSaveCollectionOverride('matches', [rec, ...(D.matches || [])]); rdmReportWriteError(err, 'Add Match'); }
       D.matches.unshift(rec);
     }
     if (editMode === 'news') {
-      const payload = { title: v('e1'), text: v('e2'), createdMs: now };
+      const pinned = !!q('#epin')?.checked;
+      if (pinned) D.news.forEach(n => { n.pinned = false; });
+      const payload = { title: v('e1'), text: v('e2'), pinned, createdMs: now };
       const rec = { ...payload, _docId: 'loc_' + now };
-      try { const ref = await rdmDB.collection(RCOL.news).add({ ...payload, updatedAt: rdmStamp() }); rec._docId = ref.id; } catch (err) { rdmReportWriteError(err, 'Add News'); }
+      try {
+        if (pinned) {
+          const prevPins = await rdmDB.collection(RCOL.news).where('pinned', '==', true).get();
+          const b = rdmDB.batch();
+          prevPins.docs.forEach(d => b.set(d.ref, { pinned: false, updatedAt: rdmStamp() }, { merge: true }));
+          if (!prevPins.empty) await b.commit();
+        }
+        const ref = await rdmDB.collection(RCOL.news).add({ ...payload, updatedAt: rdmStamp() });
+        rec._docId = ref.id;
+      } catch (err) {
+        rdmSaveCollectionOverride('news', [rec, ...(D.news || [])]);
+        rdmReportWriteError(err, 'Add News');
+      }
       D.news.unshift(rec);
     }
     if (editMode === 'player') {
-      const nums = D.players.map(p => +String(p.id).replace(/\D/g, '')).filter(Number.isFinite);
-      const id = 'RDM' + String(Math.max(0, ...nums) + 1).padStart(3, '0');
-      const payload = { id, name: v('e1'), role: v('e2'), detail: v('e3'), image: img || '', jersey: '', nick: '', bio: '', socials: [], order: D.players.length + 1, active: true };
+      const existingNums = D.players.map(p => +String(p.id).replace(/\D/g, '')).filter(Number.isFinite);
+      const docNums = (rdmTeamDocsCache || []).map(p => +String(p.id || p._docId || '').replace(/\D/g, '')).filter(Number.isFinite);
+      const nextNum = Math.max(17, ...existingNums, ...docNums) + 1;
+      const id = 'RDM' + String(nextNum).padStart(3, '0');
+      const payload = {
+        id, name: v('e1'), role: v('e2'), detail: v('e3'),
+        image: img || '', jersey: v('e4'), nick: v('e5'), bio: v('e6'),
+        socials: [], order: Math.max(D.players.length + 1, nextNum), active: true, updatedMs: now
+      };
+      if (!payload.name) return toast('Player name required');
       const np = { ...payload, _docId: id };
       D.players.push(np);
+      rdmSetOverrides(o => {
+        o.extraPlayers = (o.extraPlayers || []).filter(ep => ep.id !== id);
+        o.extraPlayers.push(np);
+        o.removedPlayerIds = (o.removedPlayerIds || []).filter(x => x !== id);
+      });
       try { await rdmDB.collection(RCOL.players).doc(id).set({ ...payload, updatedAt: rdmStamp() }); } catch (err) { rdmReportWriteError(err, 'Add Player'); }
+      await rdmProfileWrite(np, { name: np.name, role: np.role, detail: np.detail, ...(img ? { image: img } : {}) });
     }
     if (editMode === 'honour') {
       const payload = { year: v('e1'), title: v('e2'), sub: v('e3'), image: img || RDM_FALLBACK_LOGO, order: D.honours.length + 1, createdMs: now };
       const rec = { ...payload, _docId: 'loc_' + now };
-      try { const ref = await rdmDB.collection(RCOL.honours).add({ ...payload, updatedAt: rdmStamp() }); rec._docId = ref.id; } catch (err) { rdmReportWriteError(err, 'Add Honour'); }
+      try { const ref = await rdmDB.collection(RCOL.honours).add({ ...payload, updatedAt: rdmStamp() }); rec._docId = ref.id; } catch (err) { rdmSaveCollectionOverride('honours', [rec, ...(D.honours || [])]); rdmReportWriteError(err, 'Add Honour'); }
       D.honours.unshift(rec);
+    }
+    if (editMode === 'editHonour' && editObj) {
+      editObj.year = v('e1');
+      editObj.title = v('e2');
+      editObj.sub = v('e3');
+      if (img) editObj.image = img;
+      const patch = { year: editObj.year, title: editObj.title, sub: editObj.sub, ...(img ? { image: img } : {}), updatedAt: rdmStamp() };
+      try {
+        if (editObj._docId && !String(editObj._docId).startsWith('loc_')) {
+          await rdmDB.collection(RCOL.honours).doc(editObj._docId).set(patch, { merge: true });
+        } else {
+          const ref = await rdmDB.collection(RCOL.honours).add({ ...patch, image: editObj.image || RDM_FALLBACK_LOGO, order: editObj.order || 1, createdMs: editObj.createdMs || now });
+          editObj._docId = ref.id;
+        }
+      } catch (err) {
+        rdmSaveCollectionOverride('honours', D.honours);
+        rdmReportWriteError(err, 'Edit Honour');
+      }
     }
     if (editMode === 'gallery') {
       if (!img) return toast('Select an image');
       const payload = { image: img, caption: v('e1') || 'RDM Memory', album: v('e2') || 'MEMORIES', createdMs: now };
       const rec = { ...payload, _docId: 'loc_' + now };
-      try { const ref = await rdmDB.collection(RCOL.gallery).add({ ...payload, updatedAt: rdmStamp() }); rec._docId = ref.id; } catch (err) { rdmReportWriteError(err, 'Add Gallery'); }
+      try { const ref = await rdmDB.collection(RCOL.gallery).add({ ...payload, updatedAt: rdmStamp() }); rec._docId = ref.id; } catch (err) { rdmSaveCollectionOverride('gallery', [rec, ...(D.gallery || [])]); rdmReportWriteError(err, 'Add Gallery'); }
       D.gallery.unshift(rec);
+    }
+    if (editMode === 'editGallery' && editObj) {
+      editObj.caption = v('e1') || 'RDM Memory';
+      editObj.album = v('e2') || 'MEMORIES';
+      if (img) editObj.image = img;
+      const patch = { caption: editObj.caption, album: editObj.album, ...(img ? { image: img } : {}), updatedAt: rdmStamp() };
+      try {
+        if (editObj._docId && !String(editObj._docId).startsWith('loc_')) {
+          await rdmDB.collection(RCOL.gallery).doc(editObj._docId).set(patch, { merge: true });
+        } else {
+          const ref = await rdmDB.collection(RCOL.gallery).add({ ...patch, image: editObj.image, createdMs: editObj.createdMs || now });
+          editObj._docId = ref.id;
+        }
+      } catch (err) {
+        rdmSaveCollectionOverride('gallery', D.gallery);
+        rdmReportWriteError(err, 'Edit Gallery');
+      }
     }
     if (editMode === 'social') {
       const payload = { name: v('e1').toUpperCase(), displayName: v('e4') || v('e1'), url: v('e2'), icon: v('e3') || '↗', image: img || '', order: D.socials.length + 1, createdMs: now };
       const rec = { ...payload, _docId: 'loc_' + now };
-      try { const ref = await rdmDB.collection(RCOL.socials).add({ ...payload, updatedAt: rdmStamp() }); rec._docId = ref.id; } catch (err) { rdmReportWriteError(err, 'Add Social'); }
+      try { const ref = await rdmDB.collection(RCOL.socials).add({ ...payload, updatedAt: rdmStamp() }); rec._docId = ref.id; } catch (err) { rdmSaveCollectionOverride('socials', [...(D.socials || []), rec]); rdmReportWriteError(err, 'Add Social'); }
       D.socials.push(rec);
     }
     if (editMode === 'editSocial') {
@@ -1151,6 +1337,7 @@ q('#editForm').onsubmit = async e => {
     }
     q('#editor').classList.remove('show');
     rdmRefresh();
+    window.renderGalleryAlbums?.();
     window.refreshAdminSectionManager?.();
     toast('Saved & synced live');
   } catch (err) {
@@ -1572,6 +1759,32 @@ render = function () {
   renderSquadFullProfiles();
 };
 
+window.adminRemovePlayer = function (id) {
+  if (!rdmAdmin()) return toast('Admin only');
+  const p = D.players.find(x => x.id === id);
+  if (!p) return;
+  const run = async () => {
+    try {
+      await rdmDB.collection(RCOL.players).doc(id).set({ active: false, updatedMs: Date.now(), updatedAt: rdmStamp() }, { merge: true });
+    } catch (err) {
+      rdmReportWriteError(err, 'Remove player');
+    }
+    rdmSetOverrides(o => {
+      o.removedPlayerIds = [...new Set([...(o.removedPlayerIds || []), id])];
+      if (Array.isArray(o.extraPlayers)) o.extraPlayers = o.extraPlayers.filter(ep => ep.id !== id);
+    });
+    D.players = D.players.filter(x => x.id !== id);
+    document.getElementById('adminPlayerProfileModal')?.classList.remove('show');
+    rdmRefresh();
+    window.refreshAdminSectionManager?.();
+    toast(`${mini(p.name)} removed from active squad`);
+  };
+  if (typeof window.rdmConfirmModal === 'function') {
+    return window.rdmConfirmModal('Remove Player', `Remove ${mini(p.name)} (${id}) from the active squad roster?`, run);
+  }
+  return run();
+};
+
 window.adminOpenPlayerProfile = function (id) {
   if (!rdmAdmin()) return toast('Admin only');
   const p = D.players.find(x => x.id === id);
@@ -1586,13 +1799,25 @@ window.adminOpenPlayerProfile = function (id) {
     m.querySelector('.close').onclick = () => m.classList.remove('show');
     m.onclick = e => { if (e.target === m) m.classList.remove('show'); };
   }
-  document.getElementById('adminPlayerProfileBody').innerHTML = profileHtml(p, false) + `<div class="adminPlayerActions">
-    <button class="primary" onclick="adminEditPlayerProfile('${p.id}')">Edit Profile</button>
-    <button class="secondary" onclick="editPlayer('${p.id}')">Details &amp; Role</button>
-    <button class="secondary" onclick="editStats('${p.id}')">Edit Stats</button>
-    <button class="secondary" onclick="setAvailability('${p.id}')">Availability</button>
-    <button class="secondary" onclick="adminChooseDP('${p.id}')">Change Photo</button>
-    <button class="tinyBtn danger" onclick="adminResetDP('${p.id}')">Reset to Logo</button>
+  const st = (typeof XD !== 'undefined' && Array.isArray(XD.stats)) ? (XD.stats.find(z => z.playerId === id) || {}) : {};
+  const av = (typeof XD !== 'undefined' && Array.isArray(XD.availability)) ? XD.availability.find(z => z.playerId === id) : null;
+  const avStatus = (av?.status || 'NOT SET').toUpperCase();
+  const n = v => Number(v || 0) || 0;
+  const statsStrip = `<div class="adminPlayerQuickStrip">
+    <div><span>Matches</span><strong>${n(st.matches)}</strong></div>
+    <div><span>Runs</span><strong>${n(st.runs)}</strong></div>
+    <div><span>Wickets</span><strong>${n(st.wickets)}</strong></div>
+    <div><span>Best</span><strong>${esc(st.bestBowling || '—')}</strong></div>
+    <div><span>Availability</span><strong class="${avStatus === 'AVAILABLE' ? 'is-ok' : avStatus === 'UNAVAILABLE' ? 'is-off' : ''}">${esc(mini(avStatus))}</strong></div>
+  </div>`;
+
+  document.getElementById('adminPlayerProfileBody').innerHTML = profileHtml(p, false) + statsStrip + `<div class="adminPlayerActions">
+    <button type="button" class="primary" onclick="adminEditPlayerProfile('${esc(p.id)}')">Edit Complete Profile</button>
+    <button type="button" class="secondary" onclick="editStats('${esc(p.id)}')">Edit Stats</button>
+    <button type="button" class="secondary" onclick="setAvailability('${esc(p.id)}')">Availability</button>
+    <button type="button" class="secondary" onclick="adminChooseDP('${esc(p.id)}')">Change Photo</button>
+    <button type="button" class="secondary" onclick="adminResetDP('${esc(p.id)}')">Use RDM Logo</button>
+    <button type="button" class="tinyBtn danger" onclick="adminRemovePlayer('${esc(p.id)}')">Remove Player</button>
   </div>`;
   m.classList.add('show');
 };
@@ -1601,22 +1826,70 @@ window.adminEditPlayerProfile = function (id) {
   if (!rdmAdmin()) return;
   const p = D.players.find(x => x.id === id);
   if (!p) return;
-  rdmOpenSimpleModal('Edit Player Profile', [
-    { name: 'jersey', label: 'Jersey Number', value: p.jersey || '' },
-    { name: 'nick', label: 'Nickname', value: p.nick || '' },
-    { name: 'bio', label: 'Bio', type: 'textarea', value: p.bio || '', rows: 5 },
-    { name: 'social1', label: 'Social 1 Link', value: (socialObj(p.socials?.[0], 0).url || '') },
-    { name: 'social2', label: 'Social 2 Link', value: (socialObj(p.socials?.[1], 1).url || '') },
-    { name: 'social3', label: 'Social 3 Link', value: (socialObj(p.socials?.[2], 2).url || '') }
+  const s0 = socialObj(p.socials?.[0], 0);
+  const s1 = socialObj(p.socials?.[1], 1);
+  const s2 = socialObj(p.socials?.[2], 2);
+  rdmOpenSimpleModal('Edit Complete Player Profile', [
+    { name: 'name', label: 'Player Name', value: p.name || '', required: true },
+    { name: 'role', label: 'Playing Role', value: p.role || '', required: true, placeholder: 'BATSMAN / ALL-ROUNDER' },
+    { name: 'jersey', label: 'Jersey Number', value: p.jersey || '', placeholder: 'e.g. 08' },
+    { name: 'nick', label: 'Nickname', value: p.nick || '', placeholder: 'Player nickname' },
+    { name: 'detail', label: 'Playing Style & Detail', type: 'textarea', value: p.detail || '', rows: 2, full: true },
+    { name: 'bio', label: 'Player Bio', type: 'textarea', value: p.bio || '', rows: 4, full: true },
+    { name: 'social1Name', label: 'Social 1 Platform', value: s0.name || '', placeholder: 'Instagram' },
+    { name: 'social1Url', label: 'Social 1 Link', value: s0.url || '', placeholder: 'https://...' },
+    { name: 'social2Name', label: 'Social 2 Platform', value: s1.name || '', placeholder: 'YouTube' },
+    { name: 'social2Url', label: 'Social 2 Link', value: s1.url || '', placeholder: 'https://...' },
+    { name: 'social3Name', label: 'Social 3 Platform', value: s2.name || '', placeholder: 'Facebook' },
+    { name: 'social3Url', label: 'Social 3 Link', value: s2.url || '', placeholder: 'https://...' }
   ], async d => {
-    const links = [d.social1, d.social2, d.social3].map(x => String(x || '').trim()).filter(Boolean);
-    if (links.some(x => !safeUrl(x))) { toast('Valid social link required'); throw Error('VALIDATION'); }
-    const nextSocials = links.map((url, i) => ({ name: p.socials?.[i]?.name || ('Social ' + (i + 1)), url }));
-    const next = { ...p, jersey: String(d.jersey || '').trim(), nick: String(d.nick || '').trim(), bio: String(d.bio || '').trim(), socials: nextSocials };
-    Object.assign(p, { jersey: next.jersey, nick: next.nick, bio: next.bio, socials: next.socials });
-    await rdmProfileWrite(next);
+    const name = String(d.name || '').trim();
+    const role = String(d.role || '').trim();
+    if (!name || !role) { toast('Player name & role required'); throw Error('VALIDATION'); }
+    const rawSlots = [
+      { name: String(d.social1Name || '').trim(), url: String(d.social1Url || '').trim() },
+      { name: String(d.social2Name || '').trim(), url: String(d.social2Url || '').trim() },
+      { name: String(d.social3Name || '').trim(), url: String(d.social3Url || '').trim() }
+    ];
+    const nextSocials = [];
+    for (let i = 0; i < rawSlots.length; i++) {
+      const slot = rawSlots[i];
+      if (!slot.url) continue;
+      if (!safeUrl(slot.url)) { toast(`Valid https:// link required for Social ${i + 1}`); throw Error('VALIDATION'); }
+      nextSocials.push({ name: slot.name || ('Social ' + (nextSocials.length + 1)), url: slot.url });
+    }
+    const next = {
+      ...p,
+      name,
+      role,
+      detail: String(d.detail || '').trim(),
+      jersey: String(d.jersey || '').trim(),
+      nick: String(d.nick || '').trim(),
+      bio: String(d.bio || '').trim(),
+      socials: nextSocials
+    };
+    Object.assign(p, {
+      name: next.name,
+      role: next.role,
+      detail: next.detail,
+      jersey: next.jersey,
+      nick: next.nick,
+      bio: next.bio,
+      socials: next.socials
+    });
+    const now = Date.now();
+    try {
+      await rdmDB.collection(RCOL.players).doc(p.id).set({
+        id: p.id, name: p.name, role: p.role, detail: p.detail, jersey: p.jersey, updatedMs: now, updatedAt: rdmStamp()
+      }, { merge: true });
+    } catch (err) {
+      rdmReportWriteError(err, 'TeamPlayer save');
+    }
+    const synced = await rdmProfileWrite(next, { name: p.name, role: p.role, detail: p.detail });
     rdmRefresh();
-    window.adminOpenPlayerProfile(id);
-    toast('Profile saved & synced');
+    if (document.getElementById('adminPlayerProfileModal')?.classList.contains('show')) {
+      window.adminOpenPlayerProfile(id);
+    }
+    if (synced) toast('Player profile saved & synced');
   });
 };
