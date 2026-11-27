@@ -75,7 +75,7 @@ function copyStaticFilesPlugin() {
         if (!html.includes('style.css')) {
           html = html.replace(
             '</head>',
-            '  <link rel="stylesheet" href="style.css?v=17.4.5">\n  <link rel="stylesheet" href="rdm-v6890-fix.css?v=17.4.5">\n</head>'
+            '  <link rel="stylesheet" href="style.css?v=17.4.6">\n  <link rel="stylesheet" href="rdm-v6890-fix.css?v=17.4.6">\n</head>'
           );
         }
         fs.writeFileSync(distIndex, html, 'utf8');

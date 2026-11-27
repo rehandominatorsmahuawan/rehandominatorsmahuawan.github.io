@@ -558,6 +558,28 @@ function rdmComputePlayerAnalytics(players, statsList, matches, achievements) {
   return { ranked, bestPlayer: ranked[0]?.hasPerformance ? ranked[0] : null };
 }
 
+function rdmResolvePotmPlayer(potmText, players) {
+  const raw = String(potmText || '').trim();
+  if (!raw || !Array.isArray(players) || !players.length) return null;
+  const norm = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const needle = norm(raw);
+  if (!needle) return null;
+  const exact = players.find(p => norm(p.id) === needle || norm(p.name) === needle);
+  if (exact) return exact;
+  const matches = players.filter(p => {
+    const pk = norm(p.name);
+    const ik = norm(p.id);
+    return (pk && (needle.includes(pk) || pk.includes(needle))) || (ik && needle.includes(ik));
+  });
+  matches.sort((a, b) => norm(b.name).length - norm(a.name).length);
+  return matches[0] || null;
+}
+
+function rdmPotmCornerBadgeHtml(count = 1, title = 'Player of the Match') {
+  const showCount = Number(count) > 1;
+  return `<span class="rdmPotmPortraitBadge${showCount ? ' has-count' : ''}" title="${esc(title)}" aria-label="${esc(title)}"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.85 5.77 6.37.93-4.61 4.49 1.09 6.35L12 17.04l-5.7 3 1.09-6.35-4.61-4.49 6.37-.93L12 2.5z"/></svg>${showCount ? `<span>${esc(String(count))}×</span>` : ''}</span>`;
+}
+
 function rdmBestMatchCardHtml(info, compact = false) {
   if (!info || !info.match) {
     return `<article class="spotlightCard">
@@ -572,15 +594,31 @@ function rdmBestMatchCardHtml(info, compact = false) {
   const m = info.match;
   const meta = [m.date, m.matchType, m.venueName || m.venue].filter(Boolean).map(mini).join(' · ');
   const verdict = [m.result, m.margin].filter(Boolean).map(mini).join(' · ') || mini(m.note || 'Completed Match');
+  const photoFn = typeof window.playerPhotoUrl === 'function' ? window.playerPhotoUrl : (u => u || 'assets/rdm-logo.png?v=7400');
+  const potmPlayer = m.potm ? rdmResolvePotmPlayer(m.potm, (typeof D !== 'undefined' ? D.players : []) || []) : null;
+  const potmName = potmPlayer ? mini(potmPlayer.name) : mini(m.potm || '');
+  const potmPhoto = potmPlayer ? photoFn(potmPlayer.image) : 'assets/rdm-logo.png?v=7400';
+  const potmRowHtml = m.potm ? `<div class="spotlightPotmRow${potmPlayer ? ' is-clickable' : ''}"${potmPlayer ? ` role="button" tabindex="0" onclick="openPlayerProfile?.('${esc(potmPlayer.id)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openPlayerProfile?.('${esc(potmPlayer.id)}');}"` : ''}>
+      <div class="rdmPortraitWrap spotlightPotmPortrait">
+        <img class="spotlightPotmAvatar" src="${esc(potmPhoto)}" alt="${esc(potmName)} — Player of the Match" onerror="this.onerror=null;this.src='assets/rdm-logo.png?v=7400'">
+        ${rdmPotmCornerBadgeHtml(1, `Player of the Match: ${potmName}`)}
+      </div>
+      <div class="spotlightPotmMeta">
+        <span class="rdmPotmInlineTag"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.85 5.77 6.37.93-4.61 4.49 1.09 6.35L12 17.04l-5.7 3 1.09-6.35-4.61-4.49 6.37-.93L12 2.5z"/></svg>Player of the Match</span>
+        <strong>${esc(potmName)}</strong>
+        ${potmPlayer?.role ? `<small>${esc(mini(potmPlayer.role))}</small>` : ''}
+      </div>
+    </div>` : '';
+
   return `<article class="spotlightCard">
     <div class="spotlightHeadRow">
       <div>
         <span class="spotlightKicker">Best Match · ${esc(info.reason)}</span>
         <h3 class="spotlightTitle">RDM vs ${esc(mini(m.opponent || 'Opponent'))}</h3>
       </div>
-      ${m.potm ? `<span class="spotlightKicker" style="color:var(--accent-text);">POTM · ${esc(mini(m.potm))}</span>` : ''}
     </div>
     ${meta ? `<p class="spotlightMeta">${esc(meta)}</p>` : ''}
+    ${potmRowHtml}
     ${(m.ourScore || m.oppScore) ? `<div class="spotlightScoreStrip">
       <div class="spotlightScoreCell"><span>RDM Score</span><strong>${esc(m.ourScore || '—')}${m.ourOvers ? ` (${esc(m.ourOvers)} ov)` : ''}</strong></div>
       <div class="spotlightScoreCell"><span>${esc(mini(m.opponent || 'Opponent'))}</span><strong>${esc(m.oppScore || '—')}${m.oppOvers ? ` (${esc(m.oppOvers)} ov)` : ''}</strong></div>
@@ -602,14 +640,25 @@ function rdmRenderHomeHighlights() {
   const mvp = analytics.bestPlayer;
   const photoFn = typeof window.playerPhotoUrl === 'function' ? window.playerPhotoUrl : (u => u || 'assets/rdm-logo.png?v=7400');
 
+  const mvpPotmBadge = (mvp && mvp.potmCount > 0)
+    ? rdmPotmCornerBadgeHtml(mvp.potmCount, `${mvp.potmCount}× Player of the Match`)
+    : '';
+  const mvpPotmChip = (mvp && mvp.potmCount > 0)
+    ? `<span class="rdmPotmInlineTag"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.85 5.77 6.37.93-4.61 4.49 1.09 6.35L12 17.04l-5.7 3 1.09-6.35-4.61-4.49 6.37-.93L12 2.5z"/></svg>${esc(String(mvp.potmCount))}× Player of the Match</span>`
+    : '';
+
   const mvpHtml = mvp ? `<article class="spotlightCard">
     <span class="spotlightKicker">All-Time Best Performer · MVP</span>
     <div class="mvpHeroRow">
-      <img class="mvpAvatar" src="${esc(photoFn(mvp.p.image))}" alt="${esc(mini(mvp.p.name))}" onerror="this.onerror=null;this.src='assets/rdm-logo.png?v=7400'">
+      <div class="rdmPortraitWrap mvpPortraitWrap">
+        <img class="mvpAvatar" src="${esc(photoFn(mvp.p.image))}" alt="${esc(mini(mvp.p.name))}" onerror="this.onerror=null;this.src='assets/rdm-logo.png?v=7400'">
+        ${mvpPotmBadge}
+      </div>
       <div class="mvpIdentity">
         <small>${esc(miniId(mvp.p.id))}${typeof playerCode === 'function' ? ' · ' + esc(playerCode(mvp.p.id)) : ''} · ${esc(String(mvp.mvpPoints))} MVP Pts</small>
         <h3 class="spotlightTitle">${esc(mini(mvp.p.name))}</h3>
         <b>${esc(mini(mvp.p.role))}</b>
+        ${mvpPotmChip}
       </div>
     </div>
     <div class="mvpStatsStrip">

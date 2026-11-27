@@ -78,11 +78,23 @@ import {
   openAppUpdateSheet,
   openAvatarCropper,
   openConfirmSheet,
+  openCustomSheet,
   openFormSheet,
   openLightbox,
   openThemeSheet,
   showToast
 } from './ui/components.js';
+import {
+  classifyMatchStatus,
+  computeBestMatch,
+  computeMatchSummaryStats,
+  computePlayerAnalytics,
+  portraitPhotoInfo,
+  potmCornerBadgeHtml,
+  potmInlineTagHtml,
+  renderMatchTrendD3,
+  resolvePotmPlayer
+} from './utils/analytics.js';
 
 const THEMES = [
   { id: 'royal', label: 'Royal Cobalt', desc: 'Crisp Daylight Frost & Midnight Cobalt', swatches: ['#F5F7FB', '#FFFFFF', '#1D4ED8'] },
@@ -97,6 +109,7 @@ const ui = {
   portalPlayerId: null,
   publicTab: 'home', // 'home' | 'squad' | 'matches' | 'gallery' | 'more'
   matchesSubTab: 'fixtures', // 'fixtures' | 'xi' | 'tournaments'
+  matchesStatusFilter: 'ALL', // 'ALL' | 'UPCOMING' | 'LIVE' | 'COMPLETED'
   galleryAlbum: 'ALL',
   squadQuery: '',
   squadFilter: 'ALL',
@@ -485,6 +498,145 @@ function renderPublicBottomNav() {
   `;
 }
 
+function renderBestMatchCardHtml(info, { compact = false } = {}) {
+  if (!info || !info.match) {
+    return `
+      <article class="spotlightCard">
+        <span class="spotlightKicker">Best Match Spotlight</span>
+        <h3 class="spotlightTitle">No Completed Match Logged Yet</h3>
+        <p class="spotlightMeta">Once match scorecards or results are recorded, RDM's standout match will be highlighted here automatically.</p>
+        <div class="spotlightActions">
+          <button type="button" class="btnSecondary btnSm" data-public-tab="matches">Open Match Centre</button>
+        </div>
+      </article>
+    `;
+  }
+
+  const m = info.match;
+  const meta = [m.date, m.matchType, m.venueName || m.venue].filter(Boolean).map(formatTextCase).join(' · ');
+  const verdict = [m.result, m.margin].filter(Boolean).map(formatTextCase).join(' · ') || formatTextCase(m.note || 'Completed Match');
+  const potmPlayer = m.potm ? resolvePotmPlayer(m.potm, state.players) : null;
+  const potmName = potmPlayer ? formatTextCase(potmPlayer.name) : formatTextCase(m.potm || '');
+  const potmPhoto = portraitPhotoInfo(potmPlayer?.image || '', currentLogo());
+
+  const potmRowHtml = m.potm ? `
+    <div class="spotlightPotmRow${potmPlayer ? ' is-clickable' : ''}"${potmPlayer ? ` role="button" tabindex="0" data-open-player="${escHtml(potmPlayer.id)}"` : ''}>
+      <div class="rdmPortraitWrap spotlightPotmPortrait">
+        <img class="spotlightPotmAvatar avatarCircle ${potmPhoto.isCrest ? 'is-crest' : 'is-photo'}" src="${escHtml(potmPhoto.src)}" alt="${escHtml(potmName)} — Player of the Match" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='${CLUB_INFO.logoPath}'">
+        ${potmCornerBadgeHtml(1, `Player of the Match: ${potmName}`)}
+      </div>
+      <div class="spotlightPotmMeta">
+        ${potmInlineTagHtml('Player of the Match')}
+        <strong>${escHtml(potmName)}</strong>
+        ${potmPlayer?.role ? `<small>${escHtml(formatTextCase(potmPlayer.role))}</small>` : ''}
+      </div>
+    </div>
+  ` : '';
+
+  return `
+    <article class="spotlightCard">
+      <div class="spotlightHeadRow">
+        <div>
+          <span class="spotlightKicker">Best Match · ${escHtml(info.reason)}</span>
+          <h3 class="spotlightTitle">RDM vs ${escHtml(formatTextCase(m.opponent || 'Opponent'))}</h3>
+        </div>
+      </div>
+      ${meta ? `<p class="spotlightMeta num">${escHtml(meta)}</p>` : ''}
+      ${potmRowHtml}
+      ${(m.ourScore || m.oppScore) ? `
+        <div class="spotlightScoreStrip">
+          <div class="spotlightScoreCell">
+            <span>RDM Score</span>
+            <strong class="num">${escHtml(m.ourScore || '—')}${m.ourOvers ? ` (${escHtml(m.ourOvers)} ov)` : ''}</strong>
+          </div>
+          <div class="spotlightScoreCell">
+            <span>${escHtml(formatTextCase(m.opponent || 'Opponent'))}</span>
+            <strong class="num">${escHtml(m.oppScore || '—')}${m.oppOvers ? ` (${escHtml(m.oppOvers)} ov)` : ''}</strong>
+          </div>
+        </div>
+      ` : ''}
+      <p class="spotlightVerdict">${escHtml(verdict)}</p>
+      <div class="spotlightActions">
+        <button type="button" class="btnSecondary btnSm" data-public-tab="matches">View Match Centre</button>
+        ${!compact ? `<button type="button" class="btnPrimary btnSm" data-compare-players="">Compare Players</button>` : ''}
+      </div>
+    </article>
+  `;
+}
+
+function renderHomeHighlightsSection() {
+  const bestMatchInfo = computeBestMatch(state.matches);
+  const analytics = computePlayerAnalytics(state.players, state.stats, state.matches, state.achievements);
+  const mvp = analytics.bestPlayer;
+
+  let mvpHtml = '';
+  if (mvp) {
+    const mvpAv = portraitPhotoInfo(mvp.p.image, currentLogo());
+    const mvpBadge = mvp.potmCount > 0
+      ? potmCornerBadgeHtml(mvp.potmCount, `${mvp.potmCount}× Player of the Match`)
+      : '';
+    const mvpChip = mvp.potmCount > 0
+      ? potmInlineTagHtml(`${mvp.potmCount}× Player of the Match`)
+      : '';
+    const code = PLAYER_CODES[mvp.p.id] || mvp.p.id;
+    mvpHtml = `
+      <article class="spotlightCard">
+        <span class="spotlightKicker">All-Time Best Performer · MVP</span>
+        <div class="mvpHeroRow">
+          <div class="rdmPortraitWrap mvpPortraitWrap" role="button" tabindex="0" data-open-player="${escHtml(mvp.p.id)}">
+            <img class="mvpAvatar avatarCircle ${mvpAv.isCrest ? 'is-crest' : 'is-photo'}" src="${escHtml(mvpAv.src)}" alt="${escHtml(mvp.p.name)}" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='${CLUB_INFO.logoPath}'">
+            ${mvpBadge}
+          </div>
+          <div class="mvpIdentity">
+            <small class="num">${escHtml(mvp.p.id)} · ${escHtml(code)} · ${escHtml(String(mvp.mvpPoints))} MVP Pts</small>
+            <h3 class="spotlightTitle">${escHtml(formatTextCase(mvp.p.name))}</h3>
+            <b>${escHtml(formatTextCase(mvp.p.role))}</b>
+            ${mvpChip}
+          </div>
+        </div>
+        <div class="mvpStatsStrip">
+          <div class="mvpStatCell"><strong class="num">${mvp.s.matches}</strong><span>Matches</span></div>
+          <div class="mvpStatCell"><strong class="num">${mvp.s.runs}</strong><span>Runs</span></div>
+          <div class="mvpStatCell"><strong class="num">${mvp.s.wickets}</strong><span>Wickets</span></div>
+          <div class="mvpStatCell"><strong class="num">${mvp.potmCount}</strong><span>POTM</span></div>
+        </div>
+        <div class="spotlightActions">
+          <button type="button" class="btnSecondary btnSm" data-open-player="${escHtml(mvp.p.id)}">View Profile</button>
+          <button type="button" class="btnPrimary btnSm" data-compare-players="${escHtml(mvp.p.id)}">Compare Players</button>
+        </div>
+      </article>
+    `;
+  } else {
+    mvpHtml = `
+      <article class="spotlightCard">
+        <span class="spotlightKicker">All-Time Best Performer · MVP</span>
+        <h3 class="spotlightTitle">Compare Any Two Players</h3>
+        <p class="spotlightMeta">Player impact rankings unlock automatically as match stats and POTM awards are logged. Compare squad members anytime.</p>
+        <div class="spotlightActions">
+          <button type="button" class="btnPrimary btnSm" data-compare-players="">Compare Players</button>
+          <button type="button" class="btnSecondary btnSm" data-open-subpage="records">Team Records</button>
+        </div>
+      </article>
+    `;
+  }
+
+  return `
+    <section aria-label="Best Match and Best Player highlights">
+      <div class="sectionHeader" style="margin-bottom:12px;">
+        <div>
+          <span class="sectionKicker">Match &amp; Squad Spotlight</span>
+          <h2 class="sectionTitle">Best Match &amp; MVP Highlights</h2>
+        </div>
+        <button type="button" class="btnGhost btnSm" data-compare-players="">Compare ›</button>
+      </div>
+      <div id="homePerformanceHighlights" class="homeHighlightsGrid">
+        ${renderBestMatchCardHtml(bestMatchInfo, { compact: true })}
+        ${mvpHtml}
+      </div>
+    </section>
+  `;
+}
+
 function renderHomeTab() {
   const upcoming = state.matches.find(m => !/RESULT|COMPLETED|FINISHED|WON|LOST|DRAW/i.test(`${m.matchStatus || ''} ${m.status || ''} ${m.note || ''}`));
   const recent = state.matches.find(m => /RESULT|COMPLETED|FINISHED|WON|LOST|DRAW/i.test(`${m.matchStatus || ''} ${m.status || ''} ${m.note || ''}`));
@@ -507,7 +659,6 @@ function renderHomeTab() {
       <div class="heroBannerGrid">
         <div class="heroBannerInner">
           <div class="heroBannerTop">
-            <img class="heroBannerLogo" src="${escHtml(currentLogo())}" alt="RDM Official Crest" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='${CLUB_INFO.logoPath}'">
             <div class="heroBannerCopy">
               <span class="heroEyebrow">OFFICIAL CRICKET TEAM · EST. ${escHtml(CLUB_INFO.founded)}</span>
               <h1 class="heroDisplayTitle">${escHtml(CLUB_INFO.orgName)}</h1>
@@ -622,6 +773,8 @@ function renderHomeTab() {
       </article>
     </div>
 
+    ${renderHomeHighlightsSection()}
+
     <section>
       <div class="sectionHeader" style="margin-bottom:12px;">
         <div>
@@ -652,6 +805,10 @@ function renderHomeTab() {
 function renderMatchSummaryBlock(m) {
   const status = formatTextCase(m.matchStatus || m.status || 'Match');
   const meta = [m.date, m.time, m.venueName || m.venue].filter(Boolean).map(formatTextCase).join(' · ');
+  const potmPlayer = m.potm ? resolvePotmPlayer(m.potm, state.players) : null;
+  const potmName = potmPlayer ? formatTextCase(potmPlayer.name) : formatTextCase(m.potm || '');
+  const potmPhoto = potmPlayer ? portraitPhotoInfo(potmPlayer.image, currentLogo()) : null;
+
   return `
     <div>
       <div class="matchCardHead">
@@ -666,7 +823,18 @@ function renderMatchSummaryBlock(m) {
         </div>
       ` : ''}
       ${(m.result || m.note) ? `<p class="richText" style="margin:6px 0 0;font-size:0.84rem;color:var(--ink-secondary);">${escHtml(formatTextCase(m.result ? `${m.result}${m.margin ? ' · ' + m.margin : ''}` : m.note))}</p>` : ''}
-      ${m.potm ? `<p style="margin:6px 0 0;font-size:0.8rem;font-weight:700;color:var(--brand-text);">Player of the Match: ${escHtml(formatTextCase(m.potm))}</p>` : ''}
+      ${m.potm ? (potmPlayer ? `
+        <div class="matchPotmCompact is-clickable" role="button" tabindex="0" data-open-player="${escHtml(potmPlayer.id)}">
+          <div class="rdmPortraitWrap matchPotmPortrait">
+            <img class="matchPotmAvatar avatarCircle ${potmPhoto.isCrest ? 'is-crest' : 'is-photo'}" src="${escHtml(potmPhoto.src)}" alt="${escHtml(potmName)} — Player of the Match" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='${CLUB_INFO.logoPath}'">
+            ${potmCornerBadgeHtml(1, `Player of the Match: ${potmName}`)}
+          </div>
+          <div class="matchPotmCompactMeta">
+            ${potmInlineTagHtml('Player of the Match')}
+            <strong>${escHtml(potmName)}</strong>
+          </div>
+        </div>
+      ` : `<p style="margin:8px 0 0;font-size:0.8rem;font-weight:700;color:var(--brand-text);">Player of the Match: ${escHtml(potmName)}</p>`) : ''}
     </div>
   `;
 }
@@ -729,12 +897,126 @@ function renderSquadTab() {
   `;
 }
 
+function renderMatchSummaryStripHtml(stats) {
+  const winToneClass = stats.winPctNum === null ? '' : (stats.winPctNum >= 50 ? ' is-win' : ' is-loss');
+  const liveToneClass = stats.live > 0 ? ' is-live' : '';
+  const playedSub = stats.totalFixtures > 0
+    ? `${stats.totalFixtures} Total Fixture${stats.totalFixtures === 1 ? '' : 's'}`
+    : 'Synced with Firestore';
+  const wlParts = [`${stats.losses} Lost`];
+  if (stats.ties > 0) wlParts.push(`${stats.ties} Tied`);
+  if (stats.noResult > 0) wlParts.push(`${stats.noResult} NR`);
+  const winRateSub = stats.decided > 0
+    ? `${stats.wins} of ${stats.decided} decided`
+    : (stats.played > 0 ? 'No decided results yet' : 'Awaiting results');
+  const barWidth = stats.winPctNum === null ? 0 : Math.min(100, Math.max(0, stats.winPctNum));
+  const upVal = stats.live > 0 ? `${stats.live} Live` : String(stats.upcoming);
+  const upLabel = stats.live > 0 ? 'Live & Upcoming' : 'Upcoming Fixtures';
+  const upSub = stats.live > 0
+    ? `${stats.upcoming} Scheduled Next`
+    : (stats.cancelled > 0 ? `${stats.cancelled} Cancelled` : 'Scheduled Next');
+  const hiVal = stats.highestScore ? stats.highestScore.display : '—';
+  const hiSub = stats.highestScore
+    ? `vs ${formatTextCase(stats.highestScore.opponent || 'Opponent')}`
+    : 'Awaiting scorecards';
+
+  const trendList = stats.recentTrend;
+  const tW = trendList.filter(x => x.code === 'W').length;
+  const tL = trendList.filter(x => x.code === 'L').length;
+  const tT = trendList.filter(x => x.code === 'T').length;
+  const trendTitle = trendList.length
+    ? `Win / Loss Trend · Last ${trendList.length} Match${trendList.length === 1 ? '' : 'es'}`
+    : 'Win / Loss Trend · Recent Matches';
+  const trendSummary = trendList.length
+    ? `${tW}W · ${tL}L${tT ? ` · ${tT}T` : ''} · Oldest → Latest`
+    : 'Synced from Firestore Matches';
+  const streakTone = stats.winStreak > 0 ? 'is-hot' : 'is-neutral';
+  const streakValue = stats.winStreak > 0
+    ? `${stats.winStreak}W`
+    : (stats.decided > 0 ? '0' : '—');
+
+  return `
+    <div id="matchSummary" class="matchSummaryStrip">
+      <div class="matchSummaryItem">
+        <strong class="num">${stats.played}</strong>
+        <span>Total Matches Played</span>
+        <small class="matchSummarySub">${escHtml(playedSub)}</small>
+      </div>
+      <div class="matchSummaryItem${stats.wins > 0 ? ' is-win' : ''}">
+        <strong class="num">${stats.wins}</strong>
+        <span>Matches Won</span>
+        <small class="matchSummarySub">${escHtml(wlParts.join(' · '))}</small>
+      </div>
+      <div class="matchSummaryItem${winToneClass}">
+        <strong class="num">${escHtml(stats.winPctText)}</strong>
+        <span>Win Percentage</span>
+        <div class="matchSummaryBar" aria-hidden="true"><i style="width:${barWidth}%"></i></div>
+        <small class="matchSummarySub">${escHtml(winRateSub)}</small>
+      </div>
+      <div class="matchSummaryItem${liveToneClass}">
+        <strong class="num">${escHtml(upVal)}</strong>
+        <span>${upLabel}</span>
+        <small class="matchSummarySub">${escHtml(upSub)}</small>
+      </div>
+      <div class="matchSummaryItem">
+        <strong class="num">${escHtml(hiVal)}</strong>
+        <span>Highest Team Score</span>
+        <small class="matchSummarySub">${escHtml(hiSub)}</small>
+      </div>
+      <div class="matchSummaryFormRow">
+        <div class="matchTrendHead">
+          <div class="matchTrendMeta">
+            <span>${escHtml(trendTitle)}</span>
+            <small class="matchSummarySub">${escHtml(trendSummary)}</small>
+          </div>
+          <div class="matchTrendAside">
+            <div class="matchWinStreakBadge ${streakTone}" title="Current consecutive RDM wins from latest completed matches">
+              <span>Win Streak</span>
+              <strong class="num">${escHtml(streakValue)}</strong>
+            </div>
+            <div class="matchTrendLegend" aria-hidden="true">
+              <span class="matchLegendItem is-win"><i></i>Win</span>
+              <span class="matchLegendItem is-loss"><i></i>Loss</span>
+              <span class="matchLegendItem is-tie"><i></i>Tie</span>
+            </div>
+          </div>
+        </div>
+        <div id="androidMatchTrendWrap" class="matchTrendChartWrap">
+          <div class="matchTrendTooltip" hidden></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function renderMatchesTab() {
   let body = '';
   if (ui.matchesSubTab === 'fixtures') {
-    body = state.matches.length
-      ? `<div class="stackList">${state.matches.map(m => `<article class="surfaceCard">${renderMatchSummaryBlock(m)}</article>`).join('')}</div>`
-      : '<div class="emptyState">No fixtures or match results added yet.</div>';
+    const matchStats = computeMatchSummaryStats(state.matches);
+    const bestInfo = computeBestMatch(state.matches);
+    const statusTabs = [
+      ['ALL', 'All', matchStats.totalFixtures],
+      ['UPCOMING', 'Upcoming', matchStats.upcoming],
+      ['LIVE', 'Live', matchStats.live],
+      ['COMPLETED', 'Completed', matchStats.played]
+    ];
+    const filteredMatches = state.matches.filter(m => {
+      const st = classifyMatchStatus(m);
+      return ui.matchesStatusFilter === 'ALL' || st === ui.matchesStatusFilter;
+    });
+
+    body = `
+      ${renderMatchSummaryStripHtml(matchStats)}
+      ${bestInfo ? `<div style="margin-bottom:4px;">${renderBestMatchCardHtml(bestInfo, { compact: false })}</div>` : ''}
+      ${state.matches.length ? `
+        <div class="filterRow">
+          ${statusTabs.map(([k, label, cnt]) => `<button type="button" class="segTab ${ui.matchesStatusFilter === k ? 'active' : ''}" data-matches-status-filter="${k}">${label} (${cnt})</button>`).join('')}
+        </div>
+      ` : ''}
+      ${filteredMatches.length
+        ? `<div class="stackList">${filteredMatches.map(m => `<article class="surfaceCard">${renderMatchSummaryBlock(m)}</article>`).join('')}</div>`
+        : `<div class="emptyState">${state.matches.length ? 'No matches in this category.' : 'No fixtures or match results added yet.'}</div>`}
+    `;
   } else if (ui.matchesSubTab === 'xi') {
     body = renderPlayingXiList();
   } else {
@@ -1120,15 +1402,29 @@ function renderTeamSubpage() {
   } else if (ui.morePage === 'xi') {
     body = renderPlayingXiList();
   } else if (ui.morePage === 'records') {
-    body = state.records.length
+    const analytics = computePlayerAnalytics(state.players, state.stats, state.matches, state.achievements);
+    const mvp = analytics.bestPlayer;
+    const compareBanner = `
+      <div class="surfaceCard" style="margin-bottom:12px;">
+        <div class="sectionHeader" style="margin-bottom:6px;">
+          <div>
+            <span class="sectionKicker">Player Impact</span>
+            <h3 class="sectionTitle" style="font-size:1.2rem;">MVP &amp; Player Comparison</h3>
+          </div>
+          <button type="button" class="btnPrimary btnSm" data-compare-players="${escHtml(mvp?.p?.id || '')}">Compare Players</button>
+        </div>
+        ${mvp ? `<p class="sectionSub" style="margin:0;">Current All-Time Leader: <strong>${escHtml(formatTextCase(mvp.p.name))}</strong> · ${mvp.mvpPoints} MVP Pts (${mvp.s.runs} Runs, ${mvp.s.wickets} Wkts, ${mvp.potmCount} POTM)</p>` : '<p class="sectionSub" style="margin:0;">Compare any two squad members side-by-side.</p>'}
+      </div>
+    `;
+    body = compareBanner + (state.records.length
       ? `<div class="stackList">${state.records.map(r => `
           <article class="surfaceCard">
             <span class="sectionKicker">${escHtml(formatTextCase(r.season || 'Team Record'))}</span>
             <h3 class="sectionTitle" style="font-size:1.22rem;margin-bottom:4px;">${escHtml(formatTextCase(r.title || 'Record'))}</h3>
-            <p style="margin:0;font-weight:700;color:var(--brand-blue);" class="num">${escHtml(formatTextCase(r.value || ''))}${r.player ? ' · ' + escHtml(formatTextCase(r.player)) : ''}</p>
+            <p style="margin:0;font-weight:700;color:var(--brand-text);" class="num">${escHtml(formatTextCase(r.value || ''))}${r.player ? ' · ' + escHtml(formatTextCase(r.player)) : ''}</p>
           </article>
         `).join('')}</div>`
-      : '<div class="emptyState">No team records recorded yet.</div>';
+      : '<div class="emptyState">No team records recorded yet.</div>');
   } else if (ui.morePage === 'tournaments') {
     body = renderRecordsAndTournamentsList();
   } else if (ui.morePage === 'honours') {
@@ -1777,6 +2073,12 @@ function renderApp() {
 
   root.innerHTML = html + renderSideDrawer();
   bindScreenEvents();
+  if (ui.screen === 'public' && ui.publicTab === 'matches' && ui.matchesSubTab === 'fixtures') {
+    const trendWrap = document.getElementById('androidMatchTrendWrap');
+    if (trendWrap) {
+      renderMatchTrendD3(trendWrap, computeMatchSummaryStats(state.matches));
+    }
+  }
 }
 
 function bindScreenEvents() {
@@ -2128,9 +2430,25 @@ function bindScreenEvents() {
     });
   });
 
-  document.querySelectorAll('[data-open-player]').forEach(btn => {
+  document.querySelectorAll('[data-open-player]').forEach(el => {
+    el.addEventListener('click', () => {
+      if (el.dataset.openPlayer) {
+        navigateTo({ screen: 'playerDetail', detailPlayerId: el.dataset.openPlayer });
+      }
+    });
+    if (el.tagName !== 'BUTTON') {
+      el.addEventListener('keydown', e => {
+        if ((e.key === 'Enter' || e.key === ' ') && el.dataset.openPlayer) {
+          e.preventDefault();
+          navigateTo({ screen: 'playerDetail', detailPlayerId: el.dataset.openPlayer });
+        }
+      });
+    }
+  });
+
+  document.querySelectorAll('[data-compare-players]').forEach(btn => {
     btn.addEventListener('click', () => {
-      navigateTo({ screen: 'playerDetail', detailPlayerId: btn.dataset.openPlayer });
+      openPlayerComparisonSheet(btn.dataset.comparePlayers || '');
     });
   });
 
@@ -2167,6 +2485,12 @@ function bindScreenEvents() {
   document.querySelectorAll('[data-matches-sub]').forEach(btn => {
     btn.addEventListener('click', () => {
       ui.matchesSubTab = btn.dataset.matchesSub;
+      renderApp();
+    });
+  });
+  document.querySelectorAll('[data-matches-status-filter]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      ui.matchesStatusFilter = btn.dataset.matchesStatusFilter || 'ALL';
       renderApp();
     });
   });
@@ -3053,6 +3377,123 @@ function handleAdminCreateAction(action) {
       }
     });
   }
+}
+
+function openPlayerComparisonSheet(preferredAId = '') {
+  const analytics = computePlayerAnalytics(state.players, state.stats, state.matches, state.achievements);
+  const ranked = analytics.ranked;
+  if (!ranked.length) {
+    showToast('No squad players available to compare');
+    return;
+  }
+
+  let selA = (preferredAId && ranked.some(x => x.p.id === preferredAId)) ? preferredAId : ranked[0].p.id;
+  let selB = (ranked.find(x => x.p.id !== selA) || ranked[0]).p.id;
+
+  const renderBody = () => {
+    const entryA = ranked.find(x => x.p.id === selA) || ranked[0];
+    const entryB = ranked.find(x => x.p.id === selB) || ranked[Math.min(1, ranked.length - 1)] || entryA;
+    const avA = portraitPhotoInfo(entryA.p.image, currentLogo());
+    const avB = portraitPhotoInfo(entryB.p.image, currentLogo());
+
+    const optionsHtml = selectedId => ranked.map(x => `
+      <option value="${escHtml(x.p.id)}" ${x.p.id === selectedId ? 'selected' : ''}>${escHtml(formatTextCase(x.p.name))} (${escHtml(PLAYER_CODES[x.p.id] || x.p.id)})</option>
+    `).join('');
+
+    const metrics = [
+      ['MVP Points', entryA.mvpPoints, entryB.mvpPoints, 'high'],
+      ['Matches', entryA.s.matches, entryB.s.matches, 'high'],
+      ['Runs', entryA.s.runs, entryB.s.runs, 'high'],
+      ['High Score', entryA.s.highScore, entryB.s.highScore, 'high'],
+      ['Wickets', entryA.s.wickets, entryB.s.wickets, 'high'],
+      ['4s / 6s', `${entryA.s.fours}/${entryA.s.sixes}`, `${entryB.s.fours}/${entryB.s.sixes}`, 'none', entryA.s.fours + entryA.s.sixes * 2, entryB.s.fours + entryB.s.sixes * 2],
+      ['50s / 100s', `${entryA.s.fifties}/${entryA.s.hundreds}`, `${entryB.s.fifties}/${entryB.s.hundreds}`, 'none', entryA.s.fifties + entryA.s.hundreds * 2, entryB.s.fifties + entryB.s.hundreds * 2],
+      ['Strike Rate', entryA.s.strikeRate || 0, entryB.s.strikeRate || 0, 'high'],
+      ['Economy', entryA.s.economy || '—', entryB.s.economy || '—', entryA.s.economy > 0 && entryB.s.economy > 0 ? 'low' : 'none', entryA.s.economy || 0, entryB.s.economy || 0],
+      ['Best Bowling', entryA.s.bestBowling || '—', entryB.s.bestBowling || '—', 'none'],
+      ['POTM Awards', entryA.potmCount, entryB.potmCount, 'high']
+    ];
+
+    const rowsHtml = metrics.map(([label, dispA, dispB, mode, cmpA, cmpB]) => {
+      const aNum = cmpA !== undefined ? Number(cmpA) : Number(dispA);
+      const bNum = cmpB !== undefined ? Number(cmpB) : Number(dispB);
+      let winA = false;
+      let winB = false;
+      if (mode === 'high' || (mode === 'none' && cmpA !== undefined)) {
+        if (aNum > bNum) winA = true;
+        else if (bNum > aNum) winB = true;
+      } else if (mode === 'low' && aNum > 0 && bNum > 0) {
+        if (aNum < bNum) winA = true;
+        else if (bNum < aNum) winB = true;
+      }
+      return `
+        <div class="compareMetricRow">
+          <div class="compareVal num${winA ? ' is-leader' : ''}">${escHtml(String(dispA))}</div>
+          <div class="compareMetricLabel">${escHtml(label)}</div>
+          <div class="compareVal num${winB ? ' is-leader' : ''}">${escHtml(String(dispB))}</div>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="comparePickerRow">
+        <label class="fieldBlock">
+          <span>Player A</span>
+          <select id="cmpSelectA">${optionsHtml(entryA.p.id)}</select>
+        </label>
+        <label class="fieldBlock">
+          <span>Player B</span>
+          <select id="cmpSelectB">${optionsHtml(entryB.p.id)}</select>
+        </label>
+      </div>
+      <div class="compareCardsRow">
+        <div class="compareHeroMini">
+          <div class="rdmPortraitWrap">
+            <img class="compareMiniAvatar avatarCircle ${avA.isCrest ? 'is-crest' : 'is-photo'}" src="${escHtml(avA.src)}" alt="${escHtml(entryA.p.name)}" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='${CLUB_INFO.logoPath}'">
+            ${entryA.potmCount > 0 ? potmCornerBadgeHtml(entryA.potmCount, `${entryA.potmCount}× Player of the Match`) : ''}
+          </div>
+          <div>
+            <strong>${escHtml(formatTextCase(entryA.p.name))}</strong>
+            <span>${escHtml(formatTextCase(entryA.p.role))}</span>
+          </div>
+        </div>
+        <div class="compareHeroMini">
+          <div class="rdmPortraitWrap">
+            <img class="compareMiniAvatar avatarCircle ${avB.isCrest ? 'is-crest' : 'is-photo'}" src="${escHtml(avB.src)}" alt="${escHtml(entryB.p.name)}" referrerPolicy="no-referrer" onerror="this.onerror=null;this.src='${CLUB_INFO.logoPath}'">
+            ${entryB.potmCount > 0 ? potmCornerBadgeHtml(entryB.potmCount, `${entryB.potmCount}× Player of the Match`) : ''}
+          </div>
+          <div>
+            <strong>${escHtml(formatTextCase(entryB.p.name))}</strong>
+            <span>${escHtml(formatTextCase(entryB.p.role))}</span>
+          </div>
+        </div>
+      </div>
+      <div class="compareTable">${rowsHtml}</div>
+    `;
+  };
+
+  openCustomSheet({
+    title: 'Player Comparison',
+    subtitle: 'Side-by-side verified career & MVP impact stats',
+    wide: true,
+    bodyHtml: renderBody(),
+    onReady: overlay => {
+      const bodyEl = overlay.querySelector('.customSheetBody');
+      const bindSelects = () => {
+        bodyEl.querySelector('#cmpSelectA')?.addEventListener('change', e => {
+          selA = e.target.value;
+          bodyEl.innerHTML = renderBody();
+          bindSelects();
+        });
+        bodyEl.querySelector('#cmpSelectB')?.addEventListener('change', e => {
+          selB = e.target.value;
+          bodyEl.innerHTML = renderBody();
+          bindSelects();
+        });
+      };
+      bindSelects();
+    }
+  });
 }
 
 async function openNativeUpdateFlow(upd) {

@@ -673,3 +673,32 @@ export function openAppUpdateSheet({
     }
   };
 }
+
+export function openCustomSheet({ title, subtitle = '', bodyHtml = '', wide = false, onReady }) {
+  const overlay = document.createElement('div');
+  overlay.className = 'sheetOverlay show';
+  overlay.innerHTML = `
+    <div class="sheetCard${wide ? ' is-wide' : ''}" role="dialog" aria-modal="true">
+      <div class="sheetHandle"></div>
+      <div class="sheetHeader">
+        <div>
+          <h3>${escHtml(title)}</h3>
+          ${subtitle ? `<p class="sheetSub">${escHtml(subtitle)}</p>` : ''}
+        </div>
+        <button type="button" class="iconCloseBtn" data-close-sheet aria-label="Close">×</button>
+      </div>
+      <div class="customSheetBody">${bodyHtml}</div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  const close = registerModal(overlay);
+  overlay.querySelector('[data-close-sheet]').onclick = close;
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) close();
+  });
+  if (typeof onReady === 'function') {
+    onReady(overlay, close);
+  }
+  return close;
+}
+
